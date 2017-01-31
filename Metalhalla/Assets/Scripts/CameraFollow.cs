@@ -4,82 +4,98 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
 
+    public enum Projection { Ortographic, Perspective};
+
     [Header("Basic Setup")]
     [Tooltip("Player instance to follow")]
     public GameObject player;
+    [Tooltip("How tall is the player?")]
+    public float playerHeight = 2.0f;
+    [Tooltip("Player to Screen Ratio (in %). 100% means the player appears as tall as the screen. Calculations used using PERSPECTIVE projection")]
+    [Range(1f, 100f)]
+    public float playerToScreenHeightRatio = 25;
 
-    // Activate your position limitations for the Y axis by turning this on.
-
-    [Header("Deadzone Limits Setup")]
-    [Tooltip("Limits where the camera stops following the player. Must be updated when entering a new zone")]
+    [Header("Move Zone Limits")]
+    [Tooltip("Zone where the camera follows the player. If the players leaves the zone, the camera snaps to the limits specified.")]
     public float limitLeft;
     public float limitRight;
-    public float limitBottom;
     public float limitTop;
+    public float limitBottom;
 
-    [Header("Debug Visuals")]
-    [Tooltip("Draws a debug box with the dead zone of the camera")]
-    public bool showDebugBox = false;
+    [Header("Move Zone Debug")]
+    [Tooltip("Draws a box with the move zone, and the center position of the camera")]
+    public bool showMoveBox = true;
 
-    private Vector3 cameraPosition;
     private Vector3 playerPosition;
+    private float distanceFromPlayer = -10;
+
 
     void Start()
     {
-        cameraPosition = transform.position;
-
         if (player == null)
             Debug.LogError("There is no target to follow attached to the script");
-
+        playerPosition = player.transform.position;
+        CalculateDistanceFromPlayer();
     }
 
 
     void LateUpdate()
     {
-        CameraUpdate();
-        if (showDebugBox)
-            DrawDebugBox();
+        SetCameraPosition();
+        if (showMoveBox)
+            ShowBox();
     }
 
-    void CameraUpdate()
+    void SetCameraPosition()
     {
-        Vector3 positionUpdate = Vector3.zero;
-        Vector3 playerPositionDif = player.transform.position - playerPosition;
+        Vector3 playerPositionDiff = player.transform.position - playerPosition;
         playerPosition = player.transform.position;
-        
-        // horizontal followup
-        if (playerPosition.x > limitLeft &&  playerPosition.x < limitRight)
-            positionUpdate.x = playerPositionDif.x;
 
-        // vertical followup
-        if (playerPosition.y < limitTop && playerPosition.y > limitBottom)
-            positionUpdate.y = playerPositionDif.y;
+        Vector3 cameraPosition = transform.position;
 
-        if (positionUpdate.Equals(Vector3.zero) == false)
+        if (playerPosition.x > limitLeft && playerPosition.x < limitRight)
+            cameraPosition.x = playerPosition.x;
+        else
         {
-            transform.position += positionUpdate;
+            if (playerPosition.x < limitLeft && cameraPosition.x > limitLeft)
+                cameraPosition.x = limitLeft;
+            else if (playerPosition.x > limitRight && cameraPosition.x < limitRight)
+                cameraPosition.x = limitRight;
         }
+
+        if (playerPosition.y < limitTop && playerPosition.y > limitBottom)
+            cameraPosition.y = playerPosition.y;
+        else
+        {
+            if (playerPosition.y > limitTop && cameraPosition.y < limitTop)
+                cameraPosition.y = limitTop;
+            else if (playerPosition.y < limitBottom && cameraPosition.y > limitBottom)
+
+                cameraPosition.y = limitBottom;
+        }
+        CalculateDistanceFromPlayer();
+        cameraPosition.z = distanceFromPlayer;
+        transform.position = cameraPosition;
+
         CorrectOutOfBounds();
     }
 
-    void DrawDebugBox()
+    void ShowBox()
     {
+        Vector3 topLeft = new Vector3(limitLeft, limitTop);
+        Vector3 topRight = new Vector3(limitRight, limitTop);
+        Vector3 bottomLeft = new Vector3(limitLeft, limitBottom);
+        Vector3 bottomRight = new Vector3(limitRight, limitBottom);
         Vector3 centerPos = transform.position;
-        centerPos.z = 0;
-
-        Vector3 topLeft = new Vector3(limitLeft, limitTop, 0);
-        Vector3 bottomLeft = new Vector3(limitLeft, limitBottom, 0);
-        Vector3 topRight = new Vector3(limitRight, limitTop, 0);
-        Vector3 bottomRight = new Vector3(limitRight, limitBottom, 0);
-
+        centerPos.z = 0.0f;
         Color lineColor = Color.cyan;
-        Debug.DrawLine(centerPos + Vector3.up * 0.2f, centerPos + Vector3.down * 0.2f, lineColor);
-        Debug.DrawLine(centerPos + Vector3.left * 0.2f, centerPos + Vector3.right * 0.2f, lineColor);
 
-        Debug.DrawLine(topLeft, bottomLeft, lineColor);
+        Debug.DrawLine(centerPos + Vector3.left * 0.2f, centerPos + Vector3.right * 0.2f, lineColor);
+        Debug.DrawLine(centerPos + Vector3.up * 0.2f, centerPos + Vector3.down * 0.2f, lineColor);
         Debug.DrawLine(topLeft, topRight, lineColor);
-        Debug.DrawLine(bottomLeft, bottomRight, lineColor);
         Debug.DrawLine(topRight, bottomRight, lineColor);
+        Debug.DrawLine(bottomRight, bottomLeft, lineColor);
+        Debug.DrawLine(bottomLeft, topLeft, lineColor);
     }
 
     public void SetLimits(float leftLimit, float rightLimit, float bottomLimit, float topLimit)
@@ -105,5 +121,10 @@ public class CameraFollow : MonoBehaviour {
         transform.position = correctedPosition;
     }
 
+    void CalculateDistanceFromPlayer()
+    {
+        float frustumHeight = playerHeight * 100 / playerToScreenHeightRatio;
+        distanceFromPlayer = -1 * frustumHeight * 0.5f / Mathf.Tan(GetComponent<Camera>().fieldOfView * 0.5f * Mathf.Deg2Rad);
+    }
 
 }
