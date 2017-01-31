@@ -98,12 +98,12 @@ public class CameraFollow : MonoBehaviour {
         Debug.DrawLine(bottomLeft, topLeft, lineColor);
     }
 
-    public void SetLimits(float leftLimit, float rightLimit, float bottomLimit, float topLimit)
+    public void SetLimits(float left, float right, float top, float bottom )
     {
-        limitLeft = leftLimit;
-        limitRight = rightLimit;
-        limitBottom = bottomLimit;
-        limitTop = topLimit;
+        limitLeft = left;
+        limitRight = right;
+        limitTop = top;
+        limitBottom = bottom;
     }
 
     void CorrectOutOfBounds()
