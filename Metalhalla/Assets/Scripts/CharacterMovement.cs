@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class Character : MonoBehaviour {
+public class CharacterMovement : MonoBehaviour {
 
     [SerializeField]
-    private float maxSpeed = 10f;
+    private float speed = 10f;
     [SerializeField]
     private float jumpForce = 400f;
     [SerializeField]
@@ -12,6 +12,7 @@ public class Character : MonoBehaviour {
     private Transform groundCheck; // A position marking where to check if the player is grounded
     private float groundedRadius = 1f; // Radius of the overlap circle to determine if grounded
     private bool grounded = false; // Whether or not the player is grounded
+    private Vector3 tmp;
    
 	private void Awake ()
     {
@@ -32,8 +33,7 @@ public class Character : MonoBehaviour {
         if(grounded)
         {
             //Move the character
-            GetComponent<Rigidbody>().velocity = new Vector3(moveHor * maxSpeed, GetComponent<Rigidbody>().velocity.y, 0f);
-
+            GetComponent<Rigidbody>().velocity = new Vector3(moveHor * speed, GetComponent<Rigidbody>().velocity.y, 0f);
         }
 
         // If the player should jump

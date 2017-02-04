@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 58d732d59ef2c5a4a8f131bb7635231c
+timeCreated: 1486213167
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - dragonHead: {fileID: 1739232411273356, guid: 4eabdece1b2620747b6ba4aed61dc19e,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

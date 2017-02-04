@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof (Character))]
+[RequireComponent(typeof (CharacterMovement))]
 public class UserControl : MonoBehaviour
 {
 
-    private Character character;
+    private CharacterMovement character;
     private bool jump;
    
 	void Awake ()
     {
-        character = GetComponent<Character>();
+        character = GetComponent<CharacterMovement>();
 	}
 	
 	// Update is called once per frame

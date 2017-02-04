@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SelfDestruct : MonoBehaviour {
-
+    [SerializeField]
+    float lifeTime = 5.0f;
 	// Use this for initialization
 	void Start () {
-        Destroy(gameObject, 5.0f);
+        Destroy(gameObject, lifeTime);
 	}
 	
 	// Update is called once per frame
