@@ -31,9 +31,11 @@ public class HeadMovement : MonoBehaviour {
     void FixedUpdate()
     {
         RaycastHit hitInfo;
-        Physics.Raycast(transform.position, maxRangePoint.transform.position - transform.position, out hitInfo, attackRange, whatToHit);
-        DestroyCube destructionScript = hitInfo.collider.GetComponent<DestroyCube>();
+        if (Physics.Raycast(transform.position, maxRangePoint.transform.position - transform.position, out hitInfo, attackRange, whatToHit))
+        { 
+            DestroyCube destructionScript = hitInfo.collider.GetComponent<DestroyCube>();
         destructionScript.Destroy();
+        }
     }
 	
 }
