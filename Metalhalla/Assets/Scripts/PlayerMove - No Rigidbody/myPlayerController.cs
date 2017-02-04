@@ -20,7 +20,7 @@ public class myPlayerController : MonoBehaviour {
 		playerStatus = GetComponent<myPlayerStatus> ();
 		playerMove = GetComponent<myPlayerMove> ();
 		playerCollider = GetComponent<myPlayerCollider> ();
-		playerAnimator = GetComponent<Animator> ();
+	//	playerAnimator = GetComponent<Animator> ();
 	}
 
 	void Update () {
@@ -35,8 +35,8 @@ public class myPlayerController : MonoBehaviour {
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
 		// send the animator what needs to be sent :)
-		playerAnimator.SetBool("inAir",!playerStatus.newStatus.IsGround());
-		playerAnimator.SetFloat("speed",Mathf.Abs(playerMove.speed.x));
+	//	playerAnimator.SetBool("inAir",!playerStatus.newStatus.IsGround());
+	//	playerAnimator.SetFloat("speed",Mathf.Abs(playerMove.speed.x));
 
 	}
 

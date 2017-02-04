@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityStandardAssets.CrossPlatformInput;
 
 public class myPlayerInput : MonoBehaviour {
 
@@ -46,20 +45,9 @@ public class myPlayerInput : MonoBehaviour {
 	{
 		oldInput.CopyInputFrom (newInput);	//make a savestate from last input
 
-		#if UNITY_EDITOR
-
 		newInput.SetHorizontalInput( Input.GetAxis("Horizontal"));
 		newInput.SetVerticalInput( Input.GetAxis("Vertical"));
 		newInput.SetJumpButtonDown(Input.GetButtonDown("Jump"));
 		newInput.SetJumpButtonHeld(Input.GetButton ("Jump") );
-
-		#elif UNITY_ANDROID
-
-		newInput.SetHorizontalInput( CrossPlatformInputManager.GetAxis("Horizontal"));
-		newInput.SetVerticalInput( CrossPlatformInputManager.GetAxis("Vertical"));
-		newInput.SetJumpButtonDown(CrossPlatformInputManager.GetButtonDown("Jump"));
-		newInput.SetJumpButtonHeld(CrossPlatformInputManager.GetButton ("Jump") );
-
-		#endif
 	}
 }

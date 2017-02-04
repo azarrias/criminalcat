@@ -11,10 +11,12 @@ public class changeCameraBox : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("now");
-        CameraFollow camFollow = FindObjectOfType<Camera>().GetComponent<CameraFollow>();
-        if (camFollow == null)
-            Debug.Log("not working");
-        camFollow.SetLimits(left, right, top, bottom);
+        if (collision.tag == "Player")
+        { 
+            CameraFollow camFollow = FindObjectOfType<Camera>().GetComponent<CameraFollow>();
+            if (camFollow == null)
+                Debug.Log("not working");
+            camFollow.SetLimits(left, right, top, bottom);
+        }
     }
 }
