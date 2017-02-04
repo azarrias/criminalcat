@@ -35,7 +35,7 @@ public class CameraFollow : MonoBehaviour {
         if (player == null)
             Debug.LogError("There is no target to follow attached to the script");
         playerPosition = player.transform.position;
-        CalculateDistanceFromPlayer();
+        SetLimits(limitLeft, limitRight, limitTop, limitBottom);
     }
 
 
@@ -73,10 +73,8 @@ public class CameraFollow : MonoBehaviour {
 
                 cameraPosition.y = limitBottom;
         }
-        CalculateDistanceFromPlayer();
-        cameraPosition.z = distanceFromPlayer;
+        
         transform.position = cameraPosition;
-
         CorrectOutOfBounds();
     }
 
@@ -104,6 +102,11 @@ public class CameraFollow : MonoBehaviour {
         limitRight = right;
         limitTop = top;
         limitBottom = bottom;
+
+        CalculateDistanceFromPlayer();
+        Vector3 tmp = transform.position;
+        tmp.z = distanceFromPlayer;
+        transform.position = tmp;
     }
 
     void CorrectOutOfBounds()
