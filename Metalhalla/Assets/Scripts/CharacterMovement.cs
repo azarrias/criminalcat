@@ -10,7 +10,7 @@ public class CharacterMovement : MonoBehaviour {
     private LayerMask whatIsGround;
 
     private Transform groundCheck; // A position marking where to check if the player is grounded
-    private float groundedRadius = 1f; // Radius of the overlap circle to determine if grounded
+    private float groundedRadius = 0.1f; // Radius of the overlap sphere to determine if grounded
     private bool grounded = false; // Whether or not the player is grounded
     private Vector3 tmp;
    
@@ -24,7 +24,11 @@ public class CharacterMovement : MonoBehaviour {
     private void FixedUpdate()
     {
         // The player is grounded if a spherecast to the groundcheck position hits anything designated as ground
-        Collider[] colliders = Physics.OverlapSphere(groundCheck.position, groundedRadius, whatIsGround);
+        //Collider[] colliders = Physics.OverlapSphere(groundCheck.position, groundedRadius, whatIsGround);
+        Vector3 halfExtents = GetComponent<Collider>().bounds.extents;
+        halfExtents.x -= 0.1f;
+        halfExtents.z -= 0.1f;
+        Collider[] colliders = Physics.OverlapBox(transform.position, halfExtents, transform.rotation, whatIsGround);
         grounded = colliders.Length != 0 ? true : false;
     }
 
@@ -34,6 +38,7 @@ public class CharacterMovement : MonoBehaviour {
         {
             //Move the character
             GetComponent<Rigidbody>().velocity = new Vector3(moveHor * speed, GetComponent<Rigidbody>().velocity.y, 0f);
+            
         }
 
         // If the player should jump
