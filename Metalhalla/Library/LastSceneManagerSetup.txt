@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
 - path: Assets/CharacterMovement.unity
-=======
-- path: Assets/CameraMove.unity
->>>>>>> origin/develop
   isLoaded: 1
   isActive: 1
