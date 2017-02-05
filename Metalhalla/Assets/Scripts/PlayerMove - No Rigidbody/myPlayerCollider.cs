@@ -43,7 +43,7 @@ public class myPlayerCollider : MonoBehaviour {
 		for (int i = 0; i < horizontalRayCount; i++) {
 			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-			RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.right * directionX, rayLength, generalCollisionMask);
+			RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.right * directionX, rayLength, noCloudCollisionMask);
 
 
 			Debug.DrawRay (rayOrigin, Vector2.right*directionX*rayLength , Color.red);
@@ -64,9 +64,7 @@ public class myPlayerCollider : MonoBehaviour {
 				}
 
 				// here comes the change
-			//	if (!collisions.climbingSlope || surfaceAngle > maxSlopeClimbAngle) {	// ORIGINAL
-				if ((!collisions.climbingSlope || surfaceAngle > maxSlopeClimbAngle) && (hit.transform.gameObject.layer != LayerMask.NameToLayer("CloudPlatform"))) {
-			//	if ( !collisions.climbingSlope || (surfaceAngle > maxSlopeClimbAngle && hit.transform.gameObject.layer != LayerMask.NameToLayer("Cloud Platform") )) {	
+				if ((!collisions.climbingSlope || surfaceAngle > maxSlopeClimbAngle) && (hit.transform.gameObject.layer != noCloudCollisionMask)) {
 					speed.x = (hit.distance - skinWidth) * directionX;
 					rayLength = hit.distance;
 
