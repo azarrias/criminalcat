@@ -9,6 +9,8 @@ public class HeadMovement : MonoBehaviour {
     private Vector3 maxRange;
     private GameObject maxRangePoint;
     public LayerMask whatToHit;
+
+    public bool withCollider2D = true;
   
 	// Use this for initialization
 	void Start ()
@@ -30,11 +32,25 @@ public class HeadMovement : MonoBehaviour {
 
     void FixedUpdate()
     {
-        RaycastHit hitInfo;
-        if (Physics.Raycast(transform.position, maxRangePoint.transform.position - transform.position, out hitInfo, attackRange, whatToHit))
-        { 
-            DestroyCube destructionScript = hitInfo.collider.GetComponent<DestroyCube>();
-        destructionScript.Destroy();
+        if (withCollider2D == false)
+        {
+            RaycastHit hitInfo;
+            if (Physics.Raycast(transform.position, maxRangePoint.transform.position - transform.position, out hitInfo, attackRange, whatToHit))
+            {
+                DestroyCube destructionScript = hitInfo.collider.GetComponent<DestroyCube>();
+                destructionScript.Destroy();
+            }
+        }
+        else
+        {
+            RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, maxRangePoint.transform.position - transform.position, attackRange, whatToHit);
+            if (hitInfo)
+            {
+                DestroyCube destructionScript = hitInfo.collider.GetComponent<DestroyCube>();
+                destructionScript.Destroy();
+            }
+
+
         }
     }
 	
