@@ -12,6 +12,7 @@ public class MenuScript : MonoBehaviour {
     public Button options;
     public Button exitGame;
     public Button exitOptions;
+    public string nextScene;
 
 	// Use this for initialization
 	void Start () {
@@ -28,7 +29,7 @@ public class MenuScript : MonoBehaviour {
 
     public void PlayPressed()
     {
-        SceneManager.LoadScene("CameraMove");
+        SceneManager.LoadScene(nextScene);
     }
 
 	//Quit menu
