@@ -14,11 +14,12 @@ public class TransitionGameToMenu : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !ingameMenu.activeSelf)
         {
             if (ingameMenu.activeSelf)
             {
                 ingameMenu.SetActive(false);
+                
                 //Game runs at regular speed
                 Time.timeScale = 1f; 
             }
