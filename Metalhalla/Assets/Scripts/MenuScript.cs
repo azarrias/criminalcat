@@ -6,8 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class MenuScript : MonoBehaviour {
 
+    //We share the same script between starting menu and ingame menu
+    public bool ingameMenu = true;
+
+    public GameObject menu;
     public Canvas quitMenu;
     public Canvas optionsMenu;
+    public Button resume;
     public Button play;
     public Button options;
     public Button exitGame;
@@ -21,13 +26,26 @@ public class MenuScript : MonoBehaviour {
         quitMenu.enabled = false;
         optionsMenu = optionsMenu.GetComponent<Canvas>();
         optionsMenu.enabled = false;
+        resume = resume.GetComponent<Button>();
         play = play.GetComponent<Button>();
         options = options.GetComponent<Button>();
         exitGame = exitGame.GetComponent<Button>();
         exitOptions = exitOptions.GetComponent<Button>();
+
+        //Enable or disable Resume button 
+        if (ingameMenu)
+            resume.gameObject.SetActive(true);
+        else
+            resume.gameObject.SetActive(false);
+
 	}
 
-    public void PlayPressed()
+    public void ResumePressed()
+    {
+        menu.SetActive(false);
+    }
+
+    public void NewGamePressed()
     {
         SceneManager.LoadScene(nextScene);
     }
@@ -39,7 +57,7 @@ public class MenuScript : MonoBehaviour {
         play.enabled = false;
         options.enabled = false;
         exitGame.enabled = false;
-       
+        resume.enabled = false;
     }
 
     public void YesPressed()
@@ -53,6 +71,7 @@ public class MenuScript : MonoBehaviour {
         play.enabled = true;
         options.enabled = true;
         exitGame.enabled = true;
+        resume.enabled = true;
 
     }
 
@@ -63,6 +82,7 @@ public class MenuScript : MonoBehaviour {
         play.enabled = false;
         options.enabled = false;
         exitGame.enabled = false;
+        resume.enabled = false;
     }
 
 
@@ -72,6 +92,7 @@ public class MenuScript : MonoBehaviour {
         play.enabled = true;
         options.enabled = true;
         exitGame.enabled = true;
+        resume.enabled = true;
 
     }
 }
