@@ -17,9 +17,17 @@ public class TransitionGameToMenu : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (ingameMenu.activeSelf)
+            {
                 ingameMenu.SetActive(false);
+                //Game runs at regular speed
+                Time.timeScale = 1f; 
+            }
             else
+            {
                 ingameMenu.SetActive(true);
+                //Game paused
+                Time.timeScale = 0f;
+            }
         }
 	}
 }

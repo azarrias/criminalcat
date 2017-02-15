@@ -43,6 +43,9 @@ public class MenuScript : MonoBehaviour {
     public void ResumePressed()
     {
         menu.SetActive(false);
+        
+        //Game runs at regular speed
+        Time.timeScale = 1f;
     }
 
     public void NewGamePressed()
