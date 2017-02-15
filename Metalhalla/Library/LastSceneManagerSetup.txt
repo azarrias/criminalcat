@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/PauseGame.unity
+- path: Assets/CameraMove.unity
   isLoaded: 1
   isActive: 1
