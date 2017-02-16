@@ -5,16 +5,17 @@ using UnityEngine;
 public class TransitionGameToMenu : MonoBehaviour {
 
     public GameObject ingameMenu;
+    public GameObject gameOverUI;
    
 	// Use this for initialization
 	void Start () {
         ingameMenu.SetActive(false);
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.Escape) && !ingameMenu.activeSelf)
+        if (Input.GetKeyDown(KeyCode.Escape) && !ingameMenu.activeSelf && !gameOverUI.activeSelf)
         {
             if (ingameMenu.activeSelf)
             {
@@ -30,5 +31,7 @@ public class TransitionGameToMenu : MonoBehaviour {
                 Time.timeScale = 0f;
             }
         }
+
+        
 	}
 }

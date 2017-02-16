@@ -50,7 +50,11 @@ public class MenuScript : MonoBehaviour {
 
     public void NewGamePressed()
     {
+        //Game runs at regular speed
+        Time.timeScale = 1f;
+
         SceneManager.LoadScene(nextScene);
+
     }
 
 	//Quit menu

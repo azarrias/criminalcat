@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameOverTransition : MonoBehaviour {
+public class TransitionToGameOver : MonoBehaviour {
 
     public GameObject gameOverUI;
+    public GameObject ingameMenu;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         gameOverUI.SetActive(false);
-
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !ingameMenu.activeSelf)
         {
             gameOverUI.SetActive(true);
         }
