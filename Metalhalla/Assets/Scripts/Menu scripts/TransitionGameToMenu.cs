@@ -2,21 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class TransitionGameToMenu : MonoBehaviour {
 
     public GameObject menu;
     public GameObject gameOverUI;
-    public GameObject resume;
-    public GameObject newGame;
-
-    private bool isIngameMenu;
-   
+     
 	// Use this for initialization
 	void Start () {
 
         menu.SetActive(false);
-        isIngameMenu = menu.GetComponent<MenuScript>().isIngameMenu;
 
     }
 	
@@ -36,15 +32,14 @@ public class TransitionGameToMenu : MonoBehaviour {
             else
             {
                 menu.SetActive(true);
-                
-                //Set the default selected menu option -> hay que usar tags, si no, no los pilla
-                if (isIngameMenu)
-                    EventSystem.current.SetSelectedGameObject(resume);
-                else
-                    EventSystem.current.SetSelectedGameObject(newGame);
 
                 //Game paused
                 Time.timeScale = 0f;
+                //Re-select the button in order to highlight it again
+                EventSystem.current.SetSelectedGameObject(null);
+                GameObject resume = GameObject.FindGameObjectWithTag("GameMenuResume");
+                EventSystem.current.SetSelectedGameObject(resume);
+                
             }
         }   
 	}
