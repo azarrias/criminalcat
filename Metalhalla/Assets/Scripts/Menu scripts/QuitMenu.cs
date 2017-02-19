@@ -26,14 +26,13 @@ public class QuitMenu : MonoBehaviour {
             selectionList.Add(NoButton);
         }
 
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetAxis("HorizontalMenu") < 0f || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             if (selectedMenuOption == 1)
-                selectedMenuOption = 0;
+                selectedMenuOption = 0;        
         }
 
-        if(Input.GetKeyDown(KeyCode.RightArrow))
+        if(Input.GetAxis("HorizontalMenu") > 0f || Input.GetKeyDown(KeyCode.RightArrow))
         {
             if (selectedMenuOption == 0)
                 selectedMenuOption = 1;

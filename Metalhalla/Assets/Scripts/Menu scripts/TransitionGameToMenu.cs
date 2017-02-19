@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+
 
 public class TransitionGameToMenu : MonoBehaviour {
 
@@ -20,7 +20,7 @@ public class TransitionGameToMenu : MonoBehaviour {
 	void Update () {
 
         //Toggle menu
-        if (Input.GetKeyDown(KeyCode.Escape) && !menu.activeSelf && !gameOverUI.activeSelf)
+        if (Input.GetButton("DisplayMenu") && !menu.activeSelf && !gameOverUI.activeSelf)
         {
             if (menu.activeSelf)
             {

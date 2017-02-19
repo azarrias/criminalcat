@@ -7,6 +7,7 @@ public class OptionsMenu : MonoBehaviour {
 
     private List<GameObject> selectionList;
     public int selectedMenuOption = 0;
+    
 
 	// Use this for initialization
 	void Start () {
@@ -26,20 +27,20 @@ public class OptionsMenu : MonoBehaviour {
             selectionList.Add(musicVolume);
             selectionList.Add(exitOptions);
         }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+       
+        if (Input.GetAxis("VerticalMenu") > 0 || Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (selectedMenuOption != 0)
-                selectedMenuOption--;
+                selectedMenuOption--;                     
         }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetAxis("VerticalMenu") < 0 || Input.GetKeyDown(KeyCode.DownArrow))
         {
             if (selectedMenuOption != selectionList.Count - 1)
-                selectedMenuOption++;
+                selectedMenuOption++;                        
         }
-
-        if(selectionList.Count != 0)
+       
+        if (selectionList.Count != 0)
             EventSystem.current.SetSelectedGameObject(selectionList[selectedMenuOption]);
 
     }
