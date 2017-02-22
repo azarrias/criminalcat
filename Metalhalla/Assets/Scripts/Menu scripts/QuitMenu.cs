@@ -12,7 +12,7 @@ public class QuitMenu : MonoBehaviour {
 	void Start () {
 
         selectionList = new List<GameObject>();
-        selectedMenuOption = 1;
+        
 	}
 	
 	// Update is called once per frame
@@ -46,7 +46,7 @@ public class QuitMenu : MonoBehaviour {
     {
         selectedMenuOption = option;
     }
-  
+
 
 
 }

@@ -13,29 +13,37 @@ public class MenuScript : MonoBehaviour {
     public GameObject menu;
     public GameObject quitMenu;
     public GameObject optionsMenu;
-    public Button resume;
-    public Button newGame;
-    public Button options;
-    public Button exitGame;
-    public Button exitOptions;
+    public GameObject helpMenu;
+    public GameObject creditsMenu;
+    public Button resumeButton;
+    public Button newGameButton;
+    public Button optionsButton;
+    public Button helpButton;
+    public Button creditsButton;
+    public Button exitGamebutton;
     public string nextScene;
+    private Button lastOptionSelected;
 
 	// Use this for initialization
 	void Start () {
 
         quitMenu.SetActive(false);
         optionsMenu.SetActive(false);
-        resume = resume.GetComponent<Button>();
-        newGame = newGame.GetComponent<Button>();
-        options = options.GetComponent<Button>();
-        exitGame = exitGame.GetComponent<Button>();
-        exitOptions = exitOptions.GetComponent<Button>();
+        helpMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+        resumeButton = resumeButton.GetComponent<Button>();
+        newGameButton = newGameButton.GetComponent<Button>();
+        optionsButton = optionsButton.GetComponent<Button>();
+        helpButton = helpButton.GetComponent<Button>();
+        creditsButton = creditsButton.GetComponent<Button>();
+        exitGamebutton = exitGamebutton.GetComponent<Button>();
+        
 
         //Enable or disable Resume button 
         if (isIngameMenu)
-            resume.gameObject.SetActive(true);
+            resumeButton.gameObject.SetActive(true);
         else
-            resume.gameObject.SetActive(false);
+            resumeButton.gameObject.SetActive(false);
 
     }
 
@@ -53,14 +61,19 @@ public class MenuScript : MonoBehaviour {
         SceneManager.LoadScene(nextScene);
     }
 
-	//Quit menu
+	//Activate quit menu
 	public void ExitGamePressed()
     {
+        lastOptionSelected = exitGamebutton;
         quitMenu.SetActive(true);
-        newGame.enabled = false;
-        options.enabled = false;
-        exitGame.enabled = false;
-        resume.enabled = false;
+        quitMenu.GetComponent<QuitMenu>().SetSelectedMenuOption(1);
+        resumeButton.enabled = false;
+        newGameButton.enabled = false;
+        optionsButton.enabled = false;
+        helpButton.enabled = false;
+        creditsButton.enabled = false;
+        exitGamebutton.enabled = false;
+        
     }
 
     public void YesPressed()
@@ -68,45 +81,112 @@ public class MenuScript : MonoBehaviour {
         Application.Quit();
     }
 
+    //Deactivate quit menu
     public void NoPressed()
     {
         quitMenu.SetActive(false);
-        newGame.enabled = true;
-        options.enabled = true;
-        exitGame.enabled = true;
-        resume.enabled = true;
-        
+        resumeButton.enabled = true;
+        newGameButton.enabled = true;
+        optionsButton.enabled = true;
+        helpButton.enabled = true;
+        creditsButton.enabled = true;
+        exitGamebutton.enabled = true;
+
         //Set selected button
-        if (isIngameMenu)
-            EventSystem.current.SetSelectedGameObject(resume.gameObject);
-        else
-            EventSystem.current.SetSelectedGameObject(newGame.gameObject);
+        EventSystem.current.SetSelectedGameObject(lastOptionSelected.gameObject);
+
     }
 
-    //Options menu
+    //Activate options menu
     public void OptionsPressed()
     {
+        lastOptionSelected = optionsButton;
         optionsMenu.SetActive(true);
-        newGame.enabled = false;
-        options.enabled = false;
-        exitGame.enabled = false;
-        resume.enabled = false;
+        optionsMenu.GetComponent<OptionsMenu>().SetSelectedMenuOption(0);
+        resumeButton.enabled = false;
+        newGameButton.enabled = false;
+        optionsButton.enabled = false;
+        helpButton.enabled = false;
+        creditsButton.enabled = false;
+        exitGamebutton.enabled = false;
+               
     }
 
-
+    //Deactivate options menu
     public void ExitOptionsPressed()
     {
         optionsMenu.SetActive(false);
-        newGame.enabled = true;
-        options.enabled = true;
-        exitGame.enabled = true;
-        resume.enabled = true;
+        resumeButton.enabled = true;
+        newGameButton.enabled = true;
+        optionsButton.enabled = true;
+        helpButton.enabled = true;
+        creditsButton.enabled = true;
+        exitGamebutton.enabled = true;
 
         //Set selected button
-        if (isIngameMenu)
-            EventSystem.current.SetSelectedGameObject(resume.gameObject);
-        else
-            EventSystem.current.SetSelectedGameObject(newGame.gameObject);
+        EventSystem.current.SetSelectedGameObject(lastOptionSelected.gameObject);
+
+    }
+
+    //Activate Help menu
+    public void HelpPressed()
+    {
+        lastOptionSelected = helpButton;
+        helpMenu.SetActive(true);
+        helpMenu.GetComponent<HelpMenu>().SetSelectedMenuOption(0);
+        resumeButton.enabled = false;
+        newGameButton.enabled = false;
+        optionsButton.enabled = false;
+        helpButton.enabled = false;
+        creditsButton.enabled = false;
+        exitGamebutton.enabled = false;
+         
+    }
+
+    //Deactivate help menu
+    public void ExitHelpPressed()
+    {
+        helpMenu.SetActive(false);
+        resumeButton.enabled = true;
+        newGameButton.enabled = true;
+        optionsButton.enabled = true;
+        helpButton.enabled = true;
+        creditsButton.enabled = true;
+        exitGamebutton.enabled = true;
+
+        //Set selected button        
+        EventSystem.current.SetSelectedGameObject(lastOptionSelected.gameObject);
+
+    }
+
+    //Activate Credits menu
+    public void CreditsPressed()
+    {
+        lastOptionSelected = creditsButton;
+        creditsMenu.SetActive(true);
+        creditsMenu.GetComponent<CreditsMenu>().SetSelectedMenuOption(0);
+        resumeButton.enabled = false;
+        newGameButton.enabled = false;
+        optionsButton.enabled = false;
+        helpButton.enabled = false;
+        creditsButton.enabled = false;
+        exitGamebutton.enabled = false;
+        
+    }
+
+    //Deactivate Credits menu
+    public void ExitCreditsPressed()
+    {
+        creditsMenu.SetActive(false);
+        resumeButton.enabled = true;
+        newGameButton.enabled = true;
+        optionsButton.enabled = true;
+        helpButton.enabled = true;
+        creditsButton.enabled = true;
+        exitGamebutton.enabled = true;
+
+        //Set selected button
+        EventSystem.current.SetSelectedGameObject(lastOptionSelected.gameObject);
 
     }
 }
