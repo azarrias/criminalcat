@@ -37,11 +37,14 @@ public class MenuScript : MonoBehaviour {
         helpButton = helpButton.GetComponent<Button>();
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
-        
+
 
         //Enable or disable Resume button 
         if (isIngameMenu)
+        {
             resumeButton.gameObject.SetActive(true);
+            newGameButton.GetComponent<Text>().text = "RESTART";
+        }
         else
             resumeButton.gameObject.SetActive(false);
 
