@@ -22,11 +22,13 @@ public class MenuScript : MonoBehaviour {
     public Button creditsButton;
     public Button exitGamebutton;
     public string nextScene;
-    private Button lastOptionSelected;
-
+    private Button lastOptionSelected;   
+    private SaveMenuState saveMenuStateScript;
+    
+    
 	// Use this for initialization
 	void Start () {
-
+        
         quitMenu.SetActive(false);
         optionsMenu.SetActive(false);
         helpMenu.SetActive(false);
@@ -37,8 +39,8 @@ public class MenuScript : MonoBehaviour {
         helpButton = helpButton.GetComponent<Button>();
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
-
-
+        saveMenuStateScript = GameObject.FindGameObjectWithTag("GameManager").GetComponent<SaveMenuState>();
+        
         //Enable or disable Resume button 
         if (isIngameMenu)
         {
@@ -105,6 +107,13 @@ public class MenuScript : MonoBehaviour {
     {
         lastOptionSelected = optionsButton;
         optionsMenu.SetActive(true);
+
+        //set slider values
+        Slider musicSlider = GameObject.FindGameObjectWithTag("OptionsMenuMusicVolume").GetComponent<Slider>();
+        musicSlider.value = saveMenuStateScript.GetMusicSliderValue();
+        Slider fxSlider = GameObject.FindGameObjectWithTag("OptionsMenuSoundEffectsVolume").GetComponent<Slider>();
+        fxSlider.value = saveMenuStateScript.GetFxSoundSliderValue();
+             
         optionsMenu.GetComponent<OptionsMenu>().SetSelectedMenuOption(0);
         resumeButton.enabled = false;
         newGameButton.enabled = false;
@@ -118,6 +127,12 @@ public class MenuScript : MonoBehaviour {
     //Deactivate options menu
     public void ExitOptionsPressed()
     {
+        //Save sliders value
+        Slider musicSlider = GameObject.FindGameObjectWithTag("OptionsMenuMusicVolume").GetComponent<Slider>();
+        saveMenuStateScript.SetMusicSliderValue(musicSlider.value);
+        Slider fxSlider = GameObject.FindGameObjectWithTag("OptionsMenuSoundEffectsVolume").GetComponent<Slider>();
+        saveMenuStateScript.SetFxSoundSliderValue(fxSlider.value);
+
         optionsMenu.SetActive(false);
         resumeButton.enabled = true;
         newGameButton.enabled = true;
