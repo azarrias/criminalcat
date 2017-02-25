@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
 
-    public enum Projection { Ortographic, Perspective};
-
     [Header("Basic Setup")]
     [Tooltip("Player instance to follow")]
     public GameObject player;
@@ -33,8 +31,14 @@ public class CameraFollow : MonoBehaviour {
     void Start()
     {
         if (player == null)
+        {
             Debug.LogError("There is no target to follow attached to the script");
-        playerPosition = player.transform.position;
+            player = this.gameObject;
+        }
+        else
+        {
+            playerPosition = player.transform.position;
+        }
         SetLimits(limitLeft, limitRight, limitTop, limitBottom);
     }
 

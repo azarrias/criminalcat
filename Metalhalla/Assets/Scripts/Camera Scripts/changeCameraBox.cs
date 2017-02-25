@@ -9,14 +9,22 @@ public class changeCameraBox : MonoBehaviour {
     public float top = 0.0f;
     public float bottom = 0.0f;
 
+    public string cameraTagToChange = "Main Camera";
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
-        { 
-            CameraFollow camFollow = FindObjectOfType<Camera>().GetComponent<CameraFollow>();
-            if (camFollow == null)
-                Debug.Log("not working");
-            camFollow.SetLimits(left, right, top, bottom);
+        {
+            Camera[] cameraList = FindObjectsOfType<Camera>();
+            foreach( Camera cam in cameraList)
+            {
+                if (cam.tag == cameraTagToChange)
+                {
+                    CameraFollow camFollow = cam.GetComponent<CameraFollow>();
+                    if (camFollow != null)
+                        camFollow.SetLimits(left, right, top, bottom);
+                }
+            }
         }
     }
 }
