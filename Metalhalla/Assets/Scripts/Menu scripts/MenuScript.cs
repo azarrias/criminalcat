@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 public class MenuScript : MonoBehaviour {
 
     //We share the same script between starting menu and ingame menu
-    public bool isIngameMenu = true;
+    public bool isIngameMenu;
 
     public GameObject menu;
     public GameObject quitMenu;
@@ -24,7 +24,9 @@ public class MenuScript : MonoBehaviour {
     public string nextScene;
     private Button lastOptionSelected;   
     private SaveMenuState saveMenuStateScript;
-    
+    public Sprite restartSpriteIdle;
+    public Sprite restartSpriteHover;
+    private SpriteState spriteState;
     
 	// Use this for initialization
 	void Start () {
@@ -40,16 +42,23 @@ public class MenuScript : MonoBehaviour {
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
         saveMenuStateScript = GameObject.FindGameObjectWithTag("GameManager").GetComponent<SaveMenuState>();
-        
-        //Enable or disable Resume button 
+
+
         if (isIngameMenu)
         {
+            //Enable or disable Resume button 
             resumeButton.gameObject.SetActive(true);
-            newGameButton.GetComponent<Text>().text = "RESTART";
+            //change button image NEW GAME -> RESTART            
+            newGameButton.GetComponent<Image>().sprite = restartSpriteIdle;
+            spriteState = new SpriteState();
+            spriteState.highlightedSprite = restartSpriteHover;
+            newGameButton.spriteState = spriteState;
+
         }
         else
+        {
             resumeButton.gameObject.SetActive(false);
-
+        }
     }
 
     public void ResumePressed()

@@ -37,8 +37,8 @@ public class TransitionGameToMenu : MonoBehaviour {
                 //Game paused
                 Time.timeScale = 0f;
                 //Re-select the button in order to highlight it again
-                EventSystem.current.SetSelectedGameObject(null);
-                GameObject resume = GameObject.FindGameObjectWithTag("GameMenuResume");
+                EventSystem.current.SetSelectedGameObject(null);              
+                GameObject resume = GameObject.FindGameObjectWithTag("GameMenuResume");                            
                 EventSystem.current.SetSelectedGameObject(resume);
                 
             }
