@@ -3,33 +3,30 @@ using System.Collections;
 
 public class myPlayerStatus : MonoBehaviour {
 
-	public int framesToJumpInAdvance = 5;
-	public int framesToJumpInDelay = 5;
 	int framesToJumpMax;
 	int framesToJumpMin;
-
-	int framesInAdvanceCount;
-	int framesInDelayCount;
 	int framesToJumpCount;
+    bool jumpAvailable;
 
-	bool jumpInAdvanceAvailable;
-	bool jumpInDelayAvailable;
-	bool jumpAvailable;
+    int framesToFallThroughCloudPlatforms;
+    int framesToFallThroughCloudPlatformsCount;
 
-	bool facingRight;
+    bool facingRight;
 
 	PlayerStatus oldStatus;
+    [HideInInspector]
 	public PlayerStatus newStatus;
 
 	void Start (){
 		framesToJumpCount = 0;
-		framesInDelayCount = 0;
-		framesInAdvanceCount = 0;
-		framesToJumpMax = CalculateFramesToJumpMax (GetComponent<myPlayerMove> ().timeToJumpApex);
+        framesToFallThroughCloudPlatformsCount = 0;
+
+		framesToJumpMax = CalculateFramesFromTime(GetComponent<myPlayerMove> ().timeToJumpApex);
 		framesToJumpMin = (int)(framesToJumpMax / 4);
-		jumpInAdvanceAvailable = false;
-		jumpInDelayAvailable = false;
-		jumpAvailable = false;
+
+        framesToFallThroughCloudPlatforms = CalculateFramesFromTime(GetComponent<myPlayerMove>().timeToFallThroughCloudPlatforms);
+
+        jumpAvailable = false;
 		oldStatus.Reset (); newStatus.Reset ();
 		facingRight = true;
 	}
@@ -39,9 +36,8 @@ public class myPlayerStatus : MonoBehaviour {
 			Flip ();
 		}
 
-			//vertical status
+		//vertical status
 		oldStatus.CopyStatusFrom (newStatus);
-	//	print ("old.ground : " + oldStatus.IsGround () + " | old.jump : " + oldStatus.IsJump () + " | old.fall : " + oldStatus.IsFall ());
 		if (oldStatus.IsJump ()) {
 			if (input.newInput.GetJumpButtonHeld () && (framesToJumpCount <= framesToJumpMax)) {
 				newStatus.SetJump ();
@@ -58,85 +54,56 @@ public class myPlayerStatus : MonoBehaviour {
 			return;
 		}
 
-		/*
-		if (oldStatus.IsGround ()) {
-			if (input.newInput.GetJumpButtonDown ()) {
-				newStatus.SetJump ();
-				framesToJumpCount = 1;
-				return;
-			}
-			if (jumpInAdvanceAvailable && input.newInput.GetJumpButtonHeld ()) {
-				newStatus.SetJump ();
-				framesToJumpCount = 1;
-				return;
-			}
-		}
-		*/
 		if (oldStatus.IsGround ()) {
 			if (!input.newInput.GetJumpButtonHeld ()) {
 				jumpAvailable = true;
 			}
-			if ((jumpInAdvanceAvailable && input.newInput.GetJumpButtonHeld ()) || input.newInput.GetJumpButtonDown () ) {
-				newStatus.SetJump ();
-				framesToJumpCount = 1;
-				jumpAvailable = false;
-				return;
-			}
 			if (jumpAvailable && input.newInput.GetJumpButtonHeld ()) {
-				newStatus.SetJump ();
-				framesToJumpCount = 1;
+
+                if (input.newInput.GetVerticalInput() < 0)
+                {
+                    newStatus.SetFallThroughCloudPlatform();
+                    framesToFallThroughCloudPlatformsCount = 1;
+                }
+                else
+                {
+                    newStatus.SetJump();
+                    framesToJumpCount = 1;
+                }
 				jumpAvailable = false;
 				return;
 			}
 		}
 
 		if (oldStatus.IsFall ()) {
-			// specialConditionsJump check!
 			newStatus.SetFall();
-			if (jumpInDelayAvailable) {
-				if (input.newInput.GetJumpButtonDown ()) {
-					newStatus.SetJump ();
-					framesToJumpCount++;
-					jumpInDelayAvailable = false;
-					framesInDelayCount = 0;
-				} else {
-					framesInDelayCount++;
-					if (framesInDelayCount > framesToJumpInDelay) {
-						jumpInDelayAvailable = false;
-						framesInDelayCount = 0;
-					}
-				}
-			} else if (jumpInAdvanceAvailable) {
-				if (input.newInput.GetJumpButtonHeld ()) {
-					framesInAdvanceCount++;
-					if (framesInAdvanceCount > framesToJumpInAdvance){
-						jumpInAdvanceAvailable = false;
-						framesInAdvanceCount = 0;
-					}
-				} else {
-					jumpInAdvanceAvailable = false;
-				}
-			} else {
-				if (input.newInput.GetJumpButtonDown ()) {
-					jumpInAdvanceAvailable = true;
-					framesInAdvanceCount++;
-				}
-			}
 			return;
 		}
+
+        if (oldStatus.IsFallThroughCloudPlatform() )
+        {
+            if (framesToFallThroughCloudPlatformsCount <= framesToFallThroughCloudPlatforms)
+            {
+                newStatus.SetFallThroughCloudPlatform();
+                framesToFallThroughCloudPlatformsCount++;
+            }
+            else
+            {
+                newStatus.SetFall();
+                framesToFallThroughCloudPlatformsCount = 0;
+            }
+            return;
+        }
 	}
 
 	public void statusUpdateAfterCollisionCheck( myPlayerCollider collider)
 	{
 		if (newStatus.IsGround () && !collider.collisions.below){
 			newStatus.SetFall ();
-			jumpInDelayAvailable = true;
-			print (1);
 			return;
 		}
 		if (newStatus.IsFall () && collider.collisions.below) {
 			newStatus.SetGround ();
-			jumpInDelayAvailable = false;
 			return;
 		}
 	
@@ -144,9 +111,14 @@ public class myPlayerStatus : MonoBehaviour {
 			framesToJumpCount = 0;
 			newStatus.SetFall ();
 		}
+        if (newStatus.IsFallThroughCloudPlatform()) // no vertical collisions here
+        {
+            newStatus.IsFallThroughCloudPlatform();
+            return;
+        }
 	}
 
-	int CalculateFramesToJumpMax( float time )
+	int CalculateFramesFromTime( float time )
 	{
 		return (int) (time/ Time.fixedDeltaTime);
 	}
@@ -211,28 +183,31 @@ public class myPlayerStatus : MonoBehaviour {
 	static readonly int GROUND = 0x0001;
 	static readonly int JUMP = 0x0002;
 	static readonly int FALL = 0x0004;
+    static readonly int FALL_THROUGH_CLOUD_PLATFORM = 0x0008;
 
-	public struct PlayerStatus{
+    public struct PlayerStatus {
 
-		int statusMask;
+        int statusMask;
 
-		public void Reset(){ statusMask = GROUND;}
+        public void Reset() { statusMask = GROUND; }
 
-		//bit-wise functions
-		//public void SetMask( int mask ){ statusMask = statusMask & mask;}
-		public void SetMask( int mask ){ statusMask = mask;}
-		public bool TestMask( int mask ){ return (statusMask & mask) ==  mask;}
+        //bit-wise functions
+        //public void SetMask( int mask ){ statusMask = statusMask & mask;}
+        public void SetMask(int mask) { statusMask = mask; }
+        public bool TestMask(int mask) { return (statusMask & mask) == mask; }
 
-		//readable functions
-		//getters
-		public bool IsGround(){ return TestMask(GROUND);}
-		public bool IsJump(){ return TestMask(JUMP);}
-		public bool IsFall(){ return TestMask(FALL);}
+        //readable functions
+        //getters
+        public bool IsGround() { return TestMask(GROUND); }
+        public bool IsJump() { return TestMask(JUMP); }
+        public bool IsFall() { return TestMask(FALL); }
+        public bool IsFallThroughCloudPlatform() { return TestMask(FALL_THROUGH_CLOUD_PLATFORM); }
 
 		// setters
 		public void SetGround(){ SetMask(GROUND);}
 		public void SetJump(){ SetMask(JUMP);}
 		public void SetFall(){ SetMask(FALL);}
+        public void SetFallThroughCloudPlatform() { SetMask(FALL_THROUGH_CLOUD_PLATFORM); }
 
 		public void CopyStatusFrom( PlayerStatus from)
 		{
