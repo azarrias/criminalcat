@@ -10,7 +10,9 @@ public class myPlayerMove : MonoBehaviour {
 
 	public float xSpeedChangeSpeed = 0.1f;
 
-	[HideInInspector]
+    public float timeToFallThroughCloudPlatforms = 0.1f;
+
+    [HideInInspector]
 	public Vector3 speed;
 	[HideInInspector]
 	public float xCurrentSpeed;
@@ -28,7 +30,7 @@ public class myPlayerMove : MonoBehaviour {
 		if (status.newStatus.IsJump ()) {
 			speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
 		}
-		if (status.newStatus.IsFall ()) {
+		if (status.newStatus.IsFall () || status.newStatus.IsFallThroughCloudPlatform() ) {
 			speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 		}
 	}

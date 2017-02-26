@@ -28,10 +28,9 @@ public class myPlayerController : MonoBehaviour {
 	}
 	void FixedUpdate (){
 		// faltará actualizar el estado
-		//playerInput.GetInput ();
 		playerStatus.statusUpdateAfterInput(playerInput);
-		playerMove.CalculateSpeed(playerInput,playerStatus);
-		playerCollider.CheckMove (ref playerMove);
+		playerMove.CalculateSpeed(playerInput, playerStatus);
+		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
 		// send the animator what needs to be sent :)

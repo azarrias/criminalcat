@@ -28,13 +28,13 @@ public class myPlayerCollider : MonoBehaviour {
 		CalculateRaySpacing ();
 	}
 
-	public void CheckMove( ref myPlayerMove playerMove ){
+	public void CheckMove( ref myPlayerMove playerMove, ref myPlayerStatus status ){
 		UpdateRaycastOrigins ();
 		collisions.Reset ();
 		if (playerMove.speed.x != 0)
 			HorizontalCollisions (ref playerMove.speed);
 		if (playerMove.speed.y != 0)
-			VerticalCollisions (ref playerMove.speed);
+			VerticalCollisions (ref playerMove.speed, ref status);
 	}
 		
 	void HorizontalCollisions(ref Vector3 speed){
@@ -79,20 +79,20 @@ public class myPlayerCollider : MonoBehaviour {
 		}
 	}
 
-	void VerticalCollisions(ref Vector3 speed){
+	void VerticalCollisions(ref Vector3 speed, ref myPlayerStatus status ){
 		float directionY = Mathf.Sign (speed.y);
 		float rayLength = Mathf.Abs (speed.y) + skinWidth;
-		bool hitFromBelow = false;
 
 		for (int i = 0; i < verticalRayCount; i++) {
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + speed.x);
 			RaycastHit2D hit;
-			//mode for cloud platforms
-			if (directionY < 0)
-				hit = Physics2D.Raycast (rayOrigin, Vector2.up * directionY, rayLength, generalCollisionMask);
-			else
-				hit = Physics2D.Raycast (rayOrigin, Vector2.up * directionY, rayLength, noCloudCollisionMask);
+
+            //modifications for cloud platforms
+            if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
+                hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, generalCollisionMask);
+            else
+                hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, noCloudCollisionMask);
 
 			Debug.DrawRay (rayOrigin, Vector2.up*directionY *rayLength , Color.red);
 
@@ -146,7 +146,19 @@ public class myPlayerCollider : MonoBehaviour {
 		verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
 	}
 
-
+    public bool PlayerAboveCloudPlatform()
+    {
+        
+        for (int i = 0; i < verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = raycastOrigins.bottomLeft;
+            rayOrigin += Vector2.right * (verticalRaySpacing * i);
+            RaycastHit2D hit =  Physics2D.Raycast(rayOrigin, -Vector2.up, skinWidth, noCloudCollisionMask);
+            if (hit)
+                return false;
+        }
+        return true;
+    }
 
 	struct RaycastOrigins {
 		public Vector2 topLeft, topRight;
