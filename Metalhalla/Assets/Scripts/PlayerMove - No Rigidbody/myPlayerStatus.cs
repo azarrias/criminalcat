@@ -60,7 +60,7 @@ public class myPlayerStatus : MonoBehaviour {
 			}
 			if (jumpAvailable && input.newInput.GetJumpButtonHeld ()) {
 
-                if (input.newInput.GetVerticalInput() < 0)
+                if (input.newInput.GetVerticalInput() < 0 && GetComponent<myPlayerCollider>().PlayerAboveCloudPlatform() == true)
                 {
                     newStatus.SetFallThroughCloudPlatform();
                     framesToFallThroughCloudPlatformsCount = 1;

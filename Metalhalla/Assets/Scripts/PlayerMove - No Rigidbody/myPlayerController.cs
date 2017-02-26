@@ -29,7 +29,7 @@ public class myPlayerController : MonoBehaviour {
 	void FixedUpdate (){
 		// faltará actualizar el estado
 		playerStatus.statusUpdateAfterInput(playerInput);
-		playerMove.CalculateSpeed(playerInput,playerStatus);
+		playerMove.CalculateSpeed(playerInput, playerStatus);
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();

@@ -146,7 +146,19 @@ public class myPlayerCollider : MonoBehaviour {
 		verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
 	}
 
-
+    public bool PlayerAboveCloudPlatform()
+    {
+        
+        for (int i = 0; i < verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = raycastOrigins.bottomLeft;
+            rayOrigin += Vector2.right * (verticalRaySpacing * i);
+            RaycastHit2D hit =  Physics2D.Raycast(rayOrigin, -Vector2.up, skinWidth, noCloudCollisionMask);
+            if (hit)
+                return false;
+        }
+        return true;
+    }
 
 	struct RaycastOrigins {
 		public Vector2 topLeft, topRight;
