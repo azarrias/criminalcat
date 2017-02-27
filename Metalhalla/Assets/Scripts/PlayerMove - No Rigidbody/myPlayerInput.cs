@@ -46,8 +46,8 @@ public class myPlayerInput : MonoBehaviour {
 		oldInput.CopyInputFrom (newInput);	//make a savestate from last input
 
         // update with new inputs / changes in axis in the controller
-		newInput.SetHorizontalInput( Input.GetAxis("Horizontal"));
-		newInput.SetVerticalInput( Input.GetAxis("Vertical"));
+		newInput.SetHorizontalInput( Input.GetAxis("DPadHorizontal"));
+		newInput.SetVerticalInput( Input.GetAxis("DPadVertical"));
 		newInput.SetJumpButtonDown(Input.GetButtonDown("Jump"));
 		newInput.SetJumpButtonHeld(Input.GetButton ("Jump") );
 	}
