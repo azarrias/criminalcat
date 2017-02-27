@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraManager : MonoBehaviour {
 
@@ -8,15 +9,21 @@ public class CameraManager : MonoBehaviour {
     [Tooltip("Add here all the cameras that will be managed from this GameObject")]
     public Camera[] cameras;
 
+    [Tooltip("Label that will show when the i-th camera is active")]
+    public string[] cameraLabels;
+
     [Tooltip("Index of the camera that will be loaded in the scene the first.")]
     public int defaultCameraIndex = 0;
-    private int currentCameraIndex; 
+    private int currentCameraIndex;
 
-	// Use this for initialization
-	void Start () {
+    private Text label;
+//    private Text
+    // Use this for initialization
+    void Start () {
+        label = GetComponentInChildren<Text>();
+        label.material.color = Color.red;
         currentCameraIndex = defaultCameraIndex;
         ShiftCameras();
-
 	}
 	
 	// Update is called once per frame
@@ -26,7 +33,8 @@ public class CameraManager : MonoBehaviour {
             ShiftCameraIndex();
             ShiftCameras();
         }
-	}
+        label.material.color = Color.red;
+    }
 
 
     // get next gamera in array and set it active
@@ -44,6 +52,7 @@ public class CameraManager : MonoBehaviour {
             else
                 cameras[i].gameObject.SetActive(false);
         }
+        label.text = cameraLabels[currentCameraIndex];
     }
 
 }
