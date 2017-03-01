@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TransitionToEndGame : MonoBehaviour {
 
@@ -17,6 +18,8 @@ public class TransitionToEndGame : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.F) && !ingameMenu.activeSelf)
         {
             endGameUI.SetActive(true);
+            GameObject goToMenu = GameObject.FindGameObjectWithTag("EndGameGoToMenu");
+            EventSystem.current.SetSelectedGameObject(goToMenu);
         }
 	}
 }
