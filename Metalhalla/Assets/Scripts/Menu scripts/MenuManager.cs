@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
-public class MenuScript : MonoBehaviour {
+public class MenuManager : MonoBehaviour {
 
     //We share the same script between starting menu and ingame menu
     public bool isIngameMenu;
