@@ -33,6 +33,10 @@ public class myPlayerMove : MonoBehaviour {
 		if (status.newStatus.IsFall () || status.newStatus.IsFallThroughCloudPlatform() ) {
 			speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 		}
+        if (status.newStatus.IsClimbingLadder() )
+        {
+            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+        }
 	}
 
 	public void Move(){

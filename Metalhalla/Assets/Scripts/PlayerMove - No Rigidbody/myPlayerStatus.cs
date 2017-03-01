@@ -12,6 +12,8 @@ public class myPlayerStatus : MonoBehaviour {
     int framesToFallThroughCloudPlatformsCount;
 
     bool facingRight;
+    [HideInInspector]
+    public bool climbLadderAvailable;
 
 	PlayerStatus oldStatus;
     [HideInInspector]
@@ -29,70 +31,98 @@ public class myPlayerStatus : MonoBehaviour {
         jumpAvailable = false;
 		oldStatus.Reset (); newStatus.Reset ();
 		facingRight = true;
-	}
+        climbLadderAvailable = false;
 
-	public void statusUpdateAfterInput (myPlayerInput input){
-		if ((input.newInput.GetHorizontalInput () < 0 && facingRight) || (input.newInput.GetHorizontalInput () > 0 && !facingRight)) {
-			Flip ();
-		}
+    }
 
-		//vertical status
-		oldStatus.CopyStatusFrom (newStatus);
-		if (oldStatus.IsJump ()) {
-			if (input.newInput.GetJumpButtonHeld () && (framesToJumpCount <= framesToJumpMax)) {
-				newStatus.SetJump ();
-				framesToJumpCount++;
-			} else {
-				if (framesToJumpCount > framesToJumpMin) {
-					newStatus.SetFall ();
-					framesToJumpCount = 0;
-				} else {
-					newStatus.SetJump ();
-					framesToJumpCount++;
-				}	
-			}
-			return;
-		}
+    public void statusUpdateAfterInput(myPlayerInput input) {
+        if ((input.newInput.GetHorizontalInput() < 0 && facingRight) || (input.newInput.GetHorizontalInput() > 0 && !facingRight)) {
+            Flip();
+        }
 
-		if (oldStatus.IsGround ()) {
-			if (!input.newInput.GetJumpButtonHeld ()) {
-				jumpAvailable = true;
-			}
-			if (jumpAvailable && input.newInput.GetJumpButtonHeld ()) {
-
-                if (input.newInput.GetVerticalInput() < 0 && GetComponent<myPlayerCollider>().PlayerAboveCloudPlatform() == true)
+        //vertical status
+        oldStatus.CopyStatusFrom(newStatus);
+        if (input.newInput.GetVerticalInput() != 0 && climbLadderAvailable)
+        {
+            newStatus.SetClimbingLadder();
+        }
+        else
+        {
+            if (oldStatus.IsJump())
+            {
+                if (input.newInput.GetJumpButtonHeld() && (framesToJumpCount <= framesToJumpMax))
                 {
-                    newStatus.SetFallThroughCloudPlatform();
-                    framesToFallThroughCloudPlatformsCount = 1;
+                    newStatus.SetJump();
+                    framesToJumpCount++;
                 }
                 else
                 {
-                    newStatus.SetJump();
-                    framesToJumpCount = 1;
+                    if (framesToJumpCount > framesToJumpMin)
+                    {
+                        newStatus.SetFall();
+                        framesToJumpCount = 0;
+                    }
+                    else
+                    {
+                        newStatus.SetJump();
+                        framesToJumpCount++;
+                    }
                 }
-				jumpAvailable = false;
-				return;
-			}
-		}
-
-		if (oldStatus.IsFall ()) {
-			newStatus.SetFall();
-			return;
-		}
-
-        if (oldStatus.IsFallThroughCloudPlatform() )
-        {
-            if (framesToFallThroughCloudPlatformsCount <= framesToFallThroughCloudPlatforms)
-            {
-                newStatus.SetFallThroughCloudPlatform();
-                framesToFallThroughCloudPlatformsCount++;
+                return;
             }
-            else
+
+            if (oldStatus.IsGround())
+            {
+                if (!input.newInput.GetJumpButtonHeld())
+                {
+                    jumpAvailable = true;
+                }
+                if (jumpAvailable && input.newInput.GetJumpButtonHeld())
+                {
+
+                    if (input.newInput.GetVerticalInput() < 0 && GetComponent<myPlayerCollider>().PlayerAboveCloudPlatform() == true)
+                    {
+                        newStatus.SetFallThroughCloudPlatform();
+                        framesToFallThroughCloudPlatformsCount = 1;
+                    }
+                    else
+                    {
+                        newStatus.SetJump();
+                        framesToJumpCount = 1;
+                    }
+                    jumpAvailable = false;
+                    return;
+                }
+            }
+
+            if (oldStatus.IsFall())
             {
                 newStatus.SetFall();
-                framesToFallThroughCloudPlatformsCount = 0;
+                return;
             }
-            return;
+
+            if (oldStatus.IsFallThroughCloudPlatform())
+            {
+                if (framesToFallThroughCloudPlatformsCount <= framesToFallThroughCloudPlatforms)
+                {
+                    newStatus.SetFallThroughCloudPlatform();
+                    framesToFallThroughCloudPlatformsCount++;
+                }
+                else
+                {
+                    newStatus.SetFall();
+                    framesToFallThroughCloudPlatformsCount = 0;
+                }
+                return;
+            }
+
+            if (oldStatus.IsClimbingLadder())
+            {
+                if (input.newInput.GetHorizontalInput() != 0 || climbLadderAvailable == false)
+                    newStatus.SetFall();
+                else
+                    newStatus.IsClimbingLadder();
+            }
         }
 	}
 
@@ -114,6 +144,11 @@ public class myPlayerStatus : MonoBehaviour {
         if (newStatus.IsFallThroughCloudPlatform()) // no vertical collisions here
         {
             newStatus.IsFallThroughCloudPlatform();
+            return;
+        }
+        if(newStatus.IsClimbingLadder() && collider.collisions.below)
+        {
+            newStatus.IsGround();
             return;
         }
 	}
@@ -184,6 +219,7 @@ public class myPlayerStatus : MonoBehaviour {
 	static readonly int JUMP = 0x0002;
 	static readonly int FALL = 0x0004;
     static readonly int FALL_THROUGH_CLOUD_PLATFORM = 0x0008;
+    static readonly int CLIMBING_LADDER = 0x0010;
 
     public struct PlayerStatus {
 
@@ -202,12 +238,14 @@ public class myPlayerStatus : MonoBehaviour {
         public bool IsJump() { return TestMask(JUMP); }
         public bool IsFall() { return TestMask(FALL); }
         public bool IsFallThroughCloudPlatform() { return TestMask(FALL_THROUGH_CLOUD_PLATFORM); }
+        public bool IsClimbingLadder() { return TestMask(CLIMBING_LADDER); }
 
 		// setters
 		public void SetGround(){ SetMask(GROUND);}
 		public void SetJump(){ SetMask(JUMP);}
 		public void SetFall(){ SetMask(FALL);}
         public void SetFallThroughCloudPlatform() { SetMask(FALL_THROUGH_CLOUD_PLATFORM); }
+        public void SetClimbingLadder() { SetMask(CLIMBING_LADDER); }
 
 		public void CopyStatusFrom( PlayerStatus from)
 		{
