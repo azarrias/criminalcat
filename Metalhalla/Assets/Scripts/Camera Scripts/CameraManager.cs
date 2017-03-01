@@ -21,7 +21,7 @@ public class CameraManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         label = GetComponentInChildren<Text>();
-        label.material.color = Color.red;
+      //  label.material.color = Color.red;
         currentCameraIndex = defaultCameraIndex;
         ShiftCameras();
 	}
@@ -33,7 +33,7 @@ public class CameraManager : MonoBehaviour {
             ShiftCameraIndex();
             ShiftCameras();
         }
-        label.material.color = Color.red;
+       // label.material.color = Color.red;
     }
 
 
