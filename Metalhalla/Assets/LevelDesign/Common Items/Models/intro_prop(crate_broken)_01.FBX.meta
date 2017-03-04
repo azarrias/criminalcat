@@ -1,0 +1,143 @@
+fileFormatVersion: 2
+guid: 32f3904dfd4585c40a8af86186ec39ae
+timeCreated: 1488653309
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: crate_broken_1
+    100002: crate_broken_10
+    100004: crate_broken_11
+    100006: crate_broken_2
+    100008: crate_broken_3
+    100010: crate_broken_4
+    100012: crate_broken_5
+    100014: crate_broken_6
+    100016: crate_broken_7
+    100018: crate_broken_8
+    100020: crate_broken_9
+    100022: //RootNode
+    400000: crate_broken_1
+    400002: crate_broken_10
+    400004: crate_broken_11
+    400006: crate_broken_2
+    400008: crate_broken_3
+    400010: crate_broken_4
+    400012: crate_broken_5
+    400014: crate_broken_6
+    400016: crate_broken_7
+    400018: crate_broken_8
+    400020: crate_broken_9
+    400022: //RootNode
+    2300000: crate_broken_1
+    2300002: crate_broken_10
+    2300004: crate_broken_11
+    2300006: crate_broken_2
+    2300008: crate_broken_3
+    2300010: crate_broken_4
+    2300012: crate_broken_5
+    2300014: crate_broken_6
+    2300016: crate_broken_7
+    2300018: crate_broken_8
+    2300020: crate_broken_9
+    3300000: crate_broken_1
+    3300002: crate_broken_10
+    3300004: crate_broken_11
+    3300006: crate_broken_2
+    3300008: crate_broken_3
+    3300010: crate_broken_4
+    3300012: crate_broken_5
+    3300014: crate_broken_6
+    3300016: crate_broken_7
+    3300018: crate_broken_8
+    3300020: crate_broken_9
+    4300000: crate_broken_2
+    4300002: crate_broken_5
+    4300004: crate_broken_3
+    4300006: crate_broken_4
+    4300008: crate_broken_10
+    4300010: crate_broken_6
+    4300012: crate_broken_7
+    4300014: crate_broken_9
+    4300016: crate_broken_8
+    4300018: crate_broken_1
+    4300020: crate_broken_11
+    6400000: crate_broken_1
+    6400002: crate_broken_10
+    6400004: crate_broken_11
+    6400006: crate_broken_2
+    6400008: crate_broken_3
+    6400010: crate_broken_4
+    6400012: crate_broken_5
+    6400014: crate_broken_6
+    6400016: crate_broken_7
+    6400018: crate_broken_8
+    6400020: crate_broken_9
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 1
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
