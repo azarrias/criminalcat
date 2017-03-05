@@ -1,29 +1,15 @@
 fileFormatVersion: 2
-guid: a0013fc3a3c8af545a3d5c12b88ccc7c
-timeCreated: 1488650279
+guid: f1118b416bc29b44fa952ab705d77dde
+timeCreated: 1488747027
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Cylinder003
-    100002: //RootNode
-    100004: Omni001
-    100006: Omni003
-    100008: Plane001
-    400000: Cylinder003
-    400002: //RootNode
-    400004: Omni001
-    400006: Omni003
-    400008: Plane001
-    2300000: Cylinder003
-    2300002: Plane001
-    2300004: //RootNode
-    3300000: Cylinder003
-    3300002: Plane001
-    3300004: //RootNode
-    4300000: Cylinder003
-    4300002: Plane001
-    9500000: //RootNode
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: torch
   materials:
     importMaterials: 1
     materialName: 0
@@ -86,7 +72,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
