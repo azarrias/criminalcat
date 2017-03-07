@@ -17,13 +17,13 @@ public class FreeCameraMove : MonoBehaviour
     void Update()
     {
         tmp = transform.position;
-        if (Input.GetKey(KeyCode.J))
+        if (Input.GetKey(KeyCode.G))
             tmp.x -= speed * Time.deltaTime;
-        if (Input.GetKey(KeyCode.L))
+        if (Input.GetKey(KeyCode.J))
             tmp.x += speed * Time.deltaTime;
-        if (Input.GetKey(KeyCode.I))
+        if (Input.GetKey(KeyCode.Y))
             tmp.y += speed * Time.deltaTime;
-        if (Input.GetKey(KeyCode.K))
+        if (Input.GetKey(KeyCode.H))
             tmp.y -= speed * Time.deltaTime;
         transform.position = tmp;
     }

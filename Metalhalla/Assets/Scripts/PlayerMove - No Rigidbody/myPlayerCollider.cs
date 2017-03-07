@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(BoxCollider2D))]
+//[RequireComponent (typeof(BoxCollider2D))]
+[RequireComponent(typeof(BoxCollider))]
 public class myPlayerCollider : MonoBehaviour {
 
 	public LayerMask noCloudCollisionMask;
@@ -16,14 +17,16 @@ public class myPlayerCollider : MonoBehaviour {
 	float horizontalRaySpacing;
 	float verticalRaySpacing;
 
-	BoxCollider2D collider;
+    //BoxCollider2D collider;
+    BoxCollider collider;
 	RaycastOrigins raycastOrigins;
 	public CollisionInfo collisions;
 
 //	myPlayerInteractor interactor;
 
 	void Start(){
-		collider = GetComponent<BoxCollider2D> ();
+        //collider = GetComponent<BoxCollider2D> ();
+        collider = GetComponent<BoxCollider>();
 //		interactor = GetComponent<myPlayerInteractor> ();
 		CalculateRaySpacing ();
 	}
@@ -43,15 +46,20 @@ public class myPlayerCollider : MonoBehaviour {
 		for (int i = 0; i < horizontalRayCount; i++) {
 			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-			RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.right * directionX, rayLength, noCloudCollisionMask);
+            //RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.right * directionX, rayLength, noCloudCollisionMask);
+           // RaycastHit hit = Physics.Raycast(rayOrigin, Vector3.right * directionX, rayLength, noCloudCollisionMask);
 
+            RaycastHit hit;
+            
 
 			Debug.DrawRay (rayOrigin, Vector2.right*directionX*rayLength , Color.red);
 
-			// need to add the cloud platform collisions
-			if (hit) {
-				// this is ok since we check the bottom most with a slope
-				float surfaceAngle = Vector2.Angle (hit.normal, Vector2.up);
+            // need to add the cloud platform collisions
+            //if (hit) {
+            if (Physics.Raycast(rayOrigin, Vector3.right * directionX, out hit, rayLength, noCloudCollisionMask))
+            { 
+            // this is ok since we check the bottom most with a slope
+            float surfaceAngle = Vector2.Angle (hit.normal, Vector2.up);
 				print (surfaceAngle);
 				if (i == 0 && surfaceAngle <= maxSlopeClimbAngle) {
 					float distanceToSlopeStart = 0;
@@ -86,17 +94,26 @@ public class myPlayerCollider : MonoBehaviour {
 		for (int i = 0; i < verticalRayCount; i++) {
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + speed.x);
-			RaycastHit2D hit;
+            //RaycastHit2D hit;
+            RaycastHit hit;
+            bool has_hit = false;
 
             //modifications for cloud platforms
+            if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
+                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
+            else
+               has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);
+            /*
             if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
                 hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, generalCollisionMask);
             else
                 hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, noCloudCollisionMask);
+                */
+            Debug.DrawRay (rayOrigin, Vector2.up*directionY *rayLength , Color.red);
 
-			Debug.DrawRay (rayOrigin, Vector2.up*directionY *rayLength , Color.red);
-
-			if (hit) {
+//			if (hit) {
+            if(has_hit )
+            { 
 				speed.y = (hit.distance - skinWidth) * directionY;
 				rayLength = hit.distance;
 
