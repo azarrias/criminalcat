@@ -8,7 +8,7 @@ public class myPlayerCollider : MonoBehaviour {
 	public LayerMask noCloudCollisionMask;
 	public LayerMask generalCollisionMask;
 
-	const float skinWidth = .015f;
+	const float skinWidth = .05f;
 	public int horizontalRayCount = 4;
 	public int verticalRayCount = 4;
 

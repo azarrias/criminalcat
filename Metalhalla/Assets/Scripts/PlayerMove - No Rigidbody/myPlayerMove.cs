@@ -8,7 +8,7 @@ public class myPlayerMove : MonoBehaviour {
 	public float jumpSpeed = 2f;
 	public float timeToJumpApex = 0.4f;
 
-	public float xSpeedChangeSpeed = 0.1f;
+	public float xSpeedChangeSpeed = 1.0f;
 
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
@@ -18,14 +18,12 @@ public class myPlayerMove : MonoBehaviour {
 	public float xCurrentSpeed;
 	public void CalculateSpeed( myPlayerInput input, myPlayerStatus status )
 	{
-		//aqui en función del input y del estado, calculo unas velocidades u otras :)
-		//	speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
-		speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
 
-		// vertical one :)
-		if (status.newStatus.IsGround()){
+        // vertical one :)
+        if (status.newStatus.IsGround()){
 			speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
-			//speed.y = -0.2f;
 		}
 		if (status.newStatus.IsJump ()) {
 			speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
