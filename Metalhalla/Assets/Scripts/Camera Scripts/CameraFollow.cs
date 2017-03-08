@@ -11,7 +11,7 @@ public class CameraFollow : MonoBehaviour {
     public float playerHeight = 2.0f;
     [Tooltip("Player to Screen Ratio (in %). 100% means the player appears as tall as the screen. Calculations used using PERSPECTIVE projection")]
     [Range(1f, 100f)]
-    public float playerToScreenHeightRatio = 25;
+    public float playerToScreenHeightRatio = 15;
 
     [Header("Move Zone Limits")]
     [Tooltip("Zone where the camera follows the player. If the players leaves the zone, the camera snaps to the limits specified.")]
@@ -132,6 +132,12 @@ public class CameraFollow : MonoBehaviour {
     {
         float frustumHeight = playerHeight * 100 / playerToScreenHeightRatio;
         distanceFromPlayer = -1 * frustumHeight * 0.5f / Mathf.Tan(GetComponent<Camera>().fieldOfView * 0.5f * Mathf.Deg2Rad);
+    }
+
+    public void SetPlayerToScreenHeightRatio( float new_ratio)
+    {
+        playerToScreenHeightRatio = new_ratio;
+        CalculateDistanceFromPlayer();
     }
 
 }
