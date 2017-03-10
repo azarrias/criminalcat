@@ -51,13 +51,13 @@ void Update()
 	string format = System.String.Format("{0:F2} FPS",fps);
     gui_text.text = format;
  
-/*	if(fps < 30)
+	if(fps < 30)
                 gui_text.material.color = Color.yellow;
 	else 
 		if(fps < 10)
                 gui_text.material.color = Color.red;
 		else
-                gui_text.material.color = Color.green;*/
+                gui_text.material.color = Color.green;
 	//	DebugConsole.Log(format,level);
         timeleft = updateInterval;
         accum = 0.0F;
