@@ -7,6 +7,7 @@ public class DebugMode : MonoBehaviour
     private bool debugMode = false;
     public GameObject debug_canvas;
     private Dictionary<string, Material[]> materials = new Dictionary<string, Material[]>();
+    private bool isApplicationQuitting = false;
 
     void Start()
     {
@@ -28,7 +29,6 @@ public class DebugMode : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F10))
@@ -68,6 +68,17 @@ public class DebugMode : MonoBehaviour
     }
 
     private void OnApplicationQuit()
+    {
+        isApplicationQuitting = true;
+        RestoreMaterials();
+    }
+
+    private void OnDisable()
+    {
+        RestoreMaterials();
+    }
+
+    private void RestoreMaterials()
     {
         Object[] tempList = Resources.FindObjectsOfTypeAll(typeof(GameObject));
         List<GameObject> realList = new List<GameObject>();
