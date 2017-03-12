@@ -14,15 +14,7 @@ public class DebugMode : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F10))
         {
             debugMode = !debugMode;
-        }
-
-        if (debugMode)
-        {
-            debug_canvas.SetActive(true);
-        }
-        else
-        {
-            debug_canvas.SetActive(false);
+            debug_canvas.SetActive(debugMode);
         }
     }
 }
