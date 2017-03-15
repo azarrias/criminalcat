@@ -11,7 +11,7 @@ public class changeCameraBox : MonoBehaviour {
     [Range(0.0f, 100.0f)]
     public float newPlayerToScreenHeightRatio = 15f;
 
-    public string cameraTagToChange = "Main Camera";
+    public string cameraTagToChange = "MainCamera";
 
     public void Start()
     {
