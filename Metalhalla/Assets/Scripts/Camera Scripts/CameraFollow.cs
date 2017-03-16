@@ -28,7 +28,9 @@ public class CameraFollow : MonoBehaviour
     private Vector3 playerPosition;
     private float distanceFromPlayer = -10;
 
-    bool activeTracking = true; 
+    bool activeTracking = true;
+    [Range(0, 1)]
+    public float transitionSpeed = 0.05f;
 
 
     void Start()
@@ -59,10 +61,12 @@ public class CameraFollow : MonoBehaviour
         Vector3 playerPositionDiff = player.transform.position - playerPosition;
         playerPosition = player.transform.position;
 
-        Vector3 cameraPosition = transform.position;
-
         if (activeTracking == true)
         {
+            //      Vector3 cameraPosition = Vector3.MoveTowards(transform.position, player.transform.position, Time.fixedDeltaTime *2);
+            //      cameraPosition.z = distanceFromPlayer;
+            Vector3 cameraPosition = transform.position;
+
             if (playerPosition.x > limitLeft && playerPosition.x < limitRight)
                 cameraPosition.x = playerPosition.x;
             else
@@ -88,7 +92,7 @@ public class CameraFollow : MonoBehaviour
         }
         else
         {
-            MoveCamera( GetTargetPosition(), 0.02f);
+            MoveCamera( GetTargetPosition(), transitionSpeed);
         }
 
 
@@ -118,11 +122,6 @@ public class CameraFollow : MonoBehaviour
         limitRight = right;
         limitTop = top;
         limitBottom = bottom;
-
-        //   CalculateDistanceFromPlayer();
-    //    Vector3 tmp = transform.position;
-     //   tmp.z = distanceFromPlayer;
-      //  transform.position = tmp;
     }
 
     void CorrectOutOfBounds()
@@ -155,9 +154,12 @@ public class CameraFollow : MonoBehaviour
 
     public void SetCameraParameters(Vector2 horizontalLimits, Vector2 verticalLimits, float newDistanceFromPlayer)
     {
-        activeTracking = false; 
-        distanceFromPlayer = newDistanceFromPlayer;
-        SetLimits(horizontalLimits.x, horizontalLimits.y, verticalLimits.y, verticalLimits.x);
+        if (horizontalLimits.x != limitLeft || horizontalLimits.y != limitRight || verticalLimits.x != limitBottom || verticalLimits.y != limitTop || newDistanceFromPlayer != distanceFromPlayer)
+        {
+            activeTracking = false;
+            distanceFromPlayer = newDistanceFromPlayer;
+            SetLimits(horizontalLimits.x, horizontalLimits.y, verticalLimits.y, verticalLimits.x);
+        }
     }
 
     //-- scene switch
@@ -174,7 +176,6 @@ public class CameraFollow : MonoBehaviour
 
         while (Vector3.Distance(transform.position, targetPos)> 0.1)
         {
-            //transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
             transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed); 
             yield return 0;
         }
