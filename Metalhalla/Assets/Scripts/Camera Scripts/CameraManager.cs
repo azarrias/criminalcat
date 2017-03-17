@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.ImageEffects;
 
 public class CameraManager : MonoBehaviour {
 
@@ -15,6 +16,7 @@ public class CameraManager : MonoBehaviour {
     [Tooltip("Index of the camera that will be loaded in the scene the first.")]
     public int defaultCameraIndex = 0;
     private int currentCameraIndex;
+    private BlurOptimized blur = null;
 
     private Text label;
 //    private Text
@@ -24,7 +26,9 @@ public class CameraManager : MonoBehaviour {
       //  label.material.color = Color.red;
         currentCameraIndex = defaultCameraIndex;
         ShiftCameras();
-	}
+        blur = cameras[currentCameraIndex].GetComponent<BlurOptimized>() as BlurOptimized;
+        blur.enabled = false;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -33,6 +37,17 @@ public class CameraManager : MonoBehaviour {
             ShiftCameraIndex();
             ShiftCameras();
         }
+        else if (Input.GetKeyDown(KeyCode.M) == true)
+        {
+            blur.enabled = true;
+            cameras[8].gameObject.SetActive(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.M) == true)
+        {
+            blur.enabled = false;
+            cameras[8].gameObject.SetActive(false);
+        }
+
        // label.material.color = Color.red;
     }
 
