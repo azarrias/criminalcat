@@ -8,15 +8,25 @@ ModelImporter:
     100000: floor_house001
     100002: floorl_house_collider001
     100004: //RootNode
+    100006: floor_house
+    100008: floorl_house_collider
     400000: floor_house001
     400002: floorl_house_collider001
     400004: //RootNode
+    400006: floor_house
+    400008: floorl_house_collider
     2300000: floor_house001
     2300002: floorl_house_collider001
+    2300004: floor_house
+    2300006: floorl_house_collider
     3300000: floor_house001
     3300002: floorl_house_collider001
+    3300004: floor_house
+    3300006: floorl_house_collider
     4300000: floor_house001
     4300002: floorl_house_collider001
+    4300004: floor_house
+    4300006: floorl_house_collider
     9500000: //RootNode
   materials:
     importMaterials: 1
