@@ -28,6 +28,7 @@ public class CameraManager : MonoBehaviour {
         ShiftCameras();
         blur = cameras[currentCameraIndex].GetComponent<BlurOptimized>() as BlurOptimized;
         blur.enabled = false;
+        cameras[8].gameObject.SetActive(true);
     }
 	
 	// Update is called once per frame
