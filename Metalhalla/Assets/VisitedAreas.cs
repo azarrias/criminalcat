@@ -23,10 +23,10 @@ public class VisitedAreas : MonoBehaviour {
 	void Update () {
         foreach(GameObject go in tiles)
         {
-            if (player.transform.position.x > go.transform.position.x - go.transform.lossyScale.x &&
-                player.transform.position.x < go.transform.position.x + go.transform.lossyScale.x &&
-                player.transform.position.y > go.transform.position.y - go.transform.lossyScale.y &&
-                player.transform.position.y < go.transform.position.y + go.transform.lossyScale.y)
+            if (player.transform.position.x > go.transform.position.x - go.transform.lossyScale.x / 2 &&
+                player.transform.position.x < go.transform.position.x + go.transform.lossyScale.x / 2 &&
+                player.transform.position.y > go.transform.position.y - go.transform.lossyScale.y / 2 &&
+                player.transform.position.y < go.transform.position.y + go.transform.lossyScale.y / 2)
             {
                 go.GetComponent<Renderer>().material.color = redColor;
             }
