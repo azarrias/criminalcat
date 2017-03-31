@@ -32,6 +32,10 @@ public class CameraFollow : MonoBehaviour
     [Range(0, 1)]
     public float transitionSpeed = 0.05f;
 
+    Vector3 lastCameraPositionBeforeActiveTracking;
+    Vector3 lastTargetPosition;
+    float transitionThreshold;
+
 
     void Start()
     {
@@ -45,6 +49,7 @@ public class CameraFollow : MonoBehaviour
             playerPosition = player.transform.position;
         }
         SetLimits(limitLeft, limitRight, limitTop, limitBottom);
+        lastCameraPositionBeforeActiveTracking = transform.position;
     }
 
 
@@ -89,10 +94,18 @@ public class CameraFollow : MonoBehaviour
             }
             transform.position = cameraPosition;
             CorrectOutOfBounds();
+            lastCameraPositionBeforeActiveTracking = transform.position;
         }
         else
         {
-            MoveCamera( GetTargetPosition(), transitionSpeed);
+            if (lastTargetPosition != GetTargetPosition())
+            {
+                lastTargetPosition = GetTargetPosition();
+                Debug.Log("last targetpos changed for: (" + lastTargetPosition); 
+                lastCameraPositionBeforeActiveTracking = transform.position;
+            }
+            transitionThreshold = Vector3.Distance(lastCameraPositionBeforeActiveTracking, lastTargetPosition) /10;
+            MoveCamera( lastTargetPosition, transitionSpeed);
         }
 
 
@@ -174,7 +187,7 @@ public class CameraFollow : MonoBehaviour
 
         //Assumes 2D usage
 
-        while (Vector3.Distance(transform.position, targetPos)> 0.1)
+        while (Vector3.Distance(transform.position, targetPos)> transitionThreshold)
         {
             transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed); 
             yield return 0;
