@@ -25,15 +25,15 @@ public class MeleeRange : MonoBehaviour {
 
     }
 
-    void OnTriggerEnter(Collider col)
+    void OnTriggerEnter(Collider collider)
     {
-        if (col.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
             bossController.GetFSMBoss().atMeleeRange = true;
     }
 
-    void OntriggerExit(Collider col)
+    void OnTriggerExit(Collider collider)
     {
-        if (col.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
             bossController.GetFSMBoss().atMeleeRange = false;
     }
 }

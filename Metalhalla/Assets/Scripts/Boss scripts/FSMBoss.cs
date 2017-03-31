@@ -19,7 +19,7 @@ public class FSMBoss {
     private State currState;
     private State prevState;
 
-    //------------------- VARIABLES WHICH CONTROL FSM LOGIC -------------------
+    //------------------- VARIABLES THAT CONTROL FSM LOGIC -------------------
 
     public bool playerInSight = false;
     public bool atMeleeRange = false;
@@ -31,10 +31,23 @@ public class FSMBoss {
     //damaged will be modified by the player
     public bool damaged = false;
 
-    //orientation of the boss will be modified when entering triggers at the limits of the platform
+    //orientation of the boss will be modified when entering triggers at the limits of the platform and when player is around
     public bool facingRight = true;
-    public int numSpikeAttacks = 0;
+    private int numSpikeAttacks = 0;
+    private Vector3 spikesCastingSpot;
+    private Vector3 spikesReturnSpot;
+    //interpolation factor to go to spikes casting point and to return from it
+    private float lerpPosThreshold = 0.1f;
+    private float castingPosSpeed = 2.0f;
+    //Ball attack allowed at HP <= 75% * maxHP
+    private float thresholdBallAttack = 0.75f;
+    //first ice spikes at 25% maxHP
+    private float thresholdFirstSpikes = 0.25f;
+    //second ice spikes at 10% maxHP
+    private float thresholdSecondSpikes = 0.10f;
 
+    private bool returningFromSpikesCast = false;
+    
     //Temporalmente hasta que sepa cómo van las animaciones
     public string animation = "patrol";
 
@@ -42,15 +55,20 @@ public class FSMBoss {
 	{
         bossController = bossContr;
         currState = State.PATROL;
-	}
+        spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
+        spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
+    }
 
     public void Update()
     {
+        //DEBUG
+        Debug.Log(currState + " " + animation);
+                  
         switch(currState)
         {
             case State.DAMAGED:
                 Damaged();
-                if(bossController.GetHitPoints() <= 0)
+                if(bossController.GetBossStats().hitPoints <= 0)
                 {
                     currState = State.DEAD;
                     break;
@@ -171,29 +189,35 @@ public class FSMBoss {
 
     public void Patrol()
 	{
-        Vector3 newPos = bossController.GetTheBoss().transform.position;
+        if (!playerInSight)
+        {
+            Vector3 newPos = bossController.GetTheBoss().transform.position;
 
-        if (facingRight == true)
-            newPos.x += bossController.normalSpeed * Time.deltaTime;
-        else
-            newPos.x -= bossController.normalSpeed * Time.deltaTime;
+            if (facingRight == true)
+                newPos.x += bossController.GetBossStats().normalSpeed * Time.deltaTime;
+            else
+                newPos.x -= bossController.GetBossStats().normalSpeed * Time.deltaTime;
 
-        bossController.GetTheBoss().transform.position = newPos;
+            bossController.GetTheBoss().transform.position = newPos;
 
-        animation = "walk";
+            animation = "walk";
+        }
+
     }
 
 	public void Chase()
 	{
-        Vector3 newPos = bossController.GetTheBoss().transform.position;
+        if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
+        {
+            Vector3 newPos = bossController.GetTheBoss().transform.position;
 
-        if (facingRight == true)
-            newPos.x += bossController.chasingSpeed * Time.deltaTime;
-        else
-            newPos.x -= bossController.chasingSpeed * Time.deltaTime;
+            if (facingRight == true)
+                newPos.x += bossController.GetBossStats().chasingSpeed * Time.deltaTime;
+            else
+                newPos.x -= bossController.GetBossStats().chasingSpeed * Time.deltaTime;
 
-        bossController.GetTheBoss().transform.position = newPos;
-
+            bossController.GetTheBoss().transform.position = newPos;
+        }
         animation = "chase";
     }
 
@@ -211,29 +235,91 @@ public class FSMBoss {
 
 	public void IceSpikesAttack()
 	{
-        numSpikeAttacks++;       
-        animation = "spike attack";        
-        iceSpikesAttack = false;
+        Vector3 bossPos = bossController.GetTheBoss().transform.position;
+
+        if(returningFromSpikesCast == false)
+        {
+            float diff = spikesCastingSpot.x - bossPos.x;
+            if (diff > 0)
+            {
+                if (facingRight == false)
+                {
+                    //flip the boss
+                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                    scale.x *= -1;
+                    bossController.GetTheBoss().transform.localScale = scale;
+                    facingRight = true;
+                }
+            }
+            if (diff < 0)
+            {
+                if (facingRight == true)
+                {
+                    //flip the boss
+                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                    scale.x *= -1;
+                    bossController.GetTheBoss().transform.localScale = scale;
+                    facingRight = false;
+                }
+
+            }
+
+            Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesCastingSpot, Time.deltaTime * castingPosSpeed);
+            Vector3 temp = bossController.GetTheBoss().transform.position;
+            temp = newPos;
+            bossController.GetTheBoss().transform.position = temp;
+
+            //DEBUG
+            //Debug.Log("Distance = " + Vector3.Distance(bossController.GetTheBoss().transform.position, spikesCastingSpot));
+
+            if (spikesCastingSpot.z - bossController.GetTheBoss().transform.position.z <= lerpPosThreshold)
+            {
+                numSpikeAttacks++;
+                animation = "spike attack";                
+                returningFromSpikesCast = true;
+            }
+        }
+
+        if(returningFromSpikesCast == true)
+        {
+            Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesReturnSpot, Time.deltaTime * castingPosSpeed);
+            Vector3 temp = bossController.GetTheBoss().transform.position;
+            temp = newPos;
+            bossController.GetTheBoss().transform.position = temp;
+
+            //DEBUG
+            Debug.Log("Distance.z = " + (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z));
+
+            if (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z <= lerpPosThreshold)
+            {
+                //Return to exact position
+                bossController.GetTheBoss().transform.position = spikesReturnSpot;
+               
+                animation = "patrol";
+                iceSpikesAttack = false;
+                returningFromSpikesCast = false;
+            }
+        }
+        
+        
     }
 
     public void SelectAttack()
     {
-        if(bossController.GetHitPoints() > 0.75 * bossController.maxHitPoints)
+        if(bossController.GetBossStats().hitPoints > thresholdBallAttack * bossController.GetBossStats().maxHitPoints)
         {
             meleeAttack = true;
         }
         else
         {
-            if(bossController.GetHitPoints() <= 0.25 * bossController.maxHitPoints && numSpikeAttacks == 0)
+            if(bossController.GetBossStats().hitPoints <= thresholdFirstSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 0)
             {
-                iceSpikesAttack = true;
-                numSpikeAttacks++;
+                iceSpikesAttack = true;             
             }
 
-            else if (bossController.GetHitPoints() <= 0.10 * bossController.maxHitPoints && numSpikeAttacks == 1)
+            else if (bossController.GetBossStats().hitPoints <= thresholdSecondSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 1)
             {
-                iceSpikesAttack = true;
-                numSpikeAttacks++;
+                iceSpikesAttack = true;                
             }
 
             else

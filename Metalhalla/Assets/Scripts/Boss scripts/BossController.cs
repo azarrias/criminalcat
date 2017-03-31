@@ -7,27 +7,29 @@ public class BossController : MonoBehaviour {
 
     private FSMBoss fsmBoss = null;
     private GameObject theBoss = null;
-	
-	
-    //---------------------------------- Boss Stats ---------------------------------------------------
-    public float normalSpeed = 10;
-    public float chasingSpeed = 20;
-    public int maxHitPoints = 200;
-    private int hitPoints = 200;
-    //-------------------------------------------------------------------------------------------------
+    private BossStats bossStats = null;
+    public GameObject spikesCastingSpot = null;
+    public GameObject spikesReturnSpot = null;
+    public float spikesAttackBossDepth = 1.5f;
 
     void Awake()
     {
         theBoss = GameObject.FindGameObjectWithTag("Boss");
         if (theBoss == null)
-            Debug.Log("Error: boss not found.");
-	}
+            Debug.Log("Error: boss game object not found.");
+
+        bossStats = theBoss.GetComponent<BossStats>();
+        if (bossStats == null)
+            Debug.Log("Error: BossStats script not found.");
+    }
 		
 	// Use this for initialization
 	void Start ()
     {
-		fsmBoss = new FSMBoss (this);   
-	}
+		fsmBoss = new FSMBoss (this);
+        spikesCastingSpot.transform.position = theBoss.transform.position + Vector3.forward * spikesAttackBossDepth;
+        spikesReturnSpot.transform.position = theBoss.transform.position;
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -47,14 +49,14 @@ public class BossController : MonoBehaviour {
         return theBoss;
     }
 
-    public int GetHitPoints()
-    {
-        return hitPoints;
-    }
-
     public FSMBoss GetFSMBoss()
     {
         return fsmBoss;
+    }
+
+    public BossStats GetBossStats()
+    {
+        return bossStats;
     }
 
 }

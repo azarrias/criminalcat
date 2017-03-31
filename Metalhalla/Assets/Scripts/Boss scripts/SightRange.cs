@@ -23,15 +23,48 @@ public class SightRange : MonoBehaviour {
 		
 	}
 
-    void OnTriggerEnter(Collider col)
+    void OnTriggerEnter(Collider collider)
     {
-        if (col.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
+        {
             bossController.GetFSMBoss().playerInSight = true;
+
+            Vector3 playerPos = collider.gameObject.transform.position;
+            Vector3 bossPos = bossController.GetTheBoss().transform.position;
+
+            float diff = playerPos.x - bossPos.x;
+            if (diff > 0)
+            {
+                if (bossController.GetFSMBoss().facingRight == false)
+                {
+                    bossController.GetFSMBoss().facingRight = true;
+                    //flip the boss
+                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                    scale.x *= -1;
+                    bossController.GetTheBoss().transform.localScale = scale;
+                }
+
+            }
+            if (diff < 0)
+            {
+                if (bossController.GetFSMBoss().facingRight == true)
+                {
+                    bossController.GetFSMBoss().facingRight = false;
+                    //flip the boss
+                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                    scale.x *= -1;
+                    bossController.GetTheBoss().transform.localScale = scale;
+                }
+            }
+
+
+        }
+
     }
 
-    void OntriggerExit(Collider col)
+    void OnTriggerExit(Collider collider)
     {
-        if (col.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
             bossController.GetFSMBoss().playerInSight = false;
     }
 }

@@ -23,8 +23,17 @@ public class PlatformLimits : MonoBehaviour {
 		
 	}
 
-    void OnTriggerEnter(Collider col)
+    void OnTriggerEnter(Collider collider)
     {
-        bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
+        if(collider.CompareTag("Boss"))
+        {
+            bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
+            //flip the boss
+            Vector3 scale = bossController.GetTheBoss().transform.localScale;
+            scale.x *= -1;
+            bossController.GetTheBoss().transform.localScale = scale;
+        }
+        
+
     }
 }
