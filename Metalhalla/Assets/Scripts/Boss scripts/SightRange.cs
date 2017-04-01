@@ -10,7 +10,7 @@ public class SightRange : MonoBehaviour {
     {    
         bossController = FindObjectOfType<BossController>();
         if (bossController == null)
-            Debug.Log("bossController not found");
+            Debug.LogError("bossController not found");
     }
 
 	// Use this for initialization
@@ -56,15 +56,22 @@ public class SightRange : MonoBehaviour {
                     bossController.GetTheBoss().transform.localScale = scale;
                 }
             }
-
-
         }
-
     }
 
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
             bossController.GetFSMBoss().playerInSight = false;
+
+        if (collider.CompareTag("Boss"))
+        {
+            bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
+            //flip the boss
+            Vector3 scale = bossController.GetTheBoss().transform.localScale;
+            scale.x *= -1;
+            bossController.GetTheBoss().transform.localScale = scale;
+
+        }
     }
 }

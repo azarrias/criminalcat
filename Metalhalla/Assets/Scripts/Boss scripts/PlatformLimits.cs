@@ -10,7 +10,7 @@ public class PlatformLimits : MonoBehaviour {
     {
         bossController = FindObjectOfType<BossController>();
         if (bossController == null)
-            Debug.Log("bossController not found");
+            Debug.LogError("bossController not found");
     }
 
     // Use this for initialization
@@ -25,15 +25,16 @@ public class PlatformLimits : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if(collider.CompareTag("Boss"))
+        if (collider.CompareTag("Boss"))
         {
             bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
             //flip the boss
             Vector3 scale = bossController.GetTheBoss().transform.localScale;
             scale.x *= -1;
             bossController.GetTheBoss().transform.localScale = scale;
+
         }
-        
+
 
     }
 }

@@ -8,14 +8,24 @@ public class PlayerController : MonoBehaviour {
     public float speed = 6.0f;
     public float jumpSpeed = 8.0f;
     private bool onLand = true;
-    private GameObject theBoss;
+    private BossController bossController;
+    private GameObject topDownCam = null;
+    private GameObject lateralCam = null;
+    private bool toggleCam = false;
     
+    void Awake()
+    {
+        bossController = FindObjectOfType<BossController>();
+        if (bossController == null)
+            Debug.LogError("bossController not found");
+    }
+
     // Use this for initialization
 	void Start () {
-        theBoss = GameObject.FindGameObjectWithTag("Boss");
-	}
+        lateralCam = GameObject.Find("Lateral Camera");
+        topDownCam = GameObject.Find("Top Down Camera");
+    }
 
-	
 	void FixedUpdate () {
 
         if(Input.GetKeyDown(KeyCode.Space) && onLand)
@@ -30,9 +40,28 @@ public class PlayerController : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
-            theBoss.GetComponent<BossStats>().DamageBoss(10);
+            bossController.GetTheBoss().GetComponent<BossStats>().DamageBoss(10);
+            bossController.GetFSMBoss().damaged = true;
         }
-        
+
+        //Change camera
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            toggleCam = !toggleCam;
+
+            if (!toggleCam)
+            {
+                lateralCam.SetActive(true);
+                topDownCam.SetActive(false);
+            }
+            else
+            {
+                lateralCam.SetActive(false);
+                topDownCam.SetActive(true);
+            }
+
+        }
+
     }
 
     void OnCollisionEnter(Collision collision)

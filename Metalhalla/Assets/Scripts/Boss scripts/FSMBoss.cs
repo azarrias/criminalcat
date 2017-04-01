@@ -5,6 +5,7 @@ public class FSMBoss {
 
     private enum State
     {
+        START,
         DAMAGED,
         DEAD,
         PATROL,
@@ -12,13 +13,14 @@ public class FSMBoss {
         CHASE,
         MELEE_ATTACK,
         BALL_ATTACK,
-        ICE_SPIKES
+        ICE_SPIKES,
+        STALK
     }
 
     public BossController bossController = null;
-    private State currState;
-    private State prevState;
-
+    private State currState = State.START;
+    private State prevState =State.START;
+    private GameObject player = null;
     //------------------- VARIABLES THAT CONTROL FSM LOGIC -------------------
 
     public bool playerInSight = false;
@@ -27,6 +29,7 @@ public class FSMBoss {
     public bool iceSpikesAttack = false;
     public bool ballAttack = false;   
     public bool meleeAttack = false;
+    public bool playerReachable = true;
 
     //damaged will be modified by the player
     public bool damaged = false;
@@ -45,8 +48,8 @@ public class FSMBoss {
     private float thresholdFirstSpikes = 0.25f;
     //second ice spikes at 10% maxHP
     private float thresholdSecondSpikes = 0.10f;
-
     private bool returningFromSpikesCast = false;
+    
     
     //Temporalmente hasta que sepa cómo van las animaciones
     public string animation = "patrol";
@@ -57,12 +60,13 @@ public class FSMBoss {
         currState = State.PATROL;
         spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
         spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
+        player = bossController.player;
     }
 
     public void Update()
     {
         //DEBUG
-        Debug.Log(currState + " " + animation);
+        Debug.Log("state:" + currState + "  animation:" + animation + " " + "  facingRight:" + facingRight);
                   
         switch(currState)
         {
@@ -72,8 +76,8 @@ public class FSMBoss {
                 {
                     currState = State.DEAD;
                     break;
-                }
-                if(!damaged)
+                } 
+                if(!damaged)              
                     currState = prevState;
                 break;
 
@@ -84,7 +88,7 @@ public class FSMBoss {
             case State.PATROL:
                 Patrol();
                 if (playerInSight)
-                {
+                {                   
                     currState = State.ATTACK_SELECTION;
                     break;
                 }                                  
@@ -108,7 +112,9 @@ public class FSMBoss {
                 Chase();
                 if(!playerInSight)
                 {
+                    prevState = currState;
                     currState = State.PATROL;
+                    break;
                 }
                 if (damaged)
                 {
@@ -126,6 +132,11 @@ public class FSMBoss {
                     currState = State.BALL_ATTACK;
                     break;
                 }
+                if(!playerReachable)
+                {
+                    currState = State.STALK;
+                    break;
+                }
                 break;
 
             case State.MELEE_ATTACK:
@@ -138,7 +149,7 @@ public class FSMBoss {
                 }
                 if (!meleeAttack)
                 {
-                    currState = State.PATROL;
+                    currState = State.ATTACK_SELECTION;
                     break;
                 }
                 break;
@@ -153,7 +164,7 @@ public class FSMBoss {
                 }
                 if (!ballAttack)
                 {
-                    currState = State.PATROL;
+                    currState = State.ATTACK_SELECTION;
                     break;
                 }
                 break;
@@ -172,6 +183,16 @@ public class FSMBoss {
                     break;
                 }
                 break;
+
+            case State.STALK:
+                Stalk();
+                if(player.transform.position.y <= bossController.detectionHeight)
+                {
+                    playerReachable = true;
+                    currState = State.CHASE;
+                    break;
+                }
+                break;
         }
        
     }
@@ -180,6 +201,7 @@ public class FSMBoss {
     public void Damaged()
     {
         animation = "damaged";
+        damaged = false;
     }
 
     public void Dead()
@@ -189,20 +211,28 @@ public class FSMBoss {
 
     public void Patrol()
 	{
-        if (!playerInSight)
+        if (prevState == State.CHASE)
         {
-            Vector3 newPos = bossController.GetTheBoss().transform.position;
+            facingRight = !facingRight;
 
-            if (facingRight == true)
-                newPos.x += bossController.GetBossStats().normalSpeed * Time.deltaTime;
-            else
-                newPos.x -= bossController.GetBossStats().normalSpeed * Time.deltaTime;
+            //flip the boss
+            Vector3 scale = bossController.GetTheBoss().transform.localScale;
+            scale.x *= -1;
+            bossController.GetTheBoss().transform.localScale = scale;
 
-            bossController.GetTheBoss().transform.position = newPos;
-
-            animation = "walk";
+            prevState = State.PATROL;
         }
 
+        Vector3 newPos = bossController.GetTheBoss().transform.position;
+
+        if (facingRight == true)
+            newPos.x += bossController.GetBossStats().normalSpeed * Time.deltaTime;
+        else
+            newPos.x -= bossController.GetBossStats().normalSpeed * Time.deltaTime;
+
+        bossController.GetTheBoss().transform.position = newPos;
+
+        animation = "walk";
     }
 
 	public void Chase()
@@ -210,7 +240,15 @@ public class FSMBoss {
         if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
         {
             Vector3 newPos = bossController.GetTheBoss().transform.position;
+            int diff = (int)(player.transform.position.x - newPos.x);
 
+            Debug.Log("diff: " + diff);
+
+            if (diff > 0)
+                facingRight = true;
+            if (diff < 0)
+                facingRight = false;
+           
             if (facingRight == true)
                 newPos.x += bossController.GetBossStats().chasingSpeed * Time.deltaTime;
             else
@@ -340,6 +378,11 @@ public class FSMBoss {
             
         }
 
+    }
+
+    void Stalk()
+    {
+        animation = "stalk";
     }
 
 }

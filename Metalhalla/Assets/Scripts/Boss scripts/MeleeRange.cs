@@ -5,12 +5,13 @@ using UnityEngine;
 public class MeleeRange : MonoBehaviour {
 
     BossController bossController;
-
+    
     void Awake()
     {
         bossController = FindObjectOfType<BossController>();
         if (bossController == null)
-            Debug.Log("bossController not found");
+            Debug.LogError("bossController not found");
+  
     }
 
     // Use this for initialization

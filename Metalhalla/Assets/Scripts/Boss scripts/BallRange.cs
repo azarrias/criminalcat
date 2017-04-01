@@ -10,7 +10,7 @@ public class BallRange : MonoBehaviour {
     {
         bossController = FindObjectOfType<BossController>();
         if (bossController == null)
-            Debug.Log("bossController not found");
+            Debug.LogError("bossController not found");
     }
 
     // Use this for initialization

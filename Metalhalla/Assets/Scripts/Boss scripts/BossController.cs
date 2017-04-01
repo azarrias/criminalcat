@@ -10,17 +10,23 @@ public class BossController : MonoBehaviour {
     private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
+    public GameObject player = null;
     public float spikesAttackBossDepth = 1.5f;
+    public float detectionHeight = 3.0f;
 
     void Awake()
     {
         theBoss = GameObject.FindGameObjectWithTag("Boss");
         if (theBoss == null)
-            Debug.Log("Error: boss game object not found.");
+            Debug.LogError("Error: boss game object not found.");
 
         bossStats = theBoss.GetComponent<BossStats>();
         if (bossStats == null)
-            Debug.Log("Error: BossStats script not found.");
+            Debug.LogError("Error: BossStats script not found.");
+
+        player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+            Debug.LogError("Error: player not found.");
     }
 		
 	// Use this for initialization
