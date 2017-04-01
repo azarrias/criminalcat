@@ -60,7 +60,7 @@ public class FSMBoss {
         currState = State.PATROL;
         spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
         spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
-        player = bossController.player;
+        player = bossController.GetThePlayer();
     }
 
     public void Update()

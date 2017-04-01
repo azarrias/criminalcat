@@ -10,7 +10,7 @@ public class BossController : MonoBehaviour {
     private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
-    public GameObject player = null;
+    private GameObject thePlayer = null;
     public float spikesAttackBossDepth = 1.5f;
     public float detectionHeight = 3.0f;
 
@@ -24,8 +24,8 @@ public class BossController : MonoBehaviour {
         if (bossStats == null)
             Debug.LogError("Error: BossStats script not found.");
 
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
+        thePlayer = GameObject.FindGameObjectWithTag("Player");
+        if (thePlayer == null)
             Debug.LogError("Error: player not found.");
     }
 		
@@ -63,6 +63,11 @@ public class BossController : MonoBehaviour {
     public BossStats GetBossStats()
     {
         return bossStats;
+    }
+
+    public GameObject GetThePlayer()
+    {
+        return thePlayer;
     }
 
 }
