@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class myPlayerInput : MonoBehaviour {
+public class PlayerInput : MonoBehaviour {
 
 	//*********************************************
 	// INPUT HANDLING
 	//*********************************************
-	public struct PlayerInput
+	public struct pInput
 	{
 		private float horizontalInput;
 		private float verticalInput;
@@ -29,7 +29,7 @@ public class myPlayerInput : MonoBehaviour {
 		public bool GetJumpButtonDown(){  return jumpButtonDown;}
 		public bool  GetJumpButtonHeld(){  return jumpButtonHeld;}
 
-		public void CopyInputFrom( PlayerInput from)
+		public void CopyInputFrom( pInput from)
 		{
 			horizontalInput = from.horizontalInput;
 			verticalInput = from.verticalInput;
@@ -38,8 +38,8 @@ public class myPlayerInput : MonoBehaviour {
 		}
 	};
 
-	public PlayerInput newInput;
-	PlayerInput oldInput;
+	public pInput newInput;
+    pInput oldInput;
 
 	public void GetInput()
 	{

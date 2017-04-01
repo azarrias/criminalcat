@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class myPlayerMove : MonoBehaviour {
+public class PlayerMove : MonoBehaviour {
 
-	public float moveSpeed = 4;
-	public float gravity = 20f;
-	public float jumpSpeed = 2f;
-	public float timeToJumpApex = 0.4f;
+	public float moveSpeed = 5;
+	public float gravity = 40f;
+	public float jumpSpeed = 1.8f;
+	public float timeToJumpApex = 0.2f;
 
-	public float xSpeedChangeSpeed = 1.0f;
+	public float xSpeedChangeSpeed = 0.99f;
 
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
@@ -16,7 +16,7 @@ public class myPlayerMove : MonoBehaviour {
 	public Vector3 speed;
 	[HideInInspector]
 	public float xCurrentSpeed;
-	public void CalculateSpeed( myPlayerInput input, myPlayerStatus status )
+	public void CalculateSpeed( PlayerInput input, PlayerStatus status )
 	{
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;

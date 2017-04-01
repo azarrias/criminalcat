@@ -1,25 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(myPlayerInput))]
-[RequireComponent (typeof(myPlayerStatus))]
-[RequireComponent (typeof(myPlayerMove))]
-[RequireComponent (typeof(myPlayerCollider))]
+[RequireComponent (typeof(PlayerInput))]
+[RequireComponent (typeof(PlayerStatus))]
+[RequireComponent (typeof(PlayerMove))]
+[RequireComponent (typeof(PlayerCollider))]
+[RequireComponent (typeof(PlayerHealth))]
 
+public class PlayerController : MonoBehaviour {
 
-public class myPlayerController : MonoBehaviour {
-
-	myPlayerInput 	 playerInput;
-	myPlayerStatus   playerStatus;
-	myPlayerMove	 playerMove;
-	myPlayerCollider playerCollider;
+	PlayerInput 	 playerInput;
+	PlayerStatus     playerStatus;
+	PlayerMove  	 playerMove;
+	PlayerCollider  playerCollider;
 	Animator		 playerAnimator;
 
 	void Start() {
-		playerInput = GetComponent<myPlayerInput> ();
-		playerStatus = GetComponent<myPlayerStatus> ();
-		playerMove = GetComponent<myPlayerMove> ();
-		playerCollider = GetComponent<myPlayerCollider> ();
+		playerInput = GetComponent<PlayerInput> ();
+		playerStatus = GetComponent<PlayerStatus> ();
+		playerMove = GetComponent<PlayerMove> ();
+		playerCollider = GetComponent<PlayerCollider> ();
 	//	playerAnimator = GetComponent<Animator> ();
 	}
 

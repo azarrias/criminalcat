@@ -13,7 +13,7 @@ public class LadderScript : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<myPlayerStatus>().climbLadderAvailable = true;
+            collision.GetComponent<PlayerStatus>().climbLadderAvailable = true;
         }
     }
 
@@ -21,7 +21,7 @@ public class LadderScript : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<myPlayerStatus>().climbLadderAvailable = false;
+            collision.GetComponent<PlayerStatus>().climbLadderAvailable = false;
         }
     }
 }

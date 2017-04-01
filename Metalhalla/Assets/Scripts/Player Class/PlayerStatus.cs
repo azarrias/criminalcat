@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class myPlayerStatus : MonoBehaviour {
+public class PlayerStatus : MonoBehaviour {
 
 	int framesToJumpMax;
 	int framesToJumpMin;
@@ -15,18 +15,18 @@ public class myPlayerStatus : MonoBehaviour {
     [HideInInspector]
     public bool climbLadderAvailable;
 
-	PlayerStatus oldStatus;
+    pStatus oldStatus;
     [HideInInspector]
-	public PlayerStatus newStatus;
+	public pStatus newStatus;
 
 	void Start (){
 		framesToJumpCount = 0;
         framesToFallThroughCloudPlatformsCount = 0;
 
-		framesToJumpMax = CalculateFramesFromTime(GetComponent<myPlayerMove> ().timeToJumpApex);
+		framesToJumpMax = CalculateFramesFromTime(GetComponent<PlayerMove> ().timeToJumpApex);
 		framesToJumpMin = (int)(framesToJumpMax / 4);
 
-        framesToFallThroughCloudPlatforms = CalculateFramesFromTime(GetComponent<myPlayerMove>().timeToFallThroughCloudPlatforms);
+        framesToFallThroughCloudPlatforms = CalculateFramesFromTime(GetComponent<PlayerMove>().timeToFallThroughCloudPlatforms);
 
         jumpAvailable = false;
 		oldStatus.Reset (); newStatus.Reset ();
@@ -35,7 +35,7 @@ public class myPlayerStatus : MonoBehaviour {
 
     }
 
-    public void statusUpdateAfterInput(myPlayerInput input) {
+    public void statusUpdateAfterInput(PlayerInput input) {
         if ((input.newInput.GetHorizontalInput() < 0 && facingRight) || (input.newInput.GetHorizontalInput() > 0 && !facingRight)) {
             Flip();
         }
@@ -80,7 +80,7 @@ public class myPlayerStatus : MonoBehaviour {
                 if (jumpAvailable && input.newInput.GetJumpButtonHeld())
                 {
 
-                    if (input.newInput.GetVerticalInput() < 0 && GetComponent<myPlayerCollider>().PlayerAboveCloudPlatform() == true)
+                    if (input.newInput.GetVerticalInput() < 0 && GetComponent<PlayerCollider>().PlayerAboveCloudPlatform() == true)
                     {
                         newStatus.SetFallThroughCloudPlatform();
                         framesToFallThroughCloudPlatformsCount = 1;
@@ -126,7 +126,7 @@ public class myPlayerStatus : MonoBehaviour {
         }
 	}
 
-	public void statusUpdateAfterCollisionCheck( myPlayerCollider collider)
+	public void statusUpdateAfterCollisionCheck( PlayerCollider collider)
 	{
 		if (newStatus.IsGround () && !collider.collisions.below){
 			newStatus.SetFall ();
@@ -221,7 +221,7 @@ public class myPlayerStatus : MonoBehaviour {
     static readonly int FALL_THROUGH_CLOUD_PLATFORM = 0x0008;
     static readonly int CLIMBING_LADDER = 0x0010;
 
-    public struct PlayerStatus {
+    public struct pStatus {
 
         int statusMask;
 
@@ -247,7 +247,7 @@ public class myPlayerStatus : MonoBehaviour {
         public void SetFallThroughCloudPlatform() { SetMask(FALL_THROUGH_CLOUD_PLATFORM); }
         public void SetClimbingLadder() { SetMask(CLIMBING_LADDER); }
 
-		public void CopyStatusFrom( PlayerStatus from)
+		public void CopyStatusFrom( pStatus from)
 		{
 			statusMask = from.statusMask;
 		}

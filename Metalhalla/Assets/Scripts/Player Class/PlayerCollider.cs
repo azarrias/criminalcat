@@ -3,7 +3,7 @@ using System.Collections;
 
 //[RequireComponent (typeof(BoxCollider2D))]
 [RequireComponent(typeof(BoxCollider))]
-public class myPlayerCollider : MonoBehaviour {
+public class PlayerCollider : MonoBehaviour {
 
 	public LayerMask noCloudCollisionMask;
 	public LayerMask generalCollisionMask;
@@ -31,7 +31,7 @@ public class myPlayerCollider : MonoBehaviour {
 		CalculateRaySpacing ();
 	}
 
-	public void CheckMove( ref myPlayerMove playerMove, ref myPlayerStatus status ){
+	public void CheckMove( ref PlayerMove playerMove, ref PlayerStatus status ){
 		UpdateRaycastOrigins ();
 		collisions.Reset ();
 		if (playerMove.speed.x != 0)
@@ -87,7 +87,7 @@ public class myPlayerCollider : MonoBehaviour {
 		}
 	}
 
-	void VerticalCollisions(ref Vector3 speed, ref myPlayerStatus status ){
+	void VerticalCollisions(ref Vector3 speed, ref PlayerStatus status ){
 		float directionY = Mathf.Sign (speed.y);
 		float rayLength = Mathf.Abs (speed.y) + skinWidth;
 
