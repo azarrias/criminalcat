@@ -27,13 +27,13 @@ public class PlayerController : MonoBehaviour {
 		playerInput.GetInput ();
 	}
 	void FixedUpdate (){
-		// faltará actualizar el estado
+		
 		playerStatus.statusUpdateAfterInput(playerInput);
 		playerMove.CalculateSpeed(playerInput, playerStatus);
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
-		// send the animator what needs to be sent :)
+		// send the animator the variables needed
 	//	playerAnimator.SetBool("inAir",!playerStatus.newStatus.IsGround());
 	//	playerAnimator.SetFloat("speed",Mathf.Abs(playerMove.speed.x));
 
