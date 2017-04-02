@@ -99,7 +99,8 @@ public class PlayerCollider : MonoBehaviour {
             bool has_hit = false;
 
             //modifications for cloud platforms
-            if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
+            //if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
+            if (directionY < 0 )
                 has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
             else
                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);

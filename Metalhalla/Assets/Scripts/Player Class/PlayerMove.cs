@@ -21,20 +21,21 @@ public class PlayerMove : MonoBehaviour {
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
 
-        // vertical one :)
-        if (status.newStatus.IsGround()){
+        
+        if (status.currentState == PlayerStatus.idle) { 
 			speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 		}
-		if (status.newStatus.IsJump ()) {
+		if (status.currentState == PlayerStatus.jump) {
 			speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
 		}
-		if (status.newStatus.IsFall () || status.newStatus.IsFallThroughCloudPlatform() ) {
+		if (status.currentState == PlayerStatus.fall ) {
 			speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 		}
-        if (status.newStatus.IsClimbingLadder() )
+        if (status.currentState == PlayerStatus.climb)
         {
-            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput(); 
         }
+    
 	}
 
 	public void Move(){

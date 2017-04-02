@@ -43,11 +43,11 @@ public class PlayerHealth : MonoBehaviour {
             ApplyDamage(3);
         if (Input.GetKeyDown(KeyCode.F2) == true)
             RestoreHealth(25);
-        if (Input.GetKeyDown(KeyCode.F3) == true)
+        if (Input.GetKeyDown(KeyCode.F3) == true || Input.GetButtonDown("Cast") == true)
             ConsumeStamina(7);
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
-        if (Input.GetKeyDown(KeyCode.F5) == true)
+        if (Input.GetKeyDown(KeyCode.F5) == true || Input.GetButtonDown("Context") == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
             RefillBeer(5); 

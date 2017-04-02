@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour {
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
+
 		// send the animator the variables needed
 	//	playerAnimator.SetBool("inAir",!playerStatus.newStatus.IsGround());
 	//	playerAnimator.SetFloat("speed",Mathf.Abs(playerMove.speed.x));
