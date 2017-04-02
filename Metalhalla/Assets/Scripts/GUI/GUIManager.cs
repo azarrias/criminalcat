@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class GUIManager : MonoBehaviour {
 
-    [SerializeField]
     private int maxHP;
-    private int curHP;
+
     [SerializeField]
     private RectTransform HPBar;
 
@@ -21,8 +20,9 @@ public class GUIManager : MonoBehaviour {
     private Image[] stmImages;
     private int stmIndx;
 
-	// Use this for initialization
-	void Start () {
+    private PlayerHealth playerHealth;
+
+    void Start() {
         if (HPBar == null)
             Debug.Log("Error - HP bar not set");
 
@@ -32,99 +32,51 @@ public class GUIManager : MonoBehaviour {
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
 
-        maxHP = 100;
-        curHP = 100;    
-        hornIndx = hornImages.Length - 1;
-        beerHorn.sprite = hornImages[hornIndx];
-        stmIndx = stmImages.Length - 1;
+        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+        if (playerHealth == null)
+            Debug.Log("GUI could not retrieve PlayerHealth component from player");
+
+        maxHP = playerHealth.healthMaximum;
+        hornIndx = playerHealth.beerAtStart;
+        stmIndx = playerHealth.staminaAtStart;
+
+        UpdateStaminaMeter(); 
     }
-	
-	// Update is called once per frame
-	void Update () {
 
-        //Increase and decrease HP
-        if(Input.GetKeyDown(KeyCode.F2))
-        {
-            curHP += 10;
-            if (curHP >= maxHP)
-                curHP = maxHP;
+    void Update() {
 
-            SetHEalth(maxHP, curHP);
-        }
-		
-        if(Input.GetKeyDown(KeyCode.F1))
-        {
-            curHP -= 10;
-            if (curHP <= 0)
-                curHP = 0;
-
-            SetHEalth(maxHP, curHP);
-        }
-
-        //Increase and decrease beer
-        if (Input.GetKeyDown(KeyCode.F4))
-        {
-            if (hornIndx < hornImages.Length - 1)
-                hornIndx++;
-
-            SetBeer();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            if (hornIndx > 0)
-                hornIndx--;
-
-            SetBeer();
-        }
-
-        //Increase and decrease stamina
-        if(Input.GetKeyDown(KeyCode.F6))
-        {
-            if(stmIndx < stmImages.Length - 1)
-            {
-                stmIndx++;
-                AddStamina();
-            }
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            if(stmIndx > -1)
-            {
-                ReduceStamina();
-                stmIndx--;
-            }
-                    
-        }
+        SetHealth(playerHealth.GetCurrentHealthRatio());
+        SetStamina(playerHealth.GetCurrentStamina());
+        SetBeer(playerHealth.GetCurrentBeer());
 
     }
 
-    public void SetHEalth(int hp_max, int hp_curr)
+    void SetHealth(float healthRatio)
     {
-        float value =(float) hp_curr / hp_max;
-        HPBar.localScale = new Vector3(value, 1, 1);
+        HPBar.localScale = new Vector3(healthRatio, 1, 1);
     }
 
-    public void SetBeer()
+    void UpdateStaminaMeter()
     {
-        beerHorn.sprite = hornImages[hornIndx];    
+        int i;
+        for (i = 0; i < stmIndx; i++)
+            stmImages[i].color = new Vector4(1, 1, 1, 1);
+        for (i = stmIndx; i < 10; i++)
+            stmImages[i].color = new Vector4(0, 0, 0, 0);
     }
 
-    public void ReduceStamina()
+    void SetStamina(int remainingStamina)
     {
-        stmImages[stmIndx].color = new Vector4(0, 0, 0, 0);
+        if (stmIndx == remainingStamina)
+            return;
+
+        stmIndx = remainingStamina;
+        UpdateStaminaMeter(); 
     }
 
-    public void AddStamina()
+    void SetBeer( int remainingBeer )
     {
-       stmImages[stmIndx].color = new Vector4(1, 1, 1, 1);
+        beerHorn.sprite = hornImages[remainingBeer];
     }
 
-
-    public int HP_Curr {
-        get { return curHP; }
-        set { curHP = value; }
-    }
 }
