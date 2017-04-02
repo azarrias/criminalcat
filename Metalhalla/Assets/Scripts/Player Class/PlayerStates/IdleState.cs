@@ -6,7 +6,6 @@ public class IdleState : PlayerState {
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        Debug.Log("Idle.HandleInput()");
 
         if (input.newInput.GetVerticalInput() != 0 && status.climbLadderAvailable == true)
         {

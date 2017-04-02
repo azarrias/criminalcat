@@ -20,7 +20,7 @@ public class GUIManager : MonoBehaviour {
     private Image[] stmImages;
     private int stmIndx;
 
-    private PlayerHealth playerHealth;
+    private PlayerStatus playerStatus;
 
     void Start() {
         if (HPBar == null)
@@ -32,22 +32,22 @@ public class GUIManager : MonoBehaviour {
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
 
-        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
-        if (playerHealth == null)
+        playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
+        if (playerStatus == null)
             Debug.Log("GUI could not retrieve PlayerHealth component from player");
 
-        maxHP = playerHealth.healthMaximum;
-        hornIndx = playerHealth.beerAtStart;
-        stmIndx = playerHealth.staminaAtStart;
+        maxHP = playerStatus.healthMaximum;
+        hornIndx = playerStatus.beerAtStart;
+        stmIndx = playerStatus.staminaAtStart;
 
         UpdateStaminaMeter(); 
     }
 
     void Update() {
 
-        SetHealth(playerHealth.GetCurrentHealthRatio());
-        SetStamina(playerHealth.GetCurrentStamina());
-        SetBeer(playerHealth.GetCurrentBeer());
+        SetHealth(playerStatus.GetCurrentHealthRatio());
+        SetStamina(playerStatus.GetCurrentStamina());
+        SetBeer(playerStatus.GetCurrentBeer());
 
     }
 

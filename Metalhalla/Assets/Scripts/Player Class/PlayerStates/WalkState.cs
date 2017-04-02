@@ -7,8 +7,6 @@ public class WalkState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        Debug.Log("Walk.HandleInput()");
-
         if (input.newInput.GetVerticalInput() != 0 && status.climbLadderAvailable == true)
         {
             status.SetState(PlayerStatus.climb);

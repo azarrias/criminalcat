@@ -19,8 +19,6 @@ public class JumpState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        Debug.Log("Jump.HandleInput()");
-
         if (status.previousState != this)
             framesToJumpCount = 0;
 

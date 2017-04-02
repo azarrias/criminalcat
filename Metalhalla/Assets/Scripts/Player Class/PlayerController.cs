@@ -5,7 +5,6 @@ using System.Collections;
 [RequireComponent (typeof(PlayerStatus))]
 [RequireComponent (typeof(PlayerMove))]
 [RequireComponent (typeof(PlayerCollider))]
-[RequireComponent (typeof(PlayerHealth))]
 
 public class PlayerController : MonoBehaviour {
 
@@ -13,7 +12,6 @@ public class PlayerController : MonoBehaviour {
 	PlayerStatus     playerStatus;
 	PlayerMove  	 playerMove;
 	PlayerCollider   playerCollider;
-    PlayerHealth     playerHealth;
 	Animator		 playerAnimator;
 
 	void Start() {
@@ -21,7 +19,6 @@ public class PlayerController : MonoBehaviour {
 		playerStatus = GetComponent<PlayerStatus> ();
 		playerMove = GetComponent<PlayerMove> ();
 		playerCollider = GetComponent<PlayerCollider> ();
-        playerHealth = GetComponent<PlayerHealth> (); 
 		playerAnimator = GetComponent<Animator> ();
 	}
 
