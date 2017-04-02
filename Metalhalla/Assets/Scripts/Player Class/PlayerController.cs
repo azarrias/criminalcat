@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour {
 	PlayerInput 	 playerInput;
 	PlayerStatus     playerStatus;
 	PlayerMove  	 playerMove;
-	PlayerCollider  playerCollider;
+	PlayerCollider   playerCollider;
+    PlayerHealth     playerHealth;
 	Animator		 playerAnimator;
 
 	void Start() {
@@ -20,12 +21,13 @@ public class PlayerController : MonoBehaviour {
 		playerStatus = GetComponent<PlayerStatus> ();
 		playerMove = GetComponent<PlayerMove> ();
 		playerCollider = GetComponent<PlayerCollider> ();
+        playerHealth = GetComponent<PlayerHealth> (); 
 	//	playerAnimator = GetComponent<Animator> ();
 	}
 
 	void Update () {
 		playerInput.GetInput ();
-	}
+    }
 	void FixedUpdate (){
 		
 		playerStatus.statusUpdateAfterInput(playerInput);
