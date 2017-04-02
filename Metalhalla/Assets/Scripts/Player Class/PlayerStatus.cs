@@ -50,6 +50,7 @@ public class PlayerStatus : MonoBehaviour {
   
     }
 
+    //--- handled by each of the states
     public void statusUpdateAfterInput( PlayerInput input)
     {
         currentState.HandleInput(input, this); 
@@ -59,6 +60,17 @@ public class PlayerStatus : MonoBehaviour {
     {
         currentState.UpdateAfterCollisionCheck(collider, this); 
     }
+
+    // get animator parameters
+    public bool IsGrounded()
+    {
+        if (currentState == idle || currentState == walk)
+            return true;
+        else
+            return false;
+    }
+
+
 
 
     int CalculateFramesFromTime(float time) { return (int)(time / Time.fixedDeltaTime); }
@@ -77,37 +89,4 @@ public class PlayerStatus : MonoBehaviour {
         previousState = currentState;
         currentState = newState; 
     }
-
-    /*   
-       public void statusUpdateAfterInput(PlayerInput input) {
-
-               if (oldStatus.IsFallThroughCloudPlatform())
-               {
-                   if (framesToFallThroughCloudPlatformsCount <= framesToFallThroughCloudPlatforms)
-                   {
-                       newStatus.SetFallThroughCloudPlatform();
-                       framesToFallThroughCloudPlatformsCount++;
-                   }
-                   else
-                   {
-                       newStatus.SetFall();
-                       framesToFallThroughCloudPlatformsCount = 0;
-                   }
-                   return;
-               }
-           }
-       }
-
-       public void statusUpdateAfterCollisionCheck( PlayerCollider collider)
-       {
-           if (newStatus.IsFallThroughCloudPlatform()) // no vertical collisions here
-           {
-               newStatus.IsFallThroughCloudPlatform();
-               return;
-           }
-
-       }
-
-*/
-
 }

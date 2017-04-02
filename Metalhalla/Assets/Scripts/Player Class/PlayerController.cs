@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
 		playerMove = GetComponent<PlayerMove> ();
 		playerCollider = GetComponent<PlayerCollider> ();
         playerHealth = GetComponent<PlayerHealth> (); 
-	//	playerAnimator = GetComponent<Animator> ();
+		playerAnimator = GetComponent<Animator> ();
 	}
 
 	void Update () {
@@ -36,9 +36,11 @@ public class PlayerController : MonoBehaviour {
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
 
-		// send the animator the variables needed
-	//	playerAnimator.SetBool("inAir",!playerStatus.newStatus.IsGround());
-	//	playerAnimator.SetFloat("speed",Mathf.Abs(playerMove.speed.x));
+        // send the animator the variables needed
+        playerAnimator.SetBool("grounded",playerStatus.IsGrounded());
+        playerAnimator.SetFloat("horizontalSpeed",Mathf.Abs(playerMove.speed.x));
+        playerAnimator.SetFloat("verticalSpeed", playerMove.speed.y); 
+        
 
 	}
 

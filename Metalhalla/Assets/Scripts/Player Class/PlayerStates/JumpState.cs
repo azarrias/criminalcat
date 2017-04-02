@@ -16,7 +16,6 @@ public class JumpState : PlayerState
         framesToJumpMin = (int)(framesToJumpMax / 4);
 
     }
-   
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
