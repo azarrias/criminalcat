@@ -220,6 +220,11 @@ public class PlayerStatus : MonoBehaviour {
         return currentState == attack; 
     }
 
+    public bool IsDefending()
+    {
+        return currentState == defense; 
+    }
+
     int CalculateFramesFromTime(float time) {
         return (int)(time / Time.fixedDeltaTime);
     }

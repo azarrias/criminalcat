@@ -19,6 +19,12 @@ public class WalkState : PlayerState
             return; 
         }
 
+        if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true)
+        {
+            status.SetState(PlayerStatus.defense);
+            return; 
+        }
+
         if (input.newInput.GetJumpButtonDown() == true)
         {
             status.SetState(PlayerStatus.jump);

@@ -18,7 +18,14 @@ public class IdleState : PlayerState {
             status.SetState(PlayerStatus.attack);
             return; 
         }
-        
+
+        if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true)
+        {
+            status.SetState(PlayerStatus.defense);
+            return;
+        }
+
+
         if (input.newInput.GetJumpButtonDown() == true)
         {
             status.SetState(PlayerStatus.jump);

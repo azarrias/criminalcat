@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour {
 
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
-    [Header("Durations")]
+    [Header("Moveset Durations")]
     public float attackDuration = 0.400f; 
 
     [HideInInspector]
@@ -22,12 +22,15 @@ public class PlayerMove : MonoBehaviour {
 	public float xCurrentSpeed;
 	public void CalculateSpeed( PlayerInput input, PlayerStatus status )
 	{
+        // horizontal speed calculations
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         if (status.CanMoveHorizontally() == true)
             speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
         else
             speed.x = 0;
 
+
+        // vertical speed calculations
         if (status.currentState == PlayerStatus.idle)
         {
             speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
