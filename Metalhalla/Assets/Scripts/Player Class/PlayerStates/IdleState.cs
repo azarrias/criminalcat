@@ -13,16 +13,25 @@ public class IdleState : PlayerState {
             return; 
         }
 
+        if (input.newInput.GetAttackButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.attack);
+            return; 
+        }
+        
+        if (input.newInput.GetJumpButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.jump);
+            return;
+        }
+
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
         {
             status.SetState(PlayerStatus.walk); 
             status.Flip();
         }
 
-        if (input.newInput.GetJumpButtonDown() == true)
-        {
-            status.SetState(PlayerStatus.jump); 
-        }
+
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)

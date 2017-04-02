@@ -36,7 +36,8 @@ public class PlayerController : MonoBehaviour {
         // send the animator the variables needed
         playerAnimator.SetBool("grounded",playerStatus.IsGrounded());
         playerAnimator.SetFloat("horizontalSpeed",Mathf.Abs(playerMove.speed.x));
-        playerAnimator.SetFloat("verticalSpeed", playerMove.speed.y); 
+        playerAnimator.SetFloat("verticalSpeed", playerMove.speed.y);
+        playerAnimator.SetBool("attacking", playerStatus.IsAttacking()); 
         
 
 	}

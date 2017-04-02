@@ -64,7 +64,7 @@ public class PlayerStatus : MonoBehaviour {
         stamina = staminaAtStart;
         beer = beerAtStart;
 
-        attack =    new AttackState();
+        attack =    new AttackState(CalculateFramesFromTime(GetComponent<PlayerMove>().attackDuration));
         cast =      new CastState(); 
         climb =     new ClimbState();
         dead =      new DeadState();
@@ -199,10 +199,16 @@ public class PlayerStatus : MonoBehaviour {
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
     public bool IsGrounded()
     {
-        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill)
+        //TODO - improve with collider collisions
+        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill || currentState == attack)
             return true;
         else
             return false;
+    }
+
+    public bool IsAttacking()
+    {
+        return currentState == attack; 
     }
 
     int CalculateFramesFromTime(float time) {

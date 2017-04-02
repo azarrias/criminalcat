@@ -13,14 +13,21 @@ public class WalkState : PlayerState
             return;
         }
 
-
-        if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
-            status.Flip();
+        if (input.newInput.GetAttackButtonDown() == true )
+        {
+            status.SetState(PlayerStatus.attack);
+            return; 
+        }
 
         if (input.newInput.GetJumpButtonDown() == true)
         {
             status.SetState(PlayerStatus.jump);
+            return;
         }
+
+        if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+            status.Flip();
+
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
