@@ -23,22 +23,29 @@ public class PlayerMove : MonoBehaviour {
 	public void CalculateSpeed( PlayerInput input, PlayerStatus status )
 	{
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
-        speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
+        if (status.CanMoveHorizontally() == true)
+            speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
+        else
+            speed.x = 0;
 
-        
-        if (status.currentState == PlayerStatus.idle) { 
-			speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
-		}
-		if (status.currentState == PlayerStatus.jump) {
-			speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
-		}
-		if (status.currentState == PlayerStatus.fall ) {
-			speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
-		}
-        if (status.currentState == PlayerStatus.climb)
+        if (status.currentState == PlayerStatus.idle)
         {
-            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput(); 
+            speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
+        else if (status.currentState == PlayerStatus.jump)
+        {
+            speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
+        }
+        else if (status.currentState == PlayerStatus.fall)
+        {
+            speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+        }
+        else if (status.currentState == PlayerStatus.climb)
+        {
+            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+        }
+        else
+            speed.y = 0; 
     
 	}
 

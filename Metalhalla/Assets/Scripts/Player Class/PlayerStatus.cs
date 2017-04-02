@@ -206,6 +206,15 @@ public class PlayerStatus : MonoBehaviour {
             return false;
     }
 
+    public bool CanMoveHorizontally()
+    {
+        if (IsGrounded() == false)
+            return true;
+        if (currentState == idle || currentState == walk)
+            return true;
+        return false; 
+    }
+
     public bool IsAttacking()
     {
         return currentState == attack; 
