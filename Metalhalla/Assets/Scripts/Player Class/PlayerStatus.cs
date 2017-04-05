@@ -31,7 +31,8 @@ public class PlayerStatus : MonoBehaviour {
 
     [Header("Moveset Durations")]
     public float attackDuration = 0.400f;
-    public float refillDuration = 1.5f;
+    public float hitDuration = 0.5f;
+    public float refillDuration = 0.9f;
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
     public float respawnLatency = 3.0f; // time between dead and alive again
@@ -82,7 +83,7 @@ public class PlayerStatus : MonoBehaviour {
         drink = new DrinkState(CalculateFramesFromTime(drinkDuration));
         fall = new FallState();
         fallcloud = new FallCloudState(CalculateFramesFromTime(fallCloudDuration));
-        hit = new HitState();
+        hit = new HitState(CalculateFramesFromTime(hitDuration));
         idle = new IdleState();
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
         refill = new RefillState(CalculateFramesFromTime(refillDuration));
@@ -138,6 +139,7 @@ public class PlayerStatus : MonoBehaviour {
     public void ApplyDamage(int damage)
     {
         health -= damage;
+        SetState(hit);
         if (health <= 0)
             health = 0; // TODO: improve when making full player FSM
     }
@@ -252,6 +254,7 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsRefill() { return currentState == refill; }
     public bool IsDrink() { return currentState == drink;  }
     public bool IsClimb() { return currentState == climb; }
+    public bool IsHit() { return currentState == hit; }
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }

@@ -31,7 +31,7 @@ public class PlayerMove : MonoBehaviour {
         {
             speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
         }
-        else if (status.IsFall() || status.IsFallCloud())  
+        else if (status.IsFall() || status.IsFallCloud() || status.IsHit())  
         {
             speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
