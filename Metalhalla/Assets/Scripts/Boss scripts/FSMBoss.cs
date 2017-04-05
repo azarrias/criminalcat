@@ -6,10 +6,8 @@ public class FSMBoss {
     private enum State
     {
         START,
-        DAMAGED,
         DEAD,
         PATROL,
-        ATTACK_SELECTION,
         CHASE,
         MELEE_ATTACK,
         BALL_ATTACK,
@@ -28,12 +26,12 @@ public class FSMBoss {
     public bool atBallRange = false;
     public bool iceSpikesAttack = false;
     public bool ballAttack = false;   
-    public bool meleeAttack = false;
+    public bool meleeAttack = true; //starting attack
     public bool playerReachable = true;
 
     //damaged will be modified by the player
     public bool damaged = false;
-
+    public bool showIceSpikes = false;
     //orientation of the boss will be modified when entering triggers at the limits of the platform and when player is around
     public bool facingRight = true;
     private int numSpikeAttacks = 0;
@@ -69,58 +67,27 @@ public class FSMBoss {
         Debug.Log("state:" + currState + "  animation:" + animation + " " + "  facingRight:" + facingRight);
                   
         switch(currState)
-        {
-            case State.DAMAGED:
-                Damaged();
-                if(bossController.GetBossStats().hitPoints <= 0)
-                {
-                    currState = State.DEAD;
-                    break;
-                } 
-                if(!damaged)              
-                    currState = prevState;
-                break;
-
-            case State.DEAD:
-                Dead();
-                break;
-
+        {                       
             case State.PATROL:
                 Patrol();
                 if (playerInSight)
-                {                   
-                    currState = State.ATTACK_SELECTION;
+                {                               
+                    currState = State.CHASE;
                     break;
                 }                                  
                 break;
-
-            case State.ATTACK_SELECTION:
-                SelectAttack();                            
-                if(iceSpikesAttack)
+         
+            case State.CHASE:
+                if (bossController.GetBossStats().hitPoints <= 0)
                 {
-                    currState = State.ICE_SPIKES;
+                    currState = State.DEAD;
                     break;
                 }
-                if(!iceSpikesAttack)
-                {
-                    currState = State.CHASE;
-                    break;
-                }
-                break;
-
-            case State.CHASE:                
                 Chase();
-                if(!playerInSight)
-                {
-                    prevState = currState;
-                    currState = State.PATROL;
-                    break;
-                }
+                
                 if (damaged)
                 {
-                    prevState = currState;
-                    currState = State.DAMAGED;
-                    break;
+                    Damaged();
                 }
                 if(meleeAttack && atMeleeRange)
                 {
@@ -137,49 +104,74 @@ public class FSMBoss {
                     currState = State.STALK;
                     break;
                 }
+                if (!playerInSight)
+                {                    
+                    currState = State.PATROL;
+                    break;
+                }
                 break;
 
             case State.MELEE_ATTACK:
+                if(bossController.GetBossStats().hitPoints <= 0)
+                {
+                    currState = State.DEAD;
+                    break;
+                }
                 MeleeAttack();
                 if (damaged)
                 {
-                    prevState = currState;
-                    currState = State.DAMAGED;
-                    break;
+                    Damaged();                  
                 }
-                if (!meleeAttack)
+                if (!meleeAttack) //attack has finished
                 {
-                    currState = State.ATTACK_SELECTION;
-                    break;
+                    SelectAttack();
+                    if(iceSpikesAttack)
+                    {
+                        currState = State.ICE_SPIKES;
+                        break;
+                    }
+                    else
+                    {
+                        currState = State.CHASE;
+                        break;
+                    }                   
                 }
+
                 break;
 
             case State.BALL_ATTACK:
+                if (bossController.GetBossStats().hitPoints <= 0)
+                {
+                    currState = State.DEAD;
+                    break;
+                }
                 BallAttack();
                 if (damaged)
                 {
-                    prevState = currState;
-                    currState = State.DAMAGED;
-                    break;
+                    Damaged();                   
                 }
-                if (!ballAttack)
+                if (!ballAttack) //attack has finished
                 {
-                    currState = State.ATTACK_SELECTION;
-                    break;
+                    SelectAttack();
+                    if (iceSpikesAttack)
+                    {
+                        currState = State.ICE_SPIKES;
+                        break;
+                    }
+                    else
+                    {
+                        currState = State.CHASE;
+                        break;
+                    }
                 }
                 break;
 
             case State.ICE_SPIKES:
-                IceSpikesAttack();
-                if (damaged)
+                IceSpikesAttack();               
+                if (!iceSpikesAttack)  //attack has finished
                 {
-                    prevState = currState;
-                    currState = State.DAMAGED;
-                    break;
-                }
-                if (!iceSpikesAttack)
-                {
-                    currState = State.PATROL;
+                    SelectAttack();
+                    currState = State.CHASE;
                     break;
                 }
                 break;
@@ -193,20 +185,89 @@ public class FSMBoss {
                     break;
                 }
                 break;
+
+            case State.DEAD:
+                Dead();
+                break;
         }
        
     }
 
-    // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
+     
     public void Damaged()
     {
+        Debug.Log("Damaged");
+        bossController.GetTheBoss().GetComponent<BossStats>().DamageBoss(10);
         animation = "damaged";
+        //create damage effect
         damaged = false;
     }
 
+    public void SelectAttack()
+    {
+        if (bossController.GetBossStats().hitPoints > thresholdBallAttack * bossController.GetBossStats().maxHitPoints)
+        {
+            meleeAttack = true;
+        }
+        else
+        {
+            if (bossController.GetBossStats().hitPoints <= thresholdFirstSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 0)
+            {
+                iceSpikesAttack = true;
+            }
+
+            else if (bossController.GetBossStats().hitPoints <= thresholdSecondSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 1)
+            {
+                iceSpikesAttack = true;
+            }
+
+            else
+            {
+                System.Random rand = new System.Random();
+                int num = rand.Next(0, 2);
+                if (num == 0)
+                {
+                    meleeAttack = true;
+                    ballAttack = false;
+                }
+                if (num == 1)
+                {
+                    meleeAttack = false;
+                    ballAttack = true;
+                }
+            }
+
+        }
+
+    }
+    // -------------------------------------- DAMAGE THE BOSS --------------------------------------
+    public void DamageBoss(int damage)
+    {
+        if(currState != State.ICE_SPIKES && currState != State.STALK)
+        {
+            damaged = true;          
+        }
+    }
+
+    //---------------------------------------METHODS TO NOTIFY THE END OF THE ATTACK ANIMATIONS--------------------------------
+    public void FinishMeleeAttackAnimation()
+    {
+        meleeAttack = false;
+    }
+    public void FinishBallAttackAnimation()
+    {
+        ballAttack = false;
+    }
+    public void FinishSpikesAttackAnimation()
+    {
+        iceSpikesAttack = false;
+    }
+
+    // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     public void Dead()
     {
         animation = "dead";
+        //set animation in animator. Dead animation is executed once.
     }
 
     public void Patrol()
@@ -232,13 +293,17 @@ public class FSMBoss {
 
         bossController.GetTheBoss().transform.position = newPos;
 
-        animation = "walk";
+        if (animation != "walk")
+        {
+            animation = "walk";
+            //set animation in animator
+        }
     }
 
 	public void Chase()
 	{
-        if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
-        {
+       if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
+       {
             Vector3 newPos = bossController.GetTheBoss().transform.position;
             int diff = (int)(player.transform.position.x - newPos.x);
 
@@ -256,133 +321,119 @@ public class FSMBoss {
 
             bossController.GetTheBoss().transform.position = newPos;
         }
-        animation = "chase";
+        if(animation != "chase")
+        {
+            animation = "chase";
+            //set animation in animator
+        }
+        
     }
 
 	public void MeleeAttack()
 	{
-        animation = "melee attack";
-        meleeAttack = false;
+        if(animation != "melee attack")
+        {
+            animation = "melee attack";
+            //set animation in animator
+        }
+        //cuando acabe la animación se tiene que notificar con un animation event
+        FinishMeleeAttackAnimation();
 	}
 
 	public void BallAttack()
 	{
-        animation = "ball attack";
-        ballAttack = false;
+        if(animation != "ball attack")
+        {
+            animation = "ball attack";
+            //set animation in animator
+        }
+        //cuando acabe la animación se tiene que notificar con un animation event
+        FinishBallAttackAnimation();
 	}
 
 	public void IceSpikesAttack()
 	{
-        Vector3 bossPos = bossController.GetTheBoss().transform.position;
-
-        if(returningFromSpikesCast == false)
+        if (!showIceSpikes)
         {
-            float diff = spikesCastingSpot.x - bossPos.x;
-            if (diff > 0)
+            Vector3 bossPos = bossController.GetTheBoss().transform.position;
+            if (returningFromSpikesCast == false)
             {
-                if (facingRight == false)
+                float diff = spikesCastingSpot.x - bossPos.x;
+                if (diff > 0)
                 {
-                    //flip the boss
-                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
-                    scale.x *= -1;
-                    bossController.GetTheBoss().transform.localScale = scale;
-                    facingRight = true;
+                    if (facingRight == false)
+                    {
+                        //flip the boss
+                        Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                        scale.x *= -1;
+                        bossController.GetTheBoss().transform.localScale = scale;
+                        facingRight = true;
+                    }
+                }
+                if (diff < 0)
+                {
+                    if (facingRight == true)
+                    {
+                        //flip the boss
+                        Vector3 scale = bossController.GetTheBoss().transform.localScale;
+                        scale.x *= -1;
+                        bossController.GetTheBoss().transform.localScale = scale;
+                        facingRight = false;
+                    }
+
+                }
+
+                Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesCastingSpot, Time.deltaTime * castingPosSpeed);
+                Vector3 temp = bossController.GetTheBoss().transform.position;
+                temp = newPos;
+                bossController.GetTheBoss().transform.position = temp;
+
+                //DEBUG
+                //Debug.Log("Distance = " + Vector3.Distance(bossController.GetTheBoss().transform.position, spikesCastingSpot));
+
+                if (spikesCastingSpot.z - bossController.GetTheBoss().transform.position.z <= lerpPosThreshold)
+                {
+                    numSpikeAttacks++;
+                    animation = "spike attack";
+                    //start animation
+                    showIceSpikes = true;
+                    returningFromSpikesCast = true;
+                    
                 }
             }
-            if (diff < 0)
+
+            if (returningFromSpikesCast == true)
             {
-                if (facingRight == true)
+                Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesReturnSpot, Time.deltaTime * castingPosSpeed);
+                Vector3 temp = bossController.GetTheBoss().transform.position;
+                temp = newPos;
+                bossController.GetTheBoss().transform.position = temp;
+
+                //DEBUG
+                Debug.Log("Distance.z = " + (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z));
+
+                if (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z <= lerpPosThreshold)
                 {
-                    //flip the boss
-                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
-                    scale.x *= -1;
-                    bossController.GetTheBoss().transform.localScale = scale;
-                    facingRight = false;
+                    //Return to exact position
+                    bossController.GetTheBoss().transform.position = spikesReturnSpot;
+
+                    animation = "patrol";
+                    //cuando acabe la animación se tiene que setear a false
+                    FinishSpikesAttackAnimation();
+                    returningFromSpikesCast = false;
                 }
-
             }
 
-            Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesCastingSpot, Time.deltaTime * castingPosSpeed);
-            Vector3 temp = bossController.GetTheBoss().transform.position;
-            temp = newPos;
-            bossController.GetTheBoss().transform.position = temp;
-
-            //DEBUG
-            //Debug.Log("Distance = " + Vector3.Distance(bossController.GetTheBoss().transform.position, spikesCastingSpot));
-
-            if (spikesCastingSpot.z - bossController.GetTheBoss().transform.position.z <= lerpPosThreshold)
-            {
-                numSpikeAttacks++;
-                animation = "spike attack";                
-                returningFromSpikesCast = true;
-            }
         }
-
-        if(returningFromSpikesCast == true)
+        if(showIceSpikes)
         {
-            Vector3 newPos = Vector3.Lerp(bossController.GetTheBoss().transform.position, spikesReturnSpot, Time.deltaTime * castingPosSpeed);
-            Vector3 temp = bossController.GetTheBoss().transform.position;
-            temp = newPos;
-            bossController.GetTheBoss().transform.position = temp;
-
-            //DEBUG
-            Debug.Log("Distance.z = " + (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z));
-
-            if (bossController.GetTheBoss().transform.position.z - spikesReturnSpot.z <= lerpPosThreshold)
-            {
-                //Return to exact position
-                bossController.GetTheBoss().transform.position = spikesReturnSpot;
-               
-                animation = "patrol";
-                iceSpikesAttack = false;
-                returningFromSpikesCast = false;
-            }
-        }
-        
-        
+            //Sacar los pinchos y dejarlos durante un tiempo
+            showIceSpikes = false;                     
+        } 
     }
-
-    public void SelectAttack()
-    {
-        if(bossController.GetBossStats().hitPoints > thresholdBallAttack * bossController.GetBossStats().maxHitPoints)
-        {
-            meleeAttack = true;
-        }
-        else
-        {
-            if(bossController.GetBossStats().hitPoints <= thresholdFirstSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 0)
-            {
-                iceSpikesAttack = true;             
-            }
-
-            else if (bossController.GetBossStats().hitPoints <= thresholdSecondSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 1)
-            {
-                iceSpikesAttack = true;                
-            }
-
-            else
-            {
-                System.Random rand = new System.Random();
-                int num = rand.Next(0, 2);
-                if (num == 0)
-                {
-                    meleeAttack = true;
-                    ballAttack = false;
-                }
-                if (num == 1)
-                {
-                    meleeAttack = false;
-                    ballAttack = true;
-                }
-            }
-            
-        }
-
-    }
-
+    
     void Stalk()
     {
         animation = "stalk";
     }
-
 }
