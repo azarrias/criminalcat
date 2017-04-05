@@ -36,21 +36,21 @@ public class IdleState : PlayerState {
             return;
         }
 
-        if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+        //if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+        if (input.newInput.GetHorizontalInput() != 0)
         {
             status.SetState(PlayerStatus.walk); 
-            status.Flip();
             return;
         }
 
         status.SetState(this);
-        
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
     {
-        if (collider.collisions.below == false)
+        if (collider.IsGrounded() == false)
             status.SetState(PlayerStatus.fall);
+
     }
 
 }

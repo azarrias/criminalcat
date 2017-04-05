@@ -18,16 +18,16 @@ public class WalkState : PlayerState
             return;
         }
 
-        if (input.newInput.GetAttackButtonDown() == true )
+        if (input.newInput.GetAttackButtonDown() == true)
         {
             status.SetState(PlayerStatus.attack);
-            return; 
+            return;
         }
 
         if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true)
         {
             status.SetState(PlayerStatus.defense);
-            return; 
+            return;
         }
 
         if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
@@ -36,8 +36,15 @@ public class WalkState : PlayerState
             return;
         }
 
+        if (input.newInput.GetHorizontalInput() == 0)
+        { 
+            status.SetState(PlayerStatus.idle);
+            return;
+        }
+
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
+
 
         status.SetState(this);
 
@@ -45,7 +52,7 @@ public class WalkState : PlayerState
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
     {
-        if (collider.collisions.below == false)
+        if (collider.IsGrounded() == false)
             status.SetState(PlayerStatus.fall);
     }
 

@@ -14,7 +14,9 @@ public class PlayerMove : MonoBehaviour {
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
     [Header("Moveset Durations")]
-    public float attackDuration = 0.400f; 
+    public float attackDuration = 0.400f;
+    public float refillDuration = 1.5f;
+    public float drinkDuration = 0.5f;
 
     [HideInInspector]
 	public Vector3 speed;
@@ -31,7 +33,7 @@ public class PlayerMove : MonoBehaviour {
 
 
         // vertical speed calculations
-        if (status.currentState == PlayerStatus.idle)
+        if (status.IsIdle() || status.IsWalk())
         {
             speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }

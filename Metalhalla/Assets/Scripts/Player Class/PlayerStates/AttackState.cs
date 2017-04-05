@@ -18,6 +18,8 @@ public class AttackState : PlayerState
         if (status.previousState != this)
             attackFramesCount = 0;
 
+        // add attack routine here 
+
         if (attackFramesCount >= attackFramesDuration)
         {
             if (input.newInput.GetHorizontalInput() != 0)

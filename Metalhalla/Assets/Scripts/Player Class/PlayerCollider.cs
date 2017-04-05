@@ -178,7 +178,12 @@ public class PlayerCollider : MonoBehaviour {
         return true;
     }
 
-	struct RaycastOrigins {
+    public bool IsGrounded()
+    {
+        return collisions.below == true;
+    }
+
+    struct RaycastOrigins {
 		public Vector2 topLeft, topRight;
 		public Vector2 bottomLeft, bottomRight;
 	}

@@ -34,19 +34,19 @@ public class PlayerStatus : MonoBehaviour {
     public static CastState cast;
     public static ClimbState climb;
     public static DeadState dead;
-    public static DefenseState defense; 
+    public static DefenseState defense;
     public static DrinkState drink;
     public static FallState fall;
     public static HitState hit;
     public static IdleState idle;
     public static JumpState jump;
-    public static RefillState refill; 
+    public static RefillState refill;
     public static WalkState walk;
 
     [HideInInspector]
     public PlayerState currentState;
     [HideInInspector]
-    public PlayerState previousState; 
+    public PlayerState previousState;
 
     int framesToFallThroughCloudPlatforms;
     int framesToFallThroughCloudPlatformsCount;
@@ -54,7 +54,7 @@ public class PlayerStatus : MonoBehaviour {
     [HideInInspector]
     public bool facingRight;
     [HideInInspector]
-    public bool jumpAvailable; 
+    public bool jumpAvailable;
     [HideInInspector]
     public bool climbLadderAvailable;
     [HideInInspector]
@@ -66,26 +66,26 @@ public class PlayerStatus : MonoBehaviour {
         stamina = staminaAtStart;
         beer = beerAtStart;
 
-        attack =    new AttackState(CalculateFramesFromTime(GetComponent<PlayerMove>().attackDuration));
-        cast =      new CastState(); 
-        climb =     new ClimbState();
-        dead =      new DeadState();
-        defense =   new DefenseState(); 
-        drink =     new DrinkState(); 
-        fall =      new FallState();
-        hit =       new HitState();
-        idle =      new IdleState();
-        jump =      new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
-        refill =    new RefillState(); 
-        walk =      new WalkState();
+        attack = new AttackState(CalculateFramesFromTime(GetComponent<PlayerMove>().attackDuration));
+        cast = new CastState();
+        climb = new ClimbState();
+        dead = new DeadState();
+        defense = new DefenseState();
+        drink = new DrinkState(CalculateFramesFromTime(GetComponent<PlayerMove>().drinkDuration));
+        fall = new FallState();
+        hit = new HitState();
+        idle = new IdleState();
+        jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
+        refill = new RefillState(CalculateFramesFromTime(GetComponent<PlayerMove>().refillDuration));
+        walk = new WalkState();
 
-        SetState(idle); 
+        SetState(idle);
 
         facingRight = true;
         jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
-  
+
     }
 
     // TODO - Remove this method when finished testing
@@ -107,20 +107,20 @@ public class PlayerStatus : MonoBehaviour {
 
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
-    public void statusUpdateAfterInput( PlayerInput input)
+    public void statusUpdateAfterInput(PlayerInput input)
     {
-        currentState.HandleInput(input, this); 
+        currentState.HandleInput(input, this);
     }
 
-    public void statusUpdateAfterCollisionCheck( PlayerCollider collider )
+    public void statusUpdateAfterCollisionCheck(PlayerCollider collider)
     {
-        currentState.UpdateAfterCollisionCheck(collider, this); 
+        currentState.UpdateAfterCollisionCheck(collider, this);
     }
 
-    public void SetState( PlayerState newState)
+    public void SetState(PlayerState newState)
     {
         previousState = currentState;
-        currentState = newState; 
+        currentState = newState;
     }
 
 
@@ -150,7 +150,7 @@ public class PlayerStatus : MonoBehaviour {
     }
 
     // ---- STAMINA functions ---------------------------------------------------------------------------------------------
-        public bool ConsumeStamina(int consumption)
+    public bool ConsumeStamina(int consumption)
     {
         if (stamina < consumption) // cannot use magic
             return false;
@@ -215,17 +215,7 @@ public class PlayerStatus : MonoBehaviour {
             return true;
         if (currentState == idle || currentState == walk)
             return true;
-        return false; 
-    }
-
-    public bool IsAttacking()
-    {
-        return currentState == attack; 
-    }
-
-    public bool IsDefending()
-    {
-        return currentState == defense; 
+        return false;
     }
 
     int CalculateFramesFromTime(float time) {
@@ -240,5 +230,16 @@ public class PlayerStatus : MonoBehaviour {
         transform.localScale = tmp;
 
     }
+
+    // BOOLEAN STATE FUNCIONS
+    public bool IsIdle() { return currentState == idle; }
+    public bool IsWalk() { return currentState == walk; }
+    public bool IsCast() { return currentState == cast; }
+    public bool IsAttack() { return currentState == attack; }
+    public bool IsDefense() { return currentState == defense; }
+    public bool IsJump() { return currentState == jump; }
+    public bool IsFall() { return currentState == fall; }
+    public bool IsRefill() { return currentState == refill; }
+    public bool IsDrink() { return currentState == drink;  }
 
 }
