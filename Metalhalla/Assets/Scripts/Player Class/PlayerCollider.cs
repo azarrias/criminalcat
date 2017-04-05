@@ -172,7 +172,7 @@ public class PlayerCollider : MonoBehaviour {
             Vector2 rayOrigin = raycastOrigins.bottomLeft;
             rayOrigin += Vector2.right * (verticalRaySpacing * i);
             RaycastHit hitinfo;
-            if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth, onlyCloudCollisionMask))
+            if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth*2, onlyCloudCollisionMask))
                 return true;
         }
         return false;
