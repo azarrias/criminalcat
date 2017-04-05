@@ -99,7 +99,7 @@ public class PlayerStatus : MonoBehaviour {
             ConsumeStamina(7);  // like a cast
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
-        if (Input.GetKeyDown(KeyCode.F5) == true || Input.GetButtonDown("Context") == true)
+        if (Input.GetKeyDown(KeyCode.F5) == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
             RefillBeer(5);

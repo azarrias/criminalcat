@@ -4,12 +4,7 @@ using UnityEngine;
 
 public class LadderScript : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
-    private void OnTriggerStay(Collider collision)
+	private void OnTriggerStay(Collider collision)
     {
         if (collision.tag == "Player")
         {
