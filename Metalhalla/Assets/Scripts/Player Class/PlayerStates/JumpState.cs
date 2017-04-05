@@ -22,7 +22,7 @@ public class JumpState : PlayerState
         if (status.previousState != this)
             framesToJumpCount = 0;
 
-        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() != 0)
+        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0)
             status.SetState(PlayerStatus.climb);
         else
         {
