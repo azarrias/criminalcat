@@ -36,7 +36,20 @@ public class IdleState : PlayerState {
             return;
         }
 
-        //if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+        if (input.newInput.GetContextButtonDown() == true)
+        {
+            if (status.beerRefillAvailable == true)
+            {
+                status.SetState(PlayerStatus.refill);
+                return;
+            }
+            else
+            {
+                status.SetState(PlayerStatus.drink);
+                return;
+            }
+        }
+
         if (input.newInput.GetHorizontalInput() != 0)
         {
             status.SetState(PlayerStatus.walk); 

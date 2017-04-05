@@ -43,9 +43,10 @@ public class PlayerController : MonoBehaviour {
         playerAnimator.SetBool("walk", playerStatus.IsWalk());
         playerAnimator.SetBool("jump", playerStatus.IsJump());
         playerAnimator.SetBool("fall", playerStatus.IsFall());
-
         playerAnimator.SetBool("attack", playerStatus.IsAttack());
         playerAnimator.SetBool("defense", playerStatus.IsDefense());
+        playerAnimator.SetBool("refill", playerStatus.IsRefill());
+        playerAnimator.SetBool("drink", playerStatus.IsDrink());
         
 
 	}

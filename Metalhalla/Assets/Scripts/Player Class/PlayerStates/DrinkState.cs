@@ -15,9 +15,14 @@ public class DrinkState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             drinkFramesCount = 0;
-
-        // add beer consumption code here
+            if (status.ConsumeBeer(1) == false) 
+            {
+                status.SetState(PlayerStatus.idle);
+                return;
+            }
+        }
 
         if (drinkFramesCount >= drinkFramesDuration)
         {

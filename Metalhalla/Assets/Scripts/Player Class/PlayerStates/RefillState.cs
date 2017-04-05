@@ -15,9 +15,16 @@ public class RefillState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             refillFramesCount = 0;
+            if (status.RefillBeer(5) == false)
+            {
+                status.SetState(PlayerStatus.idle);
+                return;
+            }
+        }
 
-        // add beer refill code here
+        
 
         if (refillFramesCount >= refillFramesDuration)
         {
