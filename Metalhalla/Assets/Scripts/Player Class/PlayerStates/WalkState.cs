@@ -12,6 +12,7 @@ public class WalkState : PlayerState
         else if (status.jumpAvailable == false && input.newInput.GetJumpButtonHeld() == false)
             status.jumpAvailable = true;
 
+
         if (input.newInput.GetVerticalInput() != 0 && status.climbLadderAvailable == true)
         {
             status.SetState(PlayerStatus.climb);
@@ -32,8 +33,16 @@ public class WalkState : PlayerState
 
         if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
         {
-            status.SetState(PlayerStatus.jump);
-            return;
+            if (input.newInput.GetVerticalInput() < 0 && status.GetComponent<PlayerCollider>().PlayerAboveCloudPlatform() == true)
+            {
+                status.SetState(PlayerStatus.fallcloud);
+                return;
+            }
+            else
+            {
+                status.SetState(PlayerStatus.jump);
+                return;
+            }
         }
 
         if( input.newInput.GetContextButtonDown() == true )

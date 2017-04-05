@@ -33,16 +33,11 @@ public class PlayerController : MonoBehaviour {
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
 		playerMove.Move ();
 
-        // send the animator the variables needed
-/*        playerAnimator.SetBool("grounded",playerStatus.IsGrounded());
-        playerAnimator.SetFloat("horizontalSpeed",Mathf.Abs(playerMove.speed.x));
-        playerAnimator.SetFloat("verticalSpeed", playerMove.speed.y);
-        */
-
+        // pass variables to the animator 
         playerAnimator.SetBool("idle", playerStatus.IsIdle());
         playerAnimator.SetBool("walk", playerStatus.IsWalk());
         playerAnimator.SetBool("jump", playerStatus.IsJump());
-        playerAnimator.SetBool("fall", playerStatus.IsFall());
+        playerAnimator.SetBool("fall", playerStatus.IsFall() || playerStatus.IsFallCloud());
         playerAnimator.SetBool("attack", playerStatus.IsAttack());
         playerAnimator.SetBool("defense", playerStatus.IsDefense());
         playerAnimator.SetBool("refill", playerStatus.IsRefill());

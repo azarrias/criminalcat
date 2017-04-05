@@ -33,6 +33,7 @@ public class PlayerStatus : MonoBehaviour {
     public float attackDuration = 0.400f;
     public float refillDuration = 1.5f;
     public float drinkDuration = 0.5f;
+    public float fallCloudDuration = 0.3f;
     public float respawnLatency = 3.0f; // time between dead and alive again
 
     // -- State variables (using state pattern)
@@ -43,6 +44,7 @@ public class PlayerStatus : MonoBehaviour {
     public static DefenseState defense;
     public static DrinkState drink;
     public static FallState fall;
+    public static FallCloudState fallcloud;
     public static HitState hit;
     public static IdleState idle;
     public static JumpState jump;
@@ -79,6 +81,7 @@ public class PlayerStatus : MonoBehaviour {
         defense = new DefenseState();
         drink = new DrinkState(CalculateFramesFromTime(drinkDuration));
         fall = new FallState();
+        fallcloud = new FallCloudState(CalculateFramesFromTime(fallCloudDuration));
         hit = new HitState();
         idle = new IdleState();
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
@@ -245,8 +248,12 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsDefense() { return currentState == defense; }
     public bool IsJump() { return currentState == jump; }
     public bool IsFall() { return currentState == fall; }
+    public bool IsFallCloud() { return currentState == fallcloud; }
     public bool IsRefill() { return currentState == refill; }
     public bool IsDrink() { return currentState == drink;  }
     public bool IsClimb() { return currentState == climb; }
+
+    public bool WasIdle() { return previousState == idle; }
+    public bool WasWalk() { return previousState == walk; }
 
 }

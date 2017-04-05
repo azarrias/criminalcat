@@ -26,13 +26,12 @@ public class PlayerMove : MonoBehaviour {
         else
             speed.x = 0;
 
-
         // vertical speed calculations
         if (status.IsJump())
         {
             speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
         }
-        else if (status.IsFall())  // TODO: add attack & hit states
+        else if (status.IsFall() || status.IsFallCloud())  
         {
             speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }

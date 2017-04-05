@@ -15,6 +15,7 @@ public class FallState : PlayerState
 
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
+
         status.SetState(this); 
     }
 
