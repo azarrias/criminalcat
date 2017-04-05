@@ -68,17 +68,15 @@ public class CameraFollow : MonoBehaviour
 
         if (activeTracking == true)
         {
-            //      Vector3 cameraPosition = Vector3.MoveTowards(transform.position, player.transform.position, Time.fixedDeltaTime *2);
-            //      cameraPosition.z = distanceFromPlayer;
             Vector3 cameraPosition = transform.position;
 
             if (playerPosition.x > limitLeft && playerPosition.x < limitRight)
                 cameraPosition.x = playerPosition.x;
             else
             {
-                if (playerPosition.x < limitLeft && cameraPosition.x > limitLeft)
+                if (playerPosition.x < limitLeft && Mathf.Abs(cameraPosition.x - limitLeft) > 0.1f)
                     cameraPosition.x = limitLeft;
-                else if (playerPosition.x > limitRight && cameraPosition.x < limitRight)
+                else if (playerPosition.x > limitRight && Mathf.Abs(cameraPosition.x - limitRight) > 0.1f)
                     cameraPosition.x = limitRight;
             }
 
@@ -86,14 +84,16 @@ public class CameraFollow : MonoBehaviour
                 cameraPosition.y = playerPosition.y;
             else
             {
-                if (playerPosition.y > limitTop && cameraPosition.y < limitTop)
+                if (playerPosition.y > limitTop && Mathf.Abs(cameraPosition.y - limitTop) > 0.1f)
                     cameraPosition.y = limitTop;
-                else if (playerPosition.y < limitBottom && cameraPosition.y > limitBottom)
-
+                else if (playerPosition.y < limitBottom && Mathf.Abs(cameraPosition.y - limitBottom) > 0.1f)
                     cameraPosition.y = limitBottom;
             }
+
             transform.position = cameraPosition;
-            CorrectOutOfBounds();
+
+     //       CorrectOutOfBounds();
+
             lastCameraPositionBeforeActiveTracking = transform.position;
         }
         else
@@ -101,10 +101,8 @@ public class CameraFollow : MonoBehaviour
             if (lastTargetPosition != GetTargetPosition())
             {
                 lastTargetPosition = GetTargetPosition();
-                Debug.Log("last targetpos changed for: (" + lastTargetPosition); 
-                lastCameraPositionBeforeActiveTracking = transform.position;
             }
-            transitionThreshold = Vector3.Distance(lastCameraPositionBeforeActiveTracking, lastTargetPosition) /10;
+            transitionThreshold = Vector3.Distance(lastCameraPositionBeforeActiveTracking, lastTargetPosition) /8;
             MoveCamera( lastTargetPosition, transitionSpeed);
         }
 
@@ -184,8 +182,6 @@ public class CameraFollow : MonoBehaviour
     IEnumerator MoveToNextScene( Vector3 targetPos, float moveSpeed)
     {
         activeTracking = false;
-
-        //Assumes 2D usage
 
         while (Vector3.Distance(transform.position, targetPos)> transitionThreshold)
         {
