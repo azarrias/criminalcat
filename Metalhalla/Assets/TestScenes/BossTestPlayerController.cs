@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController2 : MonoBehaviour {
+public class BossTestPlayerController : MonoBehaviour {
 
     private string horizontalAxis = "Horizontal";
     public float speed = 6.0f;
