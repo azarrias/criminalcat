@@ -54,6 +54,8 @@ public class PlayerStatus : MonoBehaviour {
     [HideInInspector]
     public bool facingRight;
     [HideInInspector]
+    public bool jumpAvailable; 
+    [HideInInspector]
     public bool climbLadderAvailable;
     [HideInInspector]
     public bool beerRefillAvailable;
@@ -80,6 +82,7 @@ public class PlayerStatus : MonoBehaviour {
         SetState(idle); 
 
         facingRight = true;
+        jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
   
