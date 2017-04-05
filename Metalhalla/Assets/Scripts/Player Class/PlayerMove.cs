@@ -1,0 +1,60 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class PlayerMove : MonoBehaviour {
+
+    [Header("Basic move, jump & gravity Setup")]
+    public float moveSpeed = 5;
+	public float gravity = 40f;
+	public float jumpSpeed = 1.8f;
+	public float timeToJumpApex = 0.2f;
+
+	public float xSpeedChangeSpeed = 0.99f;
+
+    public float timeToFallThroughCloudPlatforms = 0.1f;
+
+    [Header("Moveset Durations")]
+    public float attackDuration = 0.400f;
+    public float refillDuration = 1.5f;
+    public float drinkDuration = 0.5f;
+
+    [HideInInspector]
+	public Vector3 speed;
+	[HideInInspector]
+	public float xCurrentSpeed;
+	public void CalculateSpeed( PlayerInput input, PlayerStatus status )
+	{
+        // horizontal speed calculations
+        //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        if (status.CanMoveHorizontally() == true)
+            speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
+        else
+            speed.x = 0;
+
+
+        // vertical speed calculations
+        if (status.IsIdle() || status.IsWalk())
+        {
+            speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+        }
+        else if (status.currentState == PlayerStatus.jump)
+        {
+            speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
+        }
+        else if (status.currentState == PlayerStatus.fall)
+        {
+            speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+        }
+        else if (status.currentState == PlayerStatus.climb)
+        {
+            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+        }
+        else
+            speed.y = 0; 
+    
+	}
+
+	public void Move(){
+		transform.Translate (speed);
+	}
+}

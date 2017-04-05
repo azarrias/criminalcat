@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class myPlayerInteractor : MonoBehaviour {
+public class PlayerInteractor : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

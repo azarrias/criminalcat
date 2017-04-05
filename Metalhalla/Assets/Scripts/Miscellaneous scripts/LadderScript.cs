@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class LadderScript : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
-    private void OnTriggerStay(Collider collision)
+	private void OnTriggerStay(Collider collision)
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<myPlayerStatus>().climbLadderAvailable = true;
+            collision.GetComponent<PlayerStatus>().climbLadderAvailable = true;
         }
     }
 
@@ -21,7 +16,7 @@ public class LadderScript : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<myPlayerStatus>().climbLadderAvailable = false;
+            collision.GetComponent<PlayerStatus>().climbLadderAvailable = false;
         }
     }
 }
