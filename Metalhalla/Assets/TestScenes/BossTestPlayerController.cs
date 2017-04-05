@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController2 : MonoBehaviour {
+public class BossTestPlayerController : MonoBehaviour {
 
     private string horizontalAxis = "Horizontal";
     public float speed = 6.0f;
@@ -40,8 +40,7 @@ public class PlayerController2 : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
-            bossController.GetTheBoss().GetComponent<BossStats>().DamageBoss(10);
-            bossController.GetFSMBoss().damaged = true;
+            bossController.DamageBoss(10);            
         }
 
         //Change camera
