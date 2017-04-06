@@ -52,9 +52,7 @@ public class BossController : MonoBehaviour {
     {
         fsmBoss.Update();
     }
-
-    //---------------- DELEGATE INTERACTION WITH THE BOSS STATS TO THE FSM -----------------------
-
+  
     public void DamageBoss(int damage)
     {
         fsmBoss.DamageBoss(damage);

@@ -21,11 +21,27 @@ public class OnPlatform : MonoBehaviour {
 		
 	}
 
-    void OnCollisionEnter(Collision collision)
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        bossController.GetFSMBoss().playerReachable = false;
+    //    }
+    //}
+
+    void OnTriggerEnter(Collider collider)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if(collider.CompareTag("Player"))
         {
             bossController.GetFSMBoss().playerReachable = false;
+        }
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            bossController.GetFSMBoss().playerReachable = true;
         }
     }
 }

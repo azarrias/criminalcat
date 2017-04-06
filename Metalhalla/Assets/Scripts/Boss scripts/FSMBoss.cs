@@ -191,9 +191,10 @@ public class FSMBoss {
 
             case State.STALK:
                 Stalk();
-                if(player.transform.position.y <= bossController.detectionHeight)
+                //if(player.transform.position.y <= bossController.detectionHeight)
+                if(playerReachable)
                 {
-                    playerReachable = true;
+                    //playerReachable = true;
                     currState = State.CHASE;
                     break;
                 }
@@ -205,8 +206,7 @@ public class FSMBoss {
         }
        
     }
-
-     
+    // ---------------------------- METHODS NOT RELATED TO STATES
     public void Damaged()
     {
         Debug.Log("Damaged");
@@ -254,17 +254,19 @@ public class FSMBoss {
         }
 
     }
+
     // -------------------------------------- DAMAGE THE BOSS --------------------------------------
     public void DamageBoss(int damage)
     {
-        if(
-            currState != State.PREPARE_CAST && currState != State.CAST_ICE_SPIKES && 
+
+        if (
+            currState != State.PREPARE_CAST && currState != State.CAST_ICE_SPIKES &&
             currState != State.BACK_TO_CENTER && currState != State.STALK
            )
         {
             //test delay
             Delay(1f);
-            damaged = true;          
+            damaged = true;
         }
     }
 
