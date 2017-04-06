@@ -11,6 +11,7 @@ public class BossController : MonoBehaviour {
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject thePlayer = null;
+    private Animator bossAnimator = null;
     public float spikesAttackBossDepth = 1.5f;
     public float detectionHeight = 3.0f;
 
@@ -27,6 +28,10 @@ public class BossController : MonoBehaviour {
         thePlayer = GameObject.FindGameObjectWithTag("Player");
         if (thePlayer == null)
             Debug.LogError("Error: player not found.");
+
+        bossAnimator = theBoss.GetComponent<Animator>();
+        if (bossAnimator == null)
+            Debug.LogError("Error: animator not found.");
     }
 		
 	// Use this for initialization
@@ -40,12 +45,12 @@ public class BossController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-	
-	}
+       
+    }
 
     void FixedUpdate()
     {
-      fsmBoss.Update();
+        fsmBoss.Update();
     }
 
     //---------------- DELEGATE INTERACTION WITH THE BOSS STATS TO THE FSM -----------------------
@@ -75,6 +80,11 @@ public class BossController : MonoBehaviour {
     public GameObject GetThePlayer()
     {
         return thePlayer;
+    }
+
+    public Animator GetBossAnimator()
+    {
+        return bossAnimator;
     }
 
 }
