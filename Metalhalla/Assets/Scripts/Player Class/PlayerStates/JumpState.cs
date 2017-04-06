@@ -22,31 +22,32 @@ public class JumpState : PlayerState
         if (status.previousState != this)
             framesToJumpCount = 0;
 
-        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() != 0)
+        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0)
+        {
             status.SetState(PlayerStatus.climb);
+            return;
+        }
+
+        if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+            status.Flip();
+
+
+        if (input.newInput.GetJumpButtonHeld() && (framesToJumpCount <= framesToJumpMax))
+        {
+            status.SetState(this);
+            framesToJumpCount++;
+        }
         else
         {
-            if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
-                status.Flip();
-
-
-            if (input.newInput.GetJumpButtonHeld() && (framesToJumpCount <= framesToJumpMax))
+            if (framesToJumpCount > framesToJumpMin)
             {
-                status.SetState(this);
-                framesToJumpCount++;
+                status.SetState(PlayerStatus.fall);
+                framesToJumpCount = 0;
             }
             else
             {
-                if (framesToJumpCount > framesToJumpMin)
-                {
-                    status.SetState(PlayerStatus.fall);
-                    framesToJumpCount = 0;
-                }
-                else
-                {
-                    status.SetState(this);
-                    framesToJumpCount++;
-                }
+                status.SetState(this);
+                framesToJumpCount++;
             }
         }
     }

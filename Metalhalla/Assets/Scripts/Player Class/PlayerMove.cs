@@ -13,11 +13,6 @@ public class PlayerMove : MonoBehaviour {
 
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
-    [Header("Moveset Durations")]
-    public float attackDuration = 0.400f;
-    public float refillDuration = 1.5f;
-    public float drinkDuration = 0.5f;
-
     [HideInInspector]
 	public Vector3 speed;
 	[HideInInspector]
@@ -31,28 +26,23 @@ public class PlayerMove : MonoBehaviour {
         else
             speed.x = 0;
 
-
         // vertical speed calculations
-        if (status.IsIdle() || status.IsWalk())
-        {
-            speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
-        }
-        else if (status.currentState == PlayerStatus.jump)
+        if (status.IsJump())
         {
             speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
         }
-        else if (status.currentState == PlayerStatus.fall)
+        else if (status.IsFall() || status.IsFallCloud() || status.IsHit())  
         {
             speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
-        else if (status.currentState == PlayerStatus.climb)
+        else if (status.IsClimb())
         {
             speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
         }
-        else
-            speed.y = 0; 
-    
-	}
+        else 
+            speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+
+    }
 
 	public void Move(){
 		transform.Translate (speed);

@@ -7,6 +7,7 @@ public class PlayerCollider : MonoBehaviour {
 
 	public LayerMask noCloudCollisionMask;
 	public LayerMask generalCollisionMask;
+    public LayerMask onlyCloudCollisionMask;
 
 	const float skinWidth = .05f;
 	public int horizontalRayCount = 4;
@@ -94,25 +95,25 @@ public class PlayerCollider : MonoBehaviour {
 		for (int i = 0; i < verticalRayCount; i++) {
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + speed.x);
-            //RaycastHit2D hit;
+            
             RaycastHit hit;
             bool has_hit = false;
 
-            //modifications for cloud platforms
-            //if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
-            if (directionY < 0 )
+            
+            
+            /*if (directionY < 0 )
                 has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
             else
                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);
-            /*
-            if (directionY < 0 && status.newStatus.IsFallThroughCloudPlatform() == false)
-                hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, generalCollisionMask);
+            */
+            if (directionY < 0 && status.IsFallCloud() == false )
+                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
             else
-                hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, noCloudCollisionMask);
-                */
+                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);
+
             Debug.DrawRay (rayOrigin, Vector2.up*directionY *rayLength , Color.red);
 
-//			if (hit) {
+
             if(has_hit )
             { 
 				speed.y = (hit.distance - skinWidth) * directionY;
@@ -166,16 +167,15 @@ public class PlayerCollider : MonoBehaviour {
 
     public bool PlayerAboveCloudPlatform()
     {
-        
         for (int i = 0; i < verticalRayCount; i++)
         {
             Vector2 rayOrigin = raycastOrigins.bottomLeft;
             rayOrigin += Vector2.right * (verticalRaySpacing * i);
-            RaycastHit2D hit =  Physics2D.Raycast(rayOrigin, -Vector2.up, skinWidth, noCloudCollisionMask);
-            if (hit)
-                return false;
+            RaycastHit hitinfo;
+            if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth*2, onlyCloudCollisionMask))
+                return true;
         }
-        return true;
+        return false;
     }
 
     public bool IsGrounded()

@@ -29,6 +29,14 @@ public class PlayerStatus : MonoBehaviour {
     public int beerHealthRecovery = 20;
     int beer;
 
+    [Header("Moveset Durations")]
+    public float attackDuration = 0.400f;
+    public float hitDuration = 0.5f;
+    public float refillDuration = 0.9f;
+    public float drinkDuration = 0.5f;
+    public float fallCloudDuration = 0.3f;
+    public float respawnLatency = 3.0f; // time between dead and alive again
+
     // -- State variables (using state pattern)
     public static AttackState attack;
     public static CastState cast;
@@ -37,6 +45,7 @@ public class PlayerStatus : MonoBehaviour {
     public static DefenseState defense;
     public static DrinkState drink;
     public static FallState fall;
+    public static FallCloudState fallcloud;
     public static HitState hit;
     public static IdleState idle;
     public static JumpState jump;
@@ -66,17 +75,18 @@ public class PlayerStatus : MonoBehaviour {
         stamina = staminaAtStart;
         beer = beerAtStart;
 
-        attack = new AttackState(CalculateFramesFromTime(GetComponent<PlayerMove>().attackDuration));
+        attack = new AttackState(CalculateFramesFromTime(attackDuration));
         cast = new CastState();
         climb = new ClimbState();
         dead = new DeadState();
         defense = new DefenseState();
-        drink = new DrinkState(CalculateFramesFromTime(GetComponent<PlayerMove>().drinkDuration));
+        drink = new DrinkState(CalculateFramesFromTime(drinkDuration));
         fall = new FallState();
-        hit = new HitState();
+        fallcloud = new FallCloudState(CalculateFramesFromTime(fallCloudDuration));
+        hit = new HitState(CalculateFramesFromTime(hitDuration));
         idle = new IdleState();
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
-        refill = new RefillState(CalculateFramesFromTime(GetComponent<PlayerMove>().refillDuration));
+        refill = new RefillState(CalculateFramesFromTime(refillDuration));
         walk = new WalkState();
 
         SetState(idle);
@@ -129,6 +139,7 @@ public class PlayerStatus : MonoBehaviour {
     public void ApplyDamage(int damage)
     {
         health -= damage;
+        SetState(hit);
         if (health <= 0)
             health = 0; // TODO: improve when making full player FSM
     }
@@ -239,7 +250,13 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsDefense() { return currentState == defense; }
     public bool IsJump() { return currentState == jump; }
     public bool IsFall() { return currentState == fall; }
+    public bool IsFallCloud() { return currentState == fallcloud; }
     public bool IsRefill() { return currentState == refill; }
     public bool IsDrink() { return currentState == drink;  }
+    public bool IsClimb() { return currentState == climb; }
+    public bool IsHit() { return currentState == hit; }
+
+    public bool WasIdle() { return previousState == idle; }
+    public bool WasWalk() { return previousState == walk; }
 
 }

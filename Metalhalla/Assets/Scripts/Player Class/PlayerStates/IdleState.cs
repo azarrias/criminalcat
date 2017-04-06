@@ -32,8 +32,16 @@ public class IdleState : PlayerState {
 
         if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
         {
-            status.SetState(PlayerStatus.jump);
-            return;
+            if (input.newInput.GetVerticalInput() < 0 && status.GetComponent<PlayerCollider>().PlayerAboveCloudPlatform() == true)
+            {
+                status.SetState(PlayerStatus.fallcloud);
+                return;
+            }
+            else
+            {
+                status.SetState(PlayerStatus.jump);
+                return;
+            }
         }
 
         if (input.newInput.GetContextButtonDown() == true)
