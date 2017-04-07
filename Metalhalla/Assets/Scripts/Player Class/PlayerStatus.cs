@@ -3,6 +3,10 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour {
 
+    // colliders
+    [Header("Colliders")]
+    public BoxCollider attackCollider;
+
     // health variables
     [Header("Health Setup")]
     [Tooltip("Health start value")]
@@ -71,6 +75,8 @@ public class PlayerStatus : MonoBehaviour {
 
     void Start()
     {
+        attackCollider.enabled = false;
+
         health = healthAtStart;
         stamina = staminaAtStart;
         beer = beerAtStart;
