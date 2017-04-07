@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PlayerAttackColliderBehaviour : MonoBehaviour {
 
+    public LayerMask hittableLayer;
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("enemy"))
+        if ( hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))
             Destroy(other.gameObject);
     }
 }
