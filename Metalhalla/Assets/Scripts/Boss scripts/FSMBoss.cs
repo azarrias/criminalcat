@@ -55,7 +55,7 @@ public class FSMBoss : ScriptableObject
 
     public string animation = "Patrol"; //start animation
     public bool nextAnimation = false;
-
+    private int prevDiff = 0;
     // ------------------------------------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ---------------------------------------------------
     private int patrolCounter = 0;
     private int chaseCounter = 0;
@@ -421,14 +421,38 @@ public class FSMBoss : ScriptableObject
                 Vector3 newPos = bossController.GetTheBossController().transform.position;
                 int diff = (int)(player.transform.position.x - newPos.x);
 
-                if (diff > 0)
+
+                if (Mathf.Sign(diff) == Mathf.Sign(prevDiff))
                 {
-                    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                    if (diff > 0)
+                    {
+                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                    }
+                    if (diff < 0)
+                    {
+                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    }
                 }
-                if (diff < 0)
+                else
                 {
-                    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    if (diff > 0)
+                    {
+                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    }
+                    if (diff < 0)
+                    {
+                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                    }
                 }
+
+                //if (diff > 0)
+                //{
+                //    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                //}
+                //if (diff < 0)
+                //{
+                //    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                //}
             }
 
             if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
@@ -493,7 +517,10 @@ public class FSMBoss : ScriptableObject
 
             bossAnimator.SetBool(animation, false);
             animation = "PrepareCast";
-            bossAnimator.SetBool(animation, true);                              
+            bossAnimator.SetBool(animation, true);
+
+            Vector3 newPos = bossController.GetTheBossController().transform.position;
+             prevDiff = (int)(player.transform.position.x - newPos.x);
         }
         else
         {
