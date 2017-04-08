@@ -29,9 +29,9 @@ public class PlatformLimits : MonoBehaviour {
         {
             bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
             //flip the boss
-            Vector3 scale = bossController.GetTheBoss().transform.localScale;
+            Vector3 scale = bossController.GetTheBossController().transform.localScale;
             scale.x *= -1;
-            bossController.GetTheBoss().transform.localScale = scale;
+            bossController.GetTheBossController().transform.localScale = scale;
 
         }
 

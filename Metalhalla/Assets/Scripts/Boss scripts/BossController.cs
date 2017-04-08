@@ -6,13 +6,12 @@ using UnityEngine;
 public class BossController : MonoBehaviour {
 
     private FSMBoss fsmBoss = null;
-    private GameObject theBoss = null;
+    private GameObject theBossController = null;
     private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject thePlayer = null;
     private Animator bossAnimator = null;
-    private WaitingEvent waitingEvent = null;
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
     public float detectionHeight = 3.0f;
@@ -29,9 +28,9 @@ public class BossController : MonoBehaviour {
     public float deadTime = 4.0f;
     void Awake()
     {        
-        theBoss = gameObject;
+        theBossController = gameObject;
         
-        bossStats = theBoss.GetComponent<BossStats>();
+        bossStats = theBossController.GetComponent<BossStats>();
         if (bossStats == null)
             Debug.LogError("Error: BossStats script not found.");
 
@@ -39,7 +38,7 @@ public class BossController : MonoBehaviour {
         if (thePlayer == null)
             Debug.LogError("Error: player not found.");
 
-        bossAnimator = theBoss.GetComponent<Animator>();
+        bossAnimator = theBossController.GetComponent<Animator>();
         if (bossAnimator == null)
             Debug.LogError("Error: animator not found.");
     }
@@ -48,8 +47,8 @@ public class BossController : MonoBehaviour {
 	void Start ()
     {
         fsmBoss = FSMBoss.CreateInstance(this);
-        spikesCastingSpot.transform.position = theBoss.transform.position + Vector3.forward * spikesAttackBossDepth;
-        spikesReturnSpot.transform.position = theBoss.transform.position;
+        spikesCastingSpot.transform.position = theBossController.transform.position + Vector3.forward * spikesAttackBossDepth;
+        spikesReturnSpot.transform.position = theBossController.transform.position;
     }
 	
 	// Update is called once per frame
@@ -70,9 +69,9 @@ public class BossController : MonoBehaviour {
 
     //------------------------------------ GETTERS ----------------------------------------
 
-    public GameObject GetTheBoss()
+    public GameObject GetTheBossController()
     {
-        return theBoss;
+        return theBossController;
     }
 
     public FSMBoss GetFSMBoss()
@@ -94,10 +93,4 @@ public class BossController : MonoBehaviour {
     {
         return bossAnimator;
     }
-
-    public WaitingEvent GetWaitingEvent()
-    {
-        return waitingEvent;
-    }
-
 }

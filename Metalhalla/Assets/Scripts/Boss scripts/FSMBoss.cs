@@ -73,7 +73,7 @@ public class FSMBoss : ScriptableObject
         return fsmBoss;
     }
 
-    public void Init(BossController bossContr)
+    private void Init(BossController bossContr)
     {
         bossController = bossContr;
         currState = State.PATROL;
@@ -86,7 +86,7 @@ public class FSMBoss : ScriptableObject
     public void Update()
     {
         //DEBUG
-        Debug.Log("state:" + currState + "  animation:" + animation + " " + "  facingRight:" + facingRight);
+        //Debug.Log("state:" + currState + "  animation:" + animation + " " + "  facingRight:" + facingRight);
 
         switch (currState)
         {
@@ -345,7 +345,7 @@ public class FSMBoss : ScriptableObject
     private void Damaged()
     {
         Debug.Log("Damaged");
-        bossController.GetTheBoss().GetComponent<BossStats>().DamageBoss(10);                
+        bossController.GetTheBossController().GetComponent<BossStats>().DamageBoss(10);                
         //create damage effect
         damaged = false;
           
@@ -394,14 +394,14 @@ public class FSMBoss : ScriptableObject
                 prevState = State.PATROL;
             }
 
-            Vector3 newPos = bossController.GetTheBoss().transform.position;
+            Vector3 newPos = bossController.GetTheBossController().transform.position;
 
             if (facingRight == true)
                 newPos.x += bossController.GetBossStats().normalSpeed * Time.deltaTime;
             else
                 newPos.x -= bossController.GetBossStats().normalSpeed * Time.deltaTime;
 
-            bossController.GetTheBoss().transform.position = newPos;
+            bossController.GetTheBossController().transform.position = newPos;
         }       
     }
 
@@ -418,22 +418,22 @@ public class FSMBoss : ScriptableObject
             if (prevState == State.BACK_TO_CENTER)
             {
                 prevState = State.CHASE;
-                Vector3 newPos = bossController.GetTheBoss().transform.position;
+                Vector3 newPos = bossController.GetTheBossController().transform.position;
                 int diff = (int)(player.transform.position.x - newPos.x);
 
                 if (diff > 0)
                 {
-                    bossController.GetTheBoss().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
                 }
                 if (diff < 0)
                 {
-                    bossController.GetTheBoss().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
                 }
             }
 
             if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
             {
-                Vector3 newPos = bossController.GetTheBoss().transform.position;
+                Vector3 newPos = bossController.GetTheBossController().transform.position;
                 int diff = (int)(player.transform.position.x - newPos.x);
 
                 if (diff > 0)
@@ -448,7 +448,7 @@ public class FSMBoss : ScriptableObject
                 else
                     newPos.x -= bossController.GetBossStats().chasingSpeed * Time.deltaTime;
 
-                bossController.GetTheBoss().transform.position = newPos;
+                bossController.GetTheBossController().transform.position = newPos;
             }
 
         }     
@@ -487,9 +487,9 @@ public class FSMBoss : ScriptableObject
         if (animation != "PrepareCast")
         {           
             if (facingRight)
-                bossController.GetTheBoss().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
             else
-                bossController.GetTheBoss().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
 
             bossAnimator.SetBool(animation, false);
             animation = "PrepareCast";
@@ -497,11 +497,11 @@ public class FSMBoss : ScriptableObject
         }
         else
         {
-            Vector3 pos = bossController.GetTheBoss().transform.position;
+            Vector3 pos = bossController.GetTheBossController().transform.position;
             Vector3 newPos = Vector3.Lerp(pos, spikesCastingSpot, Time.deltaTime * castingPosSpeed);
-            bossController.GetTheBoss().transform.position = newPos;
+            bossController.GetTheBossController().transform.position = newPos;
 
-            if (Vector3.Distance(bossController.GetTheBoss().transform.position, spikesCastingSpot) <= lerpPosThreshold)
+            if (Vector3.Distance(bossController.GetTheBossController().transform.position, spikesCastingSpot) <= lerpPosThreshold)
             {
                 castIceSpikes = true;
                 prepareCast = false;
@@ -514,7 +514,7 @@ public class FSMBoss : ScriptableObject
     { 
         if (animation != "CastIceSpikes")
         {                            
-            bossController.GetTheBoss().transform.localRotation *= Quaternion.Euler(0, 180, 0);
+            bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 180, 0);
 
             bossAnimator.SetBool(animation, false);
             animation = "CastIceSpikes";
@@ -541,15 +541,15 @@ public class FSMBoss : ScriptableObject
         }
         else
         {
-            Vector3 bossPosition = bossController.GetTheBoss().transform.position;
+            Vector3 bossPosition = bossController.GetTheBossController().transform.position;
             Vector3 newPos = Vector3.Lerp(bossPosition, spikesReturnSpot, Time.deltaTime * castingPosSpeed);
             bossPosition = newPos;
-            bossController.GetTheBoss().transform.position = bossPosition;
+            bossController.GetTheBossController().transform.position = bossPosition;
            
-            if (Vector3.Distance(bossController.GetTheBoss().transform.position, spikesReturnSpot) <= lerpPosThreshold)
+            if (Vector3.Distance(bossController.GetTheBossController().transform.position, spikesReturnSpot) <= lerpPosThreshold)
             {
                 //Return to the exact position
-                bossController.GetTheBoss().transform.position = spikesReturnSpot;
+                bossController.GetTheBossController().transform.position = spikesReturnSpot;
 
                 spikesCastFinished = false;
                 backToCenter = true;
@@ -571,9 +571,9 @@ public class FSMBoss : ScriptableObject
     //Flip the boss
     public void Flip()
     {
-        Vector3 scale = bossController.GetTheBoss().transform.localScale;
+        Vector3 scale = bossController.GetTheBossController().transform.localScale;
         scale.x *= -1;
-        bossController.GetTheBoss().transform.localScale = scale;
+        bossController.GetTheBossController().transform.localScale = scale;
         facingRight = !facingRight;
     }
 

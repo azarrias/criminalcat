@@ -44,31 +44,31 @@ public class BossTestPlayerController : MonoBehaviour {
         }
 
         //Change camera
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            toggleCam = !toggleCam;
+        //if (Input.GetKeyDown(KeyCode.C))
+        //{
+        //    toggleCam = !toggleCam;
 
-            if (!toggleCam)
-            {
-                lateralCam.SetActive(true);
-                topDownCam.SetActive(false);
-            }
-            else
-            {
-                lateralCam.SetActive(false);
-                topDownCam.SetActive(true);
-            }
+        //    if (!toggleCam)
+        //    {
+        //        lateralCam.SetActive(true);
+        //        topDownCam.SetActive(false);
+        //    }
+        //    else
+        //    {
+        //        lateralCam.SetActive(false);
+        //        topDownCam.SetActive(true);
+        //    }
 
-        }
-
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-       if( collision.gameObject.layer == LayerMask.NameToLayer("ground"))
-        {
-            onLand = true;
-        }
+        //}
 
     }
+
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //   if( collision.gameObject.layer == LayerMask.NameToLayer("ground"))
+    //    {
+    //        onLand = true;
+    //    }
+
+    //}
 }

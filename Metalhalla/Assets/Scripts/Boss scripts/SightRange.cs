@@ -30,7 +30,7 @@ public class SightRange : MonoBehaviour {
             bossController.GetFSMBoss().playerInSight = true;
 
             Vector3 playerPos = collider.gameObject.transform.position;
-            Vector3 bossPos = bossController.GetTheBoss().transform.position;
+            Vector3 bossPos = bossController.GetTheBossController().transform.position;
 
             float diff = playerPos.x - bossPos.x;
             if (diff > 0)
@@ -55,7 +55,7 @@ public class SightRange : MonoBehaviour {
         if (collider.CompareTag("Player"))
             bossController.GetFSMBoss().playerInSight = false;
 
-        if (collider.CompareTag("Boss"))
+        if (collider.CompareTag("BossCollider"))
         {
             bossController.GetFSMBoss().Flip();
 
