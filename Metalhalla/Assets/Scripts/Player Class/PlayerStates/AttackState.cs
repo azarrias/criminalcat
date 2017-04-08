@@ -16,8 +16,12 @@ public class AttackState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             attackFramesCount = 0;
+            status.attackCollider.enabled = true;
+        }
 
+        
         // add attack routine here 
 
         if (attackFramesCount >= attackFramesDuration)
@@ -26,6 +30,7 @@ public class AttackState : PlayerState
                 status.SetState(PlayerStatus.walk);
             else
                 status.SetState(PlayerStatus.idle);
+            status.attackCollider.enabled = false;
 
         }
         else
