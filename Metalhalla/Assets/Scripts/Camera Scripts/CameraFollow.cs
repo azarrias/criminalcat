@@ -173,6 +173,16 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
+    public void SetOrtographicParameters( Vector2 horizontalLimits, Vector2 verticalLimits, float ortographicSize )
+    {
+        if (horizontalLimits.x != limitLeft || horizontalLimits.y != limitRight || verticalLimits.x != limitBottom || verticalLimits.y != limitTop )
+        {
+            activeTracking = false;
+            GetComponent<Camera>().orthographicSize = ortographicSize;
+            SetLimits(horizontalLimits.x, horizontalLimits.y, verticalLimits.y, verticalLimits.x);
+        }
+    }
+
     //-- scene switch
     public void MoveCamera(Vector3 targetPos, float moveSpeed)
     {

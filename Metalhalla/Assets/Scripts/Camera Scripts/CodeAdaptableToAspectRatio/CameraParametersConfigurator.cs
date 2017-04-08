@@ -16,10 +16,13 @@ public class CameraParametersConfigurator : MonoBehaviour
     //-- Camera handling variables
     Camera cameraComponent;
     Transform cameraTransform;
+    float cameraAspect;
+    // perspective variables
     float frustumHeight;
     float frustumWidth;
-    float cameraAspect;
-
+    // ortographic variables
+    float ortographicSize;
+    
     //-- Player parameters
     float intentededPlayerToScreenHeightRatio;
     float playerAccountedHeight;
@@ -27,7 +30,8 @@ public class CameraParametersConfigurator : MonoBehaviour
     //--Final parameters for the cameras
     Vector2 horizontalLimits;
     Vector2 verticalLimits;
-    float zpos;
+    float zpos; // perspective
+
 
     public void ConfigureCamera( Vector3 newFrameCenter, Vector3 newFrameExtents)
     {
@@ -39,17 +43,6 @@ public class CameraParametersConfigurator : MonoBehaviour
         frameTop = frameCenter + Vector3.up * frameExtents.y;
         frameBottom = frameCenter - Vector3.up * frameExtents.y;
 
-        /*
-        frameLeft = frameCenter - Vector3.right * frameExtents.x;
-        frameRight = frameCenter + Vector3.right * frameExtents.x;
-        frameTop = frameCenter + Vector3.up * frameExtents.y;
-        frameBottom = frameCenter - Vector3.up * frameExtents.y;
-        */
-        /* frameLeft = frameCenter - Vector3.right * frameExtents.x + Vector3.forward * frameExtents.z;
-         frameRight = frameCenter + Vector3.right * frameExtents.x + Vector3.forward * frameExtents.z;
-         frameTop = frameCenter + Vector3.up * frameExtents.y + Vector3.forward* frameExtents.z;
-         frameBottom = frameCenter - Vector3.up * frameExtents.y + Vector3.forward * frameExtents.z;
-         */
         intentededPlayerToScreenHeightRatio = GetComponent<CameraFollow>().playerToScreenHeightRatio;
         playerAccountedHeight = GetComponent<CameraFollow>().playerHeight;
 
@@ -59,16 +52,26 @@ public class CameraParametersConfigurator : MonoBehaviour
         cameraAspect = GetComponent<Camera>().aspect;
 
         Vector3 lastCameraPosition = cameraTransform.position;
-        CalculateCameraParameters();
-        cameraTransform.position = lastCameraPosition;
+        if (cameraComponent.orthographic == false)
+        {
+            CalculateCameraParameters();
+            cameraTransform.position = lastCameraPosition;
+            GetComponent<CameraFollow>().SetCameraParameters(horizontalLimits, verticalLimits, zpos);
+        }
+        else
+        {
+            CalculateOrtographicCameraParameters();
+            cameraTransform.position = lastCameraPosition;
+            GetComponent<CameraFollow>().SetOrtographicParameters(horizontalLimits, verticalLimits, ortographicSize);
+        }
 
-        GetComponent<CameraFollow>().SetCameraParameters(horizontalLimits, verticalLimits, zpos);
-        
+
+
     }
 
     void CalculateCameraParameters()
     {
-        //1. Default distance calculation, an frustum proportions
+        //1. Default distance calculation, and frustum proportions
         frustumHeight = playerAccountedHeight * 100 / intentededPlayerToScreenHeightRatio;
         zpos = -1 * frustumHeight * 0.5f / Mathf.Tan(cameraComponent.fieldOfView * 0.5f * Mathf.Deg2Rad);
         frustumWidth = frustumHeight * cameraAspect;
@@ -145,5 +148,79 @@ public class CameraParametersConfigurator : MonoBehaviour
 
     }
 
+    void CalculateOrtographicCameraParameters()
+    {
+        //1. Default distance calculation, and frustum proportions
+        ortographicSize = (playerAccountedHeight * 100 / intentededPlayerToScreenHeightRatio) / 2;
+        float ortographicSizeHorizontal = ortographicSize * cameraAspect;
+        zpos = -10;
 
+        //2. Camera perpendicular of the center of the frame
+        Vector3 tmp = cameraTransform.position;
+        tmp.x = frameCenter.x;
+        tmp.y = frameCenter.y;
+        tmp.z = zpos;
+        cameraTransform.position = tmp;
+
+        //2.5 Set the vertical and horizontal limits to the center of the frame
+        horizontalLimits = new Vector2(frameCenter.x, frameCenter.x);
+        verticalLimits = new Vector2(frameCenter.y, frameCenter.y);
+
+        //3. WorldPoint to ViewPort
+        float frameLeftViewport = cameraComponent.WorldToViewportPoint(frameLeft).x;
+        float frameTopViewport = cameraComponent.WorldToViewportPoint(frameTop).y;
+
+        // decision based on viewport locations
+        if ((frameLeftViewport >= 1.0f || frameLeftViewport <= 0.0f) && (frameTopViewport <= 0.0f || frameTopViewport >= 1.0f))
+        {
+            // big frame, expand limits
+            horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
+            horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
+            verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
+            verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+        }
+        else if ((frameLeftViewport >= 0.0f || frameLeftViewport <= 0.0f) && (frameTopViewport < 0.0f || frameTopViewport > 1.0f))
+        {
+            // zoom in - horizonal extents set the required zoom
+            ortographicSizeHorizontal = frameExtents.x;
+            ortographicSize = ortographicSizeHorizontal / cameraAspect;
+            // set vertical limits with recalculated zoom
+            verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
+            verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+        }
+        else if ((frameLeftViewport > 1.0f || frameLeftViewport < 0.0f) && (frameTopViewport >= 0.0f || frameTopViewport <= 1.0f))
+        {
+            // zoom in - vertical extents set the required zoom
+            ortographicSize = frameExtents.y;
+            ortographicSizeHorizontal = ortographicSize * cameraAspect;
+            // set horizontal limits with recalculated zoom
+            horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
+            horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
+        }
+        else
+        {
+            // get the frame ratio to know which axis to use zoom
+            float frameAspectRatio = frameExtents.x / frameExtents.y;
+            if (frameAspectRatio >= cameraAspect)
+            {
+                // zoom in - horizonal extents set the required zoom
+                ortographicSizeHorizontal = frameExtents.x;
+                ortographicSize = ortographicSizeHorizontal / cameraAspect;
+                // set vertical limits with recalculated zoom
+                verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
+                verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+            }
+            else
+            {
+                // zoom in - vertical extents set the required zoom
+                ortographicSize = frameExtents.y;
+                ortographicSizeHorizontal = ortographicSize * cameraAspect;
+                // set horizontal limits with recalculated zoom
+                horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
+                horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
+            }
+        }
+
+
+    }
 }
