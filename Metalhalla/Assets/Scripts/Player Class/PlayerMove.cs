@@ -45,6 +45,6 @@ public class PlayerMove : MonoBehaviour {
     }
 
 	public void Move(){
-		transform.Translate (speed);
+        transform.Translate (speed);
 	}
 }
