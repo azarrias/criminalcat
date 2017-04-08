@@ -36,24 +36,15 @@ public class SightRange : MonoBehaviour {
             if (diff > 0)
             {
                 if (bossController.GetFSMBoss().facingRight == false)
-                {
-                    bossController.GetFSMBoss().facingRight = true;
-                    //flip the boss
-                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
-                    scale.x *= -1;
-                    bossController.GetTheBoss().transform.localScale = scale;
+                {                   
+                    bossController.GetFSMBoss().Flip();
                 }
-
             }
             if (diff < 0)
             {
                 if (bossController.GetFSMBoss().facingRight == true)
                 {
-                    bossController.GetFSMBoss().facingRight = false;
-                    //flip the boss
-                    Vector3 scale = bossController.GetTheBoss().transform.localScale;
-                    scale.x *= -1;
-                    bossController.GetTheBoss().transform.localScale = scale;
+                    bossController.GetFSMBoss().Flip();
                 }
             }
         }
@@ -66,12 +57,8 @@ public class SightRange : MonoBehaviour {
 
         if (collider.CompareTag("Boss"))
         {
-            bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
-            //flip the boss
-            Vector3 scale = bossController.GetTheBoss().transform.localScale;
-            scale.x *= -1;
-            bossController.GetTheBoss().transform.localScale = scale;
+            bossController.GetFSMBoss().Flip();
 
         }
-    }
+    }  
 }

@@ -28,15 +28,15 @@ public class BossTestPlayerController : MonoBehaviour {
 
 	void FixedUpdate () {
 
-        if(Input.GetKeyDown(KeyCode.Space) && onLand)
-        {
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.up * jumpSpeed;
-            onLand = false;
-        }
+        //if(Input.GetKeyDown(KeyCode.Space) && onLand)
+        //{
+        //    gameObject.GetComponent<Rigidbody>().velocity = Vector3.up * jumpSpeed;
+        //    onLand = false;
+        //}
 
-        float horizontal = Input.GetAxis(horizontalAxis);
-        Vector3 translation = new Vector3(horizontal * speed * Time.deltaTime, 0, 0);
-        transform.Translate(translation);
+        //float horizontal = Input.GetAxis(horizontalAxis);
+        //Vector3 translation = new Vector3(horizontal * speed * Time.deltaTime, 0, 0);
+        //transform.Translate(translation);
 
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {

@@ -58,7 +58,7 @@ public class CameraFollow : MonoBehaviour
         SetCameraPosition();
         if (showMoveBox)
             ShowBox();
-        Debug.Log("activetracking: " + activeTracking);
+ //       Debug.Log("activetracking: " + activeTracking);
     }
 
     void SetCameraPosition()
