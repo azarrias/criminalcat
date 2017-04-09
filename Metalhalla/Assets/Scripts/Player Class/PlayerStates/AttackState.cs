@@ -21,7 +21,6 @@ public class AttackState : PlayerState
             status.attackCollider.enabled = true;
         }
 
-        
         // add attack routine here 
 
         if (attackFramesCount >= attackFramesDuration)

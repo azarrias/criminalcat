@@ -21,7 +21,10 @@ public class PlayerStatus : MonoBehaviour {
     public int staminaAtStart = 10;
     [Tooltip("Stamina maximum value")]
     public int staminaMaximum = 10;
+    [Tooltip("Stamina recovery rate per second")]
+    public float staminaRecoveryRate = 1.0f;
     int stamina;
+    float staminaRecovery; 
 
     // beer variables
     [Header("Beer Setup")]
@@ -35,6 +38,7 @@ public class PlayerStatus : MonoBehaviour {
 
     [Header("Moveset Durations")]
     public float attackDuration = 0.400f;
+    public float castDuration = 0.5f; 
     public float hitDuration = 0.5f;
     public float refillDuration = 0.9f;
     public float drinkDuration = 0.5f;
@@ -79,10 +83,11 @@ public class PlayerStatus : MonoBehaviour {
 
         health = healthAtStart;
         stamina = staminaAtStart;
+        staminaRecovery = 0.0f;
         beer = beerAtStart;
 
         attack = new AttackState(CalculateFramesFromTime(attackDuration));
-        cast = new CastState();
+        cast = new CastState(CalculateFramesFromTime(castDuration));
         climb = new ClimbState();
         dead = new DeadState();
         defense = new DefenseState();
@@ -104,21 +109,32 @@ public class PlayerStatus : MonoBehaviour {
 
     }
 
-    // TODO - Remove this method when finished testing
     void Update()
     {
+        // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
             ApplyDamage(5);
         if (Input.GetKeyDown(KeyCode.F2) == true)
             RestoreHealth(5);
-        if (Input.GetKeyDown(KeyCode.F3) == true || Input.GetButtonDown("Cast") == true)
-            ConsumeStamina(7);  // like a cast
+        if (Input.GetKeyDown(KeyCode.F3) == true)
+            ConsumeStamina(7);  
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
         if (Input.GetKeyDown(KeyCode.F5) == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
             RefillBeer(5);
+
+        // stamina recovery
+        if (stamina < staminaMaximum)
+        {
+            staminaRecovery += staminaRecoveryRate * Time.deltaTime;
+            if (staminaRecovery >= 1.0f)
+            {
+                RestoreStamina(1);
+                staminaRecovery = 0.0f;
+            }
+        }
     }
 
 
@@ -261,7 +277,7 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsDrink() { return currentState == drink;  }
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
-
+   
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
 

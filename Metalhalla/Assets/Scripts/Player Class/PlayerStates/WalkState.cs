@@ -7,6 +7,7 @@ public class WalkState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
+        // prevent "autofire" when holding buttons
         if (status.previousState == PlayerStatus.fall && input.newInput.GetJumpButtonHeld() == true)
             status.jumpAvailable = false;
         else if (status.jumpAvailable == false && input.newInput.GetJumpButtonHeld() == false)
@@ -22,6 +23,12 @@ public class WalkState : PlayerState
         if (input.newInput.GetAttackButtonDown() == true)
         {
             status.SetState(PlayerStatus.attack);
+            return;
+        }
+
+        if (input.newInput.GetCastButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.cast);
             return;
         }
 
