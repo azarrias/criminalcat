@@ -36,7 +36,7 @@ public class FSMBoss : MonoBehaviour
     public float castSpikesDuration = 3.0f;
 
     //ball attack prefab
-    public GameObject fireBallPrefab = null;
+    public BossFireBall fireBallPrefab = null;
 
     private State currState = State.START;
     private State prevState = State.START;
@@ -522,10 +522,13 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "BallAttack";
             bossAnimator.SetBool(currAnimation, true);
-       
-            //Instantiation of a ball 
-            //Instantiate(fireBallPrefab, gameObject.transform.position, Quaternion.identity);
-            
+
+            BossFireBall ball = Instantiate<BossFireBall>(fireBallPrefab, gameObject.transform.position, Quaternion.identity);          
+            if (facingRight)
+                ball.SetDirection(Vector3.right);
+            if (!facingRight)
+                ball.SetDirection(Vector3.left);   
+
             StartCoroutine(FinishBallAttackAnimation(ballAttackDuration));
         }   
     }
@@ -571,8 +574,11 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
 
+            GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = false;
+            GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = false;
+
             //Sacar los pinchos y dejarlos durante un tiempo             
-            StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));           
+            StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));                  
         } 
     }
 
@@ -596,6 +602,8 @@ public class FSMBoss : MonoBehaviour
                 //Return to the exact position
                 gameObject.transform.position = spikesReturnSpot.transform.position;         
                 backToCenter = false;
+                GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = true;
+                GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = true;
             }
         }
         
