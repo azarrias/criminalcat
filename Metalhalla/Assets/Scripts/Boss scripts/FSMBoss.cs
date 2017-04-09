@@ -29,9 +29,11 @@ public class FSMBoss : MonoBehaviour
     [Tooltip("Time until body disappears")]
     public float deadTime = 4.0f;
     [Tooltip("Melee animation duration")]
-    public float meleeAttackDuration = 1.0f;
+    public float meleeAttackDuration = 0.5f;
     [Tooltip("Ball attack animation duration")]
-    public float ballAttackDuration = 3.0f;
+    public float ballAttackDuration = 1.0f;
+    [Tooltip("Cast spikes animation duration")]
+    public float castSpikesDuration = 3.0f;
 
     //ball attack prefab
     public GameObject fireBallPrefab = null;
@@ -50,12 +52,13 @@ public class FSMBoss : MonoBehaviour
     public bool atBallRange = false;
     [HideInInspector]
     public bool playerReachable = true;
-    private bool prepareCast = false;
-    private bool castIceSpikes = false;
+    
     private bool ballAttack = false;
     private bool meleeAttack = true; //starting attack
-    private bool spikesCastFinished = false;
-    private bool backToCenter = false;
+    //private bool spikesCastFinished = false;
+    private bool prepareCast = false;
+    private bool castIceSpikes = true;
+    private bool backToCenter = true;
 
     //orientation of the boss will be modified when entering triggers at the limits of the platform and when player is around
     [HideInInspector]
@@ -72,7 +75,7 @@ public class FSMBoss : MonoBehaviour
     //second ice spikes at 10% maxHP
     private float thresholdSecondSpikes = 0.10f;
 
-    public string currAnimation = "Patrol"; //start animation
+    private string currAnimation = "Patrol"; //start animation
     //public bool nextAnimation = false;
 
     // variable to set rotations properly when returning from spikes casting spot
@@ -97,23 +100,6 @@ public class FSMBoss : MonoBehaviour
     private int backToCenterFrameCounter = 0;
     private int stalkFrameCounter = 0;
 
-   
-    //public static FSMBoss CreateInstance(BossController bossController)
-    //{
-    //    FSMBoss fsmBoss = ScriptableObject.CreateInstance<FSMBoss>();
-    //    fsmBoss.Init(bossController);
-    //    return fsmBoss;
-    //}
-
-    //private void Init(BossController bossContr)
-    //{
-    //    bossController = bossContr;
-    //    currState = State.PATROL;
-    //    spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
-    //    spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
-    //    player = bossController.GetThePlayer();
-    //    bossAnimator = bossController.GetBossAnimator();
-    //}
 
     void Awake()
     {   
@@ -263,7 +249,7 @@ public class FSMBoss : MonoBehaviour
 
             case State.PREPARE_CAST:
                 PrepareCast();
-                if (castIceSpikes)
+                if (!prepareCast)  //prepared finished
                 {
                     prepareCastFrameCounter++;
                     if (prepareCastFrameCounter == prepareCastFrames)
@@ -277,13 +263,14 @@ public class FSMBoss : MonoBehaviour
 
             case State.CAST_ICE_SPIKES:
                 CastIceSpikes();
-                if (spikesCastFinished)
+                if (!castIceSpikes)  //cast finished
                 {
                     castTimeFrameCounter++;
                     if (castTimeFrameCounter == castFrames)
                     {
                         currState = State.BACK_TO_CENTER;
                         castTimeFrameCounter = 0;
+                        castIceSpikes = true; //reset value
                         break;
                     }
                 }
@@ -291,13 +278,13 @@ public class FSMBoss : MonoBehaviour
 
             case State.BACK_TO_CENTER:
                 BackToCenter();
-                if (backToCenter)
+                if (!backToCenter)   //back finished
                 {
                     backToCenterFrameCounter++;
                     if (backToCenterFrameCounter == backToCenterFrames)
                     {
                         backToCenterFrameCounter = 0;
-                        backToCenter = false;
+                        backToCenter = true;  //reset value
                         SelectAttack();
                         prevState = State.BACK_TO_CENTER;
                         currState = State.CHASE;
@@ -380,17 +367,27 @@ public class FSMBoss : MonoBehaviour
     }
 
     //---------------------------------------METHODS TO NOTIFY THE END OF THE ATTACK ANIMATIONS--------------------------------
-    private void FinishMeleeAttackAnimation()
+    private IEnumerator FinishMeleeAttackAnimation(float seconds)
     {
+        Debug.Log("waiting for melee attack to finish");
+        yield return new WaitForSeconds(seconds);
+        Debug.Log("melee attack animation finished");
         meleeAttack = false;
     }
-    private void FinishBallAttackAnimation()
+    private IEnumerator FinishBallAttackAnimation(float seconds)
     {
+        Debug.Log("waitings for ball attack to finish");
+        yield return new WaitForSeconds(seconds);
+        Debug.Log("ball attack animation finished");
         ballAttack = false;
     }
-    private void FinishCastIceSpikes()
+    private IEnumerator FinishCastIceSpikesAnimation(float seconds)
     {
+        Debug.Log("waiting for ice spikes cast to finish");
+        yield return new WaitForSeconds(seconds);
+        Debug.Log("ice spikes cast finished");
         castIceSpikes = false;
+        numSpikeAttacks++;
     }
    
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
@@ -513,10 +510,8 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "MeleeAttack";
             bossAnimator.SetBool(currAnimation, true);                    
-        }
-        else
-        {          
-            FinishMeleeAttackAnimation();               
+        
+            StartCoroutine(FinishMeleeAttackAnimation(meleeAttackDuration));
         }       
     }
 
@@ -527,13 +522,11 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "BallAttack";
             bossAnimator.SetBool(currAnimation, true);
-        }
-        else
-        {
+       
             //Instantiation of a ball 
             //Instantiate(fireBallPrefab, gameObject.transform.position, Quaternion.identity);
-            //StartCoroutine(Wait(ballAttackDuration));
-            FinishBallAttackAnimation();
+            
+            StartCoroutine(FinishBallAttackAnimation(ballAttackDuration));
         }   
     }
 
@@ -577,15 +570,9 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
-            numSpikeAttacks++;
-        }
-        else
-        {
-           
-            //Sacar los pinchos y dejarlos durante un tiempo  
-            
-            FinishCastIceSpikes();
-            spikesCastFinished = true;
+
+            //Sacar los pinchos y dejarlos durante un tiempo             
+            StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));           
         } 
     }
 
@@ -607,10 +594,8 @@ public class FSMBoss : MonoBehaviour
             if (Vector3.Distance(gameObject.transform.position, spikesReturnSpot.transform.position) <= lerpPosThreshold)
             {
                 //Return to the exact position
-                gameObject.transform.position = spikesReturnSpot.transform.position;
-
-                spikesCastFinished = false;
-                backToCenter = true;
+                gameObject.transform.position = spikesReturnSpot.transform.position;         
+                backToCenter = false;
             }
         }
         
