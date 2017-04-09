@@ -100,7 +100,7 @@ public class CameraParametersConfigurator : MonoBehaviour
             verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y) - frameSkin;
             verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y) + frameSkin;
         }
-        else if ((frameLeftViewport >= 0.0f || frameLeftViewport <= 0.0f) && (frameTopViewport < 0.0f || frameTopViewport > 1.0f))
+        else if ((frameLeftViewport >= 0.0f || frameLeftViewport <= 1.0f) && (frameTopViewport < 0.0f || frameTopViewport > 1.0f))
         {
             // zoom in - horizonal extents set the required zoom
             frustumWidth = (frameExtents.x + frameSkin)* 2;
@@ -155,47 +155,43 @@ public class CameraParametersConfigurator : MonoBehaviour
         float ortographicSizeHorizontal = ortographicSize * cameraAspect;
         zpos = -10;
 
-        //2. Camera perpendicular of the center of the frame
-        Vector3 tmp = cameraTransform.position;
-        tmp.x = frameCenter.x;
-        tmp.y = frameCenter.y;
-        tmp.z = zpos;
-        cameraTransform.position = tmp;
-
         //2.5 Set the vertical and horizontal limits to the center of the frame
         horizontalLimits = new Vector2(frameCenter.x, frameCenter.x);
         verticalLimits = new Vector2(frameCenter.y, frameCenter.y);
 
-        //3. WorldPoint to ViewPort
-        float frameLeftViewport = cameraComponent.WorldToViewportPoint(frameLeft).x;
-        float frameTopViewport = cameraComponent.WorldToViewportPoint(frameTop).y;
+        //3. where will the frame boundaries fall?
+        float minLeftCamera = frameCenter.x - ortographicSizeHorizontal;
+        float maxTopCamera = frameCenter.y + ortographicSize;
 
-        // decision based on viewport locations
-        if ((frameLeftViewport >= 1.0f || frameLeftViewport <= 0.0f) && (frameTopViewport <= 0.0f || frameTopViewport >= 1.0f))
+        // decision based on the viewing part of the frame
+        if ( frameLeft.x < minLeftCamera && frameTop.y > maxTopCamera)
         {
             // big frame, expand limits
-            horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
-            horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
-            verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
-            verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+            horizontalLimits.x -= (minLeftCamera - frameLeft.x);
+            horizontalLimits.y += (minLeftCamera - frameLeft.x);
+            verticalLimits.x -= (frameTop.y - maxTopCamera);
+            verticalLimits.y += (frameTop.y - maxTopCamera);
         }
-        else if ((frameLeftViewport >= 0.0f || frameLeftViewport <= 0.0f) && (frameTopViewport < 0.0f || frameTopViewport > 1.0f))
+        else if ( frameLeft.x >= minLeftCamera && frameTop.y > maxTopCamera)
         {
             // zoom in - horizonal extents set the required zoom
             ortographicSizeHorizontal = frameExtents.x;
             ortographicSize = ortographicSizeHorizontal / cameraAspect;
+            maxTopCamera = frameCenter.y + ortographicSize;
             // set vertical limits with recalculated zoom
-            verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
-            verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+            verticalLimits.x -= (frameTop.y - maxTopCamera);
+            verticalLimits.y += (frameTop.y - maxTopCamera);
         }
-        else if ((frameLeftViewport > 1.0f || frameLeftViewport < 0.0f) && (frameTopViewport >= 0.0f || frameTopViewport <= 1.0f))
+        
+        else if (frameLeft.x < minLeftCamera && frameTop.y <= maxTopCamera)
         {
             // zoom in - vertical extents set the required zoom
             ortographicSize = frameExtents.y;
             ortographicSizeHorizontal = ortographicSize * cameraAspect;
+            minLeftCamera = frameCenter.x - ortographicSizeHorizontal;
             // set horizontal limits with recalculated zoom
-            horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
-            horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
+            horizontalLimits.x -= (minLeftCamera - frameLeft.x);
+            horizontalLimits.y += (minLeftCamera - frameLeft.x);
         }
         else
         {
@@ -206,21 +202,21 @@ public class CameraParametersConfigurator : MonoBehaviour
                 // zoom in - horizonal extents set the required zoom
                 ortographicSizeHorizontal = frameExtents.x;
                 ortographicSize = ortographicSizeHorizontal / cameraAspect;
+                maxTopCamera = frameCenter.y + ortographicSize;
                 // set vertical limits with recalculated zoom
-                verticalLimits.x = frameBottom.y + (frameCenter.y - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).y);
-                verticalLimits.y = frameTop.y - (cameraComponent.ViewportToWorldPoint(new Vector3(0, 1, -zpos)).y - frameCenter.y);
+                verticalLimits.x -= (frameTop.y - maxTopCamera);
+                verticalLimits.y += (frameTop.y - maxTopCamera);
             }
             else
             {
                 // zoom in - vertical extents set the required zoom
                 ortographicSize = frameExtents.y;
                 ortographicSizeHorizontal = ortographicSize * cameraAspect;
+                minLeftCamera = frameCenter.x - ortographicSizeHorizontal;
                 // set horizontal limits with recalculated zoom
-                horizontalLimits.x = frameLeft.x + (frameCenter.x - cameraComponent.ViewportToWorldPoint(new Vector3(0, 0, -zpos)).x);
-                horizontalLimits.y = frameRight.x - (cameraComponent.ViewportToWorldPoint(new Vector3(1, 0, -zpos)).x - frameCenter.x);
+                horizontalLimits.x -= (minLeftCamera - frameLeft.x);
+                horizontalLimits.y += (minLeftCamera - frameLeft.x);
             }
         }
-
-
     }
 }
