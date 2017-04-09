@@ -6,10 +6,7 @@ public class AvoidPlayerThrough : MonoBehaviour {
 
     private GameObject thePlayer = null;
     private PlayerStatus thePlayerStatus = null;
-    private Transform thePlayerFeetPoint = null;
     private GameObject theBoss = null;
-    private Transform theBossHeadPoint = null;
-    private BossController bossController = null;
     private PlayerOverHead overHead = null;
     //private PlayerCollider playerCollider = null;
     private bool slidePlayer = false;
@@ -24,22 +21,10 @@ public class AvoidPlayerThrough : MonoBehaviour {
         if (thePlayerStatus == null)
             Debug.LogError("thePlayerStatus not found.");
 
-        thePlayerFeetPoint = thePlayer.transform.Find("FeetPoint");
-        if (thePlayerFeetPoint == null)
-            Debug.LogError("thePlayerFeetPoint not found.");
-
-        theBossHeadPoint = transform.Find("HeadPoint");
-        if (theBossHeadPoint == null)
-            Debug.LogError("bossHeadPoint not found.");
-
         theBoss = GameObject.FindGameObjectWithTag("Boss");
         if (theBoss == null)
             Debug.LogError("theBoss not found.");
-
-        bossController = theBoss.GetComponent<BossController>();
-        if (bossController == null)
-            Debug.LogError("bossController not found.");
-
+     
         overHead = FindObjectOfType<PlayerOverHead>();
         if (overHead == null)
             Debug.LogError("overHead not found.");

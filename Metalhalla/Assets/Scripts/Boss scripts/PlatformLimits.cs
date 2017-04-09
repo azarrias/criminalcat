@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlatformLimits : MonoBehaviour {
 
-    BossController bossController;
+    FSMBoss fsmBoss;
 
     void Awake()
     {
-        bossController = FindObjectOfType<BossController>();
-        if (bossController == null)
+        fsmBoss = FindObjectOfType<FSMBoss>();
+        if (fsmBoss == null)
             Debug.LogError("bossController not found");
     }
 
@@ -27,12 +27,11 @@ public class PlatformLimits : MonoBehaviour {
     {
         if (collider.CompareTag("Boss"))
         {
-            bossController.GetFSMBoss().facingRight = !bossController.GetFSMBoss().facingRight;
+            fsmBoss.facingRight = !fsmBoss.facingRight;
             //flip the boss
-            Vector3 scale = bossController.GetTheBossController().transform.localScale;
+            Vector3 scale = fsmBoss.transform.localScale;
             scale.x *= -1;
-            bossController.GetTheBossController().transform.localScale = scale;
-
+            fsmBoss.transform.localScale = scale;
         }
 
 

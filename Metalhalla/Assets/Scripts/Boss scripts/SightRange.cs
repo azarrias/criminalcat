@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class SightRange : MonoBehaviour {
 
-    BossController bossController;
+    FSMBoss fsmBoss;
 
     void Awake()
-    {    
-        bossController = FindObjectOfType<BossController>();
-        if (bossController == null)
-            Debug.LogError("bossController not found");
+    {
+        fsmBoss = FindObjectOfType<FSMBoss>();
+        if (fsmBoss == null)
+            Debug.LogError("fsmBoss not found");
     }
 
 	// Use this for initialization
@@ -27,24 +27,24 @@ public class SightRange : MonoBehaviour {
     {
         if (collider.CompareTag("Player"))
         {
-            bossController.GetFSMBoss().playerInSight = true;
+            fsmBoss.playerInSight = true;
 
             Vector3 playerPos = collider.gameObject.transform.position;
-            Vector3 bossPos = bossController.GetTheBossController().transform.position;
+            Vector3 bossPos = fsmBoss.transform.position;
 
             float diff = playerPos.x - bossPos.x;
             if (diff > 0)
             {
-                if (bossController.GetFSMBoss().facingRight == false)
-                {                   
-                    bossController.GetFSMBoss().Flip();
+                if (fsmBoss.facingRight == false)
+                {
+                    fsmBoss.Flip();
                 }
             }
             if (diff < 0)
             {
-                if (bossController.GetFSMBoss().facingRight == true)
+                if (fsmBoss.facingRight == true)
                 {
-                    bossController.GetFSMBoss().Flip();
+                    fsmBoss.Flip();
                 }
             }
         }
@@ -53,12 +53,11 @@ public class SightRange : MonoBehaviour {
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            bossController.GetFSMBoss().playerInSight = false;
+            fsmBoss.playerInSight = false;
 
         if (collider.CompareTag("BossCollider"))
         {
-            bossController.GetFSMBoss().Flip();
-
+            fsmBoss.Flip();
         }
     }  
 }

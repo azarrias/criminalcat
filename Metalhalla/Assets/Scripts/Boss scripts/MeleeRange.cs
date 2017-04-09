@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class MeleeRange : MonoBehaviour {
 
-    BossController bossController;
+    FSMBoss fsmBoss;
     
     void Awake()
     {
-        bossController = FindObjectOfType<BossController>();
-        if (bossController == null)
-            Debug.LogError("bossController not found");
+        fsmBoss = FindObjectOfType<FSMBoss>();
+        if (fsmBoss == null)
+            Debug.LogError("fsmBoss not found");
   
     }
 
@@ -29,12 +29,12 @@ public class MeleeRange : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            bossController.GetFSMBoss().atMeleeRange = true;
+            fsmBoss.atMeleeRange = true;
     }
 
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            bossController.GetFSMBoss().atMeleeRange = false;
+            fsmBoss.atMeleeRange = false;
     }
 }

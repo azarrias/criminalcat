@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[RequireComponent(typeof(FSMBoss))]
+[RequireComponent(typeof(BossStats))]
+[RequireComponent(typeof(Animator))]
 public class BossController : MonoBehaviour {
 
     private FSMBoss fsmBoss = null;
@@ -16,6 +18,9 @@ public class BossController : MonoBehaviour {
     public float spikesAttackBossDepth = 1.5f;
     public float detectionHeight = 3.0f;
 
+    //ball attack prefab
+    public GameObject fireBallPrefab = null;
+
     public int patrolFrames = 20;
     public int chaseFrames = 20;
     public int meleeFrames = 20;
@@ -26,27 +31,28 @@ public class BossController : MonoBehaviour {
     public int stalkFrames = 20;
     [Tooltip("Time until body disappears")]
     public float deadTime = 4.0f;
+    [Tooltip("Melee animation duration")]
+    public float meleeAttackDuration = 1.0f;
+    [Tooltip("Ball attack animation duration")]
+    public float ballAttackDuration = 2.0f;
+
     void Awake()
     {        
         theBossController = gameObject;
-        
+
+        fsmBoss = theBossController.GetComponent<FSMBoss>();       
         bossStats = theBossController.GetComponent<BossStats>();
-        if (bossStats == null)
-            Debug.LogError("Error: BossStats script not found.");
+        bossAnimator = theBossController.GetComponent<Animator>();
 
         thePlayer = GameObject.FindGameObjectWithTag("Player");
         if (thePlayer == null)
             Debug.LogError("Error: player not found.");
-
-        bossAnimator = theBossController.GetComponent<Animator>();
-        if (bossAnimator == null)
-            Debug.LogError("Error: animator not found.");
     }
 		
 	// Use this for initialization
 	void Start ()
     {
-        fsmBoss = FSMBoss.CreateInstance(this);
+        //fsmBoss = FSMBoss.CreateInstance(this);
         spikesCastingSpot.transform.position = theBossController.transform.position + Vector3.forward * spikesAttackBossDepth;
         spikesReturnSpot.transform.position = theBossController.transform.position;
     }

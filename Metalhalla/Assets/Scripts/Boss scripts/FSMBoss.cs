@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FSMBoss : ScriptableObject
+[RequireComponent(typeof(BossStats))]
+[RequireComponent(typeof(Animator))]
+public class FSMBoss : MonoBehaviour
 {
-
     private enum State
     {
         START,
@@ -17,17 +18,37 @@ public class FSMBoss : ScriptableObject
         BACK_TO_CENTER,
         STALK
     }
+ 
+    private BossStats bossStats = null;
+    public GameObject spikesCastingSpot = null;
+    public GameObject spikesReturnSpot = null;
+    [Tooltip("Depth of casting point")]
+    public float spikesAttackBossDepth = 1.5f;
+    public float detectionHeight = 3.0f;
 
-    public BossController bossController = null;
+    [Tooltip("Time until body disappears")]
+    public float deadTime = 4.0f;
+    [Tooltip("Melee animation duration")]
+    public float meleeAttackDuration = 1.0f;
+    [Tooltip("Ball attack animation duration")]
+    public float ballAttackDuration = 3.0f;
+
+    //ball attack prefab
+    public GameObject fireBallPrefab = null;
+
     private State currState = State.START;
     private State prevState = State.START;
-    private GameObject player = null;
+    private GameObject thePlayer = null;
     private Animator bossAnimator = null;
-    //------------------- VARIABLES THAT CONTROL FSM LOGIC -------------------
 
+    //------------------- VARIABLES THAT CONTROL FSM LOGIC -------------------
+    [HideInInspector]
     public bool playerInSight = false;
+    [HideInInspector]
     public bool atMeleeRange = false;
+    [HideInInspector]
     public bool atBallRange = false;
+    [HideInInspector]
     public bool playerReachable = true;
     private bool prepareCast = false;
     private bool castIceSpikes = false;
@@ -36,13 +57,11 @@ public class FSMBoss : ScriptableObject
     private bool spikesCastFinished = false;
     private bool backToCenter = false;
 
-    //damaged will be modified by the player
-    public bool damaged = false;
     //orientation of the boss will be modified when entering triggers at the limits of the platform and when player is around
+    [HideInInspector]
     public bool facingRight = true;
     private int numSpikeAttacks = 0;
-    private Vector3 spikesCastingSpot;
-    private Vector3 spikesReturnSpot;
+
     //interpolation factor to go to spikes casting point and to return from it
     private float lerpPosThreshold = 0.2f;
     private float castingPosSpeed = 1.5f;
@@ -53,35 +72,67 @@ public class FSMBoss : ScriptableObject
     //second ice spikes at 10% maxHP
     private float thresholdSecondSpikes = 0.10f;
 
-    public string animation = "Patrol"; //start animation
-    public bool nextAnimation = false;
+    public string currAnimation = "Patrol"; //start animation
+    //public bool nextAnimation = false;
+
+    // variable to set rotations properly when returning from spikes casting spot
     private int prevDiff = 0;
     // ------------------------------------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ---------------------------------------------------
-    private int patrolCounter = 0;
-    private int chaseCounter = 0;
-    private int meleeAttackCounter = 0;
-    private int ballAttackCounter = 0;
-    private int prepareCastCounter = 0;
-    private int castTimeCounter = 0;
-    private int backToCenterCounter = 0;
-    private int stalkCounter = 0;   
-    
-    public static FSMBoss CreateInstance(BossController bossController)
-    {
-        FSMBoss fsmBoss = ScriptableObject.CreateInstance<FSMBoss>();
-        fsmBoss.Init(bossController);
-        return fsmBoss;
+
+    public int patrolFrames = 20;
+    public int chaseFrames = 20;
+    public int meleeFrames = 20;
+    public int ballAttackFrames = 20;
+    public int prepareCastFrames = 20;
+    public int castFrames = 20;
+    public int backToCenterFrames = 20;
+    public int stalkFrames = 20;
+
+    private int patrolFrameCounter = 0;
+    private int chaseFrameCounter = 0;
+    private int meleeAttackFrameCounter = 0;
+    private int ballAttackFrameCounter = 0;
+    private int prepareCastFrameCounter = 0;
+    private int castTimeFrameCounter = 0;
+    private int backToCenterFrameCounter = 0;
+    private int stalkFrameCounter = 0;
+
+   
+    //public static FSMBoss CreateInstance(BossController bossController)
+    //{
+    //    FSMBoss fsmBoss = ScriptableObject.CreateInstance<FSMBoss>();
+    //    fsmBoss.Init(bossController);
+    //    return fsmBoss;
+    //}
+
+    //private void Init(BossController bossContr)
+    //{
+    //    bossController = bossContr;
+    //    currState = State.PATROL;
+    //    spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
+    //    spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
+    //    player = bossController.GetThePlayer();
+    //    bossAnimator = bossController.GetBossAnimator();
+    //}
+
+    void Awake()
+    {   
+        currState = State.PATROL;
+
+        thePlayer = GameObject.FindGameObjectWithTag("Player");
+        if (thePlayer == null)
+            Debug.LogError("Error: player not found.");
+
+        bossAnimator = GetComponent<Animator>();
+        bossStats = GetComponent<BossStats>();
     }
 
-    private void Init(BossController bossContr)
+    void Start()
     {
-        bossController = bossContr;
-        currState = State.PATROL;
-        spikesCastingSpot = bossController.spikesCastingSpot.transform.position;
-        spikesReturnSpot = bossController.spikesReturnSpot.transform.position;
-        player = bossController.GetThePlayer();
-        bossAnimator = bossController.GetBossAnimator();
+        spikesCastingSpot.transform.position = gameObject.transform.position + Vector3.forward * spikesAttackBossDepth;
+        spikesReturnSpot.transform.position = gameObject.transform.position;
     }
+
 
     public void Update()
     {
@@ -94,100 +145,91 @@ public class FSMBoss : ScriptableObject
                 Patrol();
                 if (playerInSight)
                 {
-                    patrolCounter++;
-                    if (patrolCounter == bossController.patrolFrames)
+                    patrolFrameCounter++;
+                    if (patrolFrameCounter == patrolFrames)
                     {
-                        patrolCounter = 0;
+                        patrolFrameCounter = 0;
                         currState = State.CHASE;
-                        nextAnimation = true;
+                        //nextAnimation = true;
                         break;
                     }
                 }
                 break;
 
             case State.CHASE:
-                if (bossController.GetBossStats().hitPoints <= 0)
+                if (bossStats.hitPoints <= 0)
                 {
                     currState = State.DEAD;
                     break;
                 }
-                Chase();
-
-                if (damaged)
-                {
-                    Damaged();
-                }
+                Chase();                            
                 if (meleeAttack && atMeleeRange)
                 {
-                    chaseCounter++;
-                    if (chaseCounter == bossController.chaseFrames)
+                    chaseFrameCounter++;
+                    if (chaseFrameCounter == chaseFrames)
                     {
                         currState = State.MELEE_ATTACK;
-                        chaseCounter = 0;
+                        chaseFrameCounter = 0;
                     }                      
                     break;
                 }
                 if (ballAttack && atBallRange)
                 {
-                    chaseCounter++;
-                    if (chaseCounter == bossController.chaseFrames)
+                    chaseFrameCounter++;
+                    if (chaseFrameCounter == chaseFrames)
                     {
                         currState = State.BALL_ATTACK;
-                        chaseCounter = 0;
+                        chaseFrameCounter = 0;
                     }
                     break;
                 }
                 if (prepareCast)
                 {
-                    chaseCounter++;
-                    if (chaseCounter == bossController.chaseFrames)
+                    chaseFrameCounter++;
+                    if (chaseFrameCounter == chaseFrames)
                     {
                         currState = State.PREPARE_CAST;
-                        chaseCounter = 0;
+                        chaseFrameCounter = 0;
                     }
                     break;
                 }
                 if (!playerReachable)
                 {
-                    chaseCounter++;
-                    if (chaseCounter == bossController.chaseFrames)
+                    chaseFrameCounter++;
+                    if (chaseFrameCounter == chaseFrames)
                     {
                         currState = State.STALK;
-                        chaseCounter = 0;
+                        chaseFrameCounter = 0;
                     }
                     break;
                 }
                 if (!playerInSight)
                 {
-                    chaseCounter++;
-                    if (chaseCounter == bossController.chaseFrames)
+                    chaseFrameCounter++;
+                    if (chaseFrameCounter == chaseFrames)
                     {
                         currState = State.PATROL;
-                        chaseCounter = 0;
+                        chaseFrameCounter = 0;
                     }
                     break;
                 }
                 break;
 
             case State.MELEE_ATTACK:
-                if (bossController.GetBossStats().hitPoints <= 0)
+                if (bossStats.hitPoints <= 0)
                 {
                     currState = State.DEAD;
                     break;
                 }
                 MeleeAttack();
-                if (damaged)
-                {
-                    Damaged();
-                }
                 if (!meleeAttack) //attack has finished
                 {
-                    meleeAttackCounter++;
-                    if (meleeAttackCounter == bossController.meleeFrames)
+                    meleeAttackFrameCounter++;
+                    if (meleeAttackFrameCounter == meleeFrames)
                     {
                         SelectAttack();
                         currState = State.CHASE;
-                        meleeAttackCounter = 0;
+                        meleeAttackFrameCounter = 0;
                     }
                     break;
                 }
@@ -195,29 +237,25 @@ public class FSMBoss : ScriptableObject
                 break;
 
             case State.BALL_ATTACK:
-                if (bossController.GetBossStats().hitPoints <= 0)
+                if (bossStats.hitPoints <= 0)
                 {
-                    ballAttackCounter++;
-                    if (ballAttackCounter == bossController.ballAttackFrames)
+                    ballAttackFrameCounter++;
+                    if (ballAttackFrameCounter == ballAttackFrames)
                     {
                         currState = State.DEAD;
-                        ballAttackCounter = 0;
+                        ballAttackFrameCounter = 0;
                         break;
                     }                  
                 }
-                BallAttack();
-                if (damaged)
-                {
-                    Damaged();
-                }
+                BallAttack();               
                 if (!ballAttack) //attack has finished
                 {
-                    ballAttackCounter++;
-                    if (ballAttackCounter == bossController.ballAttackFrames)
+                    ballAttackFrameCounter++;
+                    if (ballAttackFrameCounter == ballAttackFrames)
                     {
                         SelectAttack();
                         currState = State.CHASE;
-                        ballAttackCounter = 0;
+                        ballAttackFrameCounter = 0;
                         break;
                     }                  
                 }
@@ -227,11 +265,11 @@ public class FSMBoss : ScriptableObject
                 PrepareCast();
                 if (castIceSpikes)
                 {
-                    prepareCastCounter++;
-                    if (prepareCastCounter == bossController.prepareCastFrames)
+                    prepareCastFrameCounter++;
+                    if (prepareCastFrameCounter == prepareCastFrames)
                     {
                         currState = State.CAST_ICE_SPIKES;
-                        prepareCastCounter = 0;
+                        prepareCastFrameCounter = 0;
                         break;
                     }
                 }
@@ -241,11 +279,11 @@ public class FSMBoss : ScriptableObject
                 CastIceSpikes();
                 if (spikesCastFinished)
                 {
-                    castTimeCounter++;
-                    if (castTimeCounter == bossController.castFrames)
+                    castTimeFrameCounter++;
+                    if (castTimeFrameCounter == castFrames)
                     {
                         currState = State.BACK_TO_CENTER;
-                        castTimeCounter = 0;
+                        castTimeFrameCounter = 0;
                         break;
                     }
                 }
@@ -255,10 +293,10 @@ public class FSMBoss : ScriptableObject
                 BackToCenter();
                 if (backToCenter)
                 {
-                    backToCenterCounter++;
-                    if (backToCenterCounter == bossController.backToCenterFrames)
+                    backToCenterFrameCounter++;
+                    if (backToCenterFrameCounter == backToCenterFrames)
                     {
-                        backToCenterCounter = 0;
+                        backToCenterFrameCounter = 0;
                         backToCenter = false;
                         SelectAttack();
                         prevState = State.BACK_TO_CENTER;
@@ -272,10 +310,10 @@ public class FSMBoss : ScriptableObject
                 Stalk();
                 if (playerReachable)
                 {
-                    stalkCounter++;
-                    if (stalkCounter == bossController.stalkFrames)
+                    stalkFrameCounter++;
+                    if (stalkFrameCounter == stalkFrames)
                     {
-                        stalkCounter = 0;
+                        stalkFrameCounter = 0;
                         currState = State.CHASE;
                         break;
                     }
@@ -291,18 +329,18 @@ public class FSMBoss : ScriptableObject
     //Method called by the FSM
     private void SelectAttack()
     {
-        if (bossController.GetBossStats().hitPoints > thresholdBallAttack * bossController.GetBossStats().maxHitPoints)
+        if (bossStats.hitPoints > thresholdBallAttack * bossStats.maxHitPoints)
         {
             meleeAttack = true;
         }
         else
         {
-            if (bossController.GetBossStats().hitPoints <= thresholdFirstSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 0)
+            if (bossStats.hitPoints <= thresholdFirstSpikes * bossStats.maxHitPoints && numSpikeAttacks == 0)
             {
                 prepareCast = true;
             }
 
-            else if (bossController.GetBossStats().hitPoints <= thresholdSecondSpikes * bossController.GetBossStats().maxHitPoints && numSpikeAttacks == 1)
+            else if (bossStats.hitPoints <= thresholdSecondSpikes * bossStats.maxHitPoints && numSpikeAttacks == 1)
             {
                 prepareCast = true;
             }
@@ -329,26 +367,16 @@ public class FSMBoss : ScriptableObject
 
     }
 
-    //Method called by the boss controller
+    
     public void DamageBoss(int damage)
     {
-        if (
-            currState != State.PREPARE_CAST && currState != State.CAST_ICE_SPIKES &&
-            currState != State.BACK_TO_CENTER && currState != State.STALK
-           )
+        if (currState == State.CHASE || currState == State.MELEE_ATTACK || currState == State.BALL_ATTACK)
         {
-
-            damaged = true;
+            Debug.Log("Damaged");
+            bossStats.DamageBoss(damage);
+            //create damage effect
+            
         }
-    }
-    //Method called by the FSM
-    private void Damaged()
-    {
-        Debug.Log("Damaged");
-        bossController.GetTheBossController().GetComponent<BossStats>().DamageBoss(10);                
-        //create damage effect
-        damaged = false;
-          
     }
 
     //---------------------------------------METHODS TO NOTIFY THE END OF THE ATTACK ANIMATIONS--------------------------------
@@ -368,22 +396,22 @@ public class FSMBoss : ScriptableObject
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Dead()
     {
-        if (animation != "Dead")
+        if (currAnimation != "Dead")
         {
-            bossAnimator.SetBool(animation, false);
-            animation = "Dead";
-            bossAnimator.SetBool(animation, true);                             
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "Dead";
+            bossAnimator.SetBool(currAnimation, true);                             
             //Destroy boss                          
         }
     }
 
     private void Patrol()
     {      
-        if (animation != "Patrol")
+        if (currAnimation != "Patrol")
         {       
-            bossAnimator.SetBool(animation, false);
-            animation = "Patrol";
-            bossAnimator.SetBool(animation, true);                         
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "Patrol";
+            bossAnimator.SetBool(currAnimation, true);                         
         }
         else
         {
@@ -394,54 +422,54 @@ public class FSMBoss : ScriptableObject
                 prevState = State.PATROL;
             }
 
-            Vector3 newPos = bossController.GetTheBossController().transform.position;
+            Vector3 newPos = gameObject.transform.position;
 
             if (facingRight == true)
-                newPos.x += bossController.GetBossStats().normalSpeed * Time.deltaTime;
+                newPos.x += bossStats.normalSpeed * Time.deltaTime;
             else
-                newPos.x -= bossController.GetBossStats().normalSpeed * Time.deltaTime;
+                newPos.x -= bossStats.normalSpeed * Time.deltaTime;
 
-            bossController.GetTheBossController().transform.position = newPos;
+            gameObject.transform.position = newPos;
         }       
     }
 
     private void Chase()
     {
-        if (animation != "Chase")
+        if (currAnimation != "Chase")
         {      
-            bossAnimator.SetBool(animation, false);
-            animation = "Chase";
-            bossAnimator.SetBool(animation, true);     
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "Chase";
+            bossAnimator.SetBool(currAnimation, true);     
         }
         else
         {
             if (prevState == State.BACK_TO_CENTER)
             {
                 prevState = State.CHASE;
-                Vector3 newPos = bossController.GetTheBossController().transform.position;
-                int diff = (int)(player.transform.position.x - newPos.x);
+                Vector3 newPos = gameObject.transform.position;
+                int diff = (int)(thePlayer.transform.position.x - newPos.x);
 
 
                 if (Mathf.Sign(diff) == Mathf.Sign(prevDiff))
                 {
                     if (diff > 0)
                     {
-                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                        gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
                     }
                     if (diff < 0)
                     {
-                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
                     }
                 }
                 else
                 {
                     if (diff > 0)
                     {
-                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
                     }
                     if (diff < 0)
                     {
-                        bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                        gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
                     }
                 }
 
@@ -457,8 +485,8 @@ public class FSMBoss : ScriptableObject
 
             if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
             {
-                Vector3 newPos = bossController.GetTheBossController().transform.position;
-                int diff = (int)(player.transform.position.x - newPos.x);
+                Vector3 newPos = gameObject.transform.position;
+                int diff = (int)(thePlayer.transform.position.x - newPos.x);
 
                 if (diff > 0)
                     if (!facingRight)
@@ -468,11 +496,11 @@ public class FSMBoss : ScriptableObject
                         Flip();
 
                 if (facingRight == true)
-                    newPos.x += bossController.GetBossStats().chasingSpeed * Time.deltaTime;
+                    newPos.x += bossStats.chasingSpeed * Time.deltaTime;
                 else
-                    newPos.x -= bossController.GetBossStats().chasingSpeed * Time.deltaTime;
+                    newPos.x -= bossStats.chasingSpeed * Time.deltaTime;
 
-                bossController.GetTheBossController().transform.position = newPos;
+                gameObject.transform.position = newPos;
             }
 
         }     
@@ -480,11 +508,11 @@ public class FSMBoss : ScriptableObject
 
     private void MeleeAttack()
     {
-        if (animation != "MeleeAttack")
+        if (currAnimation != "MeleeAttack")
         {          
-            bossAnimator.SetBool(animation, false);
-            animation = "MeleeAttack";
-            bossAnimator.SetBool(animation, true);                    
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "MeleeAttack";
+            bossAnimator.SetBool(currAnimation, true);                    
         }
         else
         {          
@@ -494,41 +522,44 @@ public class FSMBoss : ScriptableObject
 
     private void BallAttack()
     {
-        if (animation != "BallAttack")
+        if (currAnimation != "BallAttack")
         {   
-            bossAnimator.SetBool(animation, false);
-            animation = "BallAttack";
-            bossAnimator.SetBool(animation, true);
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "BallAttack";
+            bossAnimator.SetBool(currAnimation, true);
         }
         else
-        {           
-           FinishBallAttackAnimation();
+        {
+            //Instantiation of a ball 
+            //Instantiate(fireBallPrefab, gameObject.transform.position, Quaternion.identity);
+            //StartCoroutine(Wait(ballAttackDuration));
+            FinishBallAttackAnimation();
         }   
     }
 
     private void PrepareCast()
     {
-        if (animation != "PrepareCast")
+        if (currAnimation != "PrepareCast")
         {           
             if (facingRight)
-                bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
             else
-                bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
 
-            bossAnimator.SetBool(animation, false);
-            animation = "PrepareCast";
-            bossAnimator.SetBool(animation, true);
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "PrepareCast";
+            bossAnimator.SetBool(currAnimation, true);
 
-            Vector3 newPos = bossController.GetTheBossController().transform.position;
-             prevDiff = (int)(player.transform.position.x - newPos.x);
+            Vector3 newPos = gameObject.transform.position;
+             prevDiff = (int)(thePlayer.transform.position.x - newPos.x);
         }
         else
         {
-            Vector3 pos = bossController.GetTheBossController().transform.position;
-            Vector3 newPos = Vector3.Lerp(pos, spikesCastingSpot, Time.deltaTime * castingPosSpeed);
-            bossController.GetTheBossController().transform.position = newPos;
+            Vector3 pos = gameObject.transform.position;
+            Vector3 newPos = Vector3.Lerp(pos, spikesCastingSpot.transform.position, Time.deltaTime * castingPosSpeed);
+            gameObject.transform.position = newPos;
 
-            if (Vector3.Distance(bossController.GetTheBossController().transform.position, spikesCastingSpot) <= lerpPosThreshold)
+            if (Vector3.Distance(gameObject.transform.position, spikesCastingSpot.transform.position) <= lerpPosThreshold)
             {
                 castIceSpikes = true;
                 prepareCast = false;
@@ -539,13 +570,13 @@ public class FSMBoss : ScriptableObject
 
     private void CastIceSpikes()
     { 
-        if (animation != "CastIceSpikes")
+        if (currAnimation != "CastIceSpikes")
         {                            
-            bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 180, 0);
+            gameObject.transform.localRotation *= Quaternion.Euler(0, 180, 0);
 
-            bossAnimator.SetBool(animation, false);
-            animation = "CastIceSpikes";
-            bossAnimator.SetBool(animation, true);
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "CastIceSpikes";
+            bossAnimator.SetBool(currAnimation, true);
             numSpikeAttacks++;
         }
         else
@@ -560,23 +591,23 @@ public class FSMBoss : ScriptableObject
 
     private void BackToCenter()
     {
-        if (animation != "BackToCenter")
+        if (currAnimation != "BackToCenter")
         {                       
-            bossAnimator.SetBool(animation, false);
-            animation = "BackToCenter";
-            bossAnimator.SetBool(animation, true);                    
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "BackToCenter";
+            bossAnimator.SetBool(currAnimation, true);                    
         }
         else
         {
-            Vector3 bossPosition = bossController.GetTheBossController().transform.position;
-            Vector3 newPos = Vector3.Lerp(bossPosition, spikesReturnSpot, Time.deltaTime * castingPosSpeed);
+            Vector3 bossPosition = gameObject.transform.position;
+            Vector3 newPos = Vector3.Lerp(bossPosition, spikesReturnSpot.transform.position, Time.deltaTime * castingPosSpeed);
             bossPosition = newPos;
-            bossController.GetTheBossController().transform.position = bossPosition;
+            gameObject.transform.position = bossPosition;
            
-            if (Vector3.Distance(bossController.GetTheBossController().transform.position, spikesReturnSpot) <= lerpPosThreshold)
+            if (Vector3.Distance(gameObject.transform.position, spikesReturnSpot.transform.position) <= lerpPosThreshold)
             {
                 //Return to the exact position
-                bossController.GetTheBossController().transform.position = spikesReturnSpot;
+                gameObject.transform.position = spikesReturnSpot.transform.position;
 
                 spikesCastFinished = false;
                 backToCenter = true;
@@ -587,20 +618,20 @@ public class FSMBoss : ScriptableObject
 
     private void Stalk()
     {
-        if (animation != "Stalk")
+        if (currAnimation != "Stalk")
         {                            
-            bossAnimator.SetBool(animation, false);
-            animation = "Stalk";
-            bossAnimator.SetBool(animation, true);                    
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "Stalk";
+            bossAnimator.SetBool(currAnimation, true);                    
         }
     }
 
     //Flip the boss
     public void Flip()
     {
-        Vector3 scale = bossController.GetTheBossController().transform.localScale;
+        Vector3 scale = gameObject.transform.localScale;
         scale.x *= -1;
-        bossController.GetTheBossController().transform.localScale = scale;
+        gameObject.transform.localScale = scale;
         facingRight = !facingRight;
     }
 

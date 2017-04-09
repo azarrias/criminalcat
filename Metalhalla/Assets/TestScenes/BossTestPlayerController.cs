@@ -8,16 +8,16 @@ public class BossTestPlayerController : MonoBehaviour {
     public float speed = 6.0f;
     public float jumpSpeed = 8.0f;
     private bool onLand = true;
-    private BossController bossController;
+    private FSMBoss fsm = null;
     private GameObject topDownCam = null;
     private GameObject lateralCam = null;
     private bool toggleCam = false;
     
     void Awake()
     {
-        bossController = FindObjectOfType<BossController>();
-        if (bossController == null)
-            Debug.LogError("bossController not found");
+        fsm = FindObjectOfType<FSMBoss>();
+        if (fsm == null)
+            Debug.LogError("fsm not found");
     }
 
     // Use this for initialization
@@ -40,7 +40,7 @@ public class BossTestPlayerController : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
-            bossController.DamageBoss(10);            
+            fsm.DamageBoss(10);            
         }
 
         //Change camera

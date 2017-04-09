@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class BallRange : MonoBehaviour {
 
-    BossController bossController;
+    private FSMBoss fsmBoss;
 
     void Awake()
     {
-        bossController = FindObjectOfType<BossController>();
-        if (bossController == null)
-            Debug.LogError("bossController not found");
+        fsmBoss = FindObjectOfType<FSMBoss>();
+        if (fsmBoss == null)
+            Debug.LogError("fsmBoss not found");
     }
 
     // Use this for initialization
@@ -28,12 +28,12 @@ public class BallRange : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            bossController.GetFSMBoss().atBallRange = true;
+            fsmBoss.atBallRange = true;
     }
 
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            bossController.GetFSMBoss().atBallRange = false;
+            fsmBoss.atBallRange = false;
     }
 }

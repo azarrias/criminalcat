@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class OnPlatform : MonoBehaviour {
 
-    BossController bossController;
+    FSMBoss fsmBoss;
 	// Use this for initialization
 
     void Awake()
     {
-        bossController = FindObjectOfType<BossController>();
+        fsmBoss = FindObjectOfType<FSMBoss>();
     }
 
 	void Start () {
@@ -21,19 +21,12 @@ public class OnPlatform : MonoBehaviour {
 		
 	}
 
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        bossController.GetFSMBoss().playerReachable = false;
-    //    }
-    //}
-
+    
     void OnTriggerEnter(Collider collider)
     {
         if(collider.CompareTag("Player"))
         {
-            bossController.GetFSMBoss().playerReachable = false;
+            fsmBoss.playerReachable = false;
         }
     }
 
@@ -41,7 +34,7 @@ public class OnPlatform : MonoBehaviour {
     {
         if (collider.CompareTag("Player"))
         {
-            bossController.GetFSMBoss().playerReachable = true;
+            fsmBoss.playerReachable = true;
         }
     }
 }
