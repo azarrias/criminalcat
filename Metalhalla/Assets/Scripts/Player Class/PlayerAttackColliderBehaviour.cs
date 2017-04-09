@@ -6,6 +6,11 @@ public class PlayerAttackColliderBehaviour : MonoBehaviour {
 
     public LayerMask hittableLayer;
 
+    private void Update()
+    {
+        
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if ( hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))

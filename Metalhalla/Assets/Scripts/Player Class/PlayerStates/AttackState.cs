@@ -19,6 +19,7 @@ public class AttackState : PlayerState
         {
             attackFramesCount = 0;
             status.attackCollider.enabled = true;
+            status.attackCollider.GetComponent<Renderer>().enabled = true;
         }
 
         // add attack routine here 
@@ -30,6 +31,7 @@ public class AttackState : PlayerState
             else
                 status.SetState(PlayerStatus.idle);
             status.attackCollider.enabled = false;
+            status.attackCollider.GetComponent<Renderer>().enabled = false;
 
         }
         else

@@ -65,9 +65,6 @@ public class PlayerStatus : MonoBehaviour {
     [HideInInspector]
     public PlayerState previousState;
 
-    int framesToFallThroughCloudPlatforms;
-    int framesToFallThroughCloudPlatformsCount;
-
     [HideInInspector]
     public bool facingRight;
     [HideInInspector]
@@ -80,6 +77,7 @@ public class PlayerStatus : MonoBehaviour {
     void Start()
     {
         attackCollider.enabled = false;
+        attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
 
         health = healthAtStart;
         stamina = staminaAtStart;
