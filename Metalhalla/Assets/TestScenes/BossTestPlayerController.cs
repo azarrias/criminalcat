@@ -28,7 +28,7 @@ public class BossTestPlayerController : MonoBehaviour {
 
 	void FixedUpdate () {
 
-        //if(Input.GetKeyDown(KeyCode.Space) && onLand)
+        //if (Input.GetKeyDown(KeyCode.Space) && onLand)
         //{
         //    gameObject.GetComponent<Rigidbody>().velocity = Vector3.up * jumpSpeed;
         //    onLand = false;
@@ -38,37 +38,37 @@ public class BossTestPlayerController : MonoBehaviour {
         //Vector3 translation = new Vector3(horizontal * speed * Time.deltaTime, 0, 0);
         //transform.Translate(translation);
 
-        if(Input.GetKeyDown(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            fsm.DamageBoss(10);            
+            fsm.DamageBoss(10);
         }
 
-        //Change camera
-        //if (Input.GetKeyDown(KeyCode.C))
-        //{
-        //    toggleCam = !toggleCam;
+        //    //Change camera
+        //    if (Input.GetKeyDown(KeyCode.C))
+        //    {
+        //        toggleCam = !toggleCam;
 
-        //    if (!toggleCam)
-        //    {
-        //        lateralCam.SetActive(true);
-        //        topDownCam.SetActive(false);
-        //    }
-        //    else
-        //    {
-        //        lateralCam.SetActive(false);
-        //        topDownCam.SetActive(true);
+        //        if (!toggleCam)
+        //        {
+        //            lateralCam.SetActive(true);
+        //            topDownCam.SetActive(false);
+        //        }
+        //        else
+        //        {
+        //            lateralCam.SetActive(false);
+        //            topDownCam.SetActive(true);
+        //        }
+
         //    }
 
         //}
 
+        //void OnCollisionEnter(Collision collision)
+        //{
+        //    if (collision.gameObject.layer == LayerMask.NameToLayer("ground"))
+        //    {
+        //        onLand = true;
+        //    }
+
     }
-
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //   if( collision.gameObject.layer == LayerMask.NameToLayer("ground"))
-    //    {
-    //        onLand = true;
-    //    }
-
-    //}
 }

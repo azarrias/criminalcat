@@ -551,6 +551,9 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PrepareCast";
             bossAnimator.SetBool(currAnimation, true);
+            
+            //Select the safe side to go when spikes are on
+            iceSpikesScript.SelectIceSafe();
 
             Vector3 newPos = gameObject.transform.position;
              prevDiff = (int)(thePlayer.transform.position.x - newPos.x);
@@ -564,7 +567,7 @@ public class FSMBoss : MonoBehaviour
             if (Vector3.Distance(gameObject.transform.position, spikesCastingSpot.transform.position) <= lerpPosThreshold)
             {
                 castIceSpikes = true;
-                prepareCast = false;
+                prepareCast = false;                       
             }
         }
         
@@ -612,6 +615,12 @@ public class FSMBoss : MonoBehaviour
                 backToCenter = false;
                 GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = true;
                 GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = true;
+
+                //Reset the safe side to go when spikes are on
+                if(iceSpikesScript.rightSafe)
+                    iceSpikesScript.EnableRightSpikes();
+                if (iceSpikesScript.leftSafe)
+                    iceSpikesScript.EnableLeftSpikes();
             }
         }
         
@@ -635,5 +644,7 @@ public class FSMBoss : MonoBehaviour
         gameObject.transform.localScale = scale;
         facingRight = !facingRight;
     }
+
+    
 
 }
