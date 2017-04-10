@@ -20,7 +20,6 @@ public class CameraManager : MonoBehaviour {
     [Tooltip("Camera that will be responsible for rendering the map")]
     public Camera mapCamera;
     private int currentCameraIndex;
-    private BlurOptimized blur = null;
 
     private Text label;
 //    private Text
@@ -30,8 +29,6 @@ public class CameraManager : MonoBehaviour {
       //  label.material.color = Color.red;
         currentCameraIndex = defaultCameraIndex;
         ShiftCameras();
-        blur = cameras[currentCameraIndex].GetComponent<BlurOptimized>() as BlurOptimized;
-        blur.enabled = false;
         mapCamera.gameObject.SetActive(true);
     }
 	
@@ -42,16 +39,6 @@ public class CameraManager : MonoBehaviour {
             ShiftCameraIndex();
             ShiftCameras();
         }
-        else if (Input.GetKeyDown(KeyCode.M) == true)
-        {
-            blur.enabled = true;
-        
-        }
-        else if (Input.GetKeyUp(KeyCode.M) == true)
-        {
-            blur.enabled = false;
-        }
-
        // label.material.color = Color.red;
     }
 
