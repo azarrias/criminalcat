@@ -37,6 +37,8 @@ public class FSMBoss : MonoBehaviour
 
     //ball attack prefab
     public BossFireBall fireBallPrefab = null;
+    //ice spikes attack animator
+    IceSpikesBehaviour iceSpikesScript = null;
 
     private State currState = State.START;
     private State prevState = State.START;
@@ -111,6 +113,10 @@ public class FSMBoss : MonoBehaviour
 
         bossAnimator = GetComponent<Animator>();
         bossStats = GetComponent<BossStats>();
+
+        iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
+        if (iceSpikesScript == null)
+            Debug.LogError("Error: iceSpikesScript not found.");
     }
 
     void Start()
@@ -577,7 +583,8 @@ public class FSMBoss : MonoBehaviour
             GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = false;
             GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = false;
 
-            //Sacar los pinchos y dejarlos durante un tiempo             
+            //Sacar los pinchos y dejarlos durante un tiempo               
+            iceSpikesScript.ShowIceSpikes();         
             StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));                  
         } 
     }
@@ -588,7 +595,8 @@ public class FSMBoss : MonoBehaviour
         {                       
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "BackToCenter";
-            bossAnimator.SetBool(currAnimation, true);                    
+            bossAnimator.SetBool(currAnimation, true);
+            iceSpikesScript.HideIceSpikes();                  
         }
         else
         {
