@@ -22,7 +22,9 @@ public class FallState : PlayerState
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
     {
         if (collider.collisions.below)
-            status.SetState(PlayerStatus.idle); 
+        {
+            status.SetState(PlayerStatus.idle);
+        }
     }
 
 }
