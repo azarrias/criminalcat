@@ -142,9 +142,9 @@ public class PlayerStatus : MonoBehaviour {
         currentState.HandleInput(input, this);
     }
 
-    public void statusUpdateAfterCollisionCheck(PlayerCollider collider)
+    public void statusUpdateAfterCollisionCheck(PlayerCollider collider, PlayerInput input)
     {
-        currentState.UpdateAfterCollisionCheck(collider, this);
+        currentState.UpdateAfterCollisionCheck(collider, this, input);
     }
 
     public void SetState(PlayerState newState)

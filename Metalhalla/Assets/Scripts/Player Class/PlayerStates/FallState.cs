@@ -19,11 +19,14 @@ public class FallState : PlayerState
         status.SetState(this); 
     }
 
-    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
+    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
         if (collider.collisions.below)
         {
-            status.SetState(PlayerStatus.idle);
+            if (input.newInput.GetHorizontalInput() != 0)
+                status.SetState(PlayerStatus.walk);
+            else
+                status.SetState(PlayerStatus.idle);
         }
     }
 

@@ -26,7 +26,7 @@ public class HitState : PlayerState
         hitFramesCount++;
     }
 
-    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
+    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
 
     }

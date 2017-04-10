@@ -6,5 +6,5 @@ public class PlayerState : ScriptableObject
 {
      ~PlayerState() { }
     public virtual void HandleInput(PlayerInput input, PlayerStatus status) { }
-    public virtual void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status) { }
+    public virtual void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input) { }
 }

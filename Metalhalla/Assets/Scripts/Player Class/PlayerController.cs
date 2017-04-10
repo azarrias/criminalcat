@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour {
 		playerStatus.statusUpdateAfterInput(playerInput);
 		playerMove.CalculateSpeed(playerInput, playerStatus);
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
-		playerStatus.statusUpdateAfterCollisionCheck (playerCollider);
+		playerStatus.statusUpdateAfterCollisionCheck (playerCollider, playerInput);
 		playerMove.Move ();
 
         // pass variables to the animator 

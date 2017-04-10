@@ -16,7 +16,7 @@ public class ClimbState : PlayerState
         
     }
 
-    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status)
+    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
         if (collider.collisions.below == true)
             status.SetState(PlayerStatus.idle);
