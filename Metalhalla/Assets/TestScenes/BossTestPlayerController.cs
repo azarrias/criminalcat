@@ -22,8 +22,8 @@ public class BossTestPlayerController : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
-        lateralCam = GameObject.Find("Lateral Camera");
-        topDownCam = GameObject.Find("Top Down Camera");
+        //lateralCam = GameObject.Find("Lateral Camera");
+        //topDownCam = GameObject.Find("Top Down Camera");
     }
 
 	void FixedUpdate () {
