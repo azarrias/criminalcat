@@ -1,10 +1,22 @@
 ﻿using UnityEngine;
 
 public class SelfDestruct : MonoBehaviour {
-    [SerializeField]
-    float lifeTime = 5.0f;
-	// Use this for initialization
-	void Start () {
+    
+     public float lifeTime = 5.0f;
+    // Use this for initialization
+
+    public int pushForceX = 0;
+    public int pushForceY = 0;
+    public int pushForceZ = 0;
+
+    // Use this for initialization
+    void Start()
+    {
+        foreach (Transform rockTransform in gameObject.GetComponentInChildren<Transform>())
+        {
+            rockTransform.GetComponent<Rigidbody>().AddForce(new Vector3(pushForceX, pushForceY, pushForceZ), ForceMode.VelocityChange);
+        }
+    
         Destroy(gameObject, lifeTime);
 	}
 	
