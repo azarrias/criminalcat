@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvoidPlayerThrough : MonoBehaviour {
+public class SlidePlayer : MonoBehaviour {
 
     private GameObject thePlayer = null;
     private PlayerStatus thePlayerStatus = null;
     private GameObject theBoss = null;
-    private PlayerOverHead overHead = null;
-    //private PlayerCollider playerCollider = null;
     private bool slidePlayer = false;
+    public float slideSpeed = 10f;
+    private bool slideLeft = true;
+    private FSMBoss fsmBoss = null; 
 
 	// Use this for initialization
 	void Start () {
@@ -24,58 +25,38 @@ public class AvoidPlayerThrough : MonoBehaviour {
         theBoss = GameObject.FindGameObjectWithTag("Boss");
         if (theBoss == null)
             Debug.LogError("theBoss not found.");
-     
-        overHead = FindObjectOfType<PlayerOverHead>();
-        if (overHead == null)
-            Debug.LogError("overHead not found.");
 
-        //playerCollider = thePlayer.GetComponent<PlayerCollider>();
-        //if (playerCollider == null)
-        //    Debug.LogError("playerCollider not found.");
+        fsmBoss = theBoss.GetComponent<FSMBoss>();
+        if (fsmBoss == null)
+            Debug.Log("fsmBoss not found.");
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
-
-    void FixedUpdate()
-    {
-        if(slidePlayer)
+        if (slidePlayer && fsmBoss.GetCurrentState() == FSMBoss.State.BACK_TO_CENTER)
         {
-            Vector3 pos = thePlayer.transform.position;           
-            if (thePlayerStatus.facingRight)
-            {
-                pos = new Vector3(pos.x - 0.1f, pos.y, pos.z);
-            }
+            if (theBoss.transform.position.x >= thePlayer.transform.position.x)
+                slideLeft = true;
             else
-            {                
-                pos = new Vector3(pos.x + 0.1f, pos.y, pos.z);
-            }
-                       
-            thePlayer.transform.position = pos;
-        }
+                slideLeft = false;
 
-        if(overHead.IsOverHead())
-        {
             Vector3 pos = thePlayer.transform.position;
-            if (thePlayerStatus.facingRight)
-            {                
-                pos = new Vector3(pos.x + 0.1f, pos.y, pos.z);
+            if (slideLeft)
+            {
+                pos = new Vector3(pos.x - slideSpeed * Time.deltaTime, pos.y, pos.z);
             }
             else
-            {              
-                pos = new Vector3(pos.x - 0.1f, pos.y, pos.z);
+            {
+                pos = new Vector3(pos.x + slideSpeed * Time.deltaTime, pos.y, pos.z);
             }
 
             thePlayer.transform.position = pos;
         }
-
     }
 
     void OnTriggerEnter(Collider collider)
     {     
-        if (collider.CompareTag("Player") && overHead.IsOverHead() == false)
+        if (collider.CompareTag("Player"))
         {                
             slidePlayer = true;        
         }

@@ -5,7 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(Animator))]
 public class FSMBoss : MonoBehaviour
 {
-    private enum State
+    public enum State
     {
         START,
         DEAD,
@@ -22,6 +22,7 @@ public class FSMBoss : MonoBehaviour
     private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
+    private GameObject castingArea = null;
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
     public float detectionHeight = 3.0f;
@@ -73,7 +74,7 @@ public class FSMBoss : MonoBehaviour
     //Ball attack allowed at HP <= 75% maxHP
     private float thresholdBallAttack = 0.75f;
     //first ice spikes at 25% maxHP
-    private float thresholdFirstSpikes = 0.25f;
+    private float thresholdFirstSpikes = 0.50f;
     //second ice spikes at 10% maxHP
     private float thresholdSecondSpikes = 0.10f;
 
@@ -117,12 +118,17 @@ public class FSMBoss : MonoBehaviour
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
         if (iceSpikesScript == null)
             Debug.LogError("Error: iceSpikesScript not found.");
+
+        castingArea = GameObject.FindGameObjectWithTag("CastingArea");
+        if (castingArea == null)
+            Debug.LogError("Error: castingArea not found.");
     }
 
     void Start()
     {
         spikesCastingSpot.transform.position = gameObject.transform.position + Vector3.forward * spikesAttackBossDepth;
         spikesReturnSpot.transform.position = gameObject.transform.position;
+        castingArea.transform.position = spikesReturnSpot.transform.position;
     }
 
 
@@ -611,11 +617,9 @@ public class FSMBoss : MonoBehaviour
                 gameObject.transform.position = spikesReturnSpot.transform.position;         
                 backToCenter = false;           
 
-                //Reset the safe side to go when spikes are on
-                if(iceSpikesScript.rightSafe)
-                    iceSpikesScript.EnableRightSpikes();
-                if (iceSpikesScript.leftSafe)
-                    iceSpikesScript.EnableLeftSpikes();
+                //Reset ice spikes         
+                 iceSpikesScript.EnableRightSpikes();                
+                 iceSpikesScript.EnableLeftSpikes();
             }
         }
         
@@ -638,6 +642,11 @@ public class FSMBoss : MonoBehaviour
         scale.x *= -1;
         gameObject.transform.localScale = scale;
         facingRight = !facingRight;
+    }
+
+    public State GetCurrentState()
+    {
+        return currState;
     }
 
     

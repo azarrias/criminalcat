@@ -55,7 +55,7 @@ public class SightRange : MonoBehaviour {
         if (collider.CompareTag("Player"))
             fsmBoss.playerInSight = false;
 
-        if (collider.CompareTag("BossCollider"))
+        if (collider.CompareTag("Boss"))
         {
             fsmBoss.Flip();
         }

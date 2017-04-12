@@ -96,16 +96,16 @@ public class IceSpikesBehaviour : MonoBehaviour {
         rightSafe = true;
     }
 
-    //Select the safe side to go whiles spikes are cast
+    //Select the safe side to go while spikes are cast
     public void SelectIceSafe()
     {
         System.Random rand = new System.Random();
         int num = rand.Next(0, 2);
 
         if (num == 0)
-            DisableLeftSpikes();
+           DisableLeftSpikes();
         if (num == 1)
-            DisableRightSpikes();
+           DisableRightSpikes();
       
     }
 
