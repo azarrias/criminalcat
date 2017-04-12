@@ -17,10 +17,10 @@ public class DestructionController : MonoBehaviour {
 
 		if(Input.GetKey(KeyCode.LeftAlt))
         {
-            GameObject stones = Instantiate(remains, transform.position, transform.rotation);
-            stones.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-            stones.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-            stones.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+            GameObject broken = Instantiate(remains, transform.position, transform.rotation);
+            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
             Destroy(gameObject);
         }
 	}
