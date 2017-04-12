@@ -12,9 +12,9 @@ public class SelfDestruct : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        foreach (Transform rockTransform in gameObject.GetComponentInChildren<Transform>())
+        foreach (Transform trf in gameObject.GetComponentInChildren<Transform>())
         {
-            rockTransform.GetComponent<Rigidbody>().AddForce(new Vector3(pushForceX, pushForceY, pushForceZ), ForceMode.VelocityChange);
+            trf.GetComponent<Rigidbody>().AddForce(new Vector3(pushForceX, pushForceY, pushForceZ), ForceMode.VelocityChange);
         }
     
         Destroy(gameObject, lifeTime);

@@ -15,7 +15,7 @@ public class DestructionController : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-		if(Input.GetKey(KeyCode.Space))
+		if(Input.GetKey(KeyCode.LeftAlt))
         {
             GameObject stones = Instantiate(remains, transform.position, transform.rotation);
             stones.GetComponent<SelfDestruct>().pushForceX = pushForceX;
