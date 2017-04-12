@@ -583,9 +583,6 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
 
-            GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = false;
-            GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = false;
-
             //Sacar los pinchos y dejarlos durante un tiempo               
             iceSpikesScript.ShowIceSpikes();         
             StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));                  
@@ -612,9 +609,7 @@ public class FSMBoss : MonoBehaviour
             {
                 //Return to the exact position
                 gameObject.transform.position = spikesReturnSpot.transform.position;         
-                backToCenter = false;
-                GameObject.Find("OverHeadCollider").GetComponent<BoxCollider>().enabled = true;
-                GameObject.Find("BossCollider").GetComponent<BoxCollider>().enabled = true;
+                backToCenter = false;           
 
                 //Reset the safe side to go when spikes are on
                 if(iceSpikesScript.rightSafe)
