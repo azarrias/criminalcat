@@ -5,14 +5,12 @@ using UnityEngine;
 public class AttackState : PlayerState
 {
     int attackFramesDuration;
-    int attackFramesCount;
-    int attackColliderDelay;
+    int attackFramesCount; 
 
     public AttackState( int framesDuration )
     {
         attackFramesDuration = framesDuration;
-        attackFramesCount = 0;
-        attackColliderDelay = framesDuration / 2;   // TODO: adjust times to frame precision
+        attackFramesCount = 0; 
     }
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
@@ -20,16 +18,11 @@ public class AttackState : PlayerState
         if (status.previousState != this)
         {
             attackFramesCount = 0;
-        //    status.attackCollider.enabled = true;
-        //    status.attackCollider.GetComponent<Renderer>().enabled = true;
-        }
-
-        // add attack routine here 
-        if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
-        {
             status.attackCollider.enabled = true;
             status.attackCollider.GetComponent<Renderer>().enabled = true;
         }
+
+        // add attack routine here 
 
         if (attackFramesCount >= attackFramesDuration)
         {
