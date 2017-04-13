@@ -13,7 +13,11 @@ public class PlayerAttackColliderBehaviour : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if ( hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))
-            Destroy(other.gameObject);
+        if (hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))
+        {
+            //Destroy(other.gameObject);
+            other.gameObject.SendMessage("ApplyDamage", 5, SendMessageOptions.DontRequireReceiver);
+
+        }
     }
 }
