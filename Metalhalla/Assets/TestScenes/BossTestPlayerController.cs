@@ -40,7 +40,7 @@ public class BossTestPlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            fsm.DamageBoss(10);
+            fsm.ApplyDamage(10);
         }
 
         //    //Change camera

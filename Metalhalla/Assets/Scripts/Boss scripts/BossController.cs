@@ -70,7 +70,7 @@ public class BossController : MonoBehaviour {
   
     public void DamageBoss(int damage)
     {
-        fsmBoss.DamageBoss(damage);
+        fsmBoss.ApplyDamage(damage);
     }
 
     //------------------------------------ GETTERS ----------------------------------------

@@ -84,14 +84,21 @@ public class FSMBoss : MonoBehaviour
     // variable to set rotations properly when returning from spikes casting spot
     private int prevDiff = 0;
     // ------------------------------------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ---------------------------------------------------
-
+    [Tooltip("Minimun number of frames to stay in Patrol state before transition")]
     public int patrolFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Chase state before transition")]
     public int chaseFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Melee Attack state before transition")]
     public int meleeFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Ball Attack state before transition")]
     public int ballAttackFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Prepare Cast state before transition")]
     public int prepareCastFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Cast Ice Spikes state before transition")]
     public int castFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Back To Center state before transition")]
     public int backToCenterFrames = 20;
+    [Tooltip("Minimun number of frames to stay in Stalk state before transition")]
     public int stalkFrames = 20;
 
     private int patrolFrameCounter = 0;
@@ -365,9 +372,9 @@ public class FSMBoss : MonoBehaviour
         }
 
     }
-
+    //-------------------------------- DAMAGE THE BOSS -----------------------------------------
     
-    public void DamageBoss(int damage)
+    public void ApplyDamage(int damage)
     {
         if (currState == State.CHASE || currState == State.MELEE_ATTACK || currState == State.BALL_ATTACK)
         {
