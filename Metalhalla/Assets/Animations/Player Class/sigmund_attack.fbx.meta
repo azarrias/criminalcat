@@ -111,7 +111,7 @@ ModelImporter:
     - serializedVersion: 16
       name: sigmund_attack
       takeName: Take 001
-      firstFrame: 1
+      firstFrame: 13.5
       lastFrame: 46
       wrapMode: 0
       orientationOffsetY: 0
