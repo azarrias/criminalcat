@@ -234,7 +234,7 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsGrounded()
     {
         //TODO - improve with collider collisions
-        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill || currentState == attack)
+        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill )
             return true;
         else
             return false;

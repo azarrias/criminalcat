@@ -13,6 +13,12 @@ public class FallState : PlayerState
             return;
         }
 
+        if (input.newInput.GetAttackButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.attack);
+            return;
+        }
+
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
 

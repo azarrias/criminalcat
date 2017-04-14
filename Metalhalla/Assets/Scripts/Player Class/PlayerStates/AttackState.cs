@@ -20,11 +20,8 @@ public class AttackState : PlayerState
         if (status.previousState != this)
         {
             attackFramesCount = 0;
-        //    status.attackCollider.enabled = true;
-        //    status.attackCollider.GetComponent<Renderer>().enabled = true;
         }
 
-        // add attack routine here 
         if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
         {
             status.attackCollider.enabled = true;
@@ -39,7 +36,7 @@ public class AttackState : PlayerState
                 status.SetState(PlayerStatus.idle);
             status.attackCollider.enabled = false;
             status.attackCollider.GetComponent<Renderer>().enabled = false;
-
+            Debug.Log("attackFramesCount = " + attackFramesCount);
         }
         else
             status.SetState(this);
