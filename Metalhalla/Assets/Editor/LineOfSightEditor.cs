@@ -5,12 +5,10 @@ using UnityEngine;
 [CustomEditor(typeof(LineOfSight))]
 public class LineOfSightEditor : Editor
 {
-
     private void OnSceneGUI()
     {
         LineOfSight fov = (LineOfSight)target;
         Handles.color = Color.white;
-        Handles.DrawWireArc(fov.transform.position, Vector3.forward, Vector3.left, 360, fov.viewRadius);
         Vector3 viewAngleA = fov.DirFromAngle(-fov.viewAngle / 2, false);
         Vector3 viewAngleB = fov.DirFromAngle(fov.viewAngle / 2, false);
 
