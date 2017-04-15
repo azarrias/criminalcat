@@ -19,9 +19,17 @@ public class HitState : PlayerState
             hitFramesCount = 0;
 
         if (hitFramesCount >= hitFramesDuration)
-            status.SetState(PlayerStatus.idle);
+        {
+            if (status.IsAlive())
+                status.SetState(PlayerStatus.idle);
+            else
+                status.SetState(PlayerStatus.dead);
+            return;
+        }
         else
+        {
             status.SetState(this);
+        }
 
         hitFramesCount++;
     }

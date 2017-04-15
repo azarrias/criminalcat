@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour {
         playerAnimator.SetBool("climb", playerStatus.IsClimb());
         playerAnimator.SetBool("hit", playerStatus.IsHit());
         playerAnimator.SetBool("cast", playerStatus.IsCast());
+        playerAnimator.SetBool("dead", !playerStatus.IsAlive());
         
 
 	}

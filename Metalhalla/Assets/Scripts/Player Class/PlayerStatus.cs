@@ -160,8 +160,6 @@ public class PlayerStatus : MonoBehaviour {
     {
         health -= damage;
         SetState(hit);
-        if (health <= 0)
-            health = 0; // TODO: improve when making full player FSM
     }
 
     public bool RestoreHealth(int restore)
@@ -180,6 +178,10 @@ public class PlayerStatus : MonoBehaviour {
         return (float)health / (float)healthMaximum;
     }
 
+    public bool IsAlive()
+    {
+        return health > 0; 
+    }
     // ---- STAMINA functions ---------------------------------------------------------------------------------------------
     public bool ConsumeStamina(int consumption)
     {
