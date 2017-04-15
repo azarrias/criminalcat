@@ -9,7 +9,7 @@ public class BarrelScript : MonoBehaviour {
         if (collision.tag == "Player")
         {
             collision.GetComponent<PlayerStatus>().beerRefillAvailable  = true;
-            // TODO: add code to save this position as a spawning point
+            collision.GetComponent<PlayerStatus>().activeRespawnPoint = transform.position + Vector3.up;
         }
     }
 

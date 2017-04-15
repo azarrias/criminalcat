@@ -10,17 +10,12 @@ public class CameraFade : MonoBehaviour {
     private bool isFading = false;
     private float fadeTimeCurrent = 0.0f;
 
-    //private float alpha;
     private Color guiColor;
 
-
-	// Use this for initialization
 	void Start () {
         guiColor.a = 0.0f;
-        //alpha = 0.0f;
     }
 	
-	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.R) == true && isFading == false)
         {

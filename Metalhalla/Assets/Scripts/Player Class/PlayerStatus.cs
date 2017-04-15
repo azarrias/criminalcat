@@ -47,6 +47,11 @@ public class PlayerStatus : MonoBehaviour {
     public float deadDuration = 3.0f;
     public float respawnLatency = 3.0f; // time between dead and alive again
 
+    [Header("Respawn management")]
+    public Vector3 initialPosition;
+    [HideInInspector]
+    public Vector3 activeRespawnPoint;
+
     // -- State variables (using state pattern)
     public static AttackState attack;
     public static CastState cast;
@@ -78,7 +83,6 @@ public class PlayerStatus : MonoBehaviour {
 
     void Start()
     {
-        // hiding hammer and colliders unless attacking
         hammerMesh.GetComponent<Renderer>().enabled = false;
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
@@ -87,6 +91,8 @@ public class PlayerStatus : MonoBehaviour {
         stamina = staminaAtStart;
         staminaRecovery = 0.0f;
         beer = beerAtStart;
+
+        activeRespawnPoint = initialPosition;
 
         attack = new AttackState(CalculateFramesFromTime(attackDuration));
         cast = new CastState(CalculateFramesFromTime(castDuration));
@@ -277,6 +283,12 @@ public class PlayerStatus : MonoBehaviour {
         transform.localScale = tmp;
 
     }
+
+    public void SetPlayerAtRespawnPoint()
+    {
+        transform.position = activeRespawnPoint;
+    }
+
 
     // BOOLEAN STATE FUNCIONS
     public bool IsIdle() { return currentState == idle; }

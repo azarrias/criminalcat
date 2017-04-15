@@ -7,21 +7,24 @@ public class DeadState : PlayerState
     int deadFramesDuration;
     int deadFramesCount;
 
-    public DeadState( int framesDuration)
+    public DeadState( int animationFramesDuration)
     {
-        deadFramesDuration = framesDuration;
+        deadFramesDuration = animationFramesDuration;
         deadFramesCount = 0; 
     }
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             deadFramesCount = 0;
+        }
 
         if (deadFramesCount >= deadFramesDuration)
         {
             status.SetState(PlayerStatus.idle);
             status.SetMaxHealth();
+            status.SetPlayerAtRespawnPoint();
             return;
         }
         else
