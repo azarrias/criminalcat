@@ -91,7 +91,7 @@ public class PlayerStatus : MonoBehaviour {
         attack = new AttackState(CalculateFramesFromTime(attackDuration));
         cast = new CastState(CalculateFramesFromTime(castDuration));
         climb = new ClimbState();
-        dead = new DeadState();
+        dead = new DeadState(CalculateFramesFromTime(deadDuration));
         defense = new DefenseState();
         drink = new DrinkState(CalculateFramesFromTime(drinkDuration));
         fall = new FallState();
@@ -115,9 +115,9 @@ public class PlayerStatus : MonoBehaviour {
     {
         // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
-            ApplyDamage(5);
+            ApplyDamage(30);
         if (Input.GetKeyDown(KeyCode.F2) == true)
-            RestoreHealth(5);
+            RestoreHealth(30);
         if (Input.GetKeyDown(KeyCode.F3) == true)
             ConsumeStamina(7);  
         if (Input.GetKeyDown(KeyCode.F4) == true)
@@ -185,6 +185,11 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsAlive()
     {
         return health > 0; 
+    }
+
+    public void SetMaxHealth()
+    {
+        health = healthMaximum;
     }
     // ---- STAMINA functions ---------------------------------------------------------------------------------------------
     public bool ConsumeStamina(int consumption)

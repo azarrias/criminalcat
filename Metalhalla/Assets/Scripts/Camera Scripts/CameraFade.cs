@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class CameraFade : MonoBehaviour {
 
-    public GameObject fadeTexture;
+    public Texture2D fadeTexture;
     public float fadeTime = 2.0f;
 
     private bool isFading = false;
     private float fadeTimeCurrent = 0.0f;
-    private Color textureColor;
-    private SpriteRenderer textureRenderer;
+
+    //private float alpha;
+    private Color guiColor;
 
 
 	// Use this for initialization
 	void Start () {
-        textureRenderer = fadeTexture.GetComponent<SpriteRenderer>();
-        textureColor = textureRenderer.color;
-
+        guiColor.a = 0.0f;
+        //alpha = 0.0f;
     }
 	
 	// Update is called once per frame
@@ -31,18 +31,25 @@ public class CameraFade : MonoBehaviour {
         {
             if (fadeTimeCurrent >= fadeTime)
             {
-                textureColor.a = 0.0f;
+                guiColor.a = 0.0f;
                 isFading = false;
 
             }
             else
             {
-                textureColor.a = 1 - Mathf.Abs((fadeTime * 0.5f - fadeTimeCurrent) / (fadeTime * 0.5f));
+                guiColor.a = 1 - Mathf.Abs((fadeTime * 0.5f - fadeTimeCurrent) / (fadeTime * 0.5f));
                 fadeTimeCurrent += Time.deltaTime;
             }
-
-            textureRenderer.color = textureColor;
         }
 
 	}
+
+    private void OnGUI()
+    {
+        if (isFading == true)
+        {
+            GUI.color = guiColor;
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeTexture);
+        }
+    }
 }
