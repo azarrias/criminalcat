@@ -12,6 +12,7 @@ public class RockFall : MonoBehaviour {
     private Transform currentSpawnPoint = null;
     public float spawnDelay = 2.0f;
     private bool wait = false;
+    public bool active = false;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +22,7 @@ public class RockFall : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (!wait)
+        if (!wait && active)
         {
             SelectSpawnPoint();
             StartCoroutine("Delay", spawnDelay);
