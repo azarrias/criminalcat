@@ -58,7 +58,6 @@ public class CameraFollow : MonoBehaviour
         SetCameraPosition();
         if (showMoveBox)
             ShowBox();
- //       Debug.Log("activetracking: " + activeTracking);
     }
 
     void SetCameraPosition()
@@ -91,8 +90,6 @@ public class CameraFollow : MonoBehaviour
             }
 
             transform.position = cameraPosition;
-
-     //       CorrectOutOfBounds();
 
             lastCameraPositionBeforeActiveTracking = transform.position;
         }
@@ -135,22 +132,6 @@ public class CameraFollow : MonoBehaviour
         limitBottom = bottom;
     }
 
-    void CorrectOutOfBounds()
-    {
-        Vector3 correctedPosition = transform.position;
-        if (correctedPosition.x < limitLeft)
-            correctedPosition.x = Mathf.Lerp(correctedPosition.x, limitLeft, 0.5f);
-        else if (correctedPosition.x > limitRight)
-            correctedPosition.x = Mathf.Lerp(correctedPosition.x, limitRight, 0.5f);
-
-        if (correctedPosition.y > limitTop)
-            correctedPosition.y = limitTop;
-        else if (correctedPosition.y < limitBottom)
-            correctedPosition.y = limitBottom;
-
-        transform.position = correctedPosition;
-    }
-
     void CalculateDistanceFromPlayer()
     {
         float frustumHeight = playerHeight * 100 / playerToScreenHeightRatio;
@@ -183,7 +164,7 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    //-- scene switch
+    //-- frame switch
     public void MoveCamera(Vector3 targetPos, float moveSpeed)
     {
         StartCoroutine(MoveToNextScene(targetPos, moveSpeed));

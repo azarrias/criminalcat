@@ -25,7 +25,7 @@ public class CastState : PlayerState
             }
         }
 
-        // add instantiation of cast attack based on the input
+        // add instantiation of cast attack based on the input - Eagle or Wild Boar attack
 
         if (castFramesCount>= castFramesDuration)
         {

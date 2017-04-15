@@ -44,6 +44,7 @@ public class PlayerStatus : MonoBehaviour {
     public float refillDuration = 0.9f;
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
+    public float deadDuration = 3.0f;
     public float respawnLatency = 3.0f; // time between dead and alive again
 
     // -- State variables (using state pattern)
