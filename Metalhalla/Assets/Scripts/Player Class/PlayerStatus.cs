@@ -4,7 +4,8 @@ using System.Collections;
 public class PlayerStatus : MonoBehaviour {
 
     // colliders
-    [Header("Colliders")]
+    [Header("Attack Elements")]
+    public GameObject hammerMesh;
     public BoxCollider attackCollider;
 
     // health variables
@@ -76,6 +77,8 @@ public class PlayerStatus : MonoBehaviour {
 
     void Start()
     {
+        // hiding hammer and colliders unless attacking
+        hammerMesh.GetComponent<Renderer>().enabled = false;
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
 
@@ -209,10 +212,15 @@ public class PlayerStatus : MonoBehaviour {
         if (beer == 0)
             return false;
 
-        if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
+        //UPDATE: allowed to drink even if health is full for the sake of the animation
+       /*
+        * if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
             return false;
+        */
 
         beer -= consumption;
+        if (beer <= 0)
+            beer = 0;
         return true;
     }
 

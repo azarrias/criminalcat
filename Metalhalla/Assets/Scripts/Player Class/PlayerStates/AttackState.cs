@@ -20,6 +20,7 @@ public class AttackState : PlayerState
         if (status.previousState != this)
         {
             attackFramesCount = 0;
+            status.hammerMesh.GetComponent<Renderer>().enabled = true;
         }
 
         if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
@@ -36,7 +37,7 @@ public class AttackState : PlayerState
                 status.SetState(PlayerStatus.idle);
             status.attackCollider.enabled = false;
             status.attackCollider.GetComponent<Renderer>().enabled = false;
-            Debug.Log("attackFramesCount = " + attackFramesCount);
+            status.hammerMesh.GetComponent<Renderer>().enabled = false;
         }
         else
             status.SetState(this);
