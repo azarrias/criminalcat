@@ -5,8 +5,9 @@ using UnityEngine;
 public class CameraFade : MonoBehaviour {
 
     public Texture2D fadeTexture;
-    public float fadeTime = 2.0f;
+    public float fadeTime = 6.0f;
 
+    [HideInInspector]
     private bool isFading = false;
     private float fadeTimeCurrent = 0.0f;
 
@@ -18,10 +19,7 @@ public class CameraFade : MonoBehaviour {
 	
 	void Update () {
         if (Input.GetKeyDown(KeyCode.R) == true && isFading == false)
-        {
-            isFading = true;
-            fadeTimeCurrent = 0.0f;
-        }
+            ActivateFade();
         if ( isFading == true )
         {
             if (fadeTimeCurrent >= fadeTime)
@@ -46,5 +44,11 @@ public class CameraFade : MonoBehaviour {
             GUI.color = guiColor;
             GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeTexture);
         }
+    }
+
+    public void ActivateFade()
+    {
+        isFading = true;
+        fadeTimeCurrent = 0.0f;
     }
 }

@@ -18,6 +18,7 @@ public class DeadState : PlayerState
         if (status.previousState != this)
         {
             deadFramesCount = 0;
+            status.StartRespawnCameraFade();
         }
 
         if (deadFramesCount >= deadFramesDuration)

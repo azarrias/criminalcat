@@ -51,6 +51,7 @@ public class PlayerStatus : MonoBehaviour {
     public Vector3 initialPosition;
     [HideInInspector]
     public Vector3 activeRespawnPoint;
+    CameraFade cameraFade;
 
     // -- State variables (using state pattern)
     public static AttackState attack;
@@ -93,6 +94,7 @@ public class PlayerStatus : MonoBehaviour {
         beer = beerAtStart;
 
         activeRespawnPoint = initialPosition;
+        cameraFade = GameObject.Find("PlayerCamera").GetComponent<CameraFade>();
 
         attack = new AttackState(CalculateFramesFromTime(attackDuration));
         cast = new CastState(CalculateFramesFromTime(castDuration));
@@ -289,6 +291,10 @@ public class PlayerStatus : MonoBehaviour {
         transform.position = activeRespawnPoint;
     }
 
+    public void StartRespawnCameraFade()
+    {
+        cameraFade.ActivateFade();
+    }
 
     // BOOLEAN STATE FUNCIONS
     public bool IsIdle() { return currentState == idle; }
