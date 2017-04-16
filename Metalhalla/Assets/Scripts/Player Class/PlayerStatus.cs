@@ -298,6 +298,4 @@ public class PlayerStatus : MonoBehaviour {
    
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
-    public bool WasJump() { return previousState == jump; }
-
 }

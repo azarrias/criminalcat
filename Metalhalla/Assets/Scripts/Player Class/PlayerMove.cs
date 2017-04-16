@@ -44,16 +44,11 @@ public class PlayerMove : MonoBehaviour {
         if (status.IsJump())
         {
             speed.y = jumpSpeeds[status.jumpFrames];
-            Debug.Log("jumpFrames = " + status.jumpFrames);
             //speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
         }
         else if (status.IsFall() || status.IsFallCloud() || status.IsHit() || status.IsAttack())  
         {
-            //speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
-            /*if (status.WasJump())
-                speed.y = 0;
-            else*/
-                speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+           speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
         else if (status.IsClimb())
         {
