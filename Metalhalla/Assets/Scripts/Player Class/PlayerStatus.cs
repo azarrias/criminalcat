@@ -6,6 +6,8 @@ public class PlayerStatus : MonoBehaviour {
     [Header("Attack Elements")]
     public GameObject hammerMesh;
     public BoxCollider attackCollider;
+    public GameObject eagleAttack;
+    public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.5f, 0);
 
     [Header("Health Setup")]
     [Tooltip("Health start value")]
@@ -81,6 +83,7 @@ public class PlayerStatus : MonoBehaviour {
 
     void Start()
     {
+
         hammerMesh.GetComponent<Renderer>().enabled = false;
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging

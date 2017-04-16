@@ -16,7 +16,7 @@ public class TornadoBehaviour : MonoBehaviour {
     private float angle = 0.0f;
     private Vector3 translation;
     private Transform tornadoEyeTr = null;
-	// Use this for initialization
+
 	void Start () {
 
         contains = new List<GameObject>();
@@ -122,6 +122,11 @@ public class TornadoBehaviour : MonoBehaviour {
         }
 
         return ret;
+    }
+
+    public void SetFacingRight (bool newValue)
+    {
+        facingRight = newValue;
     }
 
 

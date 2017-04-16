@@ -18,14 +18,22 @@ public class CastState : PlayerState
         if (status.previousState != this)
         {
             castFramesCount = 0;
-            if (status.ConsumeStamina(7) == false)  // TODO: put stamina consumption depending on the cast
+            // instantiation of ONLY Eagle, need to modify when having wild boar attack
+            if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(7) == true )
+            {
+                GameObject cast = Instantiate(status.eagleAttack);
+                cast.GetComponent<TornadoBehaviour>().SetFacingRight(status.facingRight);
+                if (status.facingRight == true)
+                    cast.transform.position = status.transform.position + status.eagleAttackInstanceOffset;
+                else
+                    cast.transform.position = status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up;
+            }
+            else
             {
                 status.SetState(PlayerStatus.idle);
                 return;
             }
         }
-
-        // add instantiation of cast attack based on the input - Eagle or Wild Boar attack
 
         if (castFramesCount>= castFramesDuration)
         {
