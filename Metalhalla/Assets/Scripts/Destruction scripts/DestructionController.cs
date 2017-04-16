@@ -17,11 +17,16 @@ public class DestructionController : MonoBehaviour {
 
 		if(Input.GetKey(KeyCode.LeftAlt))
         {
-            GameObject broken = Instantiate(remains, transform.position, transform.rotation);
-            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-            broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-            Destroy(gameObject);
+            ApplyDamage(); 
         }
 	}
+
+    public void ApplyDamage(int dmg = 0)
+    {
+        GameObject broken = Instantiate(remains, transform.position, transform.rotation);
+        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+        Destroy(gameObject);
+    }
 }
