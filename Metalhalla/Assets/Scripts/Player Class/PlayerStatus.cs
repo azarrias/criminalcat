@@ -254,26 +254,6 @@ public class PlayerStatus : MonoBehaviour {
 
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
-    public bool IsGrounded()
-    {
-        //TODO - improve with collider collisions
-        
-        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill || currentState == attack)
-            return true;
-        else
-            return false;
-        
-    }
-
-    public bool CanMoveHorizontally()
-    {
-        if (IsGrounded() == false)
-            return true;
-        if (currentState == idle || currentState == walk)
-            return true;
-        return false;
-    }
-
     int CalculateFramesFromTime(float time) {
         return (int)(time / Time.fixedDeltaTime);
     }

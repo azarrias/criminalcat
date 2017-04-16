@@ -179,15 +179,7 @@ public class PlayerCollider : MonoBehaviour {
 
     public bool IsGrounded()
     {
-        for (int i = 0; i < verticalRayCount; i++)
-        {
-            Vector2 rayOrigin = raycastOrigins.bottomLeft;
-            rayOrigin += Vector2.right * (verticalRaySpacing * i);
-            RaycastHit hitinfo;
-            if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth * 2, generalCollisionMask))
-                return true;
-        }
-        return false;
+        return collisions.below == true;
     }
 
     struct RaycastOrigins {

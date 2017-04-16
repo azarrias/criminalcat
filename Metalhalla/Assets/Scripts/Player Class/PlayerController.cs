@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate (){
 		
 		playerStatus.statusUpdateAfterInput(playerInput);
-		playerMove.CalculateSpeed(playerInput, playerStatus);
+		playerMove.CalculateSpeed(playerInput, playerStatus, playerCollider);
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider, playerInput);
 		playerMove.Move ();

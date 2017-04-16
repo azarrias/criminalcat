@@ -20,13 +20,14 @@ public class PlayerMove : MonoBehaviour {
 	public Vector3 speed;
 	[HideInInspector]
 	public float xCurrentSpeed;
-	public void CalculateSpeed( PlayerInput input, PlayerStatus status )
+	public void CalculateSpeed( PlayerInput input, PlayerStatus status, PlayerCollider collider )
 	{
         // horizontal speed calculations
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+
         if (status.justHit)
             speed.x = status.facingRight ? - hitRecoil*Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime;
-        else if (status.CanMoveHorizontally() == true)
+        else if ( AllowHorizontalInput(status, collider) == true )
             speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
         else
             speed.x = 0;
@@ -53,4 +54,13 @@ public class PlayerMove : MonoBehaviour {
 	public void Move(){
         transform.Translate (speed);
 	}
+
+    public bool AllowHorizontalInput( PlayerStatus status, PlayerCollider collider)
+    {
+        if (collider.IsGrounded() == false)
+            return true;
+        if (status.IsIdle() || status.IsWalk() )
+            return true;
+        return false;
+    }
 }
