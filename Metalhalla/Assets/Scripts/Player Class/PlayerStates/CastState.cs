@@ -19,7 +19,6 @@ public class CastState : PlayerState
         {
             castFramesCount = 0;
 
-            status.hammerMesh.GetComponent<Renderer>().enabled = true;  // to remove when cast animation is ready, using attack animation
             
             // instantiation of ONLY Eagle, need to modify when having wild boar attack
             if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(7) == true )
@@ -36,6 +35,8 @@ public class CastState : PlayerState
                 status.SetState(PlayerStatus.idle);
                 return;
             }
+
+            status.hammerMesh.GetComponent<Renderer>().enabled = true;  // to remove when cast animation is ready, using attack animation
         }
 
         if (castFramesCount>= castFramesDuration)
