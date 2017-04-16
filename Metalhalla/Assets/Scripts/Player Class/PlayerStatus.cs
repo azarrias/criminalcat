@@ -283,7 +283,6 @@ public class PlayerStatus : MonoBehaviour {
         Vector3 tmp = transform.localScale;
         tmp.x *= -1;
         transform.localScale = tmp;
-
     }
 
     public void SetPlayerAtRespawnPoint()

@@ -23,6 +23,8 @@ public class DeadState : PlayerState
 
         if (deadFramesCount >= deadFramesDuration)
         {
+            if (status.facingRight == false)
+                status.Flip();
             status.SetState(PlayerStatus.idle);
             status.SetMaxHealth();
             status.SetPlayerAtRespawnPoint();
