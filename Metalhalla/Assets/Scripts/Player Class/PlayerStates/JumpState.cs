@@ -22,6 +22,10 @@ public class JumpState : PlayerState
         if (status.previousState != this)
             framesToJumpCount = 0;
 
+        // counter for PlayerMove calculations
+        if (framesToJumpCount < framesToJumpMax)
+            status.jumpFrames = framesToJumpCount;
+
         if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0)
         {
             status.SetState(PlayerStatus.climb);
@@ -56,6 +60,7 @@ public class JumpState : PlayerState
                 framesToJumpCount++;
             }
         }
+
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)

@@ -75,9 +75,11 @@ public class PlayerStatus : MonoBehaviour {
     [HideInInspector] public bool climbLadderAvailable;
     [HideInInspector] public bool beerRefillAvailable;
 
-    // -- "One off" variables -- // 
+    // -- Cross component variables -- // 
     [HideInInspector]
     public bool justHit;
+    [HideInInspector]
+    public int jumpFrames; 
 
 
 
@@ -117,6 +119,7 @@ public class PlayerStatus : MonoBehaviour {
         beerRefillAvailable = false;
 
         justHit = false;
+        jumpFrames = 0; 
 
     }
 
@@ -295,6 +298,6 @@ public class PlayerStatus : MonoBehaviour {
    
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
-    public bool WasHit() { return previousState == hit;  }
+    public bool WasJump() { return previousState == jump; }
 
 }
