@@ -67,6 +67,11 @@ public class TornadoBehaviour : MonoBehaviour {
                 StartCoroutine(ManageRotationDuration(rotationDuration));               
             }                 
         }
+
+        if (LayerMask.LayerToName(collider.gameObject.layer) == "destroyableEagle")
+        {
+            collider.gameObject.SendMessage("ApplyDamage", 1, SendMessageOptions.DontRequireReceiver);
+        }
     }
 
 
