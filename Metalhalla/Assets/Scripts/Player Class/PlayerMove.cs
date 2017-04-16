@@ -13,6 +13,9 @@ public class PlayerMove : MonoBehaviour {
 
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
+    [Header("Other move constraints")]
+    public float hitRecoil = 0.2f;
+
     [HideInInspector]
 	public Vector3 speed;
 	[HideInInspector]
@@ -21,7 +24,9 @@ public class PlayerMove : MonoBehaviour {
 	{
         // horizontal speed calculations
         //speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput()* moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
-        if (status.CanMoveHorizontally() == true)
+        if (status.justHit)
+            speed.x = status.facingRight ? - hitRecoil*Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime;
+        else if (status.CanMoveHorizontally() == true)
             speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
         else
             speed.x = 0;

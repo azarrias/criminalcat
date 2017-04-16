@@ -3,12 +3,10 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour {
 
-    // colliders
     [Header("Attack Elements")]
     public GameObject hammerMesh;
     public BoxCollider attackCollider;
 
-    // health variables
     [Header("Health Setup")]
     [Tooltip("Health start value")]
     public int healthAtStart = 100;
@@ -16,7 +14,6 @@ public class PlayerStatus : MonoBehaviour {
     public int healthMaximum = 100;
     int health;
 
-    // stamina variables
     [Header("Stamina Setup")]
     [Tooltip("Starting stamina value")]
     public int staminaAtStart = 10;
@@ -27,7 +24,6 @@ public class PlayerStatus : MonoBehaviour {
     int stamina;
     float staminaRecovery; 
 
-    // beer variables
     [Header("Beer Setup")]
     [Tooltip("Starting beer value")]
     public int beerAtStart = 1;
@@ -45,15 +41,14 @@ public class PlayerStatus : MonoBehaviour {
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
-    public float respawnLatency = 3.0f; // time between dead and alive again
 
     [Header("Respawn management")]
     public Vector3 initialPosition;
     [HideInInspector]
     public Vector3 activeRespawnPoint;
-    CameraFade cameraFade;
+    private CameraFade cameraFade;
 
-    // -- State variables (using state pattern)
+    // -- State variables (using state pattern) -- //
     public static AttackState attack;
     public static CastState cast;
     public static ClimbState climb;
@@ -67,20 +62,22 @@ public class PlayerStatus : MonoBehaviour {
     public static JumpState jump;
     public static RefillState refill;
     public static WalkState walk;
-
     [HideInInspector]
     public PlayerState currentState;
     [HideInInspector]
     public PlayerState previousState;
 
+    // -- Variables shared between different states -- // 
+    [HideInInspector] public bool facingRight;
+    [HideInInspector] public bool jumpAvailable;
+    [HideInInspector] public bool climbLadderAvailable;
+    [HideInInspector] public bool beerRefillAvailable;
+
+    // -- "One off" variables -- // 
     [HideInInspector]
-    public bool facingRight;
-    [HideInInspector]
-    public bool jumpAvailable;
-    [HideInInspector]
-    public bool climbLadderAvailable;
-    [HideInInspector]
-    public bool beerRefillAvailable;
+    public bool justHit;
+
+
 
     void Start()
     {
@@ -109,7 +106,6 @@ public class PlayerStatus : MonoBehaviour {
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
         refill = new RefillState(CalculateFramesFromTime(refillDuration));
         walk = new WalkState();
-
         SetState(idle);
 
         facingRight = true;
@@ -117,13 +113,15 @@ public class PlayerStatus : MonoBehaviour {
         climbLadderAvailable = false;
         beerRefillAvailable = false;
 
+        justHit = false;
+
     }
 
     void Update()
     {
         // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
-            ApplyDamage(30);
+              ApplyDamage(30);
         if (Input.GetKeyDown(KeyCode.F2) == true)
             RestoreHealth(30);
         if (Input.GetKeyDown(KeyCode.F3) == true)
@@ -227,10 +225,11 @@ public class PlayerStatus : MonoBehaviour {
             return false;
 
         //UPDATE: allowed to drink even if health is full for the sake of the animation
-       /*
-        * if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
-            return false;
-        */
+        /*
+         * if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
+             return false;
+         */
+        RestoreHealth(beerHealthRecovery);
 
         beer -= consumption;
         if (beer <= 0)
@@ -258,10 +257,12 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsGrounded()
     {
         //TODO - improve with collider collisions
-        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill )
+        
+        if (currentState == idle || currentState == walk || currentState == cast || currentState == dead || currentState == defense || currentState == drink || currentState == refill || currentState == attack)
             return true;
         else
             return false;
+        
     }
 
     public bool CanMoveHorizontally()
@@ -311,5 +312,6 @@ public class PlayerStatus : MonoBehaviour {
    
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
+    public bool WasHit() { return previousState == hit;  }
 
 }

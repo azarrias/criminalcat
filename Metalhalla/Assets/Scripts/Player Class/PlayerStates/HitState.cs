@@ -6,6 +6,7 @@ public class HitState : PlayerState
 {
     int hitFramesDuration;
     int hitFramesCount;
+    int justHitFramesActive = 4;
 
     public HitState( int framesDuration )
     {
@@ -16,8 +17,11 @@ public class HitState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             hitFramesCount = 0;
-
+            status.justHit = true;
+        }
+        
         if (hitFramesCount >= hitFramesDuration)
         {
             if (status.IsAlive())
@@ -29,6 +33,8 @@ public class HitState : PlayerState
         else
         {
             status.SetState(this);
+            if (hitFramesCount > justHitFramesActive)
+                status.justHit = false;
         }
 
         hitFramesCount++;

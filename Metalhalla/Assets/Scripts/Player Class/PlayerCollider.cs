@@ -61,7 +61,7 @@ public class PlayerCollider : MonoBehaviour {
             { 
             // this is ok since we check the bottom most with a slope
             float surfaceAngle = Vector2.Angle (hit.normal, Vector2.up);
-				print (surfaceAngle);
+	//			print (surfaceAngle);
 				if (i == 0 && surfaceAngle <= maxSlopeClimbAngle) {
 					float distanceToSlopeStart = 0;
 					if (surfaceAngle != collisions.slopeAngleOld) {
@@ -72,7 +72,6 @@ public class PlayerCollider : MonoBehaviour {
 					speed.x += distanceToSlopeStart * directionX;
 				}
 
-				// here comes the change
 				if ((!collisions.climbingSlope || surfaceAngle > maxSlopeClimbAngle) && (hit.transform.gameObject.layer != noCloudCollisionMask)) {
 					speed.x = (hit.distance - skinWidth) * directionX;
 					rayLength = hit.distance;
@@ -180,7 +179,15 @@ public class PlayerCollider : MonoBehaviour {
 
     public bool IsGrounded()
     {
-        return collisions.below == true;
+        for (int i = 0; i < verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = raycastOrigins.bottomLeft;
+            rayOrigin += Vector2.right * (verticalRaySpacing * i);
+            RaycastHit hitinfo;
+            if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth * 2, generalCollisionMask))
+                return true;
+        }
+        return false;
     }
 
     struct RaycastOrigins {
