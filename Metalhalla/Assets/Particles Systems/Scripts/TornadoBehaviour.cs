@@ -52,9 +52,14 @@ public class TornadoBehaviour : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if (LayerMask.LayerToName(collider.gameObject.layer) == "ground")
+        string colliderLayer = LayerMask.LayerToName(collider.gameObject.layer);
+        if (colliderLayer == "ground")
         {
             DisipateTornado();
+        }
+        else if (colliderLayer == "destroyable" || colliderLayer == "destroyableEagle")
+        {
+            collider.gameObject.SendMessage("ApplyDamage", 20, SendMessageOptions.DontRequireReceiver);
         }
 
         if (collider.gameObject.CompareTag("Viking"))
@@ -64,13 +69,8 @@ public class TornadoBehaviour : MonoBehaviour {
             if (enemyInside == false)
             {
                 enemyInside = true;
-                StartCoroutine(ManageRotationDuration(rotationDuration));               
-            }                 
-        }
-
-        if (LayerMask.LayerToName(collider.gameObject.layer) == "destroyableEagle")
-        {
-            collider.gameObject.SendMessage("ApplyDamage", 1, SendMessageOptions.DontRequireReceiver);
+                StartCoroutine(ManageRotationDuration(rotationDuration));
+            }
         }
     }
 
