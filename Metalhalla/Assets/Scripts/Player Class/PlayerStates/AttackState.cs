@@ -28,8 +28,15 @@ public class AttackState : PlayerState
             status.attackCollider.enabled = true;
             status.attackCollider.GetComponent<Renderer>().enabled = true;
         }
+        
+        status.SetState(this);
 
-        if (attackFramesCount >= attackFramesDuration)
+        attackFramesCount++; 
+    }
+
+    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
+    {
+        if ( collider.IsGrounded() && attackFramesCount >= attackFramesDuration)
         {
             if (input.newInput.GetHorizontalInput() != 0)
                 status.SetState(PlayerStatus.walk);
@@ -38,16 +45,8 @@ public class AttackState : PlayerState
             status.attackCollider.enabled = false;
             status.attackCollider.GetComponent<Renderer>().enabled = false;
             status.hammerMesh.GetComponent<Renderer>().enabled = false;
+            attackFramesCount = 0; 
         }
-        else
-            status.SetState(this);
-
-        attackFramesCount++; 
-    }
-
-    public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
-    {
-
     }
 
 }
