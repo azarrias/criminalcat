@@ -9,6 +9,8 @@ public class FSMEnemy : MonoBehaviour
     [HideInInspector]
     public LineOfSight los;
     [HideInInspector]
+    public PlayerStatus playerStatus;
+    [HideInInspector]
     public State state;
 
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
@@ -16,6 +18,7 @@ public class FSMEnemy : MonoBehaviour
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
     public float rightPatrolLimit;
     public float speed = 1.0f;
+    public float attackRange;
 
     public bool stunned = false;
     private float nextLocation = 0;
@@ -31,6 +34,11 @@ public class FSMEnemy : MonoBehaviour
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
+        playerStatus = los.player.GetComponent<PlayerStatus>();
+        if (!playerStatus)
+        {
+            Debug.LogError("The Player GameObj has no PlayerStatus script attached to it!");
+        }
         state = State.Patrol;
         nextLocation = transform.position.x;
     }
@@ -96,12 +104,27 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Chase()
     {
         bool inChase = true;
-        //Debug.Log(name.ToString() + ": I'm in chase");
+        Vector3 destination = Vector3.zero;
+        Debug.Log(name.ToString() + ": I'm in chase");
+
+        if (los.player.transform.position.x > transform.position.x)
+        {
+            transform.localEulerAngles = new Vector3(0, 180, 0);
+            destination.Set(los.player.transform.position.x - attackRange, transform.position.y, transform.position.z);
+        }
+        else
+        {
+            transform.localEulerAngles = new Vector3(0, 0, 0);
+            destination.Set(los.player.transform.position.x + attackRange, transform.position.y, transform.position.z);
+        }
         yield return null;
         while (inChase)
         {
-            transform.Translate(Vector3.left * Time.deltaTime * speed * 2);
-            if (stunned || !los.playerInSight)
+            if (!stunned && !PlayerAtRange() && InBounds())
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
+            }
+            else
             {
                 inChase = false;
             }
@@ -110,6 +133,10 @@ public class FSMEnemy : MonoBehaviour
         if (stunned)
         {
             state = State.Stunned;
+        }
+        else if (PlayerAtRange())
+        {
+            state = State.Attack;
         }
         else
         {
@@ -128,6 +155,33 @@ public class FSMEnemy : MonoBehaviour
         state = State.Patrol;
     }
 
+    IEnumerator Attack()
+    {
+        bool inAttack = true;
+        Debug.Log(name.ToString() + ": I'm attacking");
+        yield return null;
+        while (inAttack)
+        {
+            if (stunned || !playerStatus.IsAlive() || !PlayerAtRange())
+            {
+                inAttack = false;
+            }
+            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
+        }
+        if (stunned)
+        {
+            state = State.Stunned;
+        }
+        else if (!PlayerAtRange())
+        {
+            state = State.Chase;
+        }
+        else
+        {
+            state = State.Patrol;
+        }
+    }
+
     public void Stun()
     {
         stunned = true;
@@ -138,5 +192,18 @@ public class FSMEnemy : MonoBehaviour
     {
         stunned = false;
         los.Start();
+    }
+
+    public bool PlayerAtRange()
+    {
+        if (los.player.transform.position.x > transform.position.x)
+            return los.player.transform.position.x - attackRange - transform.position.x <= 0.5f;
+        else
+            return transform.position.x - attackRange - los.player.transform.position.x <= 0.5f;
+    }
+
+    public bool InBounds()
+    {
+        return transform.position.x > leftPatrolLimit && transform.position.x < rightPatrolLimit;
     }
 }

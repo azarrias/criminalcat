@@ -11,8 +11,9 @@ public class LineOfSight : MonoBehaviour
     public LayerMask obstacleMask;
     [HideInInspector]
     public bool playerInSight = false;
+    [HideInInspector]
+    public GameObject player;
 
-    private GameObject player;
     private IEnumerator myCoroutine = null;
 
     void Awake()
