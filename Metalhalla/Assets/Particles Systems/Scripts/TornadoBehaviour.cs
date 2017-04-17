@@ -5,7 +5,7 @@ using UnityEngine;
 public class TornadoBehaviour : MonoBehaviour {
 
     public float speed = 1.0f;
-    public int damage = 1;
+    public int damage = 20;
     private bool facingRight = true;
     private float lifeTime = 10.0f;
     private bool platformLimitReached = false;
@@ -16,12 +16,20 @@ public class TornadoBehaviour : MonoBehaviour {
     private float angle = 0.0f;
     private Vector3 translation;
     private Transform tornadoEyeTr = null;
+    private FSMBoss fsmBoss = null;
+
+    void Awake()
+    {
+        fsmBoss = FindObjectOfType<FSMBoss>();
+        if (fsmBoss == null)
+            Debug.Log("Error: fsmBoss not found.");
+    }
 
 	void Start () {
 
         contains = new List<GameObject>();
         StartCoroutine(ManageLifeTime(lifeTime));
-        tornadoEyeTr = transform.FindChild("TornadoEye");
+        tornadoEyeTr = transform.FindChild("TornadoEye");   
 	}
 	
 	// Update is called once per frame
@@ -59,25 +67,44 @@ public class TornadoBehaviour : MonoBehaviour {
         }
         else if (colliderLayer == "destroyable" || colliderLayer == "destroyableEagle")
         {
-            collider.gameObject.SendMessage("ApplyDamage", 20, SendMessageOptions.DontRequireReceiver);
+            ApplyDamage(damage, collider.gameObject);
         }
 
         if (collider.gameObject.CompareTag("Viking"))
         {
             contains.Add(collider.gameObject);
+            ApplyDamage(damage, collider.gameObject);
 
             if (enemyInside == false)
             {
                 enemyInside = true;
+
                 StartCoroutine(ManageRotationDuration(rotationDuration));
+            }
+        }
+
+        if (collider.gameObject.CompareTag("Boss"))
+        {
+            ApplyDamageBoss(damage);
+            FSMBoss.State state = fsmBoss.GetCurrentState();
+            if(state == FSMBoss.State.CHASE || state == FSMBoss.State.BALL_ATTACK || state == FSMBoss.State.MELEE_ATTACK)
+            {
+                contains.Add(collider.gameObject);
+                fsmBoss.IsInsideTornado(true);
+                if (enemyInside == false)
+                {
+                    enemyInside = true;
+
+                    StartCoroutine(ManageRotationDuration(rotationDuration));
+                }
             }
         }
     }
 
-
     private void DisipateTornado()
     {
         //tornado disipation effect
+      
         Destroy(gameObject);
     }
 
@@ -97,11 +124,13 @@ public class TornadoBehaviour : MonoBehaviour {
         foreach(GameObject go in contains)
         {
             pos = go.transform.position;            
-            pos.y = go.GetComponent<EnemyStats>().initialHeight;            
+            pos = go.GetComponent<EnemyStats>().initialPosition;            
             go.transform.position = pos;
             go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
         }
         DisipateTornado();
+        fsmBoss.IsInsideTornado(false);
+        contains.Clear();
     }
 
     private void RotateEnemy(GameObject enemy)
@@ -134,5 +163,13 @@ public class TornadoBehaviour : MonoBehaviour {
         facingRight = newValue;
     }
 
+    private void ApplyDamage(int damage, GameObject go)
+    {
+        go.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+    }
 
+    private void ApplyDamageBoss(int damage)
+    {
+        fsmBoss.ApplyDamage(damage);
+    }
 }

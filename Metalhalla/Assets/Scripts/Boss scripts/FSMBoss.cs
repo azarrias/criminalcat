@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(BossStats))]
+[RequireComponent(typeof(EnemyStats))]
 [RequireComponent(typeof(Animator))]
 public class FSMBoss : MonoBehaviour
 {
@@ -16,10 +16,12 @@ public class FSMBoss : MonoBehaviour
         PREPARE_CAST,
         CAST_ICE_SPIKES,
         BACK_TO_CENTER,
-        STALK
+        STALK,
+        INSIDE_TORNADO,
+        WAIT
     }
  
-    private BossStats bossStats = null;
+    private EnemyStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject castingArea = null;
@@ -28,14 +30,13 @@ public class FSMBoss : MonoBehaviour
     public float detectionHeight = 3.0f;
 
     [Tooltip("Time until body disappears")]
-    public float deadTime = 4.0f;
+    public float deadTime = 3.0f;
     [Tooltip("Melee animation duration")]
-    public float meleeAttackDuration = 0.5f;
+    public float meleeAttackDuration = 3.0f;
     [Tooltip("Ball attack animation duration")]
-    public float ballAttackDuration = 1.0f;
+    public float ballAttackDuration = 3.0f;
     [Tooltip("Cast spikes animation duration")]
     public float castSpikesDuration = 3.0f;
-
     //ball attack prefab
     public BossFireBall fireBallPrefab = null;
     //ice spikes attack animator
@@ -44,6 +45,7 @@ public class FSMBoss : MonoBehaviour
     private State currState = State.START;
     private State prevState = State.START;
     private GameObject thePlayer = null;
+    private PlayerStatus thePlayerStatus = null;
     private Animator bossAnimator = null;
 
     //------------------- VARIABLES THAT CONTROL FSM LOGIC -------------------
@@ -58,10 +60,13 @@ public class FSMBoss : MonoBehaviour
     
     private bool ballAttack = false;
     private bool meleeAttack = true; //starting attack
-    //private bool spikesCastFinished = false;
     private bool prepareCast = false;
     private bool castIceSpikes = true;
     private bool backToCenter = true;
+    private bool insideTornado = false;
+
+    //Attack Damage
+    int meleeDamage = 0;
 
     //orientation of the boss will be modified when entering triggers at the limits of the platform and when player is around
     [HideInInspector]
@@ -83,7 +88,7 @@ public class FSMBoss : MonoBehaviour
 
     // variable to set rotations properly when returning from spikes casting spot
     private int prevDiff = 0;
-    // ------------------------------------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ---------------------------------------------------
+    // ----------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS (evita que el animator vaya muy lento si no hay animaciones. Posiblemente se quitará )----
     [Tooltip("Minimun number of frames to stay in Patrol state before transition")]
     public int patrolFrames = 20;
     [Tooltip("Minimun number of frames to stay in Chase state before transition")]
@@ -119,9 +124,15 @@ public class FSMBoss : MonoBehaviour
         if (thePlayer == null)
             Debug.LogError("Error: player not found.");
 
-        bossAnimator = GetComponent<Animator>();
-        bossStats = GetComponent<BossStats>();
+        thePlayerStatus = thePlayer.GetComponent<PlayerStatus>();
+        if(thePlayerStatus == null)       
+            Debug.LogError("Error: player status not found.");
+        
 
+        bossAnimator = GetComponent<Animator>();
+        bossStats = GetComponent<EnemyStats>();
+        meleeDamage = bossStats.meleeDamage;
+        
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
         if (iceSpikesScript == null)
             Debug.LogError("Error: iceSpikesScript not found.");
@@ -129,6 +140,8 @@ public class FSMBoss : MonoBehaviour
         castingArea = GameObject.FindGameObjectWithTag("CastingArea");
         if (castingArea == null)
             Debug.LogError("Error: castingArea not found.");
+
+       
     }
 
     void Start()
@@ -142,7 +155,7 @@ public class FSMBoss : MonoBehaviour
     public void Update()
     {
         //DEBUG
-        //Debug.Log("state:" + currState + "  animation:" + animation + " " + "  facingRight:" + facingRight);
+        Debug.Log("state:" + currState + "  animation:" + currAnimation + " " + "  facingRight:" + facingRight);
 
         switch (currState)
         {
@@ -167,57 +180,67 @@ public class FSMBoss : MonoBehaviour
                     currState = State.DEAD;
                     break;
                 }
-                Chase();                            
-                if (meleeAttack && atMeleeRange)
+                Chase();
+                if (thePlayerStatus.IsAlive())
                 {
-                    chaseFrameCounter++;
-                    if (chaseFrameCounter == chaseFrames)
+                    if (meleeAttack && atMeleeRange)
                     {
-                        currState = State.MELEE_ATTACK;
-                        chaseFrameCounter = 0;
-                    }                      
-                    break;
-                }
-                if (ballAttack && atBallRange)
-                {
-                    chaseFrameCounter++;
-                    if (chaseFrameCounter == chaseFrames)
-                    {
-                        currState = State.BALL_ATTACK;
-                        chaseFrameCounter = 0;
+                        chaseFrameCounter++;
+                        if (chaseFrameCounter == chaseFrames)
+                        {
+                            currState = State.MELEE_ATTACK;
+                            chaseFrameCounter = 0;
+                        }
+                        break;
                     }
-                    break;
-                }
-                if (prepareCast)
-                {
-                    chaseFrameCounter++;
-                    if (chaseFrameCounter == chaseFrames)
+                    if (ballAttack && atBallRange)
                     {
-                        currState = State.PREPARE_CAST;
-                        chaseFrameCounter = 0;
+                        chaseFrameCounter++;
+                        if (chaseFrameCounter == chaseFrames)
+                        {
+                            currState = State.BALL_ATTACK;
+                            chaseFrameCounter = 0;
+                        }
+                        break;
                     }
-                    break;
-                }
-                if (!playerReachable)
-                {
-                    chaseFrameCounter++;
-                    if (chaseFrameCounter == chaseFrames)
+                    if (prepareCast)
                     {
-                        currState = State.STALK;
-                        chaseFrameCounter = 0;
+                        chaseFrameCounter++;
+                        if (chaseFrameCounter == chaseFrames)
+                        {
+                            currState = State.PREPARE_CAST;
+                            chaseFrameCounter = 0;
+                        }
+                        break;
                     }
-                    break;
-                }
-                if (!playerInSight)
-                {
-                    chaseFrameCounter++;
-                    if (chaseFrameCounter == chaseFrames)
+                    if (!playerReachable)
                     {
-                        currState = State.PATROL;
-                        chaseFrameCounter = 0;
+                        chaseFrameCounter++;
+                        if (chaseFrameCounter == chaseFrames)
+                        {
+                            currState = State.STALK;
+                            chaseFrameCounter = 0;
+                        }
+                        break;
                     }
-                    break;
-                }
+                    if (!playerInSight)
+                    {
+                        chaseFrameCounter++;
+                        if (chaseFrameCounter == chaseFrames)
+                        {
+                            currState = State.PATROL;
+                            chaseFrameCounter = 0;
+                        }
+                        break;
+                    }
+                    if (insideTornado)
+                    {
+                        InsideTornado();
+                        currState = State.INSIDE_TORNADO;
+                        break;
+                    }
+                } 
+                               
                 break;
 
             case State.MELEE_ATTACK:
@@ -236,6 +259,12 @@ public class FSMBoss : MonoBehaviour
                         currState = State.CHASE;
                         meleeAttackFrameCounter = 0;
                     }
+                    break;
+                }
+                if (insideTornado)
+                {
+                    InsideTornado();
+                    currState = State.INSIDE_TORNADO;
                     break;
                 }
 
@@ -263,6 +292,12 @@ public class FSMBoss : MonoBehaviour
                         ballAttackFrameCounter = 0;
                         break;
                     }                  
+                }
+                if (insideTornado)
+                {
+                    InsideTornado();
+                    currState = State.INSIDE_TORNADO;
+                    break;
                 }
                 break;
 
@@ -329,6 +364,15 @@ public class FSMBoss : MonoBehaviour
             case State.DEAD:
                 Dead();
                 break;
+
+            case State.INSIDE_TORNADO:
+                InsideTornado();
+                if(!insideTornado)
+                {
+                    currState = State.CHASE;
+                    break;
+                }
+                break;
         }
 
     }
@@ -379,7 +423,7 @@ public class FSMBoss : MonoBehaviour
         if (currState == State.CHASE || currState == State.MELEE_ATTACK || currState == State.BALL_ATTACK)
         {
             Debug.Log("Damaged");
-            bossStats.DamageBoss(damage);
+            bossStats.ApplyDamage(damage);
             //create damage effect
             
         }
@@ -528,8 +572,10 @@ public class FSMBoss : MonoBehaviour
         {          
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "MeleeAttack";
-            bossAnimator.SetBool(currAnimation, true);                    
-        
+            bossAnimator.SetBool(currAnimation, true);
+
+            if (atMeleeRange)
+                thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
             StartCoroutine(FinishMeleeAttackAnimation(meleeAttackDuration));
         }       
     }
@@ -642,6 +688,12 @@ public class FSMBoss : MonoBehaviour
         }
     }
 
+    private void InsideTornado()
+    {
+        //Poner efecto de daño de tornado 
+        SelectAttack();
+    }
+
     //Flip the boss
     public void Flip()
     {
@@ -654,6 +706,14 @@ public class FSMBoss : MonoBehaviour
     public State GetCurrentState()
     {
         return currState;
+    }
+
+    public void IsInsideTornado(bool value)
+    {
+        if (value == false)
+            insideTornado = false;
+        if (value == true)
+            insideTornado = true;
     }
 
     

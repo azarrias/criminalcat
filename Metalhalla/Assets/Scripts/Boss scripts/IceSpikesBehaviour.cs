@@ -12,11 +12,12 @@ public class IceSpikesBehaviour : MonoBehaviour {
     private GameObject spikesRight2 = null;
     public bool leftSafe = false;
     public bool rightSafe = false;
-    public bool playerOnLeft = false;
-    public bool playerOnRight = false;
+    private GameObject thePlayer = null;
+    public bool isPlayerSafe = false;
+    public int spikesDamage = 25;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         spikesAnimator = GetComponent<Animator>();
 
         spikesLeft1 = transform.FindChild("SpikesLeft1").gameObject;
@@ -34,7 +35,11 @@ public class IceSpikesBehaviour : MonoBehaviour {
         spikesRight2 = transform.FindChild("SpikesRight2").gameObject;
         if (spikesRight2 == null)
             Debug.LogError("Error : SpikesRight2 not found");
-	}
+
+        thePlayer = GameObject.FindGameObjectWithTag("Player");
+        if (thePlayer == null)
+            Debug.Log("Error: player not found.");
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -56,6 +61,8 @@ public class IceSpikesBehaviour : MonoBehaviour {
         spikesAnimator.SetBool("Reset", true);
         spikesAnimator.SetBool("ShowIceSpikes", false);
         spikesAnimator.SetBool("HideIceSpikes", false);
+        leftSafe = false;
+        rightSafe = false;
     }
 
     public void EnableAnimator()
@@ -78,7 +85,7 @@ public class IceSpikesBehaviour : MonoBehaviour {
     public void DisableLeftSpikes()
     {
         spikesLeft1.SetActive(false);
-        spikesLeft1.SetActive(false);
+        spikesLeft2.SetActive(false);
         leftSafe = true;
     }
 
@@ -102,11 +109,16 @@ public class IceSpikesBehaviour : MonoBehaviour {
         System.Random rand = new System.Random();
         int num = rand.Next(0, 2);
 
-        if (num == 0)
+       // if (num == 0)
            DisableLeftSpikes();
-        if (num == 1)
-           DisableRightSpikes();
+       // if (num == 1)
+       //   DisableRightSpikes();
       
+    }
+
+    public void ApplySpikesDamage()
+    {
+        thePlayer.SendMessage("ApplyDamage", spikesDamage, SendMessageOptions.DontRequireReceiver);
     }
 
 }

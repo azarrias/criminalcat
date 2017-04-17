@@ -47,7 +47,7 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Patrol()
     {
         bool inPatrol = true;
-        Debug.Log(name.ToString() + ": I'm in patrol");
+        //Debug.Log(name.ToString() + ": I'm in patrol");
         yield return null;
         while (inPatrol)
         {
@@ -64,7 +64,7 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Chase()
     {
         bool inChase = true;
-        Debug.Log(name.ToString() + ": I'm in chase");
+        //Debug.Log(name.ToString() + ": I'm in chase");
         yield return null;
         while (inChase)
         {

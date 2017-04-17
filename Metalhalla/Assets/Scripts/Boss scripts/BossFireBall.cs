@@ -6,7 +6,8 @@ public class BossFireBall : MonoBehaviour {
 
     public float lifeTime = 3.0f;
     public float speed = 1.0f;
-    Vector3 direction;
+    private Vector3 direction;
+    public int ballDamage = 10;
     
 	// Use this for initialization
 	void Start() { 
@@ -23,7 +24,10 @@ public class BossFireBall : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Player") || LayerMask.LayerToName(collider.gameObject.layer) == "ground")
+        {
+            collider.gameObject.SendMessage("ApplyDamage", ballDamage, SendMessageOptions.DontRequireReceiver);
             Destroy(gameObject);
+        }
     }
 
     public void SetDirection(Vector3 dir)
