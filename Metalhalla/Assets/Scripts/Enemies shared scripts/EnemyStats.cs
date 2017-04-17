@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyStats : MonoBehaviour {
-
+    [HideInInspector]
     public Quaternion initialRotation = Quaternion.identity;
+    [HideInInspector]
     public Vector3 initialPosition = Vector3.zero;
     public float normalSpeed = 1;
     public float chasingSpeed = 5;
