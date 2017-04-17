@@ -12,9 +12,9 @@ public class FSMEnemy : MonoBehaviour
     public State state;
 
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
-    public int leftPatrolLimit;
+    public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
-    public int rightPatrolLimit;
+    public float rightPatrolLimit;
     public float speed = 1.0f;
 
     public bool stunned = false;
@@ -51,16 +51,37 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Patrol()
     {
         bool inPatrol = true;
+        Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in patrol");
         yield return null;
+
         while (inPatrol)
         {
-            transform.Translate(Vector3.left * Time.deltaTime * speed);
-            if (stunned || los.playerInSight)
+            do
             {
-                inPatrol = false;
+                destination.Set(Random.Range(leftPatrolLimit, rightPatrolLimit), transform.position.y, transform.position.z);
+            } while (Mathf.Abs(destination.x - transform.position.x) < 3.0f);
+
+            if (destination.x > transform.position.x)
+            {
+                transform.localEulerAngles = new Vector3(0, 180, 0);
             }
-            yield return null;
+            else
+            {
+                transform.localEulerAngles = new Vector3(0, 0, 0);
+            }
+
+            while (Vector3.Distance(transform.position, destination) > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
+                if (stunned || los.playerInSight)
+                {
+                    inPatrol = false;
+                    break;
+                }
+                yield return null;
+            }
+            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
         if (stunned)
         {
