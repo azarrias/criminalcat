@@ -197,9 +197,9 @@ public class FSMEnemy : MonoBehaviour
     public bool PlayerAtRange()
     {
         if (los.player.transform.position.x > transform.position.x)
-            return los.player.transform.position.x - attackRange - transform.position.x <= 0.5f;
+            return los.player.transform.position.x - attackRange - transform.position.x <= 0.2f;
         else
-            return transform.position.x - attackRange - los.player.transform.position.x <= 0.5f;
+            return transform.position.x - attackRange - los.player.transform.position.x <= 0.2f;
     }
 
     public bool InBounds()
