@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RockBehaviour : MonoBehaviour {
 
-    public int damage = 1;
+    public int damage = 10;
     public float lifeTime = 3.0f;
 	// Use this for initialization
 	void Start () {
@@ -17,12 +17,12 @@ public class RockBehaviour : MonoBehaviour {
 		
 	}
 
-    void OnColissionEnter(Collision collision)
+    void OnTriggerEnter(Collider collider)
     {
         
-        if(collision.gameObject.CompareTag("Player"))
+        if(collider.CompareTag("Player"))
         {
-            collision.gameObject.SendMessage("ApplyDamage", damage);
+            collider.gameObject.SendMessage("ApplyDamage", damage);
         }
 
     }
