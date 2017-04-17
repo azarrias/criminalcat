@@ -9,11 +9,13 @@ public class LineOfSight : MonoBehaviour
     public float viewAngle;
 
     public LayerMask obstacleMask;
-    private GameObject player;
     [HideInInspector]
     public bool playerInSight = false;
 
-    public void Awake()
+    private GameObject player;
+    private IEnumerator myCoroutine = null;
+
+    void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         if (!player)
@@ -22,9 +24,15 @@ public class LineOfSight : MonoBehaviour
         }
     }
 
-    void Start()
+    public void Start()
     {
-        StartCoroutine("FindPlayer", 0.3f);
+        myCoroutine = FindPlayer(0.3f);
+        StartCoroutine(myCoroutine);
+    }
+
+    public void Stop()
+    {
+        StopCoroutine(myCoroutine);
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
@@ -40,13 +48,13 @@ public class LineOfSight : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(dt);
             playerInSight = PlayerInSight();
             if (playerInSight)
             {
                 Debug.Log(this.name.ToString() + ": I can see the player");
                 Debug.DrawLine(player.transform.position, transform.position);
             }
+            yield return new WaitForSeconds(dt);
         }
     }
 

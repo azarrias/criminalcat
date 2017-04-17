@@ -10,15 +10,19 @@ public class FSMEnemy : MonoBehaviour
     public LineOfSight los;
     [HideInInspector]
     public State state;
-    private float nextLocation = 0;
+
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
-    public int leftPatrolLimit;
+    public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
-    public int rightPatrolLimit;
+    public float rightPatrolLimit;
     public float speed = 1.0f;
+
+    public bool stunned = false;
+    private float nextLocation = 0;
 
     public enum State
     {
+        Stunned,
         Patrol,
         Chase,
         Attack
@@ -47,18 +51,46 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Patrol()
     {
         bool inPatrol = true;
-        //Debug.Log(name.ToString() + ": I'm in patrol");
+        Vector3 destination = Vector3.zero;
+        Debug.Log(name.ToString() + ": I'm in patrol");
         yield return null;
+
         while (inPatrol)
         {
-            transform.Translate(Vector3.left * Time.deltaTime * speed);
-            if (los.playerInSight)
+            do
             {
-                inPatrol = false;
+                destination.Set(Random.Range(leftPatrolLimit, rightPatrolLimit), transform.position.y, transform.position.z);
+            } while (Mathf.Abs(destination.x - transform.position.x) < 3.0f);
+
+            if (destination.x > transform.position.x)
+            {
+                transform.localEulerAngles = new Vector3(0, 180, 0);
             }
-            yield return null;
+            else
+            {
+                transform.localEulerAngles = new Vector3(0, 0, 0);
+            }
+
+            while (Vector3.Distance(transform.position, destination) > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
+                if (stunned || los.playerInSight)
+                {
+                    inPatrol = false;
+                    break;
+                }
+                yield return null;
+            }
+            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
-        state = State.Chase;
+        if (stunned)
+        {
+            state = State.Stunned;
+        }
+        else
+        {
+            state = State.Chase;
+        }
     }
 
     IEnumerator Chase()
@@ -69,12 +101,42 @@ public class FSMEnemy : MonoBehaviour
         while (inChase)
         {
             transform.Translate(Vector3.left * Time.deltaTime * speed * 2);
-            if (!los.playerInSight)
+            if (stunned || !los.playerInSight)
             {
                 inChase = false;
             }
             yield return null;
         }
+        if (stunned)
+        {
+            state = State.Stunned;
+        }
+        else
+        {
+            state = State.Patrol;
+        }
+    }
+
+    IEnumerator Stunned()
+    {
+        Debug.Log(name.ToString() + ": I'm stunned");
+        yield return null;
+        while (stunned)
+        {
+            yield return new WaitForSeconds(2.0f);
+        }
         state = State.Patrol;
+    }
+
+    public void Stun()
+    {
+        stunned = true;
+        los.Stop();
+    }
+
+    public void WakeUp()
+    {
+        stunned = false;
+        los.Start();
     }
 }
