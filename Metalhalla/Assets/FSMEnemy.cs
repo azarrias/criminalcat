@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineOfSight))]
+[RequireComponent(typeof(EnemyStats))]
 public class FSMEnemy : MonoBehaviour
 {
 
@@ -12,6 +13,8 @@ public class FSMEnemy : MonoBehaviour
     public PlayerStatus playerStatus;
     [HideInInspector]
     public State state;
+    [HideInInspector]
+    public EnemyStats enemyStats;
 
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
     public float leftPatrolLimit;
@@ -34,6 +37,7 @@ public class FSMEnemy : MonoBehaviour
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
+        enemyStats = GetComponent<EnemyStats>();
         playerStatus = los.player.GetComponent<PlayerStatus>();
         if (!playerStatus)
         {
@@ -165,6 +169,10 @@ public class FSMEnemy : MonoBehaviour
             if (stunned || !playerStatus.IsAlive() || !PlayerAtRange())
             {
                 inAttack = false;
+            }
+            else
+            {
+                los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
             }
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
