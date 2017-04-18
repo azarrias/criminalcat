@@ -153,7 +153,7 @@ public class FSMBoss : MonoBehaviour
     public void Update()
     {
         //DEBUG
-        Debug.Log("state:" + currState + "  animation:" + currAnimation + " " + "  facingRight:" + facingRight + " localRot:" + gameObject.transform.localRotation.eulerAngles);
+        //Debug.Log("state:" + currState + "  animation:" + currAnimation + " " + "  facingRight:" + facingRight + " localRot:" + gameObject.transform.localRotation.eulerAngles);
 
         switch (currState)
         {
@@ -226,6 +226,7 @@ public class FSMBoss : MonoBehaviour
                         chaseFrameCounter++;
                         if (chaseFrameCounter == chaseFrames)
                         {
+                            prevState = State.CHASE;
                             currState = State.PATROL;
                             chaseFrameCounter = 0;
                         }

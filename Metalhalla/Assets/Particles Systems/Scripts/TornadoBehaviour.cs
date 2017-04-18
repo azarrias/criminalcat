@@ -14,7 +14,6 @@ public class TornadoBehaviour : MonoBehaviour {
     private List<GameObject> contains;
     private float angularSpeed = 10.0f;
     private float angle = 0.0f;
-    private Vector3 translation;
     private Transform tornadoEyeTr = null;
     private FSMBoss fsmBoss = null;
 
@@ -28,8 +27,9 @@ public class TornadoBehaviour : MonoBehaviour {
 	void Start () {
 
         contains = new List<GameObject>();
+        tornadoEyeTr = transform.FindChild("TornadoEye");
         StartCoroutine(ManageLifeTime(lifeTime));
-        tornadoEyeTr = transform.FindChild("TornadoEye");   
+     
 	}
 	
 	// Update is called once per frame
@@ -50,10 +50,11 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             foreach(GameObject go in contains)
             {
-                if (!AbsorbEnemy(go))
-                {
-                    RotateEnemy(go);
-                }
+                //if (!AbsorbEnemy(go))
+                //{
+                AbsorbEnemy(go);
+                RotateEnemy(go);
+                //}
             }
         }
 	}
@@ -124,8 +125,9 @@ public class TornadoBehaviour : MonoBehaviour {
         foreach(GameObject go in contains)
         {
             pos = go.transform.position;            
-            pos = go.GetComponent<EnemyStats>().initialPosition;            
-            go.transform.position = pos;
+            pos = go.GetComponent<EnemyStats>().initialPosition;
+            
+            go.transform.position = pos;          
             go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
         }
         DisipateTornado();
@@ -138,24 +140,38 @@ public class TornadoBehaviour : MonoBehaviour {
         Transform trf = enemy.transform;
 
         angle += angularSpeed * Time.deltaTime;
-        trf.localRotation *= Quaternion.AngleAxis(angle, Vector3.up);   
+        trf.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);   
     }
 
-    private bool AbsorbEnemy(GameObject enemy)
+    private void AbsorbEnemy(GameObject enemy)
     {
-        bool ret = true;
-        if (Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) > 0.5f)
-        {
-            Vector3 direction = (tornadoEyeTr.position - enemy.transform.position).normalized;
-            translation += direction * 5 * Time.deltaTime;
-            enemy.transform.Translate(translation);
-        }
-        else
-        {
-            ret = false;
-        }
+       
+        //if (Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) > 0.5f)
+        //{
+        //    Vector3 direction = (tornadoEyeTr.position - enemy.transform.position).normalized;
+        //    //enemy.transform.Translate(direction * Time.deltaTime);// creo que falla aquí
+        //    Vector3 newPosition = new Vector3(
+        //                        enemy.transform.position.x + direction.x * 5 * Time.deltaTime,
+        //                        enemy.transform.position.y + direction.y + 5 * Time.deltaTime,
+        //                        enemy.transform.position.z);
 
-        return ret;
+        //    enemy.transform.position = newPosition;
+
+        //    Debug.Log("distance=" + Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) + " " + "eyePos=" + tornadoEyeTr.position + "  " + "bossPoss=" + enemy.transform.position + " " + "direction=" + direction);
+        //}
+        //else
+        //{
+        //    ret = false;
+        //}
+
+        //return ret;
+
+        //if(enemy.transform.position.x != tornadoEyeTr.position.x)
+        //{
+           enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
+           //return false;
+        //}
+       
     }
 
     public void SetFacingRight (bool newValue)
