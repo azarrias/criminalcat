@@ -38,17 +38,17 @@ public class FSMEnemy : MonoBehaviour
     {
         los = GetComponent<LineOfSight>();
         enemyStats = GetComponent<EnemyStats>();
-        playerStatus = los.player.GetComponent<PlayerStatus>();
-        if (!playerStatus)
-        {
-            Debug.LogError("The Player GameObj has no PlayerStatus script attached to it!");
-        }
         state = State.Patrol;
         nextLocation = transform.position.x;
     }
 
     private void Start()
     {
+        playerStatus = los.player.GetComponent<PlayerStatus>();
+        if (!playerStatus)
+        {
+            Debug.LogError("The Player GameObj has no PlayerStatus script attached to it!");
+        }
         StartCoroutine(FSM());
     }
 
