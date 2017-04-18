@@ -86,8 +86,6 @@ public class FSMBoss : MonoBehaviour
     private string currAnimation = "Patrol"; //start animation
     //public bool nextAnimation = false;
 
-    // variable to set rotations properly when returning from spikes casting spot
-    private int prevDiff = 0;
     // ----------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS (evita que el animator vaya muy lento si no hay animaciones. Posiblemente se quitará )----
     [Tooltip("Minimun number of frames to stay in Patrol state before transition")]
     public int patrolFrames = 20;
@@ -155,7 +153,7 @@ public class FSMBoss : MonoBehaviour
     public void Update()
     {
         //DEBUG
-        Debug.Log("state:" + currState + "  animation:" + currAnimation + " " + "  facingRight:" + facingRight);
+        Debug.Log("state:" + currState + "  animation:" + currAnimation + " " + "  facingRight:" + facingRight + " localRot:" + gameObject.transform.localRotation.eulerAngles);
 
         switch (currState)
         {
@@ -506,41 +504,21 @@ public class FSMBoss : MonoBehaviour
             if (prevState == State.BACK_TO_CENTER)
             {
                 prevState = State.CHASE;
-                Vector3 newPos = gameObject.transform.position;
-                int diff = (int)(thePlayer.transform.position.x - newPos.x);
-
-
-                if (Mathf.Sign(diff) == Mathf.Sign(prevDiff))
+                Vector3 bossPos = gameObject.transform.position;
+                int diff = (int)(thePlayer.transform.position.x - bossPos.x);
+              
+                if (diff > 0)
                 {
-                    if (diff > 0)
-                    {
-                        gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
-                    }
-                    if (diff < 0)
-                    {
-                        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-                    }
+                    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+                    if (!facingRight)
+                        facingRight = true;
                 }
-                else
+                if (diff < 0)
                 {
-                    if (diff > 0)
-                    {
-                        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-                    }
-                    if (diff < 0)
-                    {
-                        gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
-                    }
+                    gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    if (facingRight)
+                        facingRight = false;
                 }
-
-                //if (diff > 0)
-                //{
-                //    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, -90, 0);
-                //}
-                //if (diff < 0)
-                //{
-                //    bossController.GetTheBossController().transform.localRotation *= Quaternion.Euler(0, 90, 0);
-                //}
             }
 
             if (meleeAttack && !atMeleeRange || ballAttack && !atBallRange)
@@ -601,9 +579,9 @@ public class FSMBoss : MonoBehaviour
     private void PrepareCast()
     {
         if (currAnimation != "PrepareCast")
-        {           
+        {
             if (facingRight)
-                gameObject.transform.localRotation *= Quaternion.Euler(0, -90, 0);
+                gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
             else
                 gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
 
@@ -613,9 +591,7 @@ public class FSMBoss : MonoBehaviour
             
             //Select the safe side to go when spikes are on
             iceSpikesScript.SelectIceSafe();
-
-            Vector3 newPos = gameObject.transform.position;
-             prevDiff = (int)(thePlayer.transform.position.x - newPos.x);
+            
         }
         else
         {
@@ -697,9 +673,11 @@ public class FSMBoss : MonoBehaviour
     //Flip the boss
     public void Flip()
     {
-        Vector3 scale = gameObject.transform.localScale;
-        scale.x *= -1;
-        gameObject.transform.localScale = scale;
+        //Vector3 scale = gameObject.transform.localScale;
+        //scale.x *= -1;
+        //gameObject.transform.localScale = scale;
+
+        gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
     }
 
