@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActivateRockGeneration : MonoBehaviour {
+public class RockGeneration : MonoBehaviour {
 
     RockFall rockGeneratorScript = null;
 
@@ -20,5 +20,11 @@ public class ActivateRockGeneration : MonoBehaviour {
     {
         if(collider.CompareTag("Player"))
             rockGeneratorScript.active = true;
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Player"))
+            rockGeneratorScript.active = false;
     }
 }
