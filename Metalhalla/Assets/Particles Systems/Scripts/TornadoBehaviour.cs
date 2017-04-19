@@ -22,11 +22,12 @@ public class TornadoBehaviour : MonoBehaviour {
         fsmBoss = FindObjectOfType<FSMBoss>();
         if (fsmBoss == null)
             Debug.Log("Error: fsmBoss not found.");
+        contains = new List<GameObject>();
     }
 
 	void Start () {
 
-        contains = new List<GameObject>();
+        
         tornadoEyeTr = transform.FindChild("TornadoEye");
         StartCoroutine(ManageLifeTime(lifeTime));
      
