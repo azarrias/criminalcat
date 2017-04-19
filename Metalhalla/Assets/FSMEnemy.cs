@@ -65,23 +65,18 @@ public class FSMEnemy : MonoBehaviour
         bool inPatrol = true;
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in patrol");
+        float new_distance_threshold = 3.0f;
         yield return null;
 
         while (inPatrol)
         {
+            // sets a new random destination within bounds and above a given minimum distance
             do
             {
                 destination.Set(Random.Range(leftPatrolLimit, rightPatrolLimit), transform.position.y, transform.position.z);
-            } while (Mathf.Abs(destination.x - transform.position.x) < 3.0f);
+            } while (Mathf.Abs(destination.x - transform.position.x) < new_distance_threshold);
 
-            if (destination.x > transform.position.x)
-            {
-                transform.localEulerAngles = new Vector3(0, 180, 0);
-            }
-            else
-            {
-                transform.localEulerAngles = new Vector3(0, 0, 0);
-            }
+            faceXCoordinate(destination.x);
 
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
@@ -111,16 +106,9 @@ public class FSMEnemy : MonoBehaviour
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in chase");
 
-        if (los.player.transform.position.x > transform.position.x)
-        {
-            transform.localEulerAngles = new Vector3(0, 180, 0);
-            destination.Set(los.player.transform.position.x - attackRange, transform.position.y, transform.position.z);
-        }
-        else
-        {
-            transform.localEulerAngles = new Vector3(0, 0, 0);
-            destination.Set(los.player.transform.position.x + attackRange, transform.position.y, transform.position.z);
-        }
+        destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x, 
+            transform.position.y, transform.position.z);
+
         yield return null;
         while (inChase)
         {
@@ -210,8 +198,28 @@ public class FSMEnemy : MonoBehaviour
             return transform.position.x - attackRange - los.player.transform.position.x <= 0.2f;
     }
 
+    private int faceXCoordinate(float xcoord)
+    {
+        if (xcoord > transform.position.x)
+        {
+            transform.localEulerAngles = new Vector3(0, 180, 0);
+            return -1;
+        }
+        else
+        {
+            transform.localEulerAngles = new Vector3(0, 0, 0);
+            return 1;
+        }
+    }
+
     public bool InBounds()
     {
         return transform.position.x > leftPatrolLimit && transform.position.x < rightPatrolLimit;
+    }
+
+    public void ApplyDamage(int damage)
+    {
+        Debug.Log(name.ToString() + ": I've been hit");
+//        enemyStats.ApplyDamage(damage);
     }
 }
