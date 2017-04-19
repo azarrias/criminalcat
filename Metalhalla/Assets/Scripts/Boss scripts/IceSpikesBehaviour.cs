@@ -16,6 +16,9 @@ public class IceSpikesBehaviour : MonoBehaviour {
     public bool isPlayerSafe = false;
     public int spikesDamage = 25;
 
+    private GameObject rightSphere = null;
+    private GameObject leftSphere = null;
+
     // Use this for initialization
     void Start () {
         spikesAnimator = GetComponent<Animator>();
@@ -39,6 +42,16 @@ public class IceSpikesBehaviour : MonoBehaviour {
         thePlayer = GameObject.FindGameObjectWithTag("Player");
         if (thePlayer == null)
             Debug.Log("Error: player not found.");
+
+        rightSphere = transform.FindChild("RightSphere").gameObject;
+        if (rightSphere == null)
+            Debug.Log("Error: rightSphere not found.");
+
+        leftSphere = transform.FindChild("LeftSphere").gameObject;
+        if (leftSphere == null)
+            Debug.Log("Error: leftSphere not found.");
+
+
     }
 	
 	// Update is called once per frame
@@ -48,7 +61,7 @@ public class IceSpikesBehaviour : MonoBehaviour {
 
     public void ShowIceSpikes()
     {
-        spikesAnimator.SetBool("ShowIceSpikes", true);
+        spikesAnimator.SetBool("ShowIceSpikes", true);       
     }
 
     public void HideIceSpikes()
@@ -63,6 +76,9 @@ public class IceSpikesBehaviour : MonoBehaviour {
         spikesAnimator.SetBool("HideIceSpikes", false);
         EnableLeftSpikes();
         EnableRightSpikes();
+        isPlayerSafe = false;
+        leftSphere.GetComponent<Renderer>().material.color = Color.grey;
+        rightSphere.GetComponent<Renderer>().material.color = Color.grey;
     }
 
     public void EnableLeftSpikes()
@@ -99,16 +115,29 @@ public class IceSpikesBehaviour : MonoBehaviour {
         System.Random rand = new System.Random();
         int num = rand.Next(0, 2);
 
-       // if (num == 0)
+        if (num == 0)
            DisableLeftSpikes();
-       // if (num == 1)
-       //   DisableRightSpikes();
-      
+        if (num == 1)
+           DisableRightSpikes();
+
+        //Revisar cuando sepamos qué tipo de objeto nos dirá qué lado es el seguro
+        if (leftSafe)
+        {
+            leftSphere.GetComponent<Renderer>().material.color = Color.green;
+            rightSphere.GetComponent<Renderer>().material.color = Color.red;
+        }
+        if (rightSafe)
+        {
+            leftSphere.GetComponent<Renderer>().material.color = Color.red;
+            rightSphere.GetComponent<Renderer>().material.color = Color.green;
+        }
+
     }
 
     public void ApplySpikesDamage()
     {
-        thePlayer.SendMessage("ApplyDamage", spikesDamage, SendMessageOptions.DontRequireReceiver);
+        if(isPlayerSafe == false)
+            thePlayer.SendMessage("ApplyDamage", spikesDamage, SendMessageOptions.DontRequireReceiver);
     }
 
 }

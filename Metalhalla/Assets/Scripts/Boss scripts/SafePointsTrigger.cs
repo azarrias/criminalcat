@@ -17,7 +17,7 @@ public class SafePointsTrigger : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		
+       
 	}
 
     void OnTriggerStay(Collider collider)

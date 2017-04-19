@@ -459,8 +459,9 @@ public class FSMBoss : MonoBehaviour
         {
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
-            bossAnimator.SetBool(currAnimation, true);                             
-            //Destroy boss                          
+            bossAnimator.SetBool(currAnimation, true);
+            //Destroy boss
+            Destroy(gameObject, deadTime);                          
         }
     }
 
