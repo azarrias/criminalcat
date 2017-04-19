@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class SightRange : MonoBehaviour {
 
-    FSMBoss fsmBoss;
+    FSMBoss fsmBoss = null;
+    GameObject movingDoor = null;
 
     void Awake()
     {
         fsmBoss = FindObjectOfType<FSMBoss>();
         if (fsmBoss == null)
-            Debug.LogError("fsmBoss not found");
+            Debug.LogError("Error: fsmBoss not found");
+
+        movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
+        if (movingDoor == null)
+            Debug.Log("Error : movingDoor not found.");
     }
 
 	// Use this for initialization
@@ -27,6 +32,8 @@ public class SightRange : MonoBehaviour {
     {
         if (collider.CompareTag("Player"))
         {
+            movingDoor.SendMessage("PlayerInside");
+
             fsmBoss.playerInSight = true;
 
             Vector3 playerPos = collider.gameObject.transform.position;
