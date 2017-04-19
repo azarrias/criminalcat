@@ -2,7 +2,8 @@
 
 public class DestructionController : MonoBehaviour {
 
-     public GameObject remains;
+    public GameObject remains;
+    public GameObject content;
     
     [Range(-20, 20)]
     public int pushForceX = 4;
@@ -27,6 +28,10 @@ public class DestructionController : MonoBehaviour {
         broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
         broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
         broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
+        if (content != null)
+            Instantiate(content, new Vector3 (transform.position.x, transform.position.y, 0), transform.rotation);
+
         Destroy(gameObject);
+        
     }
 }
