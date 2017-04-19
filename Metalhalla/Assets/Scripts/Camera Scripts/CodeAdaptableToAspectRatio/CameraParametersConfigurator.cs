@@ -206,6 +206,11 @@ public class CameraParametersConfigurator : MonoBehaviour
                 // set vertical limits with recalculated zoom
                 verticalLimits.x -= (frameTop.y - maxTopCamera);
                 verticalLimits.y += (frameTop.y - maxTopCamera);
+                if (verticalLimits.x > verticalLimits.y)
+                {
+                    verticalLimits.x = frameCenter.y;
+                    verticalLimits.y = frameCenter.y;
+                }
             }
             else
             {
@@ -216,6 +221,11 @@ public class CameraParametersConfigurator : MonoBehaviour
                 // set horizontal limits with recalculated zoom
                 horizontalLimits.x -= (minLeftCamera - frameLeft.x);
                 horizontalLimits.y += (minLeftCamera - frameLeft.x);
+                if (horizontalLimits.x > horizontalLimits.y )
+                {
+                    horizontalLimits.x = frameCenter.x;
+                    horizontalLimits.y = frameCenter.x;
+                }
             }
         }
     }
