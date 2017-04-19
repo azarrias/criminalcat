@@ -122,13 +122,10 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         yield return new WaitForSeconds(seconds);
         enemyInside = false;
-        Vector3 pos;
+       
         foreach(GameObject go in contains)
-        {
-            pos = go.transform.position;            
-            pos = go.GetComponent<EnemyStats>().initialPosition;
-            
-            go.transform.position = pos;          
+        {          
+            go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
             go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
         }
         DisipateTornado();
@@ -146,7 +143,8 @@ public class TornadoBehaviour : MonoBehaviour {
 
     private void AbsorbEnemy(GameObject enemy)
     {
-       
+        enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
+        
         //if (Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) > 0.5f)
         //{
         //    Vector3 direction = (tornadoEyeTr.position - enemy.transform.position).normalized;
@@ -169,10 +167,10 @@ public class TornadoBehaviour : MonoBehaviour {
 
         //if(enemy.transform.position.x != tornadoEyeTr.position.x)
         //{
-           enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
-           //return false;
+
+        //return false;
         //}
-       
+
     }
 
     public void SetFacingRight (bool newValue)
