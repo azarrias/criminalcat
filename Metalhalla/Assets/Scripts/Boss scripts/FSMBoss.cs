@@ -646,10 +646,7 @@ public class FSMBoss : MonoBehaviour
                 //Return to the exact position
                 gameObject.transform.position = spikesReturnSpot.transform.position;         
                 backToCenter = false;           
-
-                //Reset ice spikes         
-                 iceSpikesScript.EnableRightSpikes();                
-                 iceSpikesScript.EnableLeftSpikes();
+               
             }
         }
         

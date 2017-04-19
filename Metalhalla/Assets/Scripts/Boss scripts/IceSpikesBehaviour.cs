@@ -61,18 +61,8 @@ public class IceSpikesBehaviour : MonoBehaviour {
         spikesAnimator.SetBool("Reset", true);
         spikesAnimator.SetBool("ShowIceSpikes", false);
         spikesAnimator.SetBool("HideIceSpikes", false);
-        leftSafe = false;
-        rightSafe = false;
-    }
-
-    public void EnableAnimator()
-    {
-        spikesAnimator.enabled = true;
-    }
-
-    public void DisableAnimator()
-    {
-        spikesAnimator.enabled = false;
+        EnableLeftSpikes();
+        EnableRightSpikes();
     }
 
     public void EnableLeftSpikes()
