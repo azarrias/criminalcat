@@ -62,13 +62,12 @@ public class FSMEnemy : MonoBehaviour
 
     IEnumerator Patrol()
     {
-        bool inPatrol = true;
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in patrol");
         float new_distance_threshold = 3.0f;
         yield return null;
 
-        while (inPatrol)
+        while (state == State.Patrol)
         {
             // sets a new random destination within bounds and above a given minimum distance
             do
@@ -81,58 +80,50 @@ public class FSMEnemy : MonoBehaviour
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
-                if (stunned || los.playerInSight)
+                if (stunned)
                 {
-                    inPatrol = false;
+                    state = State.Stunned;
+                    break;
+                }
+                else if (los.playerInSight)
+                {
+                    state = State.Chase;
                     break;
                 }
                 yield return null;
             }
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
-        if (stunned)
-        {
-            state = State.Stunned;
-        }
-        else
-        {
-            state = State.Chase;
-        }
     }
 
     IEnumerator Chase()
     {
-        bool inChase = true;
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in chase");
 
         destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x, 
             transform.position.y, transform.position.z);
-
         yield return null;
-        while (inChase)
+
+        while (state == State.Chase)
         {
-            if (!stunned && !PlayerAtRange() && InBounds())
+            if (stunned)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
+                state = State.Stunned;
+            }
+            else if (PlayerAtRange())
+            {
+                state = State.Attack;
+            }
+            else if (!InBounds())
+            {
+                state = State.Patrol;
             }
             else
             {
-                inChase = false;
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
             }
             yield return null;
-        }
-        if (stunned)
-        {
-            state = State.Stunned;
-        }
-        else if (PlayerAtRange())
-        {
-            state = State.Attack;
-        }
-        else
-        {
-            state = State.Patrol;
         }
     }
 
@@ -149,32 +140,28 @@ public class FSMEnemy : MonoBehaviour
 
     IEnumerator Attack()
     {
-        bool inAttack = true;
         Debug.Log(name.ToString() + ": I'm attacking");
         yield return null;
-        while (inAttack)
+
+        while (state == State.Attack)
         {
-            if (stunned || !playerStatus.IsAlive() || !PlayerAtRange())
+            if (stunned)
             {
-                inAttack = false;
+                state = State.Stunned;
+            }
+            else if (!PlayerAtRange())
+            {
+                state = State.Chase;
+            }
+            else if (!playerStatus.IsAlive())
+            {
+                state = State.Patrol;
             }
             else
             {
                 los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
             }
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
-        }
-        if (stunned)
-        {
-            state = State.Stunned;
-        }
-        else if (!PlayerAtRange())
-        {
-            state = State.Chase;
-        }
-        else
-        {
-            state = State.Patrol;
         }
     }
 
