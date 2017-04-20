@@ -64,6 +64,7 @@ public class FSMBoss : MonoBehaviour
     private bool castIceSpikes = true;
     private bool backToCenter = true;
     private bool insideTornado = false;
+    private float tornadoDuration = 0.0f;
 
     //Attack Damage
     int meleeDamage = 0;
@@ -238,6 +239,12 @@ public class FSMBoss : MonoBehaviour
                         currState = State.INSIDE_TORNADO;
                         break;
                     }
+                }
+                //Player dead
+                if (!thePlayerStatus.IsAlive())
+                {
+                    currState = State.PATROL;
+                    playerInSight = false;
                 } 
                                
                 break;
@@ -461,6 +468,8 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
             //Destroy boss
+            if (currState == State.INSIDE_TORNADO)
+                deadTime += (tornadoDuration + 3.0f);
             Destroy(gameObject, deadTime);                          
         }
     }
@@ -693,6 +702,9 @@ public class FSMBoss : MonoBehaviour
             insideTornado = true;
     }
 
-    
+    public void NotifyRotationDuration(float duration)
+    {
+        tornadoDuration = duration;
+    }
 
 }

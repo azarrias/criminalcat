@@ -93,6 +93,7 @@ public class TornadoBehaviour : MonoBehaviour {
             {
                 contains.Add(collider.gameObject);
                 fsmBoss.IsInsideTornado(true);
+                fsmBoss.NotifyRotationDuration(rotationDuration);
                 if (enemyInside == false)
                 {
                     enemyInside = true;
