@@ -7,7 +7,7 @@ public class TornadoBehaviour : MonoBehaviour {
     public float speed = 1.0f;
     public int damage = 20;
     private bool facingRight = true;
-    private float lifeTime = 10.0f;
+    public float lifeTime = 10.0f;
     private bool platformLimitReached = false;
     private float rotationDuration = 3.0f;
     private bool enemyInside = false;
