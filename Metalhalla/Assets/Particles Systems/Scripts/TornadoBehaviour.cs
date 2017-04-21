@@ -74,6 +74,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
         if (collider.gameObject.CompareTag("Viking"))
         {
+            collider.gameObject.SendMessage("Stun");
             contains.Add(collider.gameObject);
             ApplyDamage(damage, collider.gameObject);
 
@@ -128,6 +129,7 @@ public class TornadoBehaviour : MonoBehaviour {
         {          
             go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
             go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
+            go.SendMessage("WakeUp");
         }
         DisipateTornado();
         fsmBoss.IsInsideTornado(false);
