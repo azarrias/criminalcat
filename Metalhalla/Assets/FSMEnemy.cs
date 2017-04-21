@@ -64,7 +64,7 @@ public class FSMEnemy : MonoBehaviour
     {
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in patrol");
-        float new_distance_threshold = 3.0f;
+        float new_distance_threshold = (rightPatrolLimit - leftPatrolLimit) / 3.0f;
         yield return null;
 
         while (state == State.Patrol)

@@ -74,7 +74,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
         if (collider.gameObject.CompareTag("Viking"))
         {
-            //collider.gameObject.SendMessage("Stun");
+            collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
             contains.Add(collider.gameObject);
             ApplyDamage(damage, collider.gameObject);
 
