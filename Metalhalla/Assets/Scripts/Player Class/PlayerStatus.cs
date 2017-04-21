@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerStatus : MonoBehaviour {
+public class PlayerStatus : MonoBehaviour
+{
 
     [Header("Attack Elements")]
     public GameObject hammerMesh;
@@ -24,7 +25,7 @@ public class PlayerStatus : MonoBehaviour {
     [Tooltip("Stamina recovery rate per second")]
     public float staminaRecoveryRate = 1.0f;
     int stamina;
-    float staminaRecovery; 
+    float staminaRecovery;
 
     [Header("Beer Setup")]
     [Tooltip("Starting beer value")]
@@ -37,7 +38,7 @@ public class PlayerStatus : MonoBehaviour {
 
     [Header("Moveset Durations")]
     public float attackDuration = 0.400f;
-    public float castDuration = 0.5f; 
+    public float castDuration = 0.5f;
     public float hitDuration = 0.5f;
     public float refillDuration = 0.9f;
     public float drinkDuration = 0.5f;
@@ -70,17 +71,23 @@ public class PlayerStatus : MonoBehaviour {
     public PlayerState previousState;
 
     // -- Variables shared between different states -- // 
-    [HideInInspector] public bool facingRight;
-    [HideInInspector] public bool jumpAvailable;
-    [HideInInspector] public bool climbLadderAvailable;
-    [HideInInspector] public bool beerRefillAvailable;
+    [HideInInspector]
+    public bool facingRight;
+    [HideInInspector]
+    public bool jumpAvailable;
+    [HideInInspector]
+    public bool climbLadderAvailable;
+    [HideInInspector]
+    public bool beerRefillAvailable;
 
     // -- Cross component variables -- // 
     [HideInInspector]
     public bool justHit;
     [HideInInspector]
-    public int jumpFrames; 
+    public int jumpFrames;
 
+    // -- Debug variables -- // 
+    private bool godMode = false;
 
 
     void Start()
@@ -119,7 +126,9 @@ public class PlayerStatus : MonoBehaviour {
         beerRefillAvailable = false;
 
         justHit = false;
-        jumpFrames = 0; 
+        jumpFrames = 0;
+
+        godMode = false;
 
     }
 
@@ -127,17 +136,20 @@ public class PlayerStatus : MonoBehaviour {
     {
         // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
-              ApplyDamage(30);
+            ApplyDamage(30);
         if (Input.GetKeyDown(KeyCode.F2) == true)
             RestoreHealth(30);
         if (Input.GetKeyDown(KeyCode.F3) == true)
-            ConsumeStamina(7);  
+            ConsumeStamina(7);
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
         if (Input.GetKeyDown(KeyCode.F5) == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
             RefillBeer(5);
+        if (Input.GetKeyDown(KeyCode.G) == true)
+            godMode = !godMode;
+
 
         // stamina recovery
         if (stamina < staminaMaximum)
@@ -174,8 +186,13 @@ public class PlayerStatus : MonoBehaviour {
     // ---- HEALTH functions ---------------------------------------------------------------------------------------------
     public void ApplyDamage(int damage)
     {
-        health -= damage;
-        SetState(hit);
+        if (!godMode)
+        {
+            health -= damage;
+            SetState(hit);
+        }
+        else
+            Debug.Log("Player is in god mode");
     }
 
     public bool RestoreHealth(int restore)
@@ -196,7 +213,7 @@ public class PlayerStatus : MonoBehaviour {
 
     public bool IsAlive()
     {
-        return health > 0; 
+        return health > 0;
     }
 
     public void SetMaxHealth()
@@ -219,7 +236,8 @@ public class PlayerStatus : MonoBehaviour {
             stamina = staminaMaximum;
     }
 
-    public int GetCurrentStamina() {
+    public int GetCurrentStamina()
+    {
         return stamina;
     }
 
@@ -254,13 +272,15 @@ public class PlayerStatus : MonoBehaviour {
         return true;
     }
 
-    public int GetCurrentBeer() {
+    public int GetCurrentBeer()
+    {
         return beer;
     }
 
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
-    int CalculateFramesFromTime(float time) {
+    int CalculateFramesFromTime(float time)
+    {
         return (int)(time / Time.fixedDeltaTime);
     }
 
@@ -292,10 +312,10 @@ public class PlayerStatus : MonoBehaviour {
     public bool IsFall() { return currentState == fall; }
     public bool IsFallCloud() { return currentState == fallcloud; }
     public bool IsRefill() { return currentState == refill; }
-    public bool IsDrink() { return currentState == drink;  }
+    public bool IsDrink() { return currentState == drink; }
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
-   
+
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
 }
