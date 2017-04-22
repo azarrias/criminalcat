@@ -88,7 +88,6 @@ public class FSMEnemy : MonoBehaviour
 
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
                 if (stunned)
                 {
                     state = State.Stunned;
@@ -104,6 +103,10 @@ public class FSMEnemy : MonoBehaviour
                     state = State.Chase;
                     break;
                 }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
+                }
                 yield return null;
             }
             animator.SetBool("walk", false);
@@ -116,34 +119,46 @@ public class FSMEnemy : MonoBehaviour
     {
         Vector3 destination = Vector3.zero;
         Debug.Log(name.ToString() + ": I'm in chase");
-
-        destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x, 
-            transform.position.y, transform.position.z);
         yield return null;
 
         while (state == State.Chase)
         {
-            if (stunned)
+            destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x,
+                transform.position.y, transform.position.z);
+            animator.SetBool("idle", false);
+            animator.SetBool("walk", true);
+
+            while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
-                state = State.Stunned;
+                if (stunned)
+                {
+                    state = State.Stunned;
+                    break;
+                }
+                else if (hit)
+                {
+                    state = State.BeingHit;
+                    break;
+                }
+                else if (PlayerAtRange())
+                {
+                    state = State.Attack;
+                    break;
+                }
+                else if (!InBounds())
+                {
+                    state = State.Patrol;
+                    break;
+                }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
+                }
+                yield return null;
             }
-            else if (hit)
-            {
-                state = State.BeingHit;
-            }
-            else if (PlayerAtRange())
-            {
-                state = State.Attack;
-            }
-            else if (!InBounds())
-            {
-                state = State.Patrol;
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
-            }
-            yield return null;
+            animator.SetBool("walk", false);
+            animator.SetBool("idle", true);
+            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
     }
 
