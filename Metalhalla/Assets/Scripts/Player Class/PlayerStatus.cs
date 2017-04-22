@@ -179,11 +179,10 @@ public class PlayerStatus : MonoBehaviour
     {
         previousState = currentState;
         currentState = newState;
-        if ( previousState == attack && currentState != attack)
+        if (newState != attack)
         {
-            hammerMesh.GetComponent<Renderer>().enabled = false;
             attackCollider.enabled = false;
-            attackCollider.GetComponent<Renderer>().enabled = false;    // to be 
+            attackCollider.GetComponent<Renderer>().enabled = false;
         }
     }
 
