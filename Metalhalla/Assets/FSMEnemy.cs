@@ -26,6 +26,7 @@ public class FSMEnemy : MonoBehaviour
     public float attackRange;
 
     public bool stunned = false;
+    public bool hit = false;
     private float nextLocation = 0;
 
     public enum State
@@ -33,7 +34,9 @@ public class FSMEnemy : MonoBehaviour
         Stunned,
         Patrol,
         Chase,
-        Attack
+        Attack,
+        BeingHit,
+        Dead
     }
 
     private void Awake()
@@ -91,6 +94,11 @@ public class FSMEnemy : MonoBehaviour
                     state = State.Stunned;
                     break;
                 }
+                else if (hit)
+                {
+                    state = State.BeingHit;
+                    break;
+                }
                 else if (los.playerInSight)
                 {
                     state = State.Chase;
@@ -119,6 +127,10 @@ public class FSMEnemy : MonoBehaviour
             {
                 state = State.Stunned;
             }
+            else if (hit)
+            {
+                state = State.BeingHit;
+            }
             else if (PlayerAtRange())
             {
                 state = State.Attack;
@@ -141,9 +153,30 @@ public class FSMEnemy : MonoBehaviour
         yield return null;
         while (stunned)
         {
+            if (hit)
+            {
+                state = State.BeingHit;
+            }
             yield return new WaitForSeconds(2.0f);
         }
         state = State.Patrol;
+    }
+
+    IEnumerator BeingHit()
+    {
+        Debug.Log(name.ToString() + ": I'm hit");
+        yield return null;
+
+        animator.SetBool("idle", false);
+        animator.SetBool("walk", false);
+        animator.SetBool("being_hit", true);
+        yield return new WaitForSeconds(1.05f);
+
+        animator.SetBool("being_hit", false);
+        faceXCoordinate(los.player.transform.position.x);
+        hit = false;
+
+        state = State.Chase;
     }
 
     IEnumerator Attack()
@@ -156,6 +189,12 @@ public class FSMEnemy : MonoBehaviour
             if (stunned)
             {
                 state = State.Stunned;
+                break;
+            }
+            else if (hit)
+            {
+                state = State.BeingHit;
+                break;
             }
             else if (!PlayerAtRange())
             {
@@ -215,6 +254,7 @@ public class FSMEnemy : MonoBehaviour
     public void ApplyDamage(int damage)
     {
         Debug.Log(name.ToString() + ": I've been hit");
-//        enemyStats.ApplyDamage(damage);
+        hit = true;
+        //        enemyStats.ApplyDamage(damage);
     }
 }
