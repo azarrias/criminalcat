@@ -28,6 +28,9 @@ public class DeadState : PlayerState
             status.SetState(PlayerStatus.idle);
             status.SetMaxHealth();
             status.SetPlayerAtRespawnPoint();
+            // add hoc for level elements
+            GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
+
             return;
         }
         else

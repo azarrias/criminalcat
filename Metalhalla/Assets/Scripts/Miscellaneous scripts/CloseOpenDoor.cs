@@ -5,7 +5,7 @@ using UnityEngine;
 public class CloseOpenDoor : MonoBehaviour {
 
     private  GameObject movingDoor = null;
-    private Vector3 initialPosition = new Vector3(89.5f, 17.0f, 0.0f);
+    private Vector3 initialPosition = new Vector3(89.5f, 17.47f, 0.0f);
     private bool grounded = false;   
     private bool playerInside = false;
 
@@ -36,6 +36,8 @@ public class CloseOpenDoor : MonoBehaviour {
     public void OpenDoor()
     {
         gameObject.transform.position = initialPosition;
+        grounded = false;
+        playerInside = false; 
     }
 
     void OnTriggerEnter(Collider collider)
