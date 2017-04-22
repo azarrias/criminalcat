@@ -179,6 +179,11 @@ public class PlayerStatus : MonoBehaviour
     {
         previousState = currentState;
         currentState = newState;
+        if (newState != attack)
+        {
+            attackCollider.enabled = false;
+            attackCollider.GetComponent<Renderer>().enabled = false;
+        }
     }
 
 
