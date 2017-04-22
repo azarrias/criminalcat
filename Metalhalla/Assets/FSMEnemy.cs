@@ -226,6 +226,8 @@ public class FSMEnemy : MonoBehaviour
 
     public bool PlayerAtRange()
     {
+        if (Mathf.Abs(los.player.transform.position.y - transform.position.y) > 1.0f)
+            return false;
         if (los.player.transform.position.x > transform.position.x)
             return los.player.transform.position.x - attackRange - transform.position.x <= 0.2f;
         else
