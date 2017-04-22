@@ -16,6 +16,8 @@ public class FSMEnemy : MonoBehaviour
     [HideInInspector]
     public EnemyStats enemyStats;
 
+    Animator animator;
+
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
     public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
@@ -40,6 +42,8 @@ public class FSMEnemy : MonoBehaviour
         enemyStats = GetComponent<EnemyStats>();
         state = State.Patrol;
         nextLocation = transform.position.x;
+        animator = GetComponent<Animator>();
+        animator.SetBool("idle", true);
     }
 
     private void Start()
@@ -76,6 +80,8 @@ public class FSMEnemy : MonoBehaviour
             } while (Mathf.Abs(destination.x - transform.position.x) < new_distance_threshold);
 
             faceXCoordinate(destination.x);
+            animator.SetBool("idle", false);
+            animator.SetBool("walk", true);
 
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
@@ -92,6 +98,8 @@ public class FSMEnemy : MonoBehaviour
                 }
                 yield return null;
             }
+            animator.SetBool("walk", false);
+            animator.SetBool("idle", true);
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
     }
