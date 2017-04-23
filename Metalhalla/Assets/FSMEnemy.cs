@@ -28,6 +28,7 @@ public class FSMEnemy : MonoBehaviour
     public bool stunned = false;
     public bool hit = false;
     private float nextLocation = 0;
+    private string[] animatorConditions = { "idle", "walk", "being_hit", "dead", "attack" };
 
     public enum State
     {
@@ -46,7 +47,7 @@ public class FSMEnemy : MonoBehaviour
         state = State.Patrol;
         nextLocation = transform.position.x;
         animator = GetComponent<Animator>();
-        animator.SetBool("idle", true);
+        EnableAnimatorCondition("idle");
     }
 
     private void Start()
@@ -83,8 +84,7 @@ public class FSMEnemy : MonoBehaviour
             } while (Mathf.Abs(destination.x - transform.position.x) < new_distance_threshold);
 
             faceXCoordinate(destination.x);
-            animator.SetBool("idle", false);
-            animator.SetBool("walk", true);
+            EnableAnimatorCondition("walk");
 
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
@@ -109,8 +109,7 @@ public class FSMEnemy : MonoBehaviour
                 }
                 yield return null;
             }
-            animator.SetBool("walk", false);
-            animator.SetBool("idle", true);
+            EnableAnimatorCondition("idle");
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
     }
@@ -125,8 +124,7 @@ public class FSMEnemy : MonoBehaviour
         {
             destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x,
                 transform.position.y, transform.position.z);
-            animator.SetBool("idle", false);
-            animator.SetBool("walk", true);
+            EnableAnimatorCondition("walk");
 
             while (Vector3.Distance(transform.position, destination) > 0.1f)
             {
@@ -156,8 +154,7 @@ public class FSMEnemy : MonoBehaviour
                 }
                 yield return null;
             }
-            animator.SetBool("walk", false);
-            animator.SetBool("idle", true);
+            EnableAnimatorCondition("idle");
             yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
         }
     }
@@ -165,6 +162,7 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Stunned()
     {
         Debug.Log(name.ToString() + ": I'm stunned");
+        EnableAnimatorCondition("idle");
         yield return null;
         while (stunned)
         {
@@ -182,12 +180,9 @@ public class FSMEnemy : MonoBehaviour
         Debug.Log(name.ToString() + ": I'm hit");
         yield return null;
 
-        animator.SetBool("idle", false);
-        animator.SetBool("walk", false);
-        animator.SetBool("being_hit", true);
+        EnableAnimatorCondition("being_hit");
         yield return new WaitForSeconds(1.05f);
 
-        animator.SetBool("being_hit", false);
         faceXCoordinate(los.player.transform.position.x);
         hit = false;
 
@@ -197,34 +192,31 @@ public class FSMEnemy : MonoBehaviour
     IEnumerator Attack()
     {
         Debug.Log(name.ToString() + ": I'm attacking");
+        EnableAnimatorCondition("attack");
         yield return null;
 
-        while (state == State.Attack)
+        if (stunned)
         {
-            if (stunned)
-            {
-                state = State.Stunned;
-                break;
-            }
-            else if (hit)
-            {
-                state = State.BeingHit;
-                break;
-            }
-            else if (!PlayerAtRange())
-            {
-                state = State.Chase;
-            }
-            else if (!playerStatus.IsAlive())
-            {
-                state = State.Patrol;
-            }
-            else
-            {
-                los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
-            }
-            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
+            state = State.Stunned;
         }
+        else if (hit)
+        {
+            state = State.BeingHit;
+        }
+/*        else if (!PlayerAtRange())
+        {
+            state = State.Chase;
+        }*/
+        else if (!playerStatus.IsAlive())
+        {
+            state = State.Patrol;
+        }
+        else
+        {
+            los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
+            yield return new WaitForSeconds(2.5f);
+        }
+        state = State.Chase;
     }
 
     public void Stun()
@@ -273,5 +265,16 @@ public class FSMEnemy : MonoBehaviour
         Debug.Log(name.ToString() + ": I've been hit");
         hit = true;
         //        enemyStats.ApplyDamage(damage);
+    }
+
+    public void EnableAnimatorCondition(string condition)
+    {
+        foreach (string cond in animatorConditions)
+        {
+            if (cond.Equals(condition))
+                animator.SetBool(cond, true);
+            else
+                animator.SetBool(cond, false);
+        }
     }
 }
