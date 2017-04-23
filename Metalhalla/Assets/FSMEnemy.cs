@@ -29,6 +29,7 @@ public class FSMEnemy : MonoBehaviour
     public bool hit = false;
     private float nextLocation = 0;
     private string[] animatorConditions = { "idle", "walk", "being_hit", "dead", "attack" };
+    Material material;
 
     public enum State
     {
@@ -48,6 +49,10 @@ public class FSMEnemy : MonoBehaviour
         nextLocation = transform.position.x;
         animator = GetComponent<Animator>();
         EnableAnimatorCondition("idle");
+
+        material = GetComponentInChildren<Renderer>().material;
+ //       materialCopy = Material.Instantiate(materialRender);
+
     }
 
     private void Start()
@@ -57,6 +62,7 @@ public class FSMEnemy : MonoBehaviour
         {
             Debug.LogError("The Player GameObj has no PlayerStatus script attached to it!");
         }
+
         StartCoroutine(FSM());
     }
 
@@ -220,9 +226,26 @@ public class FSMEnemy : MonoBehaviour
 
     IEnumerator Dead()
     {
+        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        material.SetInt("_ZWrite", 0);
+        material.DisableKeyword("_ALPHATEST_ON");
+        material.EnableKeyword("_ALPHABLEND_ON");
+        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        material.renderQueue = 3000;
+
+        float timeToFade = 5.0f;
         Debug.Log(name.ToString() + ": I'm dying");
         EnableAnimatorCondition("dead");
         yield return new WaitForSeconds(2.458f);
+
+        while (material.color.a > 0)
+        {
+            Color newColor = material.color;
+            newColor.a -= Time.deltaTime / timeToFade;
+            material.color = newColor;
+            yield return null;
+        }
     }
 
     public void Stun()
