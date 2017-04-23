@@ -30,6 +30,7 @@ public class FSMEnemy : MonoBehaviour
     private float nextLocation = 0;
     private string[] animatorConditions = { "idle", "walk", "being_hit", "dead", "attack" };
     Material material;
+    BoxCollider[] boxColliders;
 
     public enum State
     {
@@ -51,8 +52,7 @@ public class FSMEnemy : MonoBehaviour
         EnableAnimatorCondition("idle");
 
         material = GetComponentInChildren<Renderer>().material;
- //       materialCopy = Material.Instantiate(materialRender);
-
+        boxColliders = GetComponents<BoxCollider>();
     }
 
     private void Start()
@@ -226,6 +226,11 @@ public class FSMEnemy : MonoBehaviour
 
     IEnumerator Dead()
     {
+        float timeToFade = 5.0f;
+        Debug.Log(name.ToString() + ": I'm dying");
+        EnableAnimatorCondition("dead");
+        yield return new WaitForSeconds(1.5f);
+
         material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
         material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
         material.SetInt("_ZWrite", 0);
@@ -234,10 +239,10 @@ public class FSMEnemy : MonoBehaviour
         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
         material.renderQueue = 3000;
 
-        float timeToFade = 5.0f;
-        Debug.Log(name.ToString() + ": I'm dying");
-        EnableAnimatorCondition("dead");
-        yield return new WaitForSeconds(2.458f);
+        foreach (BoxCollider b in boxColliders)
+        {
+            b.enabled = false;
+        }
 
         while (material.color.a > 0)
         {
