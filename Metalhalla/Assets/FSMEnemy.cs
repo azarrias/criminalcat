@@ -181,12 +181,15 @@ public class FSMEnemy : MonoBehaviour
         yield return null;
 
         EnableAnimatorCondition("being_hit");
-        yield return new WaitForSeconds(1.05f);
+        yield return new WaitForSeconds(1.208f);
 
         faceXCoordinate(los.player.transform.position.x);
         hit = false;
 
-        state = State.Chase;
+        if (enemyStats.hitPoints > 0)
+            state = State.Chase;
+        else
+            state = State.Dead;
     }
 
     IEnumerator Attack()
@@ -203,10 +206,6 @@ public class FSMEnemy : MonoBehaviour
         {
             state = State.BeingHit;
         }
-/*        else if (!PlayerAtRange())
-        {
-            state = State.Chase;
-        }*/
         else if (!playerStatus.IsAlive())
         {
             state = State.Patrol;
@@ -214,9 +213,16 @@ public class FSMEnemy : MonoBehaviour
         else
         {
             los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
-            yield return new WaitForSeconds(2.5f);
+            yield return new WaitForSeconds(2.458f);
         }
         state = State.Chase;
+    }
+
+    IEnumerator Dead()
+    {
+        Debug.Log(name.ToString() + ": I'm dying");
+        EnableAnimatorCondition("dead");
+        yield return new WaitForSeconds(2.458f);
     }
 
     public void Stun()
