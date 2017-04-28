@@ -5,8 +5,8 @@ using UnityEngine;
 public class CloseOpenDoor : MonoBehaviour {
 
     private  GameObject movingDoor = null;
-    private Vector3 initialPosition = new Vector3(89.5f, 17.47f, 0.0f);
-    private bool grounded = false;   
+    private Vector3 localInitialPosition = new Vector3(89.5f, 17.47f, 0.0f);
+    private bool closed = false;   
     private bool playerInside = false;
 
     void Awake()
@@ -18,12 +18,12 @@ public class CloseOpenDoor : MonoBehaviour {
 
     void Start () {
 
-       // movingDoor.transform.position = initialPosition;
+        movingDoor.transform.localPosition = localInitialPosition;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (!grounded && playerInside)
+        if (!closed && playerInside)
             CloseDoor();
 	}
 
@@ -35,15 +35,15 @@ public class CloseOpenDoor : MonoBehaviour {
     //To be called when player respawns
     public void OpenDoor()
     {
-        gameObject.transform.position = initialPosition;
-        grounded = false;
+        gameObject.transform.localPosition = localInitialPosition;
+        closed = false;
         playerInside = false; 
     }
 
     void OnTriggerEnter(Collider collider)
     {
         if (collider.gameObject.name == "BossFightAreaFloor")
-            grounded = true;
+            closed = true;
     }
 
     public void PlayerInside()
