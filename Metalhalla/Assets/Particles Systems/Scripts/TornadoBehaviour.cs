@@ -141,7 +141,12 @@ public class TornadoBehaviour : MonoBehaviour {
         Transform trf = enemy.transform;
 
         angle += angularSpeed * Time.deltaTime;
-        trf.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);   
+
+        if (Time.timeScale != 0.0f)
+            trf.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);
+        else
+            trf.localRotation = trf.localRotation;
+
     }
 
     private void AbsorbEnemy(GameObject enemy)
