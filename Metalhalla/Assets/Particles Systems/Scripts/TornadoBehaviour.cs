@@ -52,9 +52,9 @@ public class TornadoBehaviour : MonoBehaviour {
             foreach(GameObject go in contains)
             {
                 //if (!AbsorbEnemy(go))
-                //{
-                AbsorbEnemy(go);
-                RotateEnemy(go);
+                //{              
+                    AbsorbEnemy(go);
+                    RotateEnemy(go);           
                 //}
             }
         }
@@ -72,7 +72,7 @@ public class TornadoBehaviour : MonoBehaviour {
             ApplyDamage(damage, collider.gameObject);
         }
 
-        if (collider.gameObject.CompareTag("Viking"))
+        if (collider.gameObject.CompareTag("Viking") && collider.gameObject.GetComponent<FSMEnemy>().state != FSMEnemy.State.Dead)
         {
             collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
             contains.Add(collider.gameObject);
