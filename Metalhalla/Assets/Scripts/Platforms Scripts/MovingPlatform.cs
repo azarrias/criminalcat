@@ -18,8 +18,7 @@ public class MovingPlatform : MonoBehaviour {
         pointA = transformA.position;
         pointB = transformB.position;
         directionAtoB = (pointB - pointA).normalized;
-        distanceThreshold = speed * Time.fixedDeltaTime;
-        Debug.Log("distance threshold" + distanceThreshold); 
+        distanceThreshold = 0.5f * speed * Time.fixedDeltaTime;
     }
 	
 	// Update is called once per frame
