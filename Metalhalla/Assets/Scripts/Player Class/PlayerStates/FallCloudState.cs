@@ -15,7 +15,6 @@ public class FallCloudState : PlayerState {
     
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        Debug.Log("FallCloudState active");
         if (status.previousState != this)
             fallCloudFramesCount = 0;
 

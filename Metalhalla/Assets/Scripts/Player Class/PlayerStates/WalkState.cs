@@ -20,6 +20,12 @@ public class WalkState : PlayerState
             return;
         }
 
+        if (input.newInput.GetDashButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.dash);
+            return;
+        }
+
         if (input.newInput.GetAttackButtonDown() == true)
         {
             status.SetState(PlayerStatus.attack);
