@@ -13,6 +13,7 @@ public class PlayerInput : MonoBehaviour {
 		private bool jumpButtonDown;
 		private bool jumpButtonHeld;
         private bool attackButtonDown;
+        private bool dashButtonDown; 
         private bool defenseButtonDown;
         private bool defenseButtonHeld; 
         private bool castButtonDown;
@@ -24,6 +25,7 @@ public class PlayerInput : MonoBehaviour {
 			jumpButtonDown = false;
 			jumpButtonHeld = false;
             attackButtonDown = false;
+            dashButtonDown = false; 
             defenseButtonDown = false;
             defenseButtonHeld = false; 
             castButtonDown = false;
@@ -35,6 +37,7 @@ public class PlayerInput : MonoBehaviour {
 		public void SetJumpButtonDown( bool value ) { jumpButtonDown = value; }
 		public void SetJumpButtonHeld (bool value) { jumpButtonHeld = value;}
         public void SetAttackButtonDown(bool value) { attackButtonDown = value; }
+        public void SetDashButtonDown(bool value) { dashButtonDown = value;  }
         public void SetDefenseButtonDown(bool value) { defenseButtonDown = value; }
         public void SetDefenseButtonHeld(bool value) { defenseButtonHeld = value;  }
         public void SetCastButtonDown(bool value) { castButtonDown = value; }
@@ -45,6 +48,7 @@ public class PlayerInput : MonoBehaviour {
 		public bool GetJumpButtonDown(){  return jumpButtonDown;}
 		public bool  GetJumpButtonHeld(){  return jumpButtonHeld;}
         public bool GetAttackButtonDown() { return attackButtonDown; }
+        public bool GetDashButtonDown() { return dashButtonDown; }
         public bool GetDefenseButtonDown() { return defenseButtonDown; }
         public bool GetDefenseButtonHeld() { return defenseButtonHeld; }
         public bool GetCastButtonDown() { return castButtonDown; }
@@ -57,6 +61,7 @@ public class PlayerInput : MonoBehaviour {
 			jumpButtonDown = from.jumpButtonDown;
 			jumpButtonHeld = from.jumpButtonHeld;
             attackButtonDown = from.attackButtonDown;
+            dashButtonDown = from.dashButtonDown;
             defenseButtonDown = from.defenseButtonDown;
             defenseButtonHeld = from.defenseButtonHeld;
             castButtonDown = from.castButtonDown;
@@ -71,12 +76,12 @@ public class PlayerInput : MonoBehaviour {
 	{
 		oldInput.CopyInputFrom (newInput);	//make a savestate from last input
 
-        // update with new inputs / changes in axis in the controller
 		newInput.SetHorizontalInput( Input.GetAxis("DPadHorizontal"));
 		newInput.SetVerticalInput( Input.GetAxis("DPadVertical"));
 		newInput.SetJumpButtonDown(Input.GetButtonDown("Jump"));
 		newInput.SetJumpButtonHeld(Input.GetButton ("Jump") );
         newInput.SetAttackButtonDown(Input.GetButtonDown("Attack"));
+        newInput.SetDashButtonDown(Input.GetButtonDown("Dash"));
         newInput.SetDefenseButtonDown(Input.GetButtonDown("Defense"));
         newInput.SetDefenseButtonHeld(Input.GetButton("Defense"));
         newInput.SetCastButtonDown(Input.GetButtonDown("Cast"));

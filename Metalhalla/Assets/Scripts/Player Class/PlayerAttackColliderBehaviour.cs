@@ -15,10 +15,7 @@ public class PlayerAttackColliderBehaviour : MonoBehaviour {
     {
         if (hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))
         {
-           // Destroy(other.gameObject);  // TODO: remove when interaction is done
-            //other.gameObject.SendMessage("ApplyDamage", 5, SendMessageOptions.DontRequireReceiver);
             other.gameObject.SendMessage("ApplyDamage", 10, SendMessageOptions.DontRequireReceiver);
-
         }
     }
 }

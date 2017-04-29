@@ -44,6 +44,7 @@ public class PlayerStatus : MonoBehaviour
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
+    public float dashDuration = 0.4f;
 
     [Header("Respawn management")]
     public Vector3 initialPosition;
@@ -55,6 +56,7 @@ public class PlayerStatus : MonoBehaviour
     public static AttackState attack;
     public static CastState cast;
     public static ClimbState climb;
+    public static DashState dash; 
     public static DeadState dead;
     public static DefenseState defense;
     public static DrinkState drink;
@@ -108,6 +110,7 @@ public class PlayerStatus : MonoBehaviour
         attack = new AttackState(CalculateFramesFromTime(attackDuration));
         cast = new CastState(CalculateFramesFromTime(castDuration));
         climb = new ClimbState();
+        dash = new DashState(CalculateFramesFromTime(dashDuration));
         dead = new DeadState(CalculateFramesFromTime(deadDuration));
         defense = new DefenseState();
         drink = new DrinkState(CalculateFramesFromTime(drinkDuration));
@@ -320,6 +323,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsDrink() { return currentState == drink; }
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
+    public bool IsDash() { return currentState == dash;  }
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
