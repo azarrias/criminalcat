@@ -5,7 +5,8 @@ public class PlayerMove : MonoBehaviour {
 
     [Header("Basic move, jump & gravity Setup")]
     public float moveSpeed = 5;
-	public float gravity = 40f;
+    public float dashSpeed = 15f;
+    public float gravity = 40f;
 	public float jumpSpeed = 1.8f;
 	public float timeToJumpApex = 0.2f;
 
@@ -15,7 +16,7 @@ public class PlayerMove : MonoBehaviour {
 
     [Header("Other move constraints")]
     public float hitRecoil = 0.2f;
-    public float dashDistance = 1.0f; 
+    
 
     [HideInInspector]
 	public Vector3 speed;
@@ -37,7 +38,7 @@ public class PlayerMove : MonoBehaviour {
         if (status.justHit == true)
             speed.x = status.facingRight ? -hitRecoil * Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime;
         else if (status.IsDash() == true)
-            speed.x = status.facingRight ? dashDistance * Time.fixedDeltaTime : -dashDistance * Time.fixedDeltaTime;
+            speed.x = status.facingRight ? dashSpeed * Time.fixedDeltaTime : -dashSpeed * Time.fixedDeltaTime;
         else if (AllowHorizontalInput(status, collider) == true)
             speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
         else

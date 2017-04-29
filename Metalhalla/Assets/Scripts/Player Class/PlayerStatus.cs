@@ -44,7 +44,7 @@ public class PlayerStatus : MonoBehaviour
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
-    public float dashDuration = 0.4f;
+    public float dashDuration = 0.3f;
 
     [Header("Respawn management")]
     public Vector3 initialPosition;
