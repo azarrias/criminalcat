@@ -18,6 +18,12 @@ public class DashState : PlayerState
         if (status.previousState != this)
             dashFramesCount = 0;
 
+        if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
+        {
+            status.SetState(PlayerStatus.jump);
+            return;
+        }
+
         if (dashFramesCount >= dashFramesDuration)
         {
             if (input.newInput.GetHorizontalInput() != 0)
