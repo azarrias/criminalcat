@@ -228,6 +228,11 @@ public class PlayerStatus : MonoBehaviour
         return (float)health / (float)healthMaximum;
     }
 
+    public int GetCurrentHealth()
+    {
+        return health;
+    }
+
     public bool IsAlive()
     {
         return health > 0;
