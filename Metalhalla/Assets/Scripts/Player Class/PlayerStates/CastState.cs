@@ -21,7 +21,7 @@ public class CastState : PlayerState
 
             
             // instantiation of ONLY Eagle, need to modify when having wild boar attack
-            if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(7) == true )
+            if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(1) == true )
             {
                 GameObject cast = Instantiate(status.eagleAttack);
                 cast.GetComponent<TornadoBehaviour>().SetFacingRight(status.facingRight);
