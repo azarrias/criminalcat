@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DropItem : MonoBehaviour {
 
-    [Tooltip("heeey")]
     [Header("Drop Behaviour")]
     
     public int healthRestore = 0;
@@ -27,7 +26,7 @@ public class DropItem : MonoBehaviour {
         {
             if (healthRestore > 0)
                 collision.GetComponent<PlayerStatus>().RestoreHealth(healthRestore);
-            else if (staminaRestore > 1)
+            else if (staminaRestore > 0)
                 collision.GetComponent<PlayerStatus>().RestoreStamina(staminaRestore);
             else if (beerRestore > 0)
                 collision.GetComponent<PlayerStatus>().RefillBeer(beerRestore);
