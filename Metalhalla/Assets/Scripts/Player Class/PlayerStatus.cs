@@ -10,6 +10,9 @@ public class PlayerStatus : MonoBehaviour
     public GameObject eagleAttack;
     public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.5f, 0);
 
+    [Header("Defense Elements")]
+    public GameObject shieldMesh;
+
     [Header("Health Setup")]
     [Tooltip("Health start value")]
     public int healthAtStart = 100;
@@ -99,6 +102,8 @@ public class PlayerStatus : MonoBehaviour
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
 
+        shieldMesh.GetComponent<Renderer>().enabled = false; 
+
         health = healthAtStart;
         stamina = staminaAtStart;
         staminaRecovery = 0.0f;
@@ -187,6 +192,10 @@ public class PlayerStatus : MonoBehaviour
             attackCollider.enabled = false;
             attackCollider.GetComponent<Renderer>().enabled = false;
         }
+        else if (newState != defense)
+        {
+            shieldMesh.GetComponent<Renderer>().enabled = false; 
+        }
     }
 
 
@@ -194,13 +203,13 @@ public class PlayerStatus : MonoBehaviour
     // ---- HEALTH functions ---------------------------------------------------------------------------------------------
     public void ApplyDamage(int damage)
     {
-        if (!godMode)
+        if (!godMode || currentState != defense)
         {
             health -= damage;
             SetState(hit);
         }
         else
-            Debug.Log("Player is in god mode");
+            Debug.Log("Player is in god mode or defending");
     }
 
     public bool RestoreHealth(int restore)

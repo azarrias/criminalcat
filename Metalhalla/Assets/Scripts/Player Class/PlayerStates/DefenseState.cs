@@ -7,6 +7,9 @@ public class DefenseState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
+        if (status.previousState != this)
+            status.shieldMesh.GetComponent<Renderer>().enabled = true;
+
         if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true )
         {
             status.SetState(this);
@@ -17,6 +20,7 @@ public class DefenseState : PlayerState
             status.SetState(PlayerStatus.walk);
         else
             status.SetState(PlayerStatus.idle);
+        status.shieldMesh.GetComponent<Renderer>().enabled = false;
 
     }
 
