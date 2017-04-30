@@ -19,6 +19,10 @@ public class PlayerInput : MonoBehaviour {
         private bool castButtonDown;
         private bool contextButtonDown;
 
+        //double tap control
+        private bool horizontalDoubleTap;
+
+
 		public void Reset(){
 			horizontalInput = 0f;
 			verticalInput = 0f;
@@ -30,18 +34,22 @@ public class PlayerInput : MonoBehaviour {
             defenseButtonHeld = false; 
             castButtonDown = false;
             contextButtonDown = false;
+
+            horizontalDoubleTap = false; 
         }
 
-		public void SetHorizontalInput(float value)	{ horizontalInput = value; }
-		public void SetVerticalInput( float value ) { verticalInput = value; }
-		public void SetJumpButtonDown( bool value ) { jumpButtonDown = value; }
-		public void SetJumpButtonHeld (bool value) { jumpButtonHeld = value;}
+        public void SetHorizontalInput(float value)	{ horizontalInput = value; }
+        public void SetVerticalInput( float value ) { verticalInput = value; }
+        public void SetJumpButtonDown( bool value ) { jumpButtonDown = value; }
+        public void SetJumpButtonHeld (bool value) { jumpButtonHeld = value;}
         public void SetAttackButtonDown(bool value) { attackButtonDown = value; }
         public void SetDashButtonDown(bool value) { dashButtonDown = value;  }
         public void SetDefenseButtonDown(bool value) { defenseButtonDown = value; }
         public void SetDefenseButtonHeld(bool value) { defenseButtonHeld = value;  }
         public void SetCastButtonDown(bool value) { castButtonDown = value; }
         public void SetContextButtonDown(bool value) { contextButtonDown = value;  }
+
+        public void SetHorizontalDoubleTap(bool value) { horizontalDoubleTap = value; }
 
 		public float GetHorizontalInput(){ return horizontalInput;}
 		public float GetVerticalInput(){   return verticalInput;}
@@ -54,6 +62,8 @@ public class PlayerInput : MonoBehaviour {
         public bool GetCastButtonDown() { return castButtonDown; }
         public bool GetContextButtonDown() { return contextButtonDown; }
 
+        public bool GetHorizontalDoubleTap() { return horizontalDoubleTap; }
+
 		public void CopyInputFrom( pInput from)
 		{
 			horizontalInput = from.horizontalInput;
@@ -65,12 +75,30 @@ public class PlayerInput : MonoBehaviour {
             defenseButtonDown = from.defenseButtonDown;
             defenseButtonHeld = from.defenseButtonHeld;
             castButtonDown = from.castButtonDown;
-            contextButtonDown = from.contextButtonDown; 
-		}
+            contextButtonDown = from.contextButtonDown;
+
+            horizontalDoubleTap = from.horizontalDoubleTap;
+
+        }
 	};
 
-	public pInput newInput;
+    public pInput newInput;
     pInput oldInput;
+    
+    //mod for double tap input
+    public int doubleTapFramesMax = 12;
+    int doubleTapFramesCount; 
+
+    enum doubleTap { IDLE, FIRST_TAP, FIRST_RELEASED, SECOND_TAP};
+    doubleTap hDoubleTap;
+    bool facingRightTap; 
+
+    public PlayerInput()
+    {
+        doubleTapFramesCount = 0; 
+        hDoubleTap = doubleTap.IDLE;
+    }
+    // end mod for double tap input
 
 	public void GetInput()
 	{
@@ -85,8 +113,46 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetDefenseButtonDown(Input.GetButtonDown("Defense"));
         newInput.SetDefenseButtonHeld(Input.GetButton("Defense"));
         newInput.SetCastButtonDown(Input.GetButtonDown("Cast"));
-        newInput.SetContextButtonDown(Input.GetButtonDown("Context")); 
+        newInput.SetContextButtonDown(Input.GetButtonDown("Context"));
 
-        
+        newInput.SetHorizontalDoubleTap(CheckHorizontalDoubleTap());
 	}
+
+    private bool CheckHorizontalDoubleTap()
+    {
+        bool ret = false; 
+        switch( hDoubleTap)
+        {
+            case doubleTap.IDLE:
+                doubleTapFramesCount = 0; 
+                if (oldInput.GetHorizontalInput() == 0 && newInput.GetHorizontalInput() != 0)
+                {
+                    hDoubleTap = doubleTap.FIRST_TAP;
+                    facingRightTap = newInput.GetHorizontalInput() > 0 ? true : false; 
+                }
+            break;
+
+            case doubleTap.FIRST_TAP:
+                doubleTapFramesCount++;
+                if (doubleTapFramesCount >= doubleTapFramesMax)
+                    hDoubleTap = doubleTap.IDLE;
+                else if (newInput.GetHorizontalInput() == 0)
+                    hDoubleTap = doubleTap.FIRST_RELEASED;
+                break;
+
+            case doubleTap.FIRST_RELEASED:
+                doubleTapFramesCount++;
+                if (doubleTapFramesCount >= doubleTapFramesMax)
+                    hDoubleTap = doubleTap.IDLE;
+                else if ((newInput.GetHorizontalInput() > 0 && facingRightTap) || (newInput.GetHorizontalInput() < 0 && !facingRightTap))
+                    hDoubleTap = doubleTap.SECOND_TAP;
+                break;
+
+            case doubleTap.SECOND_TAP:
+                ret = true;
+                hDoubleTap = doubleTap.IDLE;
+                break; 
+        }
+        return ret; 
+    }
 }

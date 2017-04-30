@@ -20,7 +20,7 @@ public class WalkState : PlayerState
             return;
         }
 
-        if (input.newInput.GetDashButtonDown() == true)
+        if (input.newInput.GetDashButtonDown() == true || input.newInput.GetHorizontalDoubleTap() == true)
         {
             status.SetState(PlayerStatus.dash);
             return;
