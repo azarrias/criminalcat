@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class RockGeneration : MonoBehaviour {
 
-    RockFall rockGeneratorScript = null;
+    RockFall rockFallScript = null;
 
 	// Use this for initialization
 	void Start () {
-        rockGeneratorScript = transform.parent.GetComponent<RockFall>();
+        rockFallScript = transform.parent.GetComponent<RockFall>();
 	}
 	
 	// Update is called once per frame
@@ -19,12 +19,12 @@ public class RockGeneration : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         if(collider.CompareTag("Player"))
-            rockGeneratorScript.active = true;
+            rockFallScript.generateRocks = true;
     }
 
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
-            rockGeneratorScript.active = false;
+            rockFallScript.generateRocks = false;
     }
 }
