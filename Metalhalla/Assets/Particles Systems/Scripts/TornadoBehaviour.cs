@@ -72,7 +72,7 @@ public class TornadoBehaviour : MonoBehaviour {
             ApplyDamage(damage, collider.gameObject);
         }
 
-        if (collider.gameObject.CompareTag("Viking") && collider.gameObject.GetComponent<FSMEnemy>().state != FSMEnemy.State.Dead)
+        if (collider.gameObject.CompareTag("Viking") && collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.DEAD)
         {
             collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
             contains.Add(collider.gameObject);
