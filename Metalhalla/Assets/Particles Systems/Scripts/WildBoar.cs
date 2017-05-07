@@ -15,6 +15,9 @@ public class WildBoar : MonoBehaviour {
     private ParticleSystem stoneParticles;
     private Vector3 moveDirection = Vector3.right; //debug test
     private bool stop = false;
+    private bool collision = false;
+    public float lifeTime = 2.0f;
+    public float timeToDeactivate;
 
 
     void Awake()
@@ -23,7 +26,7 @@ public class WildBoar : MonoBehaviour {
         dustParticles = dust.GetComponent<ParticleSystem>();   
         stoneParticles = stoneEmitter.GetComponent<ParticleSystem>();
 
-
+        timeToDeactivate = trailParticles.main.startLifetime.constant;
     }
 
 	// Use this for initialization
@@ -32,6 +35,7 @@ public class WildBoar : MonoBehaviour {
         trailParticles.Play();
         dustParticles.Stop();
         stoneParticles.Stop();
+        Invoke("StopAttack", lifeTime);
     }
 	
 	// Update is called once per frame
@@ -50,15 +54,34 @@ public class WildBoar : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-
-        trailParticles.Stop();
-        dustParticles.Play();
-        stoneParticles.Play();
-        stop = true;
+        if (LayerMask.LayerToName(other.gameObject.layer) == "destroyableWildboar")
+        {
+            trailParticles.Stop();
+            dustParticles.Play();
+            stoneParticles.Play();
+            stop = true;
+            collision = true;
+            other.gameObject.SendMessage("ApplyDamage", 0, SendMessageOptions.DontRequireReceiver);
+        }
     }
 
     public void SetMoveDirection(Vector3 direction)
     {
         moveDirection = direction;
+    }
+
+    void StopAttack()
+    {
+        if (!collision)
+        {
+            trailParticles.Stop();
+            stop = true;
+            Invoke("DisableWildboar", timeToDeactivate);           
+        }
+    }
+
+    void DisableWildboar()
+    {
+        gameObject.SetActive(false);
     }
 }
