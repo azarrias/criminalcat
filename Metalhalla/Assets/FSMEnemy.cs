@@ -41,6 +41,8 @@ public class FSMEnemy : MonoBehaviour
     private Vector3 destination = Vector3.zero;
     private float waitingTime;
     private float timeToWait;
+    private Material material;
+    private BoxCollider[] boxColliders;
 
     private void Awake()
     {
@@ -49,10 +51,8 @@ public class FSMEnemy : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
         playerStatus = player.GetComponent<PlayerStatus>();
-        if (!player)
-        {
-            Debug.LogError("No game object has the tag Player");
-        }
+        material = GetComponentInChildren<Renderer>().material;
+        boxColliders = GetComponents<BoxCollider>();
     }
 
     private void Start()
@@ -191,6 +191,7 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.DEAD:
                 animator.SetBool("dead", false);
+                StartCoroutine(FadeOut());
                 break;
         }
     }
@@ -254,5 +255,32 @@ public class FSMEnemy : MonoBehaviour
             return los.player.transform.position.x - attackRange - transform.position.x <= 0.2f;
         else
             return transform.position.x - attackRange - los.player.transform.position.x <= 0.2f;
+    }
+
+    IEnumerator FadeOut()
+    {
+        float timeToFade = 5.0f;
+
+        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        material.SetInt("_ZWrite", 0);
+        material.DisableKeyword("_ALPHATEST_ON");
+        material.EnableKeyword("_ALPHABLEND_ON");
+        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        material.renderQueue = 3000;
+
+        foreach (BoxCollider b in boxColliders)
+        {
+            b.enabled = false;
+        }
+
+        while (material.color.a > 0)
+        {
+            Color newColor = material.color;
+            newColor.a -= Time.deltaTime / timeToFade;
+            material.color = newColor;
+            yield return null;
+        }
+        gameObject.SetActive(false);
     }
 }
