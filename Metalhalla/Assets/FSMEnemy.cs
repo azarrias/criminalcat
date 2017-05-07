@@ -6,13 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyStats))]
 public class FSMEnemy : MonoBehaviour
 {
+    public enum State
+    {
+        STUNNED,
+        IDLE,
+        PATROL,
+        CHASE,
+        ATTACK,
+        BEING_HIT,
+        DEAD
+    }
 
     [HideInInspector]
-    public LineOfSight los;
-    [HideInInspector]
-    public PlayerStatus playerStatus;
-    [HideInInspector]
-    public State state;
+    public State currentState;
     [HideInInspector]
     public EnemyStats enemyStats;
 
@@ -25,254 +31,108 @@ public class FSMEnemy : MonoBehaviour
     public float speed = 1.0f;
     public float attackRange;
 
-    public bool stunned = false;
-    public bool hit = false;
-    private float nextLocation = 0;
-    private string[] animatorConditions = { "idle", "walk", "being_hit", "dead", "attack" };
-    Material material;
-    BoxCollider[] boxColliders;
-
-    public enum State
-    {
-        Stunned,
-        Patrol,
-        Chase,
-        Attack,
-        BeingHit,
-        Dead
-    }
+    private float minPatrolDistance = 0.0f;
+    private Vector3 destination = Vector3.zero;
+    private float waitingTime;
+    private float timeToWait;
 
     private void Awake()
     {
-        los = GetComponent<LineOfSight>();
         enemyStats = GetComponent<EnemyStats>();
-        state = State.Patrol;
-        nextLocation = transform.position.x;
         animator = GetComponent<Animator>();
-        EnableAnimatorCondition("idle");
-
-        material = GetComponentInChildren<Renderer>().material;
-        boxColliders = GetComponents<BoxCollider>();
     }
 
     private void Start()
     {
-        playerStatus = los.player.GetComponent<PlayerStatus>();
-        if (!playerStatus)
-        {
-            Debug.LogError("The Player GameObj has no PlayerStatus script attached to it!");
-        }
-
-        StartCoroutine(FSM());
+        minPatrolDistance = (rightPatrolLimit - leftPatrolLimit) / 3.0f;
+        currentState = State.IDLE;
+        StateEnter(currentState);
     }
 
-    IEnumerator FSM()
+    private void FixedUpdate()
     {
-        while (true)
+        switch (currentState)
         {
-            yield return StartCoroutine(state.ToString());
-        }
-    }
-
-    IEnumerator Patrol()
-    {
-        Vector3 destination = Vector3.zero;
-        Debug.Log(name.ToString() + ": I'm in patrol");
-        float new_distance_threshold = (rightPatrolLimit - leftPatrolLimit) / 3.0f;
-        yield return null;
-
-        while (state == State.Patrol)
-        {
-            // sets a new random destination within bounds and above a given minimum distance
-            do
-            {
-                destination.Set(Random.Range(leftPatrolLimit, rightPatrolLimit), transform.position.y, transform.position.z);
-            } while (Mathf.Abs(destination.x - transform.position.x) < new_distance_threshold);
-
-            faceXCoordinate(destination.x);
-            EnableAnimatorCondition("walk");
-
-            while (Vector3.Distance(transform.position, destination) > 0.1f)
-            {
-                if (stunned)
-                {
-                    state = State.Stunned;
-                    break;
-                }
-                else if (hit)
-                {
-                    state = State.BeingHit;
-                    break;
-                }
-                else if (los.playerInSight)
-                {
-                    state = State.Chase;
-                    break;
-                }
+            case State.IDLE:
+                if (waitingTime > timeToWait)
+                    ChangeState(State.PATROL);
                 else
-                {
+                    waitingTime += Time.fixedDeltaTime;
+                break;
+            case State.PATROL:
+                if (Vector3.Distance(transform.position, destination) > 0.1f)
                     transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
-                }
-                yield return null;
-            }
-            EnableAnimatorCondition("idle");
-            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
+                else ChangeState(State.IDLE);
+                break;
+            case State.BEING_HIT:
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
+                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                    ChangeState(State.IDLE);
+                break;
         }
     }
 
-    IEnumerator Chase()
+    private void ChangeState(State newState)
     {
-        Vector3 destination = Vector3.zero;
-        Debug.Log(name.ToString() + ": I'm in chase");
-        yield return null;
-
-        while (state == State.Chase)
+        if (newState != currentState)
         {
-            destination.Set(faceXCoordinate(los.player.transform.position.x) * attackRange + los.player.transform.position.x,
-                transform.position.y, transform.position.z);
-            EnableAnimatorCondition("walk");
-
-            while (Vector3.Distance(transform.position, destination) > 0.1f)
-            {
-                if (stunned)
-                {
-                    state = State.Stunned;
-                    break;
-                }
-                else if (hit)
-                {
-                    state = State.BeingHit;
-                    break;
-                }
-                else if (PlayerAtRange())
-                {
-                    state = State.Attack;
-                    break;
-                }
-                else if (!InBounds())
-                {
-                    state = State.Patrol;
-                    break;
-                }
-                else
-                {
-                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
-                }
-                yield return null;
-            }
-            EnableAnimatorCondition("idle");
-            yield return new WaitForSeconds(Random.Range(0.5f, 1.0f));
+            StateExit(currentState);
+            currentState = newState;
+            StateEnter(newState);
         }
     }
 
-    IEnumerator Stunned()
+    private void StateEnter(State state)
     {
-        Debug.Log(name.ToString() + ": I'm stunned");
-        EnableAnimatorCondition("idle");
-        yield return null;
-        while (stunned)
+        switch (state)
         {
-            if (hit)
-            {
-                state = State.BeingHit;
-            }
-            yield return new WaitForSeconds(2.0f);
+            case State.IDLE:
+                animator.SetBool("idle", true);
+                waitingTime = 0.0f;
+                timeToWait = Random.Range(0.5f, 1.5f);
+                break;
+            case State.PATROL:
+                animator.SetBool("walk", true);
+                destination.Set(NextPatrolLocation(), transform.position.y, transform.position.z);
+                faceXCoordinate(destination.x);
+                break;
+            case State.BEING_HIT:
+                animator.SetBool("being_hit", true);
+                break;
+            case State.STUNNED:
+                animator.SetBool("idle", true);
+                break;
         }
-        state = State.Patrol;
     }
 
-    IEnumerator BeingHit()
+    private void StateExit(State state)
     {
-        Debug.Log(name.ToString() + ": I'm hit");
-        yield return null;
+        switch (state)
+        {
+            case State.IDLE:
+                animator.SetBool("idle", false);
+                break;
+            case State.PATROL:
+                animator.SetBool("walk", false);
+                break;
+            case State.BEING_HIT:
+                animator.SetBool("being_hit", false);
+                break;
+            case State.STUNNED:
+                animator.SetBool("idle", false);
+                break;
+        }
+    }
 
-        EnableAnimatorCondition("being_hit");
-        yield return new WaitForSeconds(1.208f);
-
-        faceXCoordinate(los.player.transform.position.x);
-        hit = false;
-
-        if (enemyStats.hitPoints > 0)
-            state = State.Chase;
+    private float NextPatrolLocation()
+    {
+        if ((transform.position.x + minPatrolDistance) > rightPatrolLimit)
+            return Random.Range(leftPatrolLimit, transform.position.x - minPatrolDistance);
+        else if ((transform.position.x - minPatrolDistance) < leftPatrolLimit)
+            return Random.Range(transform.position.x + minPatrolDistance, rightPatrolLimit);
         else
-            state = State.Dead;
-    }
-
-    IEnumerator Attack()
-    {
-        Debug.Log(name.ToString() + ": I'm attacking");
-        EnableAnimatorCondition("attack");
-        yield return null;
-
-        if (stunned)
-        {
-            state = State.Stunned;
-        }
-        else if (hit)
-        {
-            state = State.BeingHit;
-        }
-        else if (!playerStatus.IsAlive())
-        {
-            state = State.Patrol;
-        }
-        else
-        {
-            los.player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
-            yield return new WaitForSeconds(2.458f);
-        }
-        state = State.Chase;
-    }
-
-    IEnumerator Dead()
-    {
-        float timeToFade = 5.0f;
-        Debug.Log(name.ToString() + ": I'm dying");
-        EnableAnimatorCondition("dead");
-        yield return new WaitForSeconds(1.5f);
-
-        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        material.SetInt("_ZWrite", 0);
-        material.DisableKeyword("_ALPHATEST_ON");
-        material.EnableKeyword("_ALPHABLEND_ON");
-        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        material.renderQueue = 3000;
-
-        foreach (BoxCollider b in boxColliders)
-        {
-            b.enabled = false;
-        }
-
-        while (material.color.a > 0)
-        {
-            Color newColor = material.color;
-            newColor.a -= Time.deltaTime / timeToFade;
-            material.color = newColor;
-            yield return null;
-        }
-    }
-
-    public void Stun()
-    {
-        stunned = true;
-        los.Stop();
-    }
-
-    public void WakeUp()
-    {
-        stunned = false;
-        los.Start();
-    }
-
-    public bool PlayerAtRange()
-    {
-        if (Mathf.Abs(los.player.transform.position.y - transform.position.y) > 1.0f)
-            return false;
-        if (los.player.transform.position.x > transform.position.x)
-            return los.player.transform.position.x - attackRange - transform.position.x <= 0.2f;
-        else
-            return transform.position.x - attackRange - los.player.transform.position.x <= 0.2f;
+            return Random.Range(0, 2) == 0 ? Random.Range(leftPatrolLimit, transform.position.x - minPatrolDistance)
+                                        : Random.Range(transform.position.x + minPatrolDistance, rightPatrolLimit);
     }
 
     private int faceXCoordinate(float xcoord)
@@ -296,19 +156,22 @@ public class FSMEnemy : MonoBehaviour
 
     public void ApplyDamage(int damage)
     {
-        Debug.Log(name.ToString() + ": I've been hit");
-        hit = true;
-        //        enemyStats.ApplyDamage(damage);
+        if (currentState != State.STUNNED)
+        {
+            Debug.Log(name.ToString() + ": I've been hit");
+            ChangeState(State.BEING_HIT);
+        }
     }
 
-    public void EnableAnimatorCondition(string condition)
+    public void Stun()
     {
-        foreach (string cond in animatorConditions)
-        {
-            if (cond.Equals(condition))
-                animator.SetBool(cond, true);
-            else
-                animator.SetBool(cond, false);
-        }
+        Debug.Log(name.ToString() + ": I've been stunned");
+        ChangeState(State.STUNNED);
+    }
+
+    public void WakeUp()
+    {
+        if (currentState == State.STUNNED)
+            ChangeState(State.IDLE);
     }
 }
