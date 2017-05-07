@@ -38,6 +38,7 @@ public class ParallaxMove : MonoBehaviour {
     {
         Vector3 calculatedPosition = transform.position;
         calculatedPosition.x = -DenormalizeXPosInParallaxBoundary(CalculateNormalizedCameraPositionInParallaxBoundary());
+        calculatedPosition.y = 0;
         transform.position = calculatedPosition;
     }
 
