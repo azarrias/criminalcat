@@ -83,7 +83,11 @@ public class FSMEnemy : MonoBehaviour
             case State.BEING_HIT:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
                         animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
-                    ChangeState(State.IDLE);
+                {
+                    if (enemyStats.hitPoints > 0)
+                        ChangeState(State.CHASE);
+                    else ChangeState(State.DEAD);
+                }
                 break;
             case State.CHASE:
                 if (PlayerAtRange())
@@ -101,6 +105,13 @@ public class FSMEnemy : MonoBehaviour
                     if (!playerStatus.IsAlive())
                         ChangeState(State.PATROL);
                     else ChangeState(State.CHASE);
+                }
+                break;
+            case State.DEAD:
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") &&
+                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                {
+                    StateExit(State.DEAD);
                 }
                 break;
         }
@@ -133,6 +144,7 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.BEING_HIT:
                 animator.SetBool("being_hit", true);
+                faceXCoordinate(player.transform.position.x);
                 break;
             case State.STUNNED:
                 animator.SetBool("idle", true);
@@ -146,6 +158,9 @@ public class FSMEnemy : MonoBehaviour
             case State.ATTACK:
                 animator.SetBool("attack", true);
                 player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
+                break;
+            case State.DEAD:
+                animator.SetBool("dead", true);
                 break;
         }
     }
@@ -173,6 +188,9 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", false);
+                break;
+            case State.DEAD:
+                animator.SetBool("dead", false);
                 break;
         }
     }
