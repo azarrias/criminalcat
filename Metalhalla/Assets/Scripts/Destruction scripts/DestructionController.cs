@@ -1,37 +1,30 @@
 ﻿using UnityEngine;
 
-public class DestructionController : MonoBehaviour {
+public class DestructionController : MonoBehaviour
+{
 
     public GameObject remains;
-    public GameObject content;
-    
-    [Range(-20, 20)]
-    public int pushForceX = 4;
-    [Range(-20, 20)]
-    public int pushForceY = 4;
-    [Range(-20, 20)]
-    public int pushForceZ = 0;
+
+    [Range(-1000, 1000)]
+    public int pushForceX = 0;
+    [Range(-1000, 1000)]
+    public int pushForceY = 0;
 
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
-		if(Input.GetKey(KeyCode.LeftAlt))
-        {
-            ApplyDamage(); 
-        }
-	}
+    }
 
     public void ApplyDamage(int dmg = 0)
     {
         GameObject broken = Instantiate(remains, transform.position, transform.rotation);
-        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-        broken.GetComponent<SelfDestruct>().pushForceX = pushForceX;
-        if (content != null)
-            Instantiate(content, new Vector3 (transform.position.x, transform.position.y, 0), transform.rotation);
+        broken.GetComponent<AdjustDirection>().fragmentScale = transform.localScale;
+        broken.GetComponent<AdjustDirection>().pushForceX = pushForceX;
+        broken.GetComponent<AdjustDirection>().pushForceY = pushForceY;
 
         Destroy(gameObject);
-        
+
     }
 }

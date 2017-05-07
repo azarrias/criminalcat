@@ -1,27 +1,19 @@
 ﻿using UnityEngine;
 
-public class SelfDestruct : MonoBehaviour {
-    
-     public float lifeTime = 5.0f;
-    // Use this for initialization
+public class SelfDestruct : MonoBehaviour
+{
 
-    public int pushForceX = 0;
-    public int pushForceY = 0;
-    public int pushForceZ = 0;
+    public float lifeTime = 5.0f;
 
     // Use this for initialization
     void Start()
     {
-        foreach (Transform fragment in gameObject.GetComponentInChildren<Transform>())
-        {
-            fragment.GetComponent<Rigidbody>().AddForce(new Vector3(pushForceX, pushForceY, pushForceZ), ForceMode.VelocityChange);
-        }
-    
         Destroy(gameObject, lifeTime);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }
