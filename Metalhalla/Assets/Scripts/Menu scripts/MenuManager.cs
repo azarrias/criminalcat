@@ -24,10 +24,9 @@ public class MenuManager : MonoBehaviour {
     public string nextScene;
     private Button lastOptionSelected;   
     private SaveMenuState saveMenuStateScript;
-    public Sprite restartSpriteIdle;
-    public Sprite restartSpriteHover;
-    private SpriteState spriteState;
-    
+    public GameObject ingameMenuBG;
+    public GameObject initialMenuBG;
+      
 	// Use this for initialization
 	void Start () {
         
@@ -48,16 +47,14 @@ public class MenuManager : MonoBehaviour {
         {
             //Enable or disable Resume button 
             resumeButton.gameObject.SetActive(true);
-            //change button image NEW GAME -> RESTART            
-            newGameButton.GetComponent<Image>().sprite = restartSpriteIdle;
-            spriteState = new SpriteState();
-            spriteState.highlightedSprite = restartSpriteHover;
-            newGameButton.spriteState = spriteState;
-
+            ingameMenuBG.SetActive(true);
+            initialMenuBG.SetActive(false);
         }
         else
         {
             resumeButton.gameObject.SetActive(false);
+            ingameMenuBG.SetActive(false);
+            initialMenuBG.SetActive(true);
         }
     }
 
