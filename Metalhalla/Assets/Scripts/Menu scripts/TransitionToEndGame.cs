@@ -15,11 +15,22 @@ public class TransitionToEndGame : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        //Code for testing pursposes
+        /*
 		if(Input.GetKeyDown(KeyCode.F) && !ingameMenu.activeSelf)
         {
             endGameUI.SetActive(true);
             GameObject goToMenu = GameObject.FindGameObjectWithTag("EndGameGoToMenu");
             EventSystem.current.SetSelectedGameObject(goToMenu);
         }
+        */
 	}
+
+    public void GoToEndGame()
+    {
+        endGameUI.SetActive(true);
+        GameObject goToMenu = GameObject.FindGameObjectWithTag("EndGameGoToMenu");
+        EventSystem.current.SetSelectedGameObject(goToMenu);
+    }
 }

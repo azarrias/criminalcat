@@ -15,12 +15,21 @@ public class TransitionToGameOver : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        //Code for testing purposes
+        /*
         if (Input.GetKeyDown(KeyCode.K) && !ingameMenu.activeSelf)
         {
             gameOverUI.SetActive(true);
             GameObject goToMenu = GameObject.FindGameObjectWithTag("GameOverGoToMenu");
             EventSystem.current.SetSelectedGameObject(goToMenu);
         }
+        */
 	}
+
+    public void GoToGameOver()
+    {
+        gameOverUI.SetActive(true);
+        GameObject goToMenu = GameObject.FindGameObjectWithTag("GameOverGoToMenu");
+        EventSystem.current.SetSelectedGameObject(goToMenu);
+    }
 }
