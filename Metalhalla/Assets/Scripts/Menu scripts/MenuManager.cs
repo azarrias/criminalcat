@@ -26,6 +26,7 @@ public class MenuManager : MonoBehaviour {
     private SaveMenuState saveMenuStateScript;
     public GameObject ingameMenuBG;
     public GameObject initialMenuBG;
+    private GameObject menuBG;
       
 	// Use this for initialization
 	void Start () {
@@ -41,7 +42,7 @@ public class MenuManager : MonoBehaviour {
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
         saveMenuStateScript = GameObject.FindGameObjectWithTag("GameManager").GetComponent<SaveMenuState>();
-
+        menuBG = GameObject.FindGameObjectWithTag("MenuBG");
 
         if (isIngameMenu)
         {
@@ -49,6 +50,7 @@ public class MenuManager : MonoBehaviour {
             resumeButton.gameObject.SetActive(true);
             ingameMenuBG.SetActive(true);
             initialMenuBG.SetActive(false);
+            menuBG.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, 0.5f);
         }
         else
         {
