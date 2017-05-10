@@ -10,10 +10,12 @@ public class WildBoar : MonoBehaviour
     public GameObject trail;
     public GameObject dust;
     public GameObject stoneEmitter;
+    public GameObject smallFragments;
 
     private ParticleSystem trailParticles;
     private ParticleSystem dustParticles;
     private ParticleSystem stoneParticles;
+    private ParticleSystem smallFragmentsParticles;
     private Vector3 moveDirection = Vector3.right; //debug test
     private bool stop = false;
     private bool collision = false;
@@ -30,6 +32,7 @@ public class WildBoar : MonoBehaviour
         trailParticles = trail.GetComponent<ParticleSystem>();
         dustParticles = dust.GetComponent<ParticleSystem>();
         stoneParticles = stoneEmitter.GetComponent<ParticleSystem>();
+        smallFragmentsParticles = smallFragments.GetComponent<ParticleSystem>();
         timeToDeactivate = trailParticles.main.startLifetime.constant;
         attackHorizontalRadius = stoneParticles.shape.radius;
         halfExtents = new Vector3(0.1f, attackVerticalRange, 1.0f);
@@ -42,6 +45,7 @@ public class WildBoar : MonoBehaviour
         trailParticles.Play();
         dustParticles.Stop();
         stoneParticles.Stop();
+        smallFragmentsParticles.Stop();
         Invoke("StopAttack", lifeTime);
     }
 
@@ -55,6 +59,8 @@ public class WildBoar : MonoBehaviour
         }
 
         Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection.normalized , transform.position + attackHorizontalRadius * moveDirection.normalized, Color.red);
+        Debug.DrawLine(transform.position, transform.position + Vector3.up * attackVerticalRange, Color.red);
+        Debug.DrawLine(transform.position, transform.position - Vector3.up * attackVerticalRange, Color.red);
     }
 
     void MoveParticleSystem(Vector3 direction)
@@ -111,6 +117,7 @@ public class WildBoar : MonoBehaviour
         trailParticles.Stop();
         dustParticles.Play();
         stoneParticles.Play();
+        smallFragmentsParticles.Play();
         stop = true;
         collision = true;
     }
