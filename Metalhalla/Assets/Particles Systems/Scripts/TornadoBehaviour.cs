@@ -8,7 +8,6 @@ public class TornadoBehaviour : MonoBehaviour {
     public int damage = 20;
     private bool facingRight = true;
     public float lifeTime = 10.0f;
-    private bool platformLimitReached = false;
     private float rotationDuration = 3.0f;
     private bool enemyInside = false;
     private List<GameObject> contains;
@@ -25,13 +24,14 @@ public class TornadoBehaviour : MonoBehaviour {
         contains = new List<GameObject>();
     }
 
-	void Start () {
-
-        
+	void Start () {          
         tornadoEyeTr = transform.FindChild("TornadoEye");
-        StartCoroutine(ManageLifeTime(lifeTime));
-     
 	}
+
+    void OnEnable()
+    {
+        StartCoroutine(ManageLifeTime(lifeTime));
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -108,8 +108,9 @@ public class TornadoBehaviour : MonoBehaviour {
     private void DisipateTornado()
     {
         //tornado disipation effect
-      
-        Destroy(gameObject);
+        //gameObject.GetComponent<ParticleSystem>().Stop();
+        gameObject.SetActive(false);
+
     }
 
     private IEnumerator ManageLifeTime(float seconds)

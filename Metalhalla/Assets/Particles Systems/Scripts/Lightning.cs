@@ -19,13 +19,13 @@ public class Lightning : MonoBehaviour {
 	void Update () {
 
         //Test particles activation/deactivation 
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    if (lightningGenerator.isStopped)
-        //        ActivateLightning();
-        //    else
-        //        DeactivateLightning();
-        //}
+        if (Input.GetKeyDown(KeyCode.RightControl))
+        {
+            if (lightningGenerator.isStopped)
+                ActivateLightning();
+            else
+                DeactivateLightning();
+        }
     }
 
     public void ActivateLightning()
