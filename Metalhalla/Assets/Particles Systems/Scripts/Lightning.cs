@@ -7,12 +7,6 @@ using System.Linq;
 public class Lightning : MonoBehaviour {
 
     private ParticleSystem lightningGenerator;
-    private List<GameObject> enemiesAtRange;
-    public int frames = 10;
-    private int frameCount = 0;
-    private int index = 0;
-    private int dictionaryLength;
-    public float force = 10.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -24,41 +18,25 @@ public class Lightning : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //apply force to lightning particles
-
+        //Test particles activation/deactivation 
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    if (lightningGenerator.isStopped)
+        //        ActivateLightning();
+        //    else
+        //        DeactivateLightning();
+        //}
     }
 
-    void OnTriggerEnter(Collider other)
+    public void ActivateLightning()
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Enemy")
-        {
-            enemiesAtRange.Add(other.gameObject);          
-        }
+        lightningGenerator.Play();
     }
 
-    void OnTriggerExit(Collider other) //Ver qué pasa si other muere y se destruye su collider. Si other.gameObject == null petará
+    public void DeactivateLightning()
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Enemy")
-        {
-            int index = enemiesAtRange.IndexOf(other.gameObject);
+        lightningGenerator.Stop();
+    }
 
-            if (index != -1)
-            {
-                enemiesAtRange.RemoveAt(index);
-            }
-        }      
-    } 
     
-    void AddForceOnParticles(Vector3 target)
-    {
-        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[lightningGenerator.particleCount];
-        int length = lightningGenerator.GetParticles(particles);
-        for (int i = 0; i < length; i++)
-        {
-            Vector3 vel = force * (target - particles[i].position).normalized;
-            particles[i].velocity = vel;
-        }
-
-        lightningGenerator.SetParticles(particles, length);
-    }  
 }
