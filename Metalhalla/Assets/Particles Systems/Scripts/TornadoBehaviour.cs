@@ -182,9 +182,9 @@ public class TornadoBehaviour : MonoBehaviour {
 
     }
 
-    public void SetFacingRight (bool newValue)
+    public void SetFacingRight (bool facingRight)
     {
-        facingRight = newValue;
+        this.facingRight = facingRight;
     }
 
     private void ApplyDamage(int damage, GameObject go)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WildBoar : MonoBehaviour
+public class WildBoarBehaviour : MonoBehaviour
 {
 
     public float speed = 1.0f;
@@ -41,12 +41,18 @@ public class WildBoar : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        
+       
+    }
 
+    void OnEnable()
+    {
+        Invoke("StopAttack", lifeTime);
         trailParticles.Play();
         dustParticles.Stop();
         stoneParticles.Stop();
         smallFragmentsParticles.Stop();
-        Invoke("StopAttack", lifeTime);
+        stop = false;
     }
 
     // Update is called once per frame
@@ -92,9 +98,12 @@ public class WildBoar : MonoBehaviour
         }    
     }
 
-    public void SetMoveDirection(Vector3 direction)
+    public void SetFacingRight(bool facingRight)
     {
-        moveDirection = direction.normalized;
+        if (facingRight)
+            moveDirection = Vector3.right;
+        else
+            moveDirection = Vector3.left;
     }
 
     void StopAttack()

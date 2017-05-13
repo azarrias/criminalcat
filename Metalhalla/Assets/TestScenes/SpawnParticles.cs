@@ -17,5 +17,10 @@ public class SpawnParticles : MonoBehaviour {
         {
             ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true) ;
         }
-	}
+
+        if (Input.GetKeyDown(KeyCode.RightControl))
+        {
+            ParticlesManager.SpawnParticle("wildboar", spawnPosition.position, true);
+        }
+    }
 }

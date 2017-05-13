@@ -7,7 +7,8 @@ public class ParticlesManager : MonoBehaviour {
     public static ParticlesManager particlesManager = null;
     private Dictionary<string, List<GameObject>> particlesPool;
     public GameObject tornadoPrefab;
-
+    public GameObject wildboarPrefab;
+    private GameObject particlesPrefab;
 
     void Awake()
     {
@@ -27,6 +28,7 @@ public class ParticlesManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+        //-------------------------------- TORNADO ---------------------
         particlesPool["tornado"] = new List<GameObject>();
 
         GameObject tornado1 = Instantiate(tornadoPrefab, Vector3.zero, Quaternion.identity);
@@ -44,36 +46,78 @@ public class ParticlesManager : MonoBehaviour {
         tornado3.transform.parent = transform;
         particlesPool["tornado"].Add(tornado3);
 
+
+        //------------------------------- WILDBOAR ----------------------------
+        particlesPool["wildboar"] = new List<GameObject>();
+
+        GameObject wildboar1 = Instantiate(wildboarPrefab, Vector3.zero, Quaternion.identity);
+        wildboar1.SetActive(false);
+        wildboar1.transform.parent = transform;
+        particlesPool["wildboar"].Add(wildboar1);
+
+        GameObject wildboar2 = Instantiate(wildboarPrefab, Vector3.zero, Quaternion.identity);
+        wildboar2.SetActive(false);
+        wildboar2.transform.parent = transform;
+        particlesPool["wildboar"].Add(wildboar2);
+
+        GameObject wildboar3 = Instantiate(wildboarPrefab, Vector3.zero, Quaternion.identity);
+        wildboar3.SetActive(false);
+        wildboar3.transform.parent = transform;
+        particlesPool["wildboar"].Add(wildboar3);
+
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
-    ///<summary>
-    ///To spawn tornados use name = "tornado" 
-    ///</summary>
+    
     public static GameObject SpawnParticle(string name, Vector3 spawnPosition, bool facingRight)
     {
-            
-        foreach(GameObject tornado in particlesManager.particlesPool[name])
+        GameObject particleToSpawn = null;
+        
+        foreach(GameObject particle in particlesManager.particlesPool[name])
         {
-            if(!tornado.activeSelf)
-            {
-                tornado.SetActive(true);
-                tornado.transform.position = spawnPosition;
-                tornado.GetComponent<TornadoBehaviour>().SetFacingRight(facingRight);
-                tornado.GetComponent<ParticleSystem>().Play();
-                return tornado;          
+            if(!particle.activeSelf)
+            {             
+                particle.SetActive(true);
+                particle.transform.position = spawnPosition;
+
+                if (name == "tornado")
+                {
+                    particle.GetComponent<TornadoBehaviour>().SetFacingRight(facingRight);
+                }
+                else if (name == "wildboar")
+                {
+                    particle.GetComponent<WildBoarBehaviour>().SetFacingRight(facingRight);
+                }
+
+                //particlesEffect.GetComponent<ParticleSystem>().Play();
+               particleToSpawn = particle;
+               break;                     
             }
         }
 
-        //no inactive object found
-        GameObject newTornado = Instantiate(particlesManager.tornadoPrefab, spawnPosition, Quaternion.identity);
-        newTornado.SetActive(true);
-        newTornado.transform.parent = particlesManager.transform;
-        newTornado.GetComponent<ParticleSystem>().Play();
-        particlesManager.particlesPool["tornado"].Add(newTornado);
-        return newTornado;
-    }
+        //no inactive gameObject found   
+        if(particleToSpawn == null)
+        {
+            if (name == "tornado")
+            {
+                particlesManager.particlesPrefab = particlesManager.tornadoPrefab;               
+            }
+            else if (name == "wildboar")
+            {
+                particlesManager.particlesPrefab = particlesManager.wildboarPrefab;              
+            }
+
+            GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
+            newParticle.SetActive(true);
+            newParticle.transform.parent = particlesManager.transform;
+            //newParticles.GetComponent<ParticleSystem>().Play();
+            particlesManager.particlesPool[name].Add(newParticle);
+            particleToSpawn = newParticle;
+        }
+
+        return particleToSpawn;     
+    }  
 }
