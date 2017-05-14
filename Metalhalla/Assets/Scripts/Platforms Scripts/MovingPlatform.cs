@@ -21,15 +21,15 @@ public class MovingPlatform : MonoBehaviour {
         distanceThreshold = 0.55f * speed * Time.fixedDeltaTime;
     }
 	
-    /*
+    
 	void Update () {
         UpdatePlatformPosition(); 
 	}
-    */
-    private void FixedUpdate()
+    
+    /*private void FixedUpdate()
     {
         UpdatePlatformPosition();
-    }
+    }*/
 
     void UpdatePlatformPosition()
     {
