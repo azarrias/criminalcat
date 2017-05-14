@@ -18,16 +18,18 @@ public class WildBoarBehaviour : MonoBehaviour
     private ParticleSystem smallFragmentsParticles;
     private Vector3 moveDirection = Vector3.right; //debug test
     private bool stop = false;
-    private bool collision = false;
+    private bool explosion = false;
     public float lifeTime = 2.0f;
-    private float timeToDeactivateNoCollision;
-    private float timeToDeactivateWithCollision;
+    private int frames_counter = 0;
+    private float timeToDeactivateNoExplosion = 5.0f;
+    private float timeToDeactivateWithExplosion = 5.0f;
     private float attackHorizontalRadius = 0.0f;
     private RaycastHit[] hits;
     public LayerMask attackableLayers;
     public LayerMask blockingLayers;
     public float attackVerticalRange = 1.0f;
     private Vector3 halfExtents;
+    public int damage = 20;
 
     void Awake()
     {
@@ -35,8 +37,8 @@ public class WildBoarBehaviour : MonoBehaviour
         dustParticles = dust.GetComponent<ParticleSystem>();
         stoneParticles = stoneEmitter.GetComponent<ParticleSystem>();
         smallFragmentsParticles = smallFragments.GetComponent<ParticleSystem>();
-        timeToDeactivateNoCollision = trailParticles.main.startLifetime.constant;
-        timeToDeactivateWithCollision = timeToDeactivateNoCollision + stoneParticles.main.startLifetime.constant;
+        timeToDeactivateNoExplosion = trailParticles.main.startLifetime.constant;
+        timeToDeactivateWithExplosion = timeToDeactivateNoExplosion + stoneParticles.main.startLifetime.constant;
         attackHorizontalRadius = stoneParticles.shape.radius;
         halfExtents = new Vector3(0.1f, attackVerticalRange, 1.0f);
     }
@@ -44,18 +46,16 @@ public class WildBoarBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        
-       
+
+
     }
 
     void OnEnable()
     {
-        Invoke("StopAttack", lifeTime);
         trailParticles.Play();
         dustParticles.Stop();
         stoneParticles.Stop();
         smallFragmentsParticles.Stop();
-        stop = false;
     }
 
     // Update is called once per frame
@@ -67,9 +67,23 @@ public class WildBoarBehaviour : MonoBehaviour
             MoveParticleSystem(moveDirection.normalized);
         }
 
-        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection.normalized , transform.position + attackHorizontalRadius * moveDirection.normalized, Color.red);
+        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection.normalized, transform.position + attackHorizontalRadius * moveDirection.normalized, Color.red);
         Debug.DrawLine(transform.position, transform.position + Vector3.up * attackVerticalRange, Color.red);
         Debug.DrawLine(transform.position, transform.position - Vector3.up * attackVerticalRange, Color.red);
+    }
+
+    void LateUpdate()
+    {
+        if (!stop)
+        {
+            frames_counter++;
+            if (frames_counter * Time.deltaTime >= lifeTime)
+            {
+                stop = true;
+                StopAttack();
+                frames_counter = 0;
+            }
+        }
     }
 
     void MoveParticleSystem(Vector3 direction)
@@ -78,7 +92,7 @@ public class WildBoarBehaviour : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision other)
-    {      
+    {
         //Check if the "other" layer belongs to the attackable layers
         if (attackableLayers == (attackableLayers | (1 << other.gameObject.layer)))
         {
@@ -92,7 +106,7 @@ public class WildBoarBehaviour : MonoBehaviour
                 {
                     if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")
                     {
-                        hits[i].collider.gameObject.SendMessage("ApplyDamage", 0, SendMessageOptions.DontRequireReceiver);
+                        hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
                     }
                 }
 
@@ -101,7 +115,8 @@ public class WildBoarBehaviour : MonoBehaviour
 
         if (blockingLayers == (blockingLayers | (1 << other.gameObject.layer)))
         {
-            Debug.Log("collision with blocking object");
+            //Debug.Log("collision with blocking object");
+            stop = true;
             StopAttack();
         }
     }
@@ -114,25 +129,6 @@ public class WildBoarBehaviour : MonoBehaviour
             moveDirection = Vector3.left;
     }
 
-    void StopAttack()
-    {
-        if (!collision)
-        {
-            trailParticles.Stop();
-            stop = true;
-            Invoke("DisableWildboar", timeToDeactivateNoCollision);
-        }
-        else
-        {
-            Invoke("DisableWildboar", timeToDeactivateWithCollision);
-        }
-    }
-
-    void DisableWildboar()
-    {
-        gameObject.SetActive(false);
-    }
-
     void ActivateStoneExplosion()
     {
         trailParticles.Stop();
@@ -140,6 +136,30 @@ public class WildBoarBehaviour : MonoBehaviour
         stoneParticles.Play();
         smallFragmentsParticles.Play();
         stop = true;
-        collision = true;
+        explosion = true;
+        StopAttack();
+    }
+
+    void StopAttack()
+    {
+        if (!explosion)
+        {
+            trailParticles.Stop();
+            stop = true;
+            Invoke("DisableWildboar", timeToDeactivateNoExplosion);
+        }
+        else
+        {
+            Invoke("DisableWildboar", timeToDeactivateWithExplosion);
+        }
+    }
+
+    void DisableWildboar()
+    {
+        Debug.Log("Disable wildboar");
+        gameObject.SetActive(false);
+        frames_counter = 0;
+        explosion = false;
+        stop = false;
     }
 }
