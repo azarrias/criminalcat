@@ -24,21 +24,25 @@ public class CastState : PlayerState
             if (input.newInput.GetVerticalInput() == 0 )
             {
                 // New version with ParticlesManager
-                // ParticlesManager.SpawnParticle("tornado", status.transform.position, status.facingRight);
-                GameObject cast = Instantiate(status.eagleAttack);
-                cast.GetComponent<TornadoBehaviour>().SetFacingRight(status.facingRight);
-                if (status.facingRight == true)
-                    cast.transform.position = status.transform.position + status.eagleAttackInstanceOffset;
+                if (status.facingRight)
+                    ParticlesManager.SpawnParticle("tornado", status.transform.position + status.eagleAttackInstanceOffset, true);
                 else
-                    cast.transform.position = status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up;
-
+                    ParticlesManager.SpawnParticle("tornado", status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up, false);
+                /* GameObject cast = Instantiate(status.eagleAttack);
+                 cast.GetComponent<TornadoBehaviour>().SetFacingRight(status.facingRight);
+                 if (status.facingRight == true)
+                     cast.transform.position = status.transform.position + status.eagleAttackInstanceOffset;
+                 else
+                     cast.transform.position = status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up;
+                     */
             }
             // boar attack
             else if (input.newInput.GetVerticalInput() < 0 )
             {
-                // New version with ParticlesManager
-                //ParticlesManager.SpawnParticle("wildboar", status.transform.position, status.facingRight);
-                Debug.Log("Wild boar attack");
+                if (status.facingRight)
+                    ParticlesManager.SpawnParticle("wildboar", status.transform.position + status.wildboarAttackInstanceOffset, true);
+                else
+                    ParticlesManager.SpawnParticle("wildboar", status.transform.position - status.wildboarAttackInstanceOffset.x * Vector3.right + status.wildboarAttackInstanceOffset.y * Vector3.up, false);
             }
             else
             {

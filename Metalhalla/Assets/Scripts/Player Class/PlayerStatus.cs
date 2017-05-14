@@ -7,8 +7,8 @@ public class PlayerStatus : MonoBehaviour
     [Header("Attack Elements")]
     public GameObject hammerMesh;
     public BoxCollider attackCollider;
-    public GameObject eagleAttack;
-    public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.5f, 0);
+    public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
+    public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
     [Header("Defense Elements")]
     public GameObject shieldMesh;
