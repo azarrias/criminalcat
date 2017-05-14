@@ -102,7 +102,14 @@ public class FSMEnemy : MonoBehaviour
                 if (PlayerAtRange())
                     ChangeState(State.ATTACK);
                 else if (!InBounds())
-                    ChangeState(State.PATROL);
+                {
+                    if ((player.transform.position.x - transform.position.x) > 0.0f)
+                    {
+                        faceXCoordinate(transform.position.x - 3.0f);
+                    }
+                    else faceXCoordinate(transform.position.x + 3.0f); 
+                    ChangeState(State.IDLE);
+                }
                 else if (Vector3.Distance(transform.position, destination) > 0.1f)
                     transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
                 else ChangeState(State.IDLE);
