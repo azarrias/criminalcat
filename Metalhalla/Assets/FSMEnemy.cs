@@ -157,7 +157,7 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", true);
-                player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
+//                player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
