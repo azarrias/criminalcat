@@ -30,7 +30,8 @@ public class IdleState : PlayerState {
             return; 
         }
 
-        if (input.newInput.GetCastButtonDown() == true)
+        //if (input.newInput.GetCastButtonDown() == true)
+        if (input.newInput.GetCastButtonDown() == true && status.ConsumeStamina(1) == true )
         {
             status.SetState(PlayerStatus.cast);
             return;

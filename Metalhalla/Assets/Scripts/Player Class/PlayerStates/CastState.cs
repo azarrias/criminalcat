@@ -19,16 +19,26 @@ public class CastState : PlayerState
         {
             castFramesCount = 0;
 
-            
-            // instantiation of ONLY Eagle, need to modify when having wild boar attack
-            if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(1) == true )
+            // eagle attack: idle, left or right pressed + cast button
+            //if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(1) == true )
+            if (input.newInput.GetVerticalInput() == 0 )
             {
+                // New version with ParticlesManager
+                // ParticlesManager.SpawnParticle("tornado", status.transform.position, status.facingRight);
                 GameObject cast = Instantiate(status.eagleAttack);
                 cast.GetComponent<TornadoBehaviour>().SetFacingRight(status.facingRight);
                 if (status.facingRight == true)
                     cast.transform.position = status.transform.position + status.eagleAttackInstanceOffset;
                 else
                     cast.transform.position = status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up;
+
+            }
+            // boar attack
+            else if (input.newInput.GetVerticalInput() < 0 )
+            {
+                // New version with ParticlesManager
+                //ParticlesManager.SpawnParticle("wildboar", status.transform.position, status.facingRight);
+                Debug.Log("Wild boar attack");
             }
             else
             {
