@@ -20,10 +20,12 @@ public class WildBoarBehaviour : MonoBehaviour
     private bool stop = false;
     private bool collision = false;
     public float lifeTime = 2.0f;
-    private float timeToDeactivate;
+    private float timeToDeactivateNoCollision;
+    private float timeToDeactivateWithCollision;
     private float attackHorizontalRadius = 0.0f;
     private RaycastHit[] hits;
     public LayerMask attackableLayers;
+    public LayerMask blockingLayers;
     public float attackVerticalRange = 1.0f;
     private Vector3 halfExtents;
 
@@ -33,7 +35,8 @@ public class WildBoarBehaviour : MonoBehaviour
         dustParticles = dust.GetComponent<ParticleSystem>();
         stoneParticles = stoneEmitter.GetComponent<ParticleSystem>();
         smallFragmentsParticles = smallFragments.GetComponent<ParticleSystem>();
-        timeToDeactivate = trailParticles.main.startLifetime.constant;
+        timeToDeactivateNoCollision = trailParticles.main.startLifetime.constant;
+        timeToDeactivateWithCollision = timeToDeactivateNoCollision + stoneParticles.main.startLifetime.constant;
         attackHorizontalRadius = stoneParticles.shape.radius;
         halfExtents = new Vector3(0.1f, attackVerticalRange, 1.0f);
     }
@@ -75,27 +78,32 @@ public class WildBoarBehaviour : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision other)
-    {
-        //Raycast in one dimension
-        //float attackStartPosX = transform.position.x - attackHorizontalRadius * moveDirection.normalized.x;
-        //Vector3 attackStartPos = new Vector3(attackStartPosX, transform.position.y, transform.position.y);  
-        //hits = Physics.RaycastAll(attackStartPos, moveDirection.normalized, 2 * attackHorizontalRadius, attackableLayers);
-
-        hits = Physics.BoxCastAll(transform.position, halfExtents, moveDirection.normalized, Quaternion.identity, attackHorizontalRadius, attackableLayers);
-        
-        if (hits.Length != 0)
+    {      
+        //Check if the "other" layer belongs to the attackable layers
+        if (attackableLayers == (attackableLayers | (1 << other.gameObject.layer)))
         {
-            ActivateStoneExplosion();
+            hits = Physics.BoxCastAll(transform.position, halfExtents, moveDirection.normalized, Quaternion.identity, attackHorizontalRadius, attackableLayers);
 
-            for (int i = 0; i < hits.Length; i++)
+            if (hits.Length != 0)
             {
-                if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")
-                {
-                    hits[i].collider.gameObject.SendMessage("ApplyDamage", 0, SendMessageOptions.DontRequireReceiver);
-                }
-            }
+                ActivateStoneExplosion();
 
-        }    
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")
+                    {
+                        hits[i].collider.gameObject.SendMessage("ApplyDamage", 0, SendMessageOptions.DontRequireReceiver);
+                    }
+                }
+
+            }
+        }
+
+        if (blockingLayers == (blockingLayers | (1 << other.gameObject.layer)))
+        {
+            Debug.Log("collision with blocking object");
+            StopAttack();
+        }
     }
 
     public void SetFacingRight(bool facingRight)
@@ -112,7 +120,11 @@ public class WildBoarBehaviour : MonoBehaviour
         {
             trailParticles.Stop();
             stop = true;
-            Invoke("DisableWildboar", timeToDeactivate);
+            Invoke("DisableWildboar", timeToDeactivateNoCollision);
+        }
+        else
+        {
+            Invoke("DisableWildboar", timeToDeactivateWithCollision);
         }
     }
 
