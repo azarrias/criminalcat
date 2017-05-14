@@ -52,7 +52,7 @@ public class FSMEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         playerStatus = player.GetComponent<PlayerStatus>();
         material = GetComponentInChildren<Renderer>().material;
-        boxColliders = GetComponents<BoxCollider>();
+        boxColliders = GetComponentsInChildren<BoxCollider>();
     }
 
     private void Start()
@@ -61,6 +61,15 @@ public class FSMEnemy : MonoBehaviour
         minPatrolDistance = (rightPatrolLimit - leftPatrolLimit) / 3.0f;
         currentState = State.IDLE;
         StateEnter(currentState);
+
+        // disable attack colliders
+        foreach (BoxCollider b in boxColliders)
+        {
+            if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
+            {
+                b.enabled = false;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -157,7 +166,13 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", true);
-//                player.SendMessage("ApplyDamage", enemyStats.meleeDamage, SendMessageOptions.DontRequireReceiver);
+                foreach (BoxCollider b in boxColliders)
+                {
+                    if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
+                    {
+                        b.enabled = true;
+                    }
+                }
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
@@ -188,6 +203,13 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", false);
+                foreach (BoxCollider b in boxColliders)
+                {
+                    if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
+                    {
+                        b.enabled = false;
+                    }
+                }
                 break;
             case State.DEAD:
                 animator.SetBool("dead", false);
