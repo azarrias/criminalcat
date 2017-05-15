@@ -30,6 +30,7 @@ public class WildBoarBehaviour : MonoBehaviour
     public float attackVerticalRange = 1.0f;
     private Vector3 halfExtents;
     public int damage = 20;
+    private bool allowApplyDamage = true;
 
     void Awake()
     {
@@ -56,6 +57,7 @@ public class WildBoarBehaviour : MonoBehaviour
         dustParticles.Stop();
         stoneParticles.Stop();
         smallFragmentsParticles.Stop();
+        allowApplyDamage = true;
     }
 
     // Update is called once per frame
@@ -94,8 +96,10 @@ public class WildBoarBehaviour : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         //Check if the "other" layer belongs to the attackable layers
-        if (attackableLayers == (attackableLayers | (1 << other.gameObject.layer)))
+        if (attackableLayers == (attackableLayers | (1 << other.gameObject.layer)) &&  allowApplyDamage)
         {
+            allowApplyDamage = false;
+
             hits = Physics.BoxCastAll(transform.position, halfExtents, moveDirection.normalized, Quaternion.identity, attackHorizontalRadius, attackableLayers);
 
             if (hits.Length != 0)
