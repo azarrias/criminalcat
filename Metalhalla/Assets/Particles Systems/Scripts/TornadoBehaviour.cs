@@ -135,6 +135,7 @@ public class TornadoBehaviour : MonoBehaviour {
         DisipateTornado();
         fsmBoss.IsInsideTornado(false);
         contains.Clear();
+        angle = 0.0f;
     }
 
     private void RotateEnemy(GameObject enemy)
