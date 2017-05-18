@@ -88,18 +88,20 @@ public class TornadoBehaviour : MonoBehaviour {
 
         if (collider.gameObject.CompareTag("Boss"))
         {
-            ApplyDamageBoss(damage);
+            
             FSMBoss.State state = fsmBoss.GetCurrentState();
-            if(state == FSMBoss.State.CHASE || state == FSMBoss.State.BALL_ATTACK || state == FSMBoss.State.MELEE_ATTACK)
+            if (state != FSMBoss.State.DEAD)
             {
-                contains.Add(collider.gameObject);
-                fsmBoss.IsInsideTornado(true);
-                fsmBoss.NotifyRotationDuration(rotationDuration);
-                if (enemyInside == false)
+                if (state == FSMBoss.State.CHASE || state == FSMBoss.State.BALL_ATTACK || state == FSMBoss.State.MELEE_ATTACK)
                 {
-                    enemyInside = true;
-
-                    StartCoroutine(ManageRotationDuration(rotationDuration));
+                    contains.Add(collider.gameObject);
+                    fsmBoss.IsInsideTornado(true);                    
+                    fsmBoss.NotifyRotationDuration(rotationDuration);
+                    if (enemyInside == false)
+                    {
+                        enemyInside = true;
+                        StartCoroutine(ManageRotationDuration(rotationDuration));
+                    }                   
                 }
             }
         }
@@ -131,6 +133,11 @@ public class TornadoBehaviour : MonoBehaviour {
             go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
             go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
             go.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
+
+            if(go.CompareTag("Boss"))
+            {
+                ApplyDamageBoss(damage);
+            }
         }
         DisipateTornado();
         fsmBoss.IsInsideTornado(false);

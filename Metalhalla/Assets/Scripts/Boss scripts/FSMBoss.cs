@@ -375,6 +375,7 @@ public class FSMBoss : MonoBehaviour
                 InsideTornado();
                 if(!insideTornado)
                 {
+                    SelectAttack();
                     currState = State.CHASE;
                     break;
                 }
@@ -426,7 +427,7 @@ public class FSMBoss : MonoBehaviour
     
     public void ApplyDamage(int damage)
     {
-        if (currState == State.CHASE || currState == State.MELEE_ATTACK || currState == State.BALL_ATTACK)
+        if (currState == State.CHASE || currState == State.MELEE_ATTACK || currState == State.BALL_ATTACK || currState == State.INSIDE_TORNADO)
         {
             Debug.Log("Damaged");
             bossStats.ApplyDamage(damage);
@@ -675,7 +676,7 @@ public class FSMBoss : MonoBehaviour
     private void InsideTornado()
     {
         //Poner efecto de daño de tornado 
-        SelectAttack();
+       
     }
 
     //Flip the boss
