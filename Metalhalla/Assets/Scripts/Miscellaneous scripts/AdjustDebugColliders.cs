@@ -8,19 +8,13 @@ public class AdjustDebugColliders : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
-       
-        Transform bodyCubeTr = showBoxCollidersPrefab.transform.Find("BodyCube");
+            
         Transform meleeCubeTr = showBoxCollidersPrefab.transform.Find("MeleeCube");
         Transform rangeCubeTr = showBoxCollidersPrefab.transform.Find("RangeCube");
 
         GameObject bossGO = transform.parent.gameObject;
-        BoxCollider bossBodyCollider = bossGO.GetComponent<BoxCollider>();
         BoxCollider meleeRangeCollider = bossGO.transform.Find("MeleeRange").GetComponent<BoxCollider>();
         BoxCollider ballRangeCollider = bossGO.transform.Find("BallRange").GetComponent<BoxCollider>();
-
-        //set body cube dimensions and position
-        bodyCubeTr.localScale = bossBodyCollider.bounds.size;
-        bodyCubeTr.position = bossBodyCollider.bounds.center;
 
         //set melee range cube dimensions and position
         meleeCubeTr.localScale = meleeRangeCollider.bounds.size;
