@@ -166,6 +166,7 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.CHASE:
                 animator.SetBool("walk", true);
+                animator.speed = enemyStats.chasingSpeed;
                 destination.Set(player.transform.position.x, transform.position.y, transform.position.z);
                 faceXCoordinate(destination.x);
                 los.enabled = true;
@@ -205,6 +206,7 @@ public class FSMEnemy : MonoBehaviour
                 break;
             case State.CHASE:
                 animator.SetBool("walk", false);
+                animator.speed = enemyStats.normalSpeed;
                 los.enabled = false;
                 break;
             case State.ATTACK:
