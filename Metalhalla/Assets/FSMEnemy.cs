@@ -34,7 +34,6 @@ public class FSMEnemy : MonoBehaviour
     public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
     public float rightPatrolLimit;
-    public float speed = 1.0f;
     public float attackRange;
 
     private float minPatrolDistance = 0.0f;
@@ -86,7 +85,7 @@ public class FSMEnemy : MonoBehaviour
                 if (los.playerInSight)
                     ChangeState(State.CHASE);
                 else if (Vector3.Distance(transform.position, destination) > 0.1f)
-                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed);
+                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * enemyStats.normalSpeed);
                 else ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
@@ -111,7 +110,7 @@ public class FSMEnemy : MonoBehaviour
                     ChangeState(State.IDLE);
                 }
                 else if (Vector3.Distance(transform.position, destination) > 0.1f)
-                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * speed * 2);
+                    transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * enemyStats.chasingSpeed);
                 else ChangeState(State.IDLE);
                 break;
             case State.ATTACK:
