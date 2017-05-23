@@ -38,7 +38,7 @@ public class FSMBoss : MonoBehaviour
     [Tooltip("Cast spikes animation duration")]
     public float castSpikesDuration = 3.0f;
     //ball attack prefab
-    public BossFireBall fireBallPrefab = null;
+    //public BossFireBall fireBallPrefab = null;
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
 
@@ -578,11 +578,14 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "BallAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            BossFireBall ball = Instantiate<BossFireBall>(fireBallPrefab, gameObject.transform.position, Quaternion.identity);          
-            if (facingRight)
-                ball.SetDirection(Vector3.right);
-            if (!facingRight)
-                ball.SetDirection(Vector3.left);   
+            //BossFireBall ball = Instantiate<BossFireBall>(fireBallPrefab, gameObject.transform.position, Quaternion.identity);          
+            //if (facingRight)
+            //    ball.SetDirection(Vector3.right);
+            //if (!facingRight)
+            //    ball.SetDirection(Vector3.left);   
+
+            GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", gameObject.transform.position, facingRight);
+            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
 
             StartCoroutine(FinishBallAttackAnimation(ballAttackDuration));
         }   
@@ -682,10 +685,6 @@ public class FSMBoss : MonoBehaviour
     //Flip the boss
     public void Flip()
     {
-        //Vector3 scale = gameObject.transform.localScale;
-        //scale.x *= -1;
-        //gameObject.transform.localScale = scale;
-
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
     }

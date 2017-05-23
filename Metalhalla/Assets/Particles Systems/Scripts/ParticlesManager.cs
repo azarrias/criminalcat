@@ -9,6 +9,7 @@ public class ParticlesManager : MonoBehaviour
     private Dictionary<string, List<GameObject>> particlesPool;
     public GameObject tornadoPrefab;
     public GameObject wildboarPrefab;
+    public GameObject bossFireBallPrefab;
     private GameObject particlesPrefab;
 
     void Awake()
@@ -51,6 +52,17 @@ public class ParticlesManager : MonoBehaviour
             wildboar.transform.parent = transform;
             particlesPool["wildboar"].Add(wildboar);
         }
+
+        //------------------------------- BOSS FIREBALL ------------------------
+        particlesPool["bossFireBall"] = new List<GameObject>();
+
+        for(int i = 0; i < 5; i++)
+        {
+            GameObject bossFireBall = Instantiate(bossFireBallPrefab, Vector3.zero, Quaternion.identity);
+            bossFireBall.SetActive(false);
+            bossFireBall.transform.parent = transform;
+            particlesPool["bossFireBall"].Add(bossFireBall);
+        }
     }
 
     // Update is called once per frame
@@ -78,6 +90,10 @@ public class ParticlesManager : MonoBehaviour
                 {
                     particle.GetComponent<WildBoarBehaviour>().SetFacingRight(facingRight);
                 }
+                else if (name == "bossFireBall")
+                {
+                    particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
+                }
 
                 particleToSpawn = particle;
                 break;
@@ -94,6 +110,10 @@ public class ParticlesManager : MonoBehaviour
             else if (name == "wildboar")
             {
                 particlesManager.particlesPrefab = particlesManager.wildboarPrefab;
+            }
+            else if(name == "bossFireBall")
+            {
+                particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
             }
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
