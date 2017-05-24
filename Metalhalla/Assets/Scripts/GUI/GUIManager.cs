@@ -53,6 +53,9 @@ public class GUIManager : MonoBehaviour {
 
     void SetHealth(float healthRatio)
     {
+        if (healthRatio < 0.0f)
+            healthRatio = 0.0f;
+
         HPBar.localScale = new Vector3(healthRatio, 1, 1);
     }
 
