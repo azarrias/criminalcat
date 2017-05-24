@@ -33,6 +33,12 @@ public class BossFireBallBehaviour : MonoBehaviour {
         }
     }
 
+    void OnTriggerEnter(Collider collider)
+    {
+        if(collider.gameObject.name == "MovingDoor")
+            gameObject.SetActive(false); 
+    }
+
     public void SetFacingRight(bool facingRight)
     {
         Transform ball = gameObject.transform.Find("Ball").transform;
