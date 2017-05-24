@@ -12,7 +12,6 @@ public class BossFireBallBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 
-        //Destroy(gameObject, lifeTime);
         Invoke("Deactivate", lifeTime);
 	}
 	
@@ -22,33 +21,35 @@ public class BossFireBallBehaviour : MonoBehaviour {
         transform.Translate(direction * speed * Time.deltaTime);
 	}
 
-    void OnTriggerEnter(Collider collider)
+    void OnCollisionEnter(Collision collision)
     {
-        if (collider.CompareTag("Player") || LayerMask.LayerToName(collider.gameObject.layer) == "ground" || LayerMask.LayerToName(collider.gameObject.layer) == "player")
+        if (LayerMask.LayerToName(collision.gameObject.layer) == "ground" || 
+            LayerMask.LayerToName(collision.gameObject.layer) == "wall" ||
+            LayerMask.LayerToName(collision.gameObject.layer) == "player")
         {
-            collider.gameObject.SendMessage("ApplyDamage", ballDamage, SendMessageOptions.DontRequireReceiver);
-            //Destroy(gameObject);
+            collision.gameObject.SendMessage("ApplyDamage", ballDamage, SendMessageOptions.DontRequireReceiver);
+           
             gameObject.SetActive(false);
         }
     }
 
     public void SetFacingRight(bool facingRight)
     {
-        Transform smokeTr = gameObject.transform.Find("Ball").transform;
+        Transform ball = gameObject.transform.Find("Ball").transform;
 
         if (facingRight)
         {
             direction = Vector3.right;
-            
-            if (smokeTr.eulerAngles.y != -90.0f)
-                smokeTr.localRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+
+            if (ball.eulerAngles.y != -90.0f)
+                ball.localRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
         }
         else
         {
             direction = Vector3.left;
 
-            if (smokeTr.eulerAngles.y != 90.0f)
-                smokeTr.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+            if (ball.eulerAngles.y != 90.0f)
+                ball.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
         }
     }
 
