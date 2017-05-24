@@ -178,6 +178,17 @@ public class FSMBoss : MonoBehaviour
                     currState = State.DEAD;
                     break;
                 }
+                //Player dead
+                if (!thePlayerStatus.IsAlive())
+                {
+                    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+                    if (!facingRight)
+                        facingRight = true;
+
+                    currState = State.PATROL;
+                    playerInSight = false;
+                    break;
+                }
                 Chase();
                 if (thePlayerStatus.IsAlive())
                 {
@@ -238,14 +249,7 @@ public class FSMBoss : MonoBehaviour
                         currState = State.INSIDE_TORNADO;
                         break;
                     }
-                }
-                //Player dead
-                if (!thePlayerStatus.IsAlive())
-                {
-                    currState = State.PATROL;
-                    playerInSight = false;
-                } 
-                               
+                }                                         
                 break;
 
             case State.MELEE_ATTACK:
