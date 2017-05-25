@@ -103,7 +103,7 @@ public class ParallaxManager : MonoBehaviour
         for (int i = 0; i < layers.Length; ++i)
         {
             tmp = layers[i].position;
-            tmp.x = limits.x * (1 - camPosNormalized) + (limits.x + limitRange * (1 - ratios[i])) * camPosNormalized;
+            tmp.x = limits.x * (1 - camPosNormalized) + (limits.x + limitRange - limitRange*ratios[i]) * camPosNormalized;
             layers[i].position = tmp;
         }
     }
