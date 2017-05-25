@@ -20,6 +20,10 @@ public class ParallaxManager : MonoBehaviour
     public GameObject background3;
     public GameObject background4;
 
+    [Header("Parallax Active Zone")]
+    [Tooltip("Sets the normalized camera position in the parallax boundaries [0-1] where the layers DO move. Useful to prevent undesired parallax when doing a camera travelling")]
+    public Vector2 activeZone; 
+
     Bounds boundaries;
 
     Transform cameraTransform;
@@ -61,7 +65,7 @@ public class ParallaxManager : MonoBehaviour
 
         }
 
-        //get the limits of the parallax to know the position of the 
+        //get the limits of the parallax to know the position of the boundaries
         boundaries = GetComponent<BoxCollider>().bounds;
         limits.x = boundaries.center.x - boundaries.extents.x;
         limits.y = boundaries.center.x + boundaries.extents.x;
@@ -77,10 +81,20 @@ public class ParallaxManager : MonoBehaviour
     private void UpdateCamPosNormalized()
     {
         camPosNormalized = (cameraTransform.position.x - limits.x) / limitRange;
+        /*
         if (camPosNormalized <= 0.0f)
             camPosNormalized = 0.0f;
         if (camPosNormalized >= 1.0f)
             camPosNormalized = 1.0f;
+            */
+        if (camPosNormalized <= activeZone.x)
+            camPosNormalized = 0.0f;
+        else if (camPosNormalized >= activeZone.y)
+            camPosNormalized = 1.0f;
+        else
+        {
+            camPosNormalized = (camPosNormalized - activeZone.x) / (activeZone.y - activeZone.x);
+        }
     }
 
     private void UpdateLayerPositions()
