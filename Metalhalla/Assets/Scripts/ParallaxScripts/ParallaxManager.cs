@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ParallaxManager : MonoBehaviour
 {
+    [Header("Layer ratios (& speed)")]
     [Tooltip("Layer ratio between main boundaries and layer. It also determines the layer speed.")]
-    public float foreground1ratio = 1.1f;
-    public float background1ratio = 0.9f;
-    public float background2ratio = 0.8f;
-    public float background3ratio = 0.6f;
-    public float background4ratio = 0.4f;
+    public float foreground1Ratio = 1.1f;
+    public float background1Ratio = 0.9f;
+    public float background2Ratio = 0.8f;
+    public float background3Ratio = 0.6f;
+    public float background4Ratio = 0.4f;
 
-    [Tooltip("Layer GameObjects. Their pivot must be in x=0 for the effect to work properly")]
+    [Header("Layer GameObjects")]
+    [Tooltip("Their pivot must be in x=0 for the effect to work properly")]
     public GameObject foreground1;
     public GameObject background1;
     public GameObject background2;
@@ -30,7 +32,7 @@ public class ParallaxManager : MonoBehaviour
 
     void Start()
     {
-        cameraTransform = GameObject.FindGameObjectWithTag("MainCdamera").transform;;
+        cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;;
 
         GameObject[] tmp = { foreground1, background1, background2, background3, background4 };
         bool[] mask = { false, false, false, false, false };
@@ -44,7 +46,7 @@ public class ParallaxManager : MonoBehaviour
             }
         }
 
-        float[] tmpratios = new float[] { foreground1ratio, background1ratio, background2ratio, background3ratio, background4ratio };
+        float[] tmpratios = new float[] { foreground1Ratio, background1Ratio, background2Ratio, background3Ratio, background4Ratio };
         ratios = new float[validLayers];
         layers = new Transform[validLayers];
         int j = 0;
