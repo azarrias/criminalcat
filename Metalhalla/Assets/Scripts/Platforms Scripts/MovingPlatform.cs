@@ -36,7 +36,8 @@ public class MovingPlatform : MonoBehaviour {
         Vector3 pos = transform.position;
         if (goingToB)
         {
-            pos += directionAtoB * Time.deltaTime * speed;
+            //pos += directionAtoB * Time.deltaTime * speed;
+            pos += directionAtoB * Time.fixedDeltaTime * speed;
             if (Vector3.Distance(pos, pointB) <= distanceThreshold)
             {
                 pos = pointB;
@@ -45,7 +46,8 @@ public class MovingPlatform : MonoBehaviour {
         }
         else
         {
-            pos -= directionAtoB * Time.deltaTime * speed;
+            //pos -= directionAtoB * Time.deltaTime * speed;
+            pos -= directionAtoB * Time.fixedDeltaTime * speed;
             if (Vector3.Distance(pos, pointA) <= distanceThreshold)
             {
                 pos = pointA;
