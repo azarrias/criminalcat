@@ -22,7 +22,7 @@ public class ParallaxManager : MonoBehaviour
 
     [Header("Parallax Active Zone")]
     [Tooltip("Sets the normalized camera position in the parallax boundaries [0-1] where the layers DO move. Useful to prevent undesired parallax when doing a camera travelling")]
-    public Vector2 activeZone; 
+    public Vector2 activeZone = new Vector2(0, 1);
 
     Bounds boundaries;
 
