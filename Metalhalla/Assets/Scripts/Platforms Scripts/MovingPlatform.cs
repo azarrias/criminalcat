@@ -23,13 +23,13 @@ public class MovingPlatform : MonoBehaviour {
 	
     
 	void Update () {
-        UpdatePlatformPosition(); 
+    //    UpdatePlatformPosition(); 
 	}
     
-    /*private void FixedUpdate()
+    private void FixedUpdate()
     {
         UpdatePlatformPosition();
-    }*/
+    }
 
     void UpdatePlatformPosition()
     {
