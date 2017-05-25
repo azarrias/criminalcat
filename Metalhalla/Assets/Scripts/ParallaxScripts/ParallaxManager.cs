@@ -27,6 +27,9 @@ public class ParallaxManager : MonoBehaviour
     Bounds boundaries;
 
     Transform cameraTransform;
+    Camera camera;
+    float screenWidth; 
+
     float[] ratios;
     Transform[] layers;
     Vector2 limits;
@@ -36,7 +39,9 @@ public class ParallaxManager : MonoBehaviour
 
     void Start()
     {
-        cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;;
+        cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        screenWidth = 2f * camera.orthographicSize * camera.aspect;
 
         GameObject[] tmp = { foreground1, background1, background2, background3, background4 };
         bool[] mask = { false, false, false, false, false };
@@ -81,12 +86,6 @@ public class ParallaxManager : MonoBehaviour
     private void UpdateCamPosNormalized()
     {
         camPosNormalized = (cameraTransform.position.x - limits.x) / limitRange;
-        /*
-        if (camPosNormalized <= 0.0f)
-            camPosNormalized = 0.0f;
-        if (camPosNormalized >= 1.0f)
-            camPosNormalized = 1.0f;
-            */
         if (camPosNormalized <= activeZone.x)
             camPosNormalized = 0.0f;
         else if (camPosNormalized >= activeZone.y)
@@ -100,10 +99,15 @@ public class ParallaxManager : MonoBehaviour
     private void UpdateLayerPositions()
     {
         Vector3 tmp;
+        screenWidth = 2f * camera.orthographicSize * camera.aspect;
+        float layerWidth;
         for (int i = 0; i < layers.Length; ++i)
         {
             tmp = layers[i].position;
-            tmp.x = limits.x * (1 - camPosNormalized) + (limits.x + limitRange - limitRange*ratios[i]) * camPosNormalized;
+            layerWidth = ratios[i] * (limitRange - screenWidth) + screenWidth;
+            tmp.x = limits.x * (1 - camPosNormalized) + camPosNormalized * ( limits.x + limitRange - layerWidth);
+//          tmp.x = limits.x * (1 - camPosNormalized) + (limits.x + limitRange - limitRange * ratios[i]) * camPosNormalized;
+
             layers[i].position = tmp;
         }
     }
