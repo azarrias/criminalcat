@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{AEC903A5-20D2-4FBC-933E-0B65715F1744}" SchemaVersion="75">
 	<Events>
-		<WorkUnit Name="Default Work Unit" ID="{AEC903A5-20D2-4FBC-933E-0B65715F1744}" PersistMode="Standalone"/>
+		<WorkUnit Name="Default Work Unit" ID="{AEC903A5-20D2-4FBC-933E-0B65715F1744}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="Footstep" ID="{7B7C5FD6-3576-4EA1-B0E3-A0EC79016A81}">
+					<ChildrenList>
+						<Action Name="Play" ID="{08F1EEE3-8361-47F8-AAD8-8A519F620C16}" ShortID="222744204" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{60C87EC4-333A-4E69-86D1-D0782DD86B72}" Global="false">
+									<ObjectRef Name="FOOTSTEP - Metal Plate Walk Barefoot Male - 1" ID="{80E7A20A-586F-415F-8575-384500948C85}" WorkUnitID="{A0192639-C998-4F58-9D3B-1BC680E15098}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
 	</Events>
 </WwiseDocument>
