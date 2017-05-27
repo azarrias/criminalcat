@@ -53,6 +53,8 @@ public class FSMBoss : MonoBehaviour
     [HideInInspector]
     public bool atMeleeRange = false;
     [HideInInspector]
+    public bool playerHit = false; //the collider attached to the stick will notify this boolean when colliding with the player
+    [HideInInspector]
     public bool atBallRange = false;
     [HideInInspector]
     public bool playerReachable = true;
@@ -86,7 +88,7 @@ public class FSMBoss : MonoBehaviour
     private string currAnimation = "Patrol"; //start animation
     //public bool nextAnimation = false;
 
-    // ----------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS (evita que el animator vaya muy lento si no hay animaciones. Posiblemente se quitará )----
+    // ----------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ----
     [Tooltip("Minimun number of frames to stay in Patrol state before transition")]
     public int patrolFrames = 20;
     [Tooltip("Minimun number of frames to stay in Chase state before transition")]
@@ -562,15 +564,25 @@ public class FSMBoss : MonoBehaviour
     private void MeleeAttack()
     {
         if (currAnimation != "MeleeAttack")
-        {          
+        {
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "MeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            if (atMeleeRange)
-                thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
             StartCoroutine(FinishMeleeAttackAnimation(meleeAttackDuration));
-        }       
+        }
+            //if (atMeleeRange)
+            //    thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
+            //StartCoroutine(FinishMeleeAttackAnimation(meleeAttackDuration));
+
+        if (playerHit)
+        {
+            thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
+            playerHit = false;
+        }
+
+            
+              
     }
 
     private void BallAttack()
