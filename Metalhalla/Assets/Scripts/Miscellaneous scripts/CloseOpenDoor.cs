@@ -5,7 +5,7 @@ using UnityEngine;
 public class CloseOpenDoor : MonoBehaviour {
 
     private  GameObject movingDoor = null;
-    private Vector3 localInitialPosition = new Vector3(89.5f, 17.47f, 0.0f);
+    private Vector3 localInitialPosition = new Vector3(87.71f, 27.31f, 0.0f);
     private bool closed = false;   
     private bool playerInside = false;
 
