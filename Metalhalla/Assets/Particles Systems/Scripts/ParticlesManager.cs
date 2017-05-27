@@ -117,6 +117,7 @@ public class ParticlesManager : MonoBehaviour
             }
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
+            newParticle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
             newParticle.SetActive(true);
             newParticle.transform.parent = particlesManager.transform;
             particlesManager.particlesPool[name].Add(newParticle);
@@ -150,6 +151,7 @@ public class ParticlesManager : MonoBehaviour
             particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
+            newParticle.GetComponent<BossFireBallBehaviour>().SetFacingRight(ballDirection);
             newParticle.SetActive(true);
             newParticle.transform.parent = particlesManager.transform;
             particlesManager.particlesPool["bossFireBall"].Add(newParticle);
