@@ -89,14 +89,21 @@ public class FSMEnemy : MonoBehaviour
                 else ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
+                if (enemyStats.hitPoints <= 0)
+                    ChangeState(State.DEAD);
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
                         animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
                 {
-                    if (enemyStats.hitPoints > 0)
-                        ChangeState(State.CHASE);
-                    else ChangeState(State.DEAD);
+                    ChangeState(State.CHASE);
                 }
-                break;
+                    /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
+                            animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                    {
+                        if (enemyStats.hitPoints > 0)
+                            ChangeState(State.CHASE);
+                        else ChangeState(State.DEAD);
+                    }*/
+                    break;
             case State.CHASE:
                 if (PlayerAtRange())
                     ChangeState(State.ATTACK);
