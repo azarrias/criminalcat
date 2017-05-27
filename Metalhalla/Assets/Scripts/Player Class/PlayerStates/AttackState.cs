@@ -8,7 +8,7 @@ public class AttackState : PlayerState
     int attackFramesCount;
     int attackColliderDelay;
 
-    public AttackState( int framesDuration )
+    public AttackState( int framesDuration ) 
     {
         attackFramesDuration = framesDuration;
         attackFramesCount = 0;
