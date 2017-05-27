@@ -7,6 +7,7 @@ public class PlayerStatus : MonoBehaviour
     [Header("Attack Elements")]
     public GameObject hammerMesh;
     public BoxCollider attackCollider;
+    public GameObject lightningGenerator;   
     public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
@@ -98,9 +99,10 @@ public class PlayerStatus : MonoBehaviour
     void Start()
     {
 
-        hammerMesh.GetComponent<Renderer>().enabled = false;
+        hammerMesh.GetComponent<Renderer>().enabled = false;    // change if the hammer is to be visible always
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
+        lightningGenerator.SetActive(false);    // temp
 
         shieldMesh.GetComponent<Renderer>().enabled = false; 
 
