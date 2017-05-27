@@ -183,9 +183,12 @@ public class FSMBoss : MonoBehaviour
                 //Player dead
                 if (!thePlayerStatus.IsAlive())
                 {
-                    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-                    if (!facingRight)
-                        facingRight = true;
+                    if (prevState == State.BACK_TO_CENTER)
+                    {
+                        gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+                        if (!facingRight)
+                            facingRight = true;
+                    }
 
                     currState = State.PATROL;
                     playerInSight = false;
