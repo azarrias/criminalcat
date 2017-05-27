@@ -21,6 +21,7 @@ public class AttackState : PlayerState
         {
             attackFramesCount = 0;
             status.hammerMesh.GetComponent<Renderer>().enabled = true;
+            status.lightningGenerator.SetActive(true);  // lightning on
         }
 
         if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
@@ -45,6 +46,7 @@ public class AttackState : PlayerState
             status.attackCollider.enabled = false;
             status.attackCollider.GetComponent<Renderer>().enabled = false;
             status.hammerMesh.GetComponent<Renderer>().enabled = false;
+            status.lightningGenerator.SetActive(false);  // lightning off
             attackFramesCount = 0; 
         }
     }
