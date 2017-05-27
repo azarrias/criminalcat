@@ -158,7 +158,6 @@ public class PlayerStatus : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G) == true)
             godMode = !godMode;
 
-
         // stamina recovery
         if (stamina < staminaMaximum)
         {
@@ -203,7 +202,7 @@ public class PlayerStatus : MonoBehaviour
     // ---- HEALTH functions ---------------------------------------------------------------------------------------------
     public void ApplyDamage(int damage)
     {
-        if (!godMode || currentState != defense)
+        if (!godMode && currentState != defense)
         {
             health -= damage;
             SetState(hit);
