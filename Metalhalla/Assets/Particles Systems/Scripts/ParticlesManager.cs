@@ -56,7 +56,7 @@ public class ParticlesManager : MonoBehaviour
         //------------------------------- BOSS FIREBALL ------------------------
         particlesPool["bossFireBall"] = new List<GameObject>();
 
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             GameObject bossFireBall = Instantiate(bossFireBallPrefab, Vector3.zero, Quaternion.identity);
             bossFireBall.SetActive(false);
@@ -111,7 +111,7 @@ public class ParticlesManager : MonoBehaviour
             {
                 particlesManager.particlesPrefab = particlesManager.wildboarPrefab;
             }
-            else if(name == "bossFireBall")
+            else if (name == "bossFireBall")
             {
                 particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
             }
@@ -120,6 +120,39 @@ public class ParticlesManager : MonoBehaviour
             newParticle.SetActive(true);
             newParticle.transform.parent = particlesManager.transform;
             particlesManager.particlesPool[name].Add(newParticle);
+            particleToSpawn = newParticle;
+        }
+
+        return particleToSpawn;
+    }
+
+    //Dark Elves fireballs
+    public static GameObject SpawnParticle(Vector3 spawnPosition, Vector3 ballDirection)
+    {
+        GameObject particleToSpawn = null;
+
+        foreach (GameObject particle in particlesManager.particlesPool["bossFireBall"])
+        {
+            if (!particle.activeSelf)
+            {
+                particle.SetActive(true);
+                particle.transform.position = spawnPosition;
+                particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(ballDirection);
+
+                particleToSpawn = particle;
+                break;
+            }
+        }
+
+        //no inactive gameObject found   
+        if (particleToSpawn == null)
+        {
+            particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
+
+            GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
+            newParticle.SetActive(true);
+            newParticle.transform.parent = particlesManager.transform;
+            particlesManager.particlesPool["bossFireBall"].Add(newParticle);
             particleToSpawn = newParticle;
         }
 

@@ -8,17 +8,26 @@ public class BossFireBallBehaviour : MonoBehaviour {
     public float speed = 1.0f;
     private Vector3 direction;
     public int ballDamage = 10;
+    private float counter = 0.0f;
+
+
     
 	// Use this for initialization
 	void Start() {
 
-        Invoke("Deactivate", lifeTime);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
         transform.Translate(direction * speed * Time.deltaTime);
+
+        counter += Time.deltaTime;
+        if(counter >= lifeTime)
+        {
+            counter = 0.0f;
+            Deactivate();
+        }
 	}
 
     void OnCollisionEnter(Collision collision)
@@ -47,16 +56,24 @@ public class BossFireBallBehaviour : MonoBehaviour {
         {
             direction = Vector3.right;
 
-            if (ball.eulerAngles.y != -90.0f)
-                ball.localRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+            if (ball.eulerAngles.y != 90.0f)
+                ball.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
         }
         else
         {
             direction = Vector3.left;
 
-            if (ball.eulerAngles.y != 90.0f)
-                ball.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+            if (ball.eulerAngles.y != -90.0f)
+                ball.localRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
         }
+    }
+
+    public void SetFacingRight(Vector3 ballDirection)
+    {
+        Transform ball = gameObject.transform.Find("Ball").transform;
+        direction = ballDirection.normalized;
+        Quaternion rotation = Quaternion.LookRotation(ballDirection);
+        ball.localRotation = rotation;
     }
 
     void Deactivate()

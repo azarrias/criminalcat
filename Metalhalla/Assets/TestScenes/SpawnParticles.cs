@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpawnParticles : MonoBehaviour {
 
     public Transform spawnPosition;
+    public GameObject target;
 
 	// Use this for initialization
 	void Start () {
@@ -13,14 +14,20 @@ public class SpawnParticles : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKeyDown(KeyCode.Space))
+        //if(Input.GetKeyDown(KeyCode.Space))
+        //      {
+        //          ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true) ;
+        //      }
+
+        //if (Input.GetKeyDown(KeyCode.RightControl))
+        //{
+        //    ParticlesManager.SpawnParticle("wildboar", spawnPosition.position, true);
+        //}
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true) ;
+            ParticlesManager.SpawnParticle(spawnPosition.position, target.transform.position - transform.position);
         }
 
-        if (Input.GetKeyDown(KeyCode.RightControl))
-        {
-            ParticlesManager.SpawnParticle("wildboar", spawnPosition.position, true);
-        }
     }
 }
