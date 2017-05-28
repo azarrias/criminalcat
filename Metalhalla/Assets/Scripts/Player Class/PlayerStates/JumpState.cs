@@ -13,7 +13,8 @@ public class JumpState : PlayerState
     {
         framesToJumpCount = 0;
         framesToJumpMax = framesToMaxJump;
-        framesToJumpMin = (int)(framesToJumpMax / 4);
+        //framesToJumpMin = (int)(framesToJumpMax / 4);
+        framesToJumpMin = framesToJumpMax;
 
     }
 
