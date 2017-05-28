@@ -19,22 +19,24 @@ public class Lightning : MonoBehaviour {
 	void Update () {
 
         //Test particles activation/deactivation 
-        if (Input.GetKeyDown(KeyCode.RightControl))
-        {
-            if (lightningGenerator.isStopped)
-                ActivateLightning();
-            else
-                DeactivateLightning();
-        }
+        //if (Input.GetKeyDown(KeyCode.RightControl))
+        //{
+        //    if (lightningGenerator.isStopped)
+        //        ActivateLightning();
+        //    else
+        //        DeactivateLightning();
+        //}
     }
 
     public void ActivateLightning()
     {
+        lightningGenerator.GetComponent<ParticleSystemRenderer>().enabled = true;
         lightningGenerator.Play();
     }
 
     public void DeactivateLightning()
     {
+        lightningGenerator.GetComponent<ParticleSystemRenderer>().enabled = false;
         lightningGenerator.Stop();
     }
 
