@@ -28,7 +28,7 @@ public class FSMDarkElf : MonoBehaviour
     [HideInInspector]
     public PlayerStatus playerStatus;
 
-//    Animator animator;
+    Animator animator;
 
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
     public float leftPatrolLimit;
@@ -47,7 +47,7 @@ public class FSMDarkElf : MonoBehaviour
     {
         los = GetComponent<LineOfSight>();
         enemyStats = GetComponent<EnemyStats>();
-//        animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
         playerStatus = player.GetComponent<PlayerStatus>();
         material = GetComponentInChildren<Renderer>().material;
@@ -138,31 +138,31 @@ public class FSMDarkElf : MonoBehaviour
         switch (state)
         {
             case State.IDLE:
-//                animator.SetBool("idle", true);
+                animator.SetBool("idle", true);
                 waitingTime = 0.0f;
                 timeToWait = Random.Range(0.5f, 1.5f);
                 break;
             case State.PATROL:
-//                animator.SetBool("walk", true);
+                animator.SetBool("walk", true);
                 destination.Set(NextPatrolLocation(), transform.position.y, transform.position.z);
                 faceXCoordinate(destination.x);
                 los.enabled = true;
                 break;
             case State.BEING_HIT:
-//                animator.SetBool("being_hit", true);
+                animator.SetBool("being_hit", true);
                 faceXCoordinate(player.transform.position.x);
                 break;
             case State.STUNNED:
-//                animator.SetBool("idle", true);
+                animator.SetBool("idle", true);
                 break;
             case State.CHASE:
-//                animator.SetBool("walk", true);
+                animator.SetBool("walk", true);
                 destination.Set(player.transform.position.x, transform.position.y, transform.position.z);
                 faceXCoordinate(destination.x);
                 los.enabled = true;
                 break;
             case State.ATTACK:
-//                animator.SetBool("attack", true);
+                animator.SetBool("attack", true);
                 foreach (BoxCollider b in boxColliders)
                 {
                     if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
@@ -172,7 +172,7 @@ public class FSMDarkElf : MonoBehaviour
                 }
                 break;
             case State.DEAD:
-//                animator.SetBool("dead", true);
+                animator.SetBool("dead", true);
                 break;
         }
     }
@@ -182,24 +182,24 @@ public class FSMDarkElf : MonoBehaviour
         switch (state)
         {
             case State.IDLE:
-//                animator.SetBool("idle", false);
+                animator.SetBool("idle", false);
                 break;
             case State.PATROL:
-//                animator.SetBool("walk", false);
+                animator.SetBool("walk", false);
                 los.enabled = false;
                 break;
             case State.BEING_HIT:
-//                animator.SetBool("being_hit", false);
+                animator.SetBool("being_hit", false);
                 break;
             case State.STUNNED:
-//                animator.SetBool("idle", false);
+                animator.SetBool("idle", false);
                 break;
             case State.CHASE:
-//                animator.SetBool("walk", false);
+                animator.SetBool("walk", false);
                 los.enabled = false;
                 break;
             case State.ATTACK:
-//                animator.SetBool("attack", false);
+                animator.SetBool("attack", false);
                 foreach (BoxCollider b in boxColliders)
                 {
                     if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
@@ -209,7 +209,7 @@ public class FSMDarkElf : MonoBehaviour
                 }
                 break;
             case State.DEAD:
-//                animator.SetBool("dead", false);
+                animator.SetBool("dead", false);
                 StartCoroutine(FadeOut());
                 break;
         }
