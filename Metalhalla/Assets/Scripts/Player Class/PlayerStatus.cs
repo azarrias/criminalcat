@@ -7,12 +7,18 @@ public class PlayerStatus : MonoBehaviour
     [Header("Attack Elements")]
     public GameObject hammerMesh;
     public BoxCollider attackCollider;
-    public GameObject lightningGenerator;   
+    public GameObject lightningGenerator;
     public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
     [Header("Defense Elements")]
     public GameObject shieldMesh;
+
+    [Header("Sound Effects")]
+    public AudioClip fxSwing;
+    public AudioClip fxJump;
+    public AudioClip fxLand;
+    AudioSource playerAudioSource;
 
     [Header("Health Setup")]
     [Tooltip("Health start value")]
@@ -104,7 +110,9 @@ public class PlayerStatus : MonoBehaviour
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
 
-        shieldMesh.GetComponent<Renderer>().enabled = false; 
+        shieldMesh.GetComponent<Renderer>().enabled = false;
+
+        playerAudioSource = GetComponent<AudioSource>();
 
         health = healthAtStart;
         stamina = staminaAtStart;
@@ -342,4 +350,12 @@ public class PlayerStatus : MonoBehaviour
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
+
+    // ---- SOUND functions ---------------------------------------------------------------------------------------------
+    public void PlaySwingFx()
+    {
+        playerAudioSource.clip = fxSwing;
+        playerAudioSource.Play();
+    }
+
 }
