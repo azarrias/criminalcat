@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
@@ -9,6 +10,7 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Music")]
     public AudioClip introCutscene;
+    public AudioClip playingLevel;
 
     void Awake()
     {
@@ -21,9 +23,29 @@ public class AudioManager : MonoBehaviour {
         audioSource.clip = introCutscene;
         audioSource.Play();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+     {
+
+        switch (scene.buildIndex)
+        {
+            case 2:
+                audioSource.Stop();
+                audioSource.clip = playingLevel;
+                audioSource.Play();
+                break;
+        }
+
+    }
+
 }
