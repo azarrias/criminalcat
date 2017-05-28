@@ -166,7 +166,6 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", true);
-                ParticlesManager.SpawnElfFireBall(transform.position, player.transform.position - transform.position);
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
@@ -299,6 +298,11 @@ public class FSMDarkElf : MonoBehaviour
         }
         gameObject.SetActive(false);
     }
+
+    private void ThrowFireBall()
+    {
+        ParticlesManager.SpawnElfFireBall(transform.position, player.transform.position - transform.position);
+    } 
 
     IEnumerator WaitForSeconds(float s)
     {
