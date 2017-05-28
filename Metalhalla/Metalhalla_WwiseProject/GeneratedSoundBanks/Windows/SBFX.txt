@@ -1,6 +1,0 @@
-Event	ID	Name			Wwise Object Path	Notes
-	1489311338	EvFootstep			\Default Work Unit\EvFootstep	
-
-In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	474014089	FOOTSTEP - Metal Plate Walk Barefoot Male - 1	C:\Users\adolfo\Documents\My Unity Projects\criminalcat\Metalhalla\Metalhalla_WwiseProject\.cache\Windows\SFX\FOOTSTEP - Metal Plate Walk Barefoot Male - 1_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\FOOTSTEP - Metal Plate Walk Barefoot Male - 1		59454
-

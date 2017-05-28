@@ -1,7 +1,0 @@
-Event	ID	Name			Wwise Object Path	Notes
-	394644566	EvGameStart			\Default Work Unit\EvGameStart	
-
-In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	206486989	Start_Menu	C:\Users\adolfo\Documents\My Unity Projects\criminalcat\Metalhalla\Metalhalla_WwiseProject\.cache\Windows\SFX\Menu_Inicial_4B8CC0C5.wem		\Interactive Music Hierarchy\Default Work Unit\Metalhalla Music Switch Container\Menu_01\Start_Menu		45581824
-	665446125	Cutscene_Intro	C:\Users\adolfo\Documents\My Unity Projects\criminalcat\Metalhalla\Metalhalla_WwiseProject\.cache\Windows\SFX\Cutscene_Intro_4B8CC0C5.wem		\Interactive Music Hierarchy\Default Work Unit\Metalhalla Music Switch Container\Cutscene_01\Cutscene_Intro		34398064
-
