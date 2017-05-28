@@ -166,13 +166,7 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", true);
-/*                foreach (BoxCollider b in boxColliders)
-                {
-                    if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
-                    {
-                        b.enabled = true;
-                    }
-                }*/
+                ParticlesManager.SpawnElfFireBall(transform.position, player.transform.position - transform.position);
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
