@@ -212,13 +212,11 @@ public class PlayerStatus : MonoBehaviour
     // ---- HEALTH functions ---------------------------------------------------------------------------------------------
     public void ApplyDamage(int damage)
     {
-        if (!godMode && currentState != defense)
+        if (!godMode && currentState != defense && currentState != dead)
         {
             health -= damage;
             SetState(hit);
         }
-        else
-            Debug.Log("Player is in god mode or defending");
     }
 
     public bool RestoreHealth(int restore)
