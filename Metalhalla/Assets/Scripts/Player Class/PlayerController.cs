@@ -48,10 +48,6 @@ public class PlayerController : MonoBehaviour {
         playerAnimator.SetBool("dead", !playerStatus.IsAlive());
         playerAnimator.SetBool("dash", playerStatus.IsDash());
         
-        //if (playerStatus.IsWalk())
-        //{
-        //    AkSoundEngine.PostEvent("Footstep", gameObject);
-        //}
 	}
 
 

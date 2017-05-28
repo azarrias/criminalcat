@@ -11,17 +11,12 @@
 	<StreamedFiles/>
 	<MediaFilesNotInAnyBank/>
 	<SoundBanks>
-		<SoundBank Id="1355168291" Language="SFX">
-			<ObjectPath>Init</ObjectPath>
-			<ShortName>Init</ShortName>
-			<Path>Init.bnk</Path>
-		</SoundBank>
-		<SoundBank Id="2385628198" Language="SFX">
-			<ObjectPath>\SoundBanks\Default Work Unit\Footsteps</ObjectPath>
-			<ShortName>Footsteps</ShortName>
-			<Path>Footsteps.bnk</Path>
+		<SoundBank Id="636311908" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\SBFX</ObjectPath>
+			<ShortName>SBFX</ShortName>
+			<Path>SBFX.bnk</Path>
 			<IncludedEvents>
-				<Event Id="1866025847" Name="Footstep" ObjectPath="\Events\Default Work Unit\Footstep"/>
+				<Event Id="1489311338" Name="EvFootstep" ObjectPath="\Events\Default Work Unit\EvFootstep"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
 				<File Id="474014089" Language="SFX">
@@ -29,6 +24,29 @@
 					<Path>SFX\FOOTSTEP - Metal Plate Walk Barefoot Male - 1_9E69E797.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
+		</SoundBank>
+		<SoundBank Id="824973819" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\SBMusic</ObjectPath>
+			<ShortName>SBMusic</ShortName>
+			<Path>SBMusic.bnk</Path>
+			<IncludedEvents>
+				<Event Id="394644566" Name="EvGameStart" ObjectPath="\Events\Default Work Unit\EvGameStart"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="206486989" Language="SFX">
+					<ShortName>Menu_Inicial.wav</ShortName>
+					<Path>SFX\Menu_Inicial_4B8CC0C5.wem</Path>
+				</File>
+				<File Id="665446125" Language="SFX">
+					<ShortName>Cutscene_Intro.wav</ShortName>
+					<Path>SFX\Cutscene_Intro_4B8CC0C5.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ObjectPath>Init</ObjectPath>
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
 		</SoundBank>
 	</SoundBanks>
 </SoundBanksInfo>

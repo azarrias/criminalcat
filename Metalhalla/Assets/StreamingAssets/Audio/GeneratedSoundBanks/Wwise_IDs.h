@@ -13,13 +13,32 @@ namespace AK
 {
     namespace EVENTS
     {
-        static const AkUniqueID FOOTSTEP = 1866025847U;
+        static const AkUniqueID EVFOOTSTEP = 1489311338U;
+        static const AkUniqueID EVGAMESTART = 394644566U;
     } // namespace EVENTS
+
+    namespace STATES
+    {
+        namespace GAMESTATES
+        {
+            static const AkUniqueID GROUP = 777429653U;
+
+            namespace STATE
+            {
+                static const AkUniqueID STINGAMEMENU = 3837480894U;
+                static const AkUniqueID STINTROCUTSCENE = 3651934054U;
+                static const AkUniqueID STINTROMENU = 3096536535U;
+                static const AkUniqueID STPLAYINGGAME = 2549164780U;
+            } // namespace STATE
+        } // namespace GAMESTATES
+
+    } // namespace STATES
 
     namespace BANKS
     {
         static const AkUniqueID INIT = 1355168291U;
-        static const AkUniqueID FOOTSTEPS = 2385628198U;
+        static const AkUniqueID SBFX = 636311908U;
+        static const AkUniqueID SBMUSIC = 824973819U;
     } // namespace BANKS
 
     namespace BUSSES

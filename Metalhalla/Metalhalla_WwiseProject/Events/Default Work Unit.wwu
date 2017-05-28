@@ -3,12 +3,29 @@
 	<Events>
 		<WorkUnit Name="Default Work Unit" ID="{AEC903A5-20D2-4FBC-933E-0B65715F1744}" PersistMode="Standalone">
 			<ChildrenList>
-				<Event Name="Footstep" ID="{7B7C5FD6-3576-4EA1-B0E3-A0EC79016A81}">
+				<Event Name="EvFootstep" ID="{7B7C5FD6-3576-4EA1-B0E3-A0EC79016A81}">
 					<ChildrenList>
 						<Action Name="Play" ID="{08F1EEE3-8361-47F8-AAD8-8A519F620C16}" ShortID="222744204" Type="Play" Scope="One" Global="false">
 							<ElementList>
 								<Element ID="{60C87EC4-333A-4E69-86D1-D0782DD86B72}" Global="false">
 									<ObjectRef Name="FOOTSTEP - Metal Plate Walk Barefoot Male - 1" ID="{80E7A20A-586F-415F-8575-384500948C85}" WorkUnitID="{A0192639-C998-4F58-9D3B-1BC680E15098}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="EvGameStart" ID="{FFAB73F8-C585-4E82-AEC6-B074D0A54610}">
+					<ChildrenList>
+						<Action Name="Set State" ID="{DF8E3EE7-FF2C-48E8-BBB4-56D2ECADD860}" ShortID="561117627" Type="SetState" Scope="All" Global="true">
+							<SetItemParam>
+								<Group Name="GameStates" ID="{CFF1AC64-CEAD-4329-A9E3-376C34DE541E}"/>
+								<GroupItem Name="StIntroCutscene" ID="{FFA87F50-E609-458B-A71C-E9ABDE5AE02D}"/>
+							</SetItemParam>
+						</Action>
+						<Action Name="Play" ID="{AF50964E-8E00-4D44-A3AF-D53ABB40687A}" ShortID="447277418" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{483C3284-9CA5-4DFB-87E8-39C72779FDD0}" Global="false">
+									<ObjectRef Name="Metalhalla Music Switch Container" ID="{DF536070-FA0E-4F11-839D-20E59614311E}" WorkUnitID="{4CB2C5B6-738B-41A4-A838-7C4CE10AB7E5}"/>
 								</Element>
 							</ElementList>
 						</Action>
