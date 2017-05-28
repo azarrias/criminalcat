@@ -21,7 +21,9 @@ public class AudioManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         audioSource.clip = introCutscene;
+        audioSource.volume = 0.0f;
         audioSource.Play();
+        StartCoroutine("FadeIn", 10.0f);
 	}
 
     void OnEnable()
@@ -46,6 +48,15 @@ public class AudioManager : MonoBehaviour {
                 break;
         }
 
+    }
+
+    IEnumerator FadeIn(float duration)
+    {
+        while(audioSource.volume < 1.0f)
+        {
+            audioSource.volume += Time.deltaTime / duration;
+            yield return null;
+        }
     }
 
 }
