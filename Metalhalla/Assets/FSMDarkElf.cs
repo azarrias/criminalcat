@@ -111,10 +111,13 @@ public class FSMDarkElf : MonoBehaviour
                 else ChangeState(State.IDLE);
                 break;
             case State.ATTACK:
-                StartCoroutine(WaitForSeconds(1.0f));
-                if (!playerStatus.IsAlive())
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
+                    animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                {
+                    if (!playerStatus.IsAlive())
                         ChangeState(State.PATROL);
                     else ChangeState(State.CHASE);
+                }
                 break;
             case State.DEAD:
                 StartCoroutine(WaitForSeconds(1.0f));
@@ -163,13 +166,13 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", true);
-                foreach (BoxCollider b in boxColliders)
+/*                foreach (BoxCollider b in boxColliders)
                 {
                     if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
                     {
                         b.enabled = true;
                     }
-                }
+                }*/
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
@@ -200,13 +203,13 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", false);
-                foreach (BoxCollider b in boxColliders)
+/*                foreach (BoxCollider b in boxColliders)
                 {
                     if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
                     {
                         b.enabled = false;
                     }
-                }
+                }*/
                 break;
             case State.DEAD:
                 animator.SetBool("dead", false);
@@ -268,8 +271,8 @@ public class FSMDarkElf : MonoBehaviour
 
     public bool PlayerAtRange()
     {
-        if (Mathf.Abs(los.player.transform.position.y - transform.position.y) > 1.0f)
-            return false;
+/*        if (Mathf.Abs(los.player.transform.position.y - transform.position.y) > 1.0f)
+            return false;*/
         if (los.player.transform.position.x > transform.position.x)
             return los.player.transform.position.x - attackRange - transform.position.x <= 0.2f;
         else
