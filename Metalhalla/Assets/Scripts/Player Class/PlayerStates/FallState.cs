@@ -33,6 +33,7 @@ public class FallState : PlayerState
                 status.SetState(PlayerStatus.walk);
             else
                 status.SetState(PlayerStatus.idle);
+            status.PlayFx("land");
         }
     }
 

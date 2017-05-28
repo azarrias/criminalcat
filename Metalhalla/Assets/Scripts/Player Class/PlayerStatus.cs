@@ -352,10 +352,16 @@ public class PlayerStatus : MonoBehaviour
     public bool WasWalk() { return previousState == walk; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
-    public void PlaySwingFx()
+    public void PlayFx( string fx)
     {
-        playerAudioSource.clip = fxSwing;
+        if (fx.Equals("swing"))
+            playerAudioSource.clip = fxSwing;
+        else if (fx.Equals("jump"))
+            playerAudioSource.clip = fxJump;
+        else if (fx.Equals("land"))
+            playerAudioSource.clip = fxLand;
         playerAudioSource.Play();
+           
     }
 
 }

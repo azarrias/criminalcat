@@ -22,14 +22,14 @@ public class AttackState : PlayerState
             attackFramesCount = 0;
             status.hammerMesh.GetComponent<Renderer>().enabled = true;
             status.lightningGenerator.SetActive(true);  // lightning on
-//            status.PlaySwingFx();
+            
         }
 
         if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
         {
             status.attackCollider.enabled = true;
             status.attackCollider.GetComponent<Renderer>().enabled = true;
-            status.PlaySwingFx();
+            status.PlayFx("swing");
         }
         
         status.SetState(this);

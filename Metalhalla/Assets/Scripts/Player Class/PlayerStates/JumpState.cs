@@ -21,7 +21,10 @@ public class JumpState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             framesToJumpCount = 0;
+            status.PlayFx("jump");
+        }
 
         // counter for PlayerMove calculations
         if (framesToJumpCount < framesToJumpMax)
