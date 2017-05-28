@@ -26,7 +26,7 @@ public class SpawnParticles : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ParticlesManager.SpawnParticle(spawnPosition.position, target.transform.position - transform.position);
+            ParticlesManager.SpawnElfFireBall(spawnPosition.position, target.transform.position - transform.position);
         }
 
     }

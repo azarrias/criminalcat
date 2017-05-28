@@ -10,6 +10,7 @@ public class ParticlesManager : MonoBehaviour
     public GameObject tornadoPrefab;
     public GameObject wildboarPrefab;
     public GameObject bossFireBallPrefab;
+    public GameObject elfFireBallPrefab;
     private GameObject particlesPrefab;
 
     void Awake()
@@ -63,6 +64,17 @@ public class ParticlesManager : MonoBehaviour
             bossFireBall.transform.parent = transform;
             particlesPool["bossFireBall"].Add(bossFireBall);
         }
+
+        //------------------------------- ELF FIREBALL ------------------------
+        particlesPool["elfFireBall"] = new List<GameObject>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject elfFireBall = Instantiate(elfFireBallPrefab, Vector3.zero, Quaternion.identity);
+            elfFireBall.SetActive(false);
+            elfFireBall.transform.parent = transform;
+            particlesPool["elfFireBall"].Add(elfFireBall);
+        }
     }
 
     // Update is called once per frame
@@ -94,7 +106,7 @@ public class ParticlesManager : MonoBehaviour
                 {
                     particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
                 }
-
+                
                 particleToSpawn = particle;
                 break;
             }
@@ -128,17 +140,17 @@ public class ParticlesManager : MonoBehaviour
     }
 
     //Dark Elves fireballs
-    public static GameObject SpawnParticle(Vector3 spawnPosition, Vector3 ballDirection)
+    public static GameObject SpawnElfFireBall(Vector3 spawnPosition, Vector3 ballDirection)
     {
         GameObject particleToSpawn = null;
 
-        foreach (GameObject particle in particlesManager.particlesPool["bossFireBall"])
+        foreach (GameObject particle in particlesManager.particlesPool["elfFireBall"])
         {
             if (!particle.activeSelf)
             {
                 particle.SetActive(true);
                 particle.transform.position = spawnPosition;
-                particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(ballDirection);
+                particle.GetComponent<ElfFireBallBehaviour>().SetDirection(ballDirection);
 
                 particleToSpawn = particle;
                 break;
@@ -148,13 +160,13 @@ public class ParticlesManager : MonoBehaviour
         //no inactive gameObject found   
         if (particleToSpawn == null)
         {
-            particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
+            particlesManager.particlesPrefab = particlesManager.elfFireBallPrefab;
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
-            newParticle.GetComponent<BossFireBallBehaviour>().SetFacingRight(ballDirection);
+            newParticle.GetComponent<ElfFireBallBehaviour>().SetDirection(ballDirection);
             newParticle.SetActive(true);
             newParticle.transform.parent = particlesManager.transform;
-            particlesManager.particlesPool["bossFireBall"].Add(newParticle);
+            particlesManager.particlesPool["elfFireBall"].Add(newParticle);
             particleToSpawn = newParticle;
         }
 
