@@ -1,0 +1,187 @@
+fileFormatVersion: 2
+guid: 18bf0e423c645c443b9ad53e245295f3
+timeCreated: 1495988870
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Group45
+    100004: joint1
+    100006: joint10
+    100008: joint15
+    100010: joint2
+    100012: joint20
+    100014: joint21
+    100016: joint22
+    100018: joint23
+    100020: joint24
+    100022: joint26
+    100024: joint27
+    100026: joint28
+    100028: joint29
+    100030: joint3
+    100032: joint30
+    100034: joint31
+    100036: joint32
+    100038: joint33
+    100040: joint34
+    100042: joint35
+    100044: joint36
+    100046: joint37
+    100048: joint38
+    100050: joint39
+    100052: joint4
+    100054: joint40
+    100056: joint41
+    100058: joint43
+    100060: joint44
+    100062: joint45
+    100064: joint46
+    100066: joint47
+    100068: joint48
+    100070: joint49
+    100072: joint5
+    100074: joint50
+    100076: joint51
+    100078: joint52
+    100080: joint53
+    100082: joint54
+    100084: joint55
+    100086: joint56
+    100088: joint57
+    100090: joint58
+    100092: joint59
+    100094: joint6
+    100096: joint62
+    100098: joint63
+    100100: joint64
+    100102: joint7
+    100104: joint8
+    100106: joint9
+    400000: //RootNode
+    400002: Group45
+    400004: joint1
+    400006: joint10
+    400008: joint15
+    400010: joint2
+    400012: joint20
+    400014: joint21
+    400016: joint22
+    400018: joint23
+    400020: joint24
+    400022: joint26
+    400024: joint27
+    400026: joint28
+    400028: joint29
+    400030: joint3
+    400032: joint30
+    400034: joint31
+    400036: joint32
+    400038: joint33
+    400040: joint34
+    400042: joint35
+    400044: joint36
+    400046: joint37
+    400048: joint38
+    400050: joint39
+    400052: joint4
+    400054: joint40
+    400056: joint41
+    400058: joint43
+    400060: joint44
+    400062: joint45
+    400064: joint46
+    400066: joint47
+    400068: joint48
+    400070: joint49
+    400072: joint5
+    400074: joint50
+    400076: joint51
+    400078: joint52
+    400080: joint53
+    400082: joint54
+    400084: joint55
+    400086: joint56
+    400088: joint57
+    400090: joint58
+    400092: joint59
+    400094: joint6
+    400096: joint62
+    400098: joint63
+    400100: joint64
+    400102: joint7
+    400104: joint8
+    400106: joint9
+    4300000: Group45
+    7400000: dark_elf_death
+    9500000: //RootNode
+    13700000: Group45
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
