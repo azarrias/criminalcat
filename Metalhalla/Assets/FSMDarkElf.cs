@@ -95,7 +95,9 @@ public class FSMDarkElf : MonoBehaviour
                 else ChangeState(State.DEAD);
                 break;
             case State.CHASE:
-                if (PlayerAtRange())
+                if (!los.playerInSight)
+                    ChangeState(State.PATROL);
+                else if (PlayerAtRange())
                     ChangeState(State.ATTACK);
                 else if (!InBounds())
                 {
