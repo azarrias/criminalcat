@@ -89,10 +89,14 @@ public class FSMDarkElf : MonoBehaviour
                 else ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
-                StartCoroutine(WaitForSeconds(1.0f));
-                if (enemyStats.hitPoints > 0)
-                    ChangeState(State.CHASE);
-                else ChangeState(State.DEAD);
+                if (waitingTime > timeToWait)
+                {
+                    if (enemyStats.hitPoints > 0)
+                        ChangeState(State.CHASE);
+                    else ChangeState(State.DEAD);
+                }
+                else
+                    waitingTime += Time.fixedDeltaTime;
                 break;
             case State.CHASE:
                 if (!los.playerInSight)
@@ -155,6 +159,8 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.BEING_HIT:
                 animator.SetBool("being_hit", true);
+                waitingTime = 0.0f;
+                timeToWait = 1.0f;
                 faceXCoordinate(player.transform.position.x);
                 break;
             case State.STUNNED:
