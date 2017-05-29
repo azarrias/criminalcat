@@ -24,9 +24,14 @@ public class SpawnParticles : MonoBehaviour {
         //    ParticlesManager.SpawnParticle("wildboar", spawnPosition.position, true);
         //}
 
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    ParticlesManager.SpawnElfFireBall(spawnPosition.position, target.transform.position - transform.position);
+        //}
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ParticlesManager.SpawnElfFireBall(spawnPosition.position, target.transform.position - transform.position);
+            ParticlesManager.SpawnParticle("blood", spawnPosition.position, false);
         }
 
     }

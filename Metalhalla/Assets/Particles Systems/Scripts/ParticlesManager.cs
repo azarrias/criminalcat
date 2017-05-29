@@ -11,7 +11,9 @@ public class ParticlesManager : MonoBehaviour
     public GameObject wildboarPrefab;
     public GameObject bossFireBallPrefab;
     public GameObject elfFireBallPrefab;
+    public GameObject bloodPrefab;
     private GameObject particlesPrefab;
+   
 
     void Awake()
     {
@@ -75,6 +77,17 @@ public class ParticlesManager : MonoBehaviour
             elfFireBall.transform.parent = transform;
             particlesPool["elfFireBall"].Add(elfFireBall);
         }
+
+        //------------------------------- BLOOD PARTICLES  ------------------------
+        particlesPool["blood"] = new List<GameObject>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject blood = Instantiate(bloodPrefab, Vector3.zero, Quaternion.identity);
+            blood.SetActive(false);
+            blood.transform.parent = transform;
+            particlesPool["blood"].Add(blood);
+        }
     }
 
     // Update is called once per frame
@@ -106,6 +119,10 @@ public class ParticlesManager : MonoBehaviour
                 {
                     particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
                 }
+                else if(name == "blood")
+                {
+                    particle.GetComponent<BloodBehaviour>().SetFacingRight(facingRight);
+                }
                 
                 particleToSpawn = particle;
                 break;
@@ -127,9 +144,12 @@ public class ParticlesManager : MonoBehaviour
             {
                 particlesManager.particlesPrefab = particlesManager.bossFireBallPrefab;
             }
+            else if (name == "blood")
+            {
+                particlesManager.particlesPrefab = particlesManager.bloodPrefab;
+            }
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
-            newParticle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
             newParticle.SetActive(true);
             newParticle.transform.parent = particlesManager.transform;
             particlesManager.particlesPool[name].Add(newParticle);
