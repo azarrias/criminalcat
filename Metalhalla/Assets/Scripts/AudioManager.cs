@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
 
-    AudioSource audioSource;
+    public static AudioManager instance = null;
+    AudioSource musicSource;
 
     [Header("Music")]
     public AudioClip introCutscene;
@@ -14,17 +15,33 @@ public class AudioManager : MonoBehaviour {
 
     void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
+
         DontDestroyOnLoad(gameObject);
-        audioSource = GetComponent<AudioSource>();
+        musicSource = GetComponent<AudioSource>();
     }
 
 	// Use this for initialization
-	void Start () {
-        audioSource.clip = introCutscene;
-        audioSource.volume = 0.0f;
-        audioSource.Play();
+/*	void Start () {
+        musicSource.clip = introCutscene;
+        musicSource.volume = 0.0f;
+        musicSource.Play();
         StartCoroutine("FadeIn", 10.0f);
-	}
+	}*/
+
+    public void StopMusic()
+    {
+        musicSource.Stop();
+    }
+
+    public void PlayMusic(AudioClip clip)
+    {
+        musicSource.clip = clip;
+        musicSource.Play();
+    }
 
     void OnEnable()
     {
@@ -41,10 +58,12 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
+            case 0:
+                PlayMusic(introCutscene);
+                break;
             case 2:
-                audioSource.Stop();
-                audioSource.clip = playingLevel;
-                audioSource.Play();
+                StopMusic();
+                PlayMusic(playingLevel);
                 break;
         }
 
@@ -52,9 +71,9 @@ public class AudioManager : MonoBehaviour {
 
     IEnumerator FadeIn(float duration)
     {
-        while(audioSource.volume < 1.0f)
+        while(musicSource.volume < 1.0f)
         {
-            audioSource.volume += Time.deltaTime / duration;
+            musicSource.volume += Time.deltaTime / duration;
             yield return null;
         }
     }
