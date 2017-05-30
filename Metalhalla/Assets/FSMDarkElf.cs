@@ -126,8 +126,11 @@ public class FSMDarkElf : MonoBehaviour
                 }
                 break;
             case State.DEAD:
-                StartCoroutine(WaitForSeconds(1.0f));
-                StateExit(State.DEAD);
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") &&
+                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                {
+                    StateExit(State.DEAD);
+                }
                 break;
         }
     }
