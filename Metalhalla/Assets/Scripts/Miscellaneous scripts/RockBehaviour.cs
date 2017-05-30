@@ -6,10 +6,12 @@ public class RockBehaviour : MonoBehaviour {
 
     public int damage = 10;
     public float lifeTime = 3.0f;
+    //ParticleSystem rockDustParticles;
 
+    
     void OnEnable()
     {
-        //Invoke("DestroyRock", lifeTime);
+        //rockDustParticles.Play();
     }
 
     void OnTriggerEnter(Collider collider)
@@ -21,7 +23,8 @@ public class RockBehaviour : MonoBehaviour {
     }
 
     private void DestroyRock()
-    {      
-       gameObject.SetActive(false);
+    {
+        //rockDustParticles.Stop();
+        gameObject.SetActive(false);
     }
 }

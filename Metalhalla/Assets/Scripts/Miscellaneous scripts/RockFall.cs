@@ -68,6 +68,9 @@ public class RockFall : MonoBehaviour {
         wait = true;
         GameObject rock = rocks[rockIndex];
         rock.transform.position = sp.transform.position;
+        rock.transform.localScale = Vector3.one;
+        float randomScale = Random.Range(1.0f, 2.5f);
+        rock.transform.localScale *= randomScale;
         rock.GetComponent<Rigidbody>().velocity = Vector3.zero;
         rock.SetActive(true);       
 
