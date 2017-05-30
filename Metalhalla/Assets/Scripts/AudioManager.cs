@@ -7,9 +7,12 @@ using UnityEngine.SceneManagement;
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance = null;
-    AudioSource musicSource;
 
-    [Header("Music")]
+    [Header("Channels")]
+    public AudioSource musicSource;
+    public AudioSource fxSource;
+
+    [Header("Music Tracks")]
     public AudioClip introCutscene;
     public AudioClip playingLevel;
 
@@ -21,7 +24,6 @@ public class AudioManager : MonoBehaviour {
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-        musicSource = GetComponent<AudioSource>();
     }
 
 	// Use this for initialization
