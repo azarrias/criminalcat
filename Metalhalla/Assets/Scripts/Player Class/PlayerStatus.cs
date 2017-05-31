@@ -18,7 +18,8 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxSwing;
     public AudioClip fxJump;
     public AudioClip fxLand;
-    AudioSource playerAudioSource;
+    public AudioClip fxTornado;
+//    AudioSource playerAudioSource;
 
     [Header("Health Setup")]
     [Tooltip("Health start value")]
@@ -112,7 +113,7 @@ public class PlayerStatus : MonoBehaviour
 
         shieldMesh.GetComponent<Renderer>().enabled = false;
 
-        playerAudioSource = GetComponent<AudioSource>();
+//        playerAudioSource = GetComponent<AudioSource>();
 
         health = healthAtStart;
         stamina = staminaAtStart;
@@ -353,12 +354,11 @@ public class PlayerStatus : MonoBehaviour
     public void PlayFx( string fx)
     {
         if (fx.Equals("swing"))
-            playerAudioSource.clip = fxSwing;
+            AudioManager.instance.PlayFx(fxSwing);
         else if (fx.Equals("jump"))
-            playerAudioSource.clip = fxJump;
+            AudioManager.instance.PlayFx(fxJump);
         else if (fx.Equals("land"))
-            playerAudioSource.clip = fxLand;
-        playerAudioSource.Play();
+            AudioManager.instance.PlayFx(fxLand);
            
     }
 
