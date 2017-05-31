@@ -31,7 +31,7 @@ public class SpawnParticles : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ParticlesManager.SpawnParticle("blood", spawnPosition.position, false);
+            ParticlesManager.SpawnParticle("blood", spawnPosition.position, true);
         }
 
     }
