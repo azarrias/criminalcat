@@ -19,8 +19,8 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxJump;
     public AudioClip fxLand;
     public AudioClip fxTornado;
-    public AudioClip[] leftFootstep;
-    public AudioClip[] rightFootstep;
+    public AudioClip[] leftFootsteps;
+    public AudioClip[] rightFootsteps;
 //    AudioSource playerAudioSource;
 
     [Header("Health Setup")]
@@ -363,6 +363,10 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.PlayFx(fxLand);
         else if (fx.Equals("tornado"))
             AudioManager.instance.PlayFx(fxTornado);
+        else if (fx.Equals("leftFootstep"))
+            AudioManager.instance.RandomizePlayFx(leftFootsteps);
+        else if (fx.Equals("rightFootstep"))
+            AudioManager.instance.RandomizePlayFx(rightFootsteps);
     }
 
 }
