@@ -45,6 +45,12 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
+    public void PlayFx(AudioClip clip)
+    {
+        fxSource.clip = clip;
+        fxSource.Play();
+    }
+
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
