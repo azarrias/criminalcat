@@ -19,6 +19,8 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxJump;
     public AudioClip fxLand;
     public AudioClip fxTornado;
+    public AudioClip[] leftFootstep;
+    public AudioClip[] rightFootstep;
 //    AudioSource playerAudioSource;
 
     [Header("Health Setup")]

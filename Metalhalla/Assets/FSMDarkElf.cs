@@ -36,6 +36,9 @@ public class FSMDarkElf : MonoBehaviour
     public float rightPatrolLimit;
     public float attackRange;
 
+    [Header("Sound FXs")]
+    public AudioClip fireBall;
+
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
     private float waitingTime;
@@ -312,6 +315,7 @@ public class FSMDarkElf : MonoBehaviour
 
     private void ThrowFireBall()
     {
+        AudioManager.instance.PlayFx(fireBall);
         ParticlesManager.SpawnElfFireBall(transform.position, player.transform.position - transform.position);
     } 
 
