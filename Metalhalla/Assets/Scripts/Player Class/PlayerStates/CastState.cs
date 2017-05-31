@@ -23,6 +23,7 @@ public class CastState : PlayerState
             //if (input.newInput.GetHorizontalInput() != 0 && status.ConsumeStamina(1) == true )
             if (input.newInput.GetVerticalInput() == 0 )
             {
+                status.PlayFx("tornado");
                 // New version with ParticlesManager
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("tornado", status.transform.position + status.eagleAttackInstanceOffset, true);

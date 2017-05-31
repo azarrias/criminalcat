@@ -359,7 +359,8 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.PlayFx(fxJump);
         else if (fx.Equals("land"))
             AudioManager.instance.PlayFx(fxLand);
-           
+        else if (fx.Equals("tornado"))
+            AudioManager.instance.PlayFx(fxTornado);
     }
 
 }
