@@ -72,7 +72,7 @@ public class TornadoBehaviour : MonoBehaviour {
             ApplyDamage(damage, collider.gameObject);
         }
 
-        if ((collider.gameObject.CompareTag("Viking") || collider.gameObject.CompareTag("Dark Elf"))  && 
+        if (collider.gameObject.CompareTag("Viking")   && 
             collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.DEAD &&
             collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.STUNNED)
         {
@@ -87,6 +87,23 @@ public class TornadoBehaviour : MonoBehaviour {
                 StartCoroutine(ManageRotationDuration(rotationDuration));
             }
         }
+
+        if (collider.gameObject.CompareTag("Dark Elf") &&
+           collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.DEAD &&
+           collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.STUNNED)
+        {
+            collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
+            contains.Add(collider.gameObject);
+            ApplyDamage(damage, collider.gameObject);
+
+            if (enemyInside == false)
+            {
+                enemyInside = true;
+
+                StartCoroutine(ManageRotationDuration(rotationDuration));
+            }
+        }
+
 
         if (collider.gameObject.CompareTag("Boss"))
         {
