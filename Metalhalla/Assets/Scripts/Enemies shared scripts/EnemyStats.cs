@@ -14,6 +14,9 @@ public class EnemyStats : MonoBehaviour {
     public int meleeDamage = 5;
     public int specialAttackDamage = 25;
 
+    [Header("Sound Effects")]
+    public AudioClip fxEnemyWasHit;
+
     // Use this for initialization
     void Start () {
 		
@@ -36,6 +39,7 @@ public class EnemyStats : MonoBehaviour {
 
     public void ApplyDamage(int value)
     {
+        AudioManager.instance.PlayFx(fxEnemyWasHit);
         hitPoints -= value;
     }
 }
