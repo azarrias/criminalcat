@@ -27,9 +27,13 @@ public class MenuManager : MonoBehaviour {
     public GameObject ingameMenuBG;
     public GameObject initialMenuBG;
     private GameObject menuBG;
-      
-	// Use this for initialization
-	void Start () {
+
+    [Header("Sound Effects")]
+    public AudioClip fxSelect;
+    public AudioClip fxNavigate;
+
+    // Use this for initialization
+    void Start () {
         
         quitMenu.SetActive(false);
         optionsMenu.SetActive(false);
@@ -214,5 +218,15 @@ public class MenuManager : MonoBehaviour {
         //Set selected button
         EventSystem.current.SetSelectedGameObject(lastOptionSelected.gameObject);
 
+    }
+
+    public void ClickedButton()
+    {
+        AudioManager.instance.PlayFx(fxSelect);
+    }
+
+    public void HighlightedButton()
+    {
+        AudioManager.instance.PlayFx(fxNavigate);
     }
 }
