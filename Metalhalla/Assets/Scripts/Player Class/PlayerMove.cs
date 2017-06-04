@@ -1,40 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerMove : MonoBehaviour {
-
-    [Header("Basic move, jump & gravity Setup")]
-    public float moveSpeed = 5;
+public class PlayerMove : MonoBehaviour
+{
+    [Header("Horizontal move & acceleration Setup")]
+    [Tooltip("Speed at which the player moves when running")]
+    public float moveSpeed = 8f;
+    [Tooltip("Speed at which the player moves when dashing")]
     public float dashSpeed = 15f;
+    [Tooltip("Maximum time in which the player horizonal speed switches to its target value")]
+    public float xSpeedChangeSpeed = 0.1f; // 0.99f previous value, too low accel
+
+    [Header("Jump & gravity Setup")]
     public float gravity = 40f;
-	public float jumpSpeed = 1.8f;
-	public float timeToJumpApex = 0.2f;
-
-	public float xSpeedChangeSpeed = 0.99f;
-
+    public float jumpSpeed = 5.8f;
+    public float timeToJumpApex = 0.2f;
+    [Tooltip("Time in which the player can fall through cloud platforms")]
     public float timeToFallThroughCloudPlatforms = 0.1f;
 
-    [Header("Other move constraints")]
-    public float hitRecoil = 0.2f;
-    
+    [Header("Non interactive move Setup")]
+    [Tooltip("Recoil suffered when hit")]
+    public float hitRecoil = 5f;
 
     [HideInInspector]
-	public Vector3 speed;
-	[HideInInspector]
-	public float xCurrentSpeed;
+    public Vector3 speed;
+    [HideInInspector]
+    public float xCurrentSpeed;
 
     private float[] jumpSpeeds;
-
-
 
     private void Start()
     {
         CalculateJumpFramesSpeed();
     }
 
-    public void CalculateSpeed( PlayerInput input, PlayerStatus status, PlayerCollider collider )
-	{
+    public void CalculateSpeed(PlayerInput input, PlayerStatus status, PlayerCollider collider)
+    {
         // horizontal speed calculations
+        /*
         if (status.justHit == true)
             speed.x = status.facingRight ? -hitRecoil * Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime;
         else if (status.IsDash() == true)
@@ -43,6 +46,15 @@ public class PlayerMove : MonoBehaviour {
             speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
         else
             speed.x = 0;
+ */
+        if (status.justHit == true)
+            speed.x = Mathf.SmoothDamp(speed.x, status.facingRight ? -hitRecoil * Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        else if (status.IsDash() == true)
+            speed.x = Mathf.SmoothDamp(speed.x, status.facingRight ? dashSpeed * Time.fixedDeltaTime : -dashSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        else if (AllowHorizontalInput(status, collider))
+            speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        else 
+            speed.x = Mathf.SmoothDamp(speed.x, 0, ref xCurrentSpeed, xSpeedChangeSpeed);
 
         // vertical speed calculations
         if (status.IsJump())
@@ -50,28 +62,29 @@ public class PlayerMove : MonoBehaviour {
             speed.y = jumpSpeeds[status.jumpFrames];
             //speed.y += (jumpSpeed - gravity * Time.fixedDeltaTime) * Time.fixedDeltaTime;
         }
-        else if (status.IsFall() || status.IsFallCloud() || status.IsHit() || status.IsAttack())  
+        else if (status.IsFall() || status.IsFallCloud() || status.IsHit() || status.IsAttack())
         {
-           speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+            speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
         else if (status.IsClimb())
         {
             speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
         }
-        else 
+        else
             speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 
     }
 
-	public void Move(){
-        transform.Translate (speed);
-	}
+    public void Move()
+    {
+        transform.Translate(speed);
+    }
 
-    public bool AllowHorizontalInput( PlayerStatus status, PlayerCollider collider)
+    public bool AllowHorizontalInput(PlayerStatus status, PlayerCollider collider)
     {
         if (collider.IsGrounded() == false)
             return true;
-        if (status.IsIdle() || status.IsWalk() )
+        if (status.IsIdle() || status.IsWalk())
             return true;
         return false;
     }
@@ -87,10 +100,10 @@ public class PlayerMove : MonoBehaviour {
         //float initialJumpSpeed = gravity * timeToJumpApex; 
         float initialJumpSpeed = jumpSpeed;
 
-        jumpSpeeds = new float[maxFrame+1];
+        jumpSpeeds = new float[maxFrame + 1];
 
         jumpSpeeds[0] = 0;
-        for (int i = 1; i < maxFrame+1; i++)
+        for (int i = 1; i < maxFrame + 1; i++)
         {
             jumpSpeeds[i] = initialJumpSpeed * i * Time.fixedDeltaTime - 0.5f * gravity * i * i * Time.fixedDeltaTime * Time.fixedDeltaTime;
             jumpSpeeds[i] -= jumpSpeeds[i - 1];
