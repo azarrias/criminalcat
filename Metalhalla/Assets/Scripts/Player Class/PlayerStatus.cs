@@ -357,6 +357,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
     public bool IsDash() { return currentState == dash;  }
+    public bool IsDead() { return currentState == dead; }
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }

@@ -87,6 +87,8 @@ public class PlayerMove : MonoBehaviour
 
     public bool AllowHorizontalInput(PlayerStatus status, PlayerCollider collider)
     {
+        if (status.IsDead())
+            return false;
         if (collider.IsGrounded() == false)
             return true;
         if (status.IsIdle() || status.IsWalk())
