@@ -19,6 +19,12 @@ public class FallState : PlayerState
             return;
         }
 
+        if ((input.newInput.GetJumpButtonDown() ) && status.IsGhostJumpAvailable())
+        {
+            status.SetState(PlayerStatus.jump);
+            return;
+        }
+
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
 
@@ -35,6 +41,8 @@ public class FallState : PlayerState
                 status.SetState(PlayerStatus.idle);
             status.PlayFx("land");
         }
+        else
+            status.framesInDelayCount++;
     }
 
 }

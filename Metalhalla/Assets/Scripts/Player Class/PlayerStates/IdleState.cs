@@ -84,7 +84,10 @@ public class IdleState : PlayerState {
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
         if (collider.IsGrounded() == false)
+        {
             status.SetState(PlayerStatus.fall);
+            status.framesInDelayCount = 0;
+        }
 
     }
 

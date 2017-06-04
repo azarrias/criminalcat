@@ -90,7 +90,10 @@ public class WalkState : PlayerState
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
         if (collider.IsGrounded() == false)
+        {
             status.SetState(PlayerStatus.fall);
+            status.framesInDelayCount = 0;
+        }
 
         if ((collider.collisions.left == true && input.newInput.GetHorizontalInput() < 0) || (collider.collisions.right == true && input.newInput.GetHorizontalInput() > 0))
             status.SetState(PlayerStatus.idle);

@@ -56,6 +56,10 @@ public class PlayerStatus : MonoBehaviour
     public int beerHealthRecovery = 20;
     int beer;
 
+    [Header("Ghost Jump parameters")]
+    [Tooltip("Number of frames in which the player can still jump after losing foot in their last platform")]
+    public int framesToJumpInDelay = 5;
+
     [Header("Moveset Durations")]
     public float attackDuration = 0.5f;
     public float castDuration = 0.5f;
@@ -107,6 +111,8 @@ public class PlayerStatus : MonoBehaviour
     public bool justHit;
     [HideInInspector]
     public int jumpFrames;
+    [HideInInspector]
+    public int framesInDelayCount; 
 
     // -- Debug variables -- // 
     private bool godMode = false;
@@ -157,6 +163,7 @@ public class PlayerStatus : MonoBehaviour
 
         justHit = false;
         jumpFrames = 0;
+        framesInDelayCount = 0; 
 
         godMode = false;
 
@@ -379,7 +386,7 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(rightFootsteps);
     }
 
-    // ---- ROTATION functions --------------------------------------------------------------------------------------------
+    // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
     public void SetClimbStateModelRotation()
     {
         playerModel.transform.localRotation = playerModelClimbRotation;
@@ -389,4 +396,13 @@ public class PlayerStatus : MonoBehaviour
     {
         playerModel.transform.localRotation = playerModelDefaultRotation;
     }
+
+    // ---- GHOST JUMP functions --------------------------------------------------------------------------------------------------
+    public bool IsGhostJumpAvailable()
+    {
+        return framesInDelayCount <= framesToJumpInDelay;
+    }
+
+
+
 }
