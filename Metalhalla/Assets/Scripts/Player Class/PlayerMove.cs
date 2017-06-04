@@ -11,12 +11,14 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("Maximum time in which the player horizonal speed switches to its target value")]
     public float xSpeedChangeSpeed = 0.1f; // 0.99f previous value, too low accel
 
-    [Header("Jump & gravity Setup")]
+    [Header("Vertical move, jump & gravity Setup")]
     public float gravity = 40f;
     public float jumpSpeed = 5.8f;
     public float timeToJumpApex = 0.2f;
     [Tooltip("Time in which the player can fall through cloud platforms")]
     public float timeToFallThroughCloudPlatforms = 0.1f;
+    [Tooltip("Climb Speed")]
+    public float climbSpeed = 4f; 
 
     [Header("Non interactive move Setup")]
     [Tooltip("Recoil suffered when hit")]
@@ -26,6 +28,8 @@ public class PlayerMove : MonoBehaviour
     public Vector3 speed;
     [HideInInspector]
     public float xCurrentSpeed;
+    [HideInInspector]
+    public float yCurrentSpeed;
 
     private float[] jumpSpeeds;
 
@@ -68,10 +72,11 @@ public class PlayerMove : MonoBehaviour
         }
         else if (status.IsClimb())
         {
-            speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+            //speed.y = moveSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
+            speed.y = climbSpeed * Time.fixedDeltaTime * input.newInput.GetVerticalInput();
         }
         else
-            speed.y = -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
+            speed.y += -gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 
     }
 
