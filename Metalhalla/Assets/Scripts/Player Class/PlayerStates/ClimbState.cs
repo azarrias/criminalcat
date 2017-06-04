@@ -7,12 +7,17 @@ public class ClimbState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        if (input.newInput.GetJumpButtonDown() == true || status.climbLadderAvailable == false )
+        status.playerAnimator.speed = 1;
+        if (input.newInput.GetJumpButtonDown() == true || status.climbLadderAvailable == false)
         {
             status.SetState(PlayerStatus.fall);
         }
         else
-            status.SetState(PlayerStatus.climb); 
+        {
+            status.SetState(PlayerStatus.climb);
+            if (input.newInput.GetVerticalInput() == 0 && input.newInput.GetHorizontalInput() == 0)
+                status.playerAnimator.speed = 0;
+        }
         
     }
 

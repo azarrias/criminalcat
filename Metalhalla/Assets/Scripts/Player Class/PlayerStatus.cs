@@ -21,7 +21,10 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxTornado;
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
-//    AudioSource playerAudioSource;
+    //    AudioSource playerAudioSource;
+
+    [HideInInspector]
+    public Animator playerAnimator;
 
     [Header("Health Setup")]
     [Tooltip("Health start value")]
@@ -32,11 +35,11 @@ public class PlayerStatus : MonoBehaviour
 
     [Header("Stamina Setup")]
     [Tooltip("Starting stamina value")]
-    public int staminaAtStart = 10;
+    public int staminaAtStart = 4;
     [Tooltip("Stamina maximum value")]
     public int staminaMaximum = 10;
     [Tooltip("Stamina recovery rate per second")]
-    public float staminaRecoveryRate = 1.0f;
+    public float staminaRecoveryRate = 0.0f;
     int stamina;
     float staminaRecovery;
 
@@ -50,14 +53,14 @@ public class PlayerStatus : MonoBehaviour
     int beer;
 
     [Header("Moveset Durations")]
-    public float attackDuration = 0.400f;
+    public float attackDuration = 0.5f;
     public float castDuration = 0.5f;
-    public float hitDuration = 0.5f;
-    public float refillDuration = 0.9f;
+    public float hitDuration = 0.4f;
+    public float refillDuration = 1.5f;
     public float drinkDuration = 0.5f;
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
-    public float dashDuration = 0.3f;
+    public float dashDuration = 0.4f;
 
     [Header("Respawn management")]
     public Vector3 initialPosition;
@@ -104,10 +107,8 @@ public class PlayerStatus : MonoBehaviour
     // -- Debug variables -- // 
     private bool godMode = false;
 
-
     void Start()
     {
-
         hammerMesh.GetComponent<Renderer>().enabled = false;    // change if the hammer is to be visible always
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
@@ -115,7 +116,8 @@ public class PlayerStatus : MonoBehaviour
 
         shieldMesh.GetComponent<Renderer>().enabled = false;
 
-//        playerAudioSource = GetComponent<AudioSource>();
+        //        playerAudioSource = GetComponent<AudioSource>();
+        playerAnimator = GetComponent<Animator>();
 
         health = healthAtStart;
         stamina = staminaAtStart;
