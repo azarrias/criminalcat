@@ -3,6 +3,10 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour
 {
+    [Header("Full model elements")]
+    public GameObject playerModel;
+    Quaternion playerModelDefaultRotation;
+    Quaternion playerModelClimbRotation;
 
     [Header("Attack Elements")]
     public GameObject hammerMesh;
@@ -109,6 +113,9 @@ public class PlayerStatus : MonoBehaviour
 
     void Start()
     {
+        playerModelDefaultRotation = playerModel.transform.localRotation;
+        playerModelClimbRotation = Quaternion.identity;
+
         hammerMesh.GetComponent<Renderer>().enabled = false;    // change if the hammer is to be visible always
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
@@ -371,4 +378,14 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(rightFootsteps);
     }
 
+    // ---- ROTATION functions --------------------------------------------------------------------------------------------
+    public void SetClimbStateModelRotation()
+    {
+        playerModel.transform.localRotation = playerModelClimbRotation;
+    }
+
+    public void SetInitialModelRotation()
+    {
+        playerModel.transform.localRotation = playerModelDefaultRotation;
+    }
 }

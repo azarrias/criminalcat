@@ -7,10 +7,15 @@ public class ClimbState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
+        if (status.previousState != this)
+            status.SetClimbStateModelRotation(); 
+
         status.playerAnimator.speed = 1;
+
         if (input.newInput.GetJumpButtonDown() == true || status.climbLadderAvailable == false)
         {
             status.SetState(PlayerStatus.fall);
+            status.SetInitialModelRotation();
         }
         else
         {
@@ -24,7 +29,10 @@ public class ClimbState : PlayerState
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
     {
         if (collider.collisions.below == true)
+        {
             status.SetState(PlayerStatus.idle);
+            status.SetInitialModelRotation();
+        }
     }
 
 }
