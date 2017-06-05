@@ -112,7 +112,11 @@ public class PlayerStatus : MonoBehaviour
     [HideInInspector]
     public int jumpFrames;
     [HideInInspector]
-    public int framesInDelayCount; 
+    public int framesInDelayCount;
+
+    // -- Camera shake variables -- // 
+    private CameraFollow camFollow; 
+    
 
     // -- Debug variables -- // 
     private bool godMode = false;
@@ -163,7 +167,9 @@ public class PlayerStatus : MonoBehaviour
 
         justHit = false;
         jumpFrames = 0;
-        framesInDelayCount = 0; 
+        framesInDelayCount = 0;
+
+        camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
 
         godMode = false;
 
@@ -231,6 +237,8 @@ public class PlayerStatus : MonoBehaviour
     // ---- HEALTH functions ---------------------------------------------------------------------------------------------
     public void ApplyDamage(int damage)
     {
+        if (!godMode && currentState != dead)
+            camFollow.StartShake();
         if (!godMode && currentState != defense && currentState != dead)
         {
             health -= damage;
