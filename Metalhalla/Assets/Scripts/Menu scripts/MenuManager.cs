@@ -233,12 +233,24 @@ public class MenuManager : MonoBehaviour {
     public void SetMusicVolume(Slider slider)
     {
         HighlightedButton();
-        AudioManager.instance.mixer.SetFloat("MusicVolume", slider.value);
+
+        if (slider.value > 0.05f)
+        {
+            AudioManager.instance.mixer.SetFloat("MusicVolume", 20.0f * Mathf.Log10(slider.value));
+        }
+        else
+            AudioManager.instance.mixer.SetFloat("MusicVolume", -144.0f);
     }
 
     public void SetFxVolume(Slider slider)
     {
         HighlightedButton();
-        AudioManager.instance.mixer.SetFloat("FXVolume", slider.value);
+
+        if (slider.value > 0.05f)
+        {
+            AudioManager.instance.mixer.SetFloat("FXVolume", 20.0f * Mathf.Log10(slider.value));
+        }
+        else
+            AudioManager.instance.mixer.SetFloat("FXVolume", -144.0f);
     }
 }
