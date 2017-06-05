@@ -25,6 +25,12 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("Draws a box with the move zone, and the center position of the camera")]
     public bool showMoveBox = true;
 
+    [Header("Camera Shake Setup")]
+    public float magnitude = 0.1f;
+    [Tooltip("Shake duration")]
+    public float duration= 0.1f;
+    private bool shaking = false; 
+
     private Vector3 playerPosition;
     private float distanceFromPlayer = -10;
 
@@ -50,11 +56,17 @@ public class CameraFollow : MonoBehaviour
         }
         SetLimits(limitLeft, limitRight, limitTop, limitBottom);
         lastCameraPositionBeforeActiveTracking = transform.position;
+        shaking = false; 
     }
 
 
     void LateUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("SHAKEEE");
+            StartShake();
+        }
         SetCameraPosition();
         if (showMoveBox)
             ShowBox();
@@ -67,31 +79,38 @@ public class CameraFollow : MonoBehaviour
 
         if (activeTracking == true)
         {
-            Vector3 cameraPosition = transform.position;
-
-            if (playerPosition.x > limitLeft && playerPosition.x < limitRight)
-                cameraPosition.x = playerPosition.x;
+            if (shaking == true)
+            {
+                StartCoroutine(Shake());
+            }
             else
             {
-                if (playerPosition.x < limitLeft && Mathf.Abs(cameraPosition.x - limitLeft) > 0.1f)
-                    cameraPosition.x = limitLeft;
-                else if (playerPosition.x > limitRight && Mathf.Abs(cameraPosition.x - limitRight) > 0.1f)
-                    cameraPosition.x = limitRight;
+                Vector3 cameraPosition = transform.position;
+
+                if (playerPosition.x > limitLeft && playerPosition.x < limitRight)
+                    cameraPosition.x = playerPosition.x;
+                else
+                {
+                    if (playerPosition.x < limitLeft && Mathf.Abs(cameraPosition.x - limitLeft) > 0.1f)
+                        cameraPosition.x = limitLeft;
+                    else if (playerPosition.x > limitRight && Mathf.Abs(cameraPosition.x - limitRight) > 0.1f)
+                        cameraPosition.x = limitRight;
+                }
+
+                if (playerPosition.y < limitTop && playerPosition.y > limitBottom)
+                    cameraPosition.y = playerPosition.y;
+                else
+                {
+                    if (playerPosition.y > limitTop && Mathf.Abs(cameraPosition.y - limitTop) > 0.1f)
+                        cameraPosition.y = limitTop;
+                    else if (playerPosition.y < limitBottom && Mathf.Abs(cameraPosition.y - limitBottom) > 0.1f)
+                        cameraPosition.y = limitBottom;
+                }
+
+                transform.position = cameraPosition;
+
+                lastCameraPositionBeforeActiveTracking = transform.position;
             }
-
-            if (playerPosition.y < limitTop && playerPosition.y > limitBottom)
-                cameraPosition.y = playerPosition.y;
-            else
-            {
-                if (playerPosition.y > limitTop && Mathf.Abs(cameraPosition.y - limitTop) > 0.1f)
-                    cameraPosition.y = limitTop;
-                else if (playerPosition.y < limitBottom && Mathf.Abs(cameraPosition.y - limitBottom) > 0.1f)
-                    cameraPosition.y = limitBottom;
-            }
-
-            transform.position = cameraPosition;
-
-            lastCameraPositionBeforeActiveTracking = transform.position;
         }
         else
         {
@@ -205,4 +224,36 @@ public class CameraFollow : MonoBehaviour
         targetPosition.z = distanceFromPlayer;
         return targetPosition;
     }
+
+    //-- Camera Shake
+    IEnumerator Shake()
+    {
+        float elapsedTime = 0.0f;
+        Vector3 originalCamPos = transform.position;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float percentComplete = elapsedTime / duration;
+            float damper = 1.0f - Mathf.Clamp(4.0f * percentComplete - 3.0f, 0.0f, 1.0f);
+
+            float x = Random.value * 2.0f - 1.0f;
+            float y = Random.value * 2.0f - 1.0f;
+
+            x *= magnitude * damper;
+            y *= magnitude * damper;
+
+
+            transform.position = originalCamPos + new Vector3(x, y, 0);
+
+            yield return 0;
+        }
+        shaking = false;
+        transform.localPosition = originalCamPos;
+    }
+
+    public void StartShake() { shaking = true; }
+    void StopShake(){ shaking = false; }
+
 }
