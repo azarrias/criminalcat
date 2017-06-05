@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance = null;
+    public AudioMixer mixer;
 
     [Header("Channels")]
     public AudioSource musicSource;
