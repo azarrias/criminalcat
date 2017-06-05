@@ -229,4 +229,16 @@ public class MenuManager : MonoBehaviour {
     {
         AudioManager.instance.PlayFx(fxNavigate);
     }
+
+    public void SetMusicVolume(Slider slider)
+    {
+        HighlightedButton();
+        Debug.Log(slider.value);
+    }
+
+    public void SetFxVolume(Slider slider)
+    {
+        HighlightedButton();
+        Debug.Log(slider.value);
+    }
 }
