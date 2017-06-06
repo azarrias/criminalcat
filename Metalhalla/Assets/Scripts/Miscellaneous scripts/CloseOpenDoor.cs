@@ -5,13 +5,13 @@ using UnityEngine;
 public class CloseOpenDoor : MonoBehaviour {
 
     private  GameObject movingDoor = null;
-    private Vector3 localInitialPosition = new Vector3(87.71f, 27.31f, 0.0f);
+    public Vector3 localInitialPosition = new Vector3(87.71f, 27.31f, 0.0f);
     private bool closed = false;   
     private bool playerInside = false;
 
     void Awake()
     {
-        movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
+        movingDoor = gameObject;
         if (movingDoor == null)
             Debug.Log("movingDoor not found.");   
     }
@@ -42,7 +42,7 @@ public class CloseOpenDoor : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.name == "BossFightAreaFloor")
+        if (collider.gameObject.name == "BossFightAreaFloor" || LayerMask.LayerToName(collider.gameObject.layer) == "ground")
             closed = true;
     }
 

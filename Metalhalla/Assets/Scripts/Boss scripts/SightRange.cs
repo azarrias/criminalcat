@@ -5,7 +5,7 @@ using UnityEngine;
 public class SightRange : MonoBehaviour {
 
     FSMBoss fsmBoss = null;
-    GameObject movingDoor = null;
+    GameObject[] movingDoors;
 
     void Awake()
     {
@@ -13,8 +13,8 @@ public class SightRange : MonoBehaviour {
         if (fsmBoss == null)
             Debug.LogError("Error: fsmBoss not found");
 
-        movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
-        if (movingDoor == null)
+        movingDoors = GameObject.FindGameObjectsWithTag("MovingDoor");
+        if (movingDoors.Length == 0)
             Debug.Log("Error : movingDoor not found.");
     }
 
@@ -32,8 +32,11 @@ public class SightRange : MonoBehaviour {
     {
         if (collider.CompareTag("Player"))
         {
-            movingDoor.SendMessage("PlayerInside");
-
+            foreach (var movingDoor in movingDoors)
+            {
+                movingDoor.SendMessage("PlayerInside");
+            }
+            
             fsmBoss.playerInSight = true;
 
             Vector3 playerPos = collider.gameObject.transform.position;
