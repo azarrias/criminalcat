@@ -14,6 +14,9 @@ public class IceSpikesBehaviour : MonoBehaviour {
     public bool isPlayerSafe = false;
     public int spikesDamage = 25;
 
+    private SafeAreaRight safeAreaRightScript;
+    private SafeAreaLeft safeAreaLeftScript;
+
     private GameObject rightSphere = null;
     private GameObject leftSphere = null;
 
@@ -40,6 +43,14 @@ public class IceSpikesBehaviour : MonoBehaviour {
         leftSphere = transform.FindChild("LeftSphere").gameObject;
         if (leftSphere == null)
             Debug.Log("Error: leftSphere not found.");
+
+        safeAreaRightScript = transform.FindChild("SafeAreaRight").gameObject.GetComponent<SafeAreaRight>();
+        if (safeAreaRightScript == null)
+            Debug.Log("Error: safeAreaRightScript not found");
+
+        safeAreaLeftScript = transform.FindChild("SafeAreaLeft").gameObject.GetComponent<SafeAreaLeft>();
+        if (safeAreaLeftScript == null)
+            Debug.Log("Error: safeAreaLeftScript not found");
 
     }
 	
@@ -121,7 +132,10 @@ public class IceSpikesBehaviour : MonoBehaviour {
 
     public void ApplySpikesDamage()
     {
-        if(isPlayerSafe == false)
+        if(leftSafe && !safeAreaLeftScript.isOnLeftSafeArea)
+            thePlayer.SendMessage("ApplyDamage", spikesDamage, SendMessageOptions.DontRequireReceiver);
+
+        if (rightSafe && !safeAreaRightScript.isOnRightSafeArea)
             thePlayer.SendMessage("ApplyDamage", spikesDamage, SendMessageOptions.DontRequireReceiver);
     }
 

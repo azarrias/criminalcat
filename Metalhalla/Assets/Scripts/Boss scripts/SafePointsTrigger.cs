@@ -6,6 +6,8 @@ public class SafePointsTrigger : MonoBehaviour {
 
     private IceSpikesBehaviour iceSpikesScript = null;
     private GameObject thePlayer = null;
+    private bool isOnRightCollider = false;
+    private bool isOnLeftCollider = false;
 
     // Use this for initialization
     void Start()
@@ -20,16 +22,27 @@ public class SafePointsTrigger : MonoBehaviour {
        
 	}
 
-    void OnTriggerStay(Collider collider)
+    void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Player"))
         {
-            if (iceSpikesScript.rightSafe == true && gameObject.name == "SafePointRight")        
-                iceSpikesScript.isPlayerSafe = true;
-                        
-            if (iceSpikesScript.leftSafe == true && gameObject.name == "SafePointLeft")
-                iceSpikesScript.isPlayerSafe = true;
+            if (gameObject.name == "SafePointRight")
+                isOnRightCollider = true;
+
+            if (gameObject.name == "SafePointLeft")
+                isOnLeftCollider = true;
         }
     }
 
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            if (gameObject.name == "SafePointRight")
+                isOnRightCollider = false;
+
+            if (gameObject.name == "SafePointLeft")
+                isOnLeftCollider = false;
+        }
+    }
 }
