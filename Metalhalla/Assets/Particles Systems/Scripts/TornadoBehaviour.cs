@@ -16,17 +16,43 @@ public class TornadoBehaviour : MonoBehaviour {
     private Transform tornadoEyeTr = null;
     private FSMBoss fsmBoss = null;
 
+    public GameObject tornadoCircleGO;
+    private ParticleSystem tornadoCirclesPS;
+    private ParticleSystem.Particle[] tornadoCircles;
+
+    public GameObject foggyBaseGO;
+    private ParticleSystem foggyBasePS;
+    private ParticleSystem.Particle[] baseEffects;
+
+    public GameObject smallFragmentsGO;
+    private ParticleSystem smallFragmentsPS;
+    private ParticleSystem.Particle[] smallFragments;
+
+    private bool disipating = false;
+    private int counter = 0;
+    
+    public float fadeSpeed = 0.1f;
+    public float fadeFrames = 120;
+
     void Awake()
     {
         fsmBoss = FindObjectOfType<FSMBoss>();
         if (fsmBoss == null)
             Debug.Log("Error: fsmBoss not found.");
         contains = new List<GameObject>();
+
+        tornadoCirclesPS = tornadoCircleGO.GetComponent<ParticleSystem>();
+        foggyBasePS = foggyBaseGO.GetComponent<ParticleSystem>();
+        smallFragmentsPS = smallFragmentsGO.GetComponent<ParticleSystem>();
     }
 
-	void Start () {          
+	void Start ()
+    {                
         tornadoEyeTr = transform.FindChild("TornadoEye");
-	}
+        tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
+        baseEffects = new ParticleSystem.Particle[foggyBasePS.main.maxParticles];
+        smallFragments = new ParticleSystem.Particle[smallFragmentsPS.main.maxParticles];
+    }
 
     void OnEnable()
     {
@@ -35,7 +61,7 @@ public class TornadoBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!enemyInside)
+        if (!enemyInside && !disipating)
         {
             if (facingRight)
             {
@@ -56,6 +82,56 @@ public class TornadoBehaviour : MonoBehaviour {
                     AbsorbEnemy(go);
                     RotateEnemy(go);           
                 //}
+            }
+        }
+
+        if(disipating)
+        {
+            int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
+            for (int i = 0; i < numParticlesAlive; i++)
+            {
+                Color newColor = tornadoCircles[i].GetCurrentColor(tornadoCirclesPS);
+                newColor.a -= fadeSpeed * Time.deltaTime;               
+                if (newColor.a < 0.0f)
+                    newColor.a = 0.0f;
+
+                tornadoCircles[i].startColor = newColor;
+                tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
+            }
+
+            numParticlesAlive = foggyBasePS.GetParticles(baseEffects);
+            for (int i = 0; i < numParticlesAlive; i++)
+            {
+                Color newColor = baseEffects[i].GetCurrentColor(foggyBasePS);
+
+                Debug.Log("color.a = " + newColor.a);
+
+                newColor.a -= fadeSpeed * Time.deltaTime;
+                if (newColor.a < 0.0f)
+                    newColor.a = 0.0f;
+
+                baseEffects[i].startColor = newColor;
+                foggyBasePS.SetParticles(baseEffects, numParticlesAlive);
+            }
+
+            numParticlesAlive = smallFragmentsPS.GetParticles(smallFragments);
+            for (int i = 0; i < numParticlesAlive; i++)
+            {
+                Color newColor = smallFragments[i].GetCurrentColor(smallFragmentsPS);
+                newColor.a -= fadeSpeed * Time.deltaTime;
+                if (newColor.a < 0.0f)
+                    newColor.a = 0.0f;
+
+                smallFragments[i].startColor = newColor;
+                smallFragmentsPS.SetParticles(smallFragments, numParticlesAlive);
+            }
+
+            counter++;
+            if(counter == fadeFrames)
+            {
+                gameObject.SetActive(false);
+                counter = 0;
+                disipating = false;
             }
         }
 	}
@@ -130,7 +206,8 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         //tornado disipation effect
         //gameObject.GetComponent<ParticleSystem>().Stop();
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        disipating = true;
 
     }
 
