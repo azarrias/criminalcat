@@ -100,10 +100,10 @@ public class TornadoBehaviour : MonoBehaviour {
             }
 
             ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
-            foggyEmission.rateOverTime = 1.0f;
+            foggyEmission.rateOverTime = 0.0f;
 
             ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
-            dustEmission.rateOverTime = 1.0f;
+            dustEmission.rateOverTime = 0.0f;
 
             counter++;
             if (counter == fadeFrames)
