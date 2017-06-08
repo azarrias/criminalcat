@@ -7,10 +7,15 @@ public class DeadState : PlayerState
     int deadFramesDuration;
     int deadFramesCount;
 
+    int frameToReduceCollider;
+    int frameToRestoreCollider;
+
     public DeadState( int animationFramesDuration)
     {
         deadFramesDuration = animationFramesDuration;
-        deadFramesCount = 0; 
+        deadFramesCount = 0;
+        frameToReduceCollider = 15;
+        frameToRestoreCollider = deadFramesDuration -1;
     }
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
@@ -34,7 +39,13 @@ public class DeadState : PlayerState
             return;
         }
         else
+        {
             status.SetState(this);
+            if (deadFramesCount == frameToReduceCollider)
+                status.SetColliderYSize(1.1f);
+            if (deadFramesCount == frameToRestoreCollider)
+                status.RestoreColliderSize();
+        }
         deadFramesCount++;
     }
 

@@ -115,8 +115,10 @@ public class PlayerStatus : MonoBehaviour
     public int framesInDelayCount;
 
     // -- Camera shake variables -- // 
-    private CameraFollow camFollow; 
-    
+    private CameraFollow camFollow;
+
+    // -- Collider adjustment variables -- // 
+    private Vector3 colliderSize;
 
     // -- Debug variables -- // 
     private bool godMode = false;
@@ -133,7 +135,6 @@ public class PlayerStatus : MonoBehaviour
 
         shieldMesh.GetComponent<Renderer>().enabled = false;
 
-        //        playerAudioSource = GetComponent<AudioSource>();
         playerAnimator = GetComponent<Animator>();
 
         health = healthAtStart;
@@ -170,6 +171,8 @@ public class PlayerStatus : MonoBehaviour
         framesInDelayCount = 0;
 
         camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
+
+        colliderSize = GetComponent<BoxCollider>().size;
 
         godMode = false;
 
@@ -411,6 +414,18 @@ public class PlayerStatus : MonoBehaviour
         return framesInDelayCount <= framesToJumpInDelay;
     }
 
+    // ---- DEAD STATE COLLIDER adjustment functions ------------------------------------------------------------------------------
+    public void RestoreColliderSize()
+    {
+        GetComponent<BoxCollider>().size = colliderSize;
+    }
+
+    public void SetColliderYSize( float ySize )
+    {
+        Vector3 tmpSize = colliderSize;
+        tmpSize.y = ySize;
+        GetComponent<BoxCollider>().size = tmpSize;
+    }
 
 
 }
