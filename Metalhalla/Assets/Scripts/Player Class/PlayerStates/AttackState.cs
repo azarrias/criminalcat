@@ -20,7 +20,6 @@ public class AttackState : PlayerState
         if (status.previousState != this)
         {
             attackFramesCount = 0;
-            status.hammerMesh.GetComponent<Renderer>().enabled = true;
             status.lightningGenerator.SetActive(true);  // lightning on
             
         }
@@ -28,7 +27,6 @@ public class AttackState : PlayerState
         if ( attackColliderDelay <= attackFramesCount && status.attackCollider.enabled == false)
         {
             status.attackCollider.enabled = true;
-            status.attackCollider.GetComponent<Renderer>().enabled = true;
             status.PlayFx("swing");
         }
         
@@ -47,7 +45,6 @@ public class AttackState : PlayerState
                 status.SetState(PlayerStatus.idle);
             status.attackCollider.enabled = false;
             status.attackCollider.GetComponent<Renderer>().enabled = false;
-            status.hammerMesh.GetComponent<Renderer>().enabled = false;
             status.lightningGenerator.SetActive(false);  // lightning off
             attackFramesCount = 0; 
         }

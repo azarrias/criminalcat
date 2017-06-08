@@ -25,7 +25,6 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxTornado;
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
-    //    AudioSource playerAudioSource;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -128,7 +127,6 @@ public class PlayerStatus : MonoBehaviour
         playerModelDefaultRotation = playerModel.transform.localRotation;
         playerModelClimbRotation = Quaternion.identity;
 
-        hammerMesh.GetComponent<Renderer>().enabled = false;    // change if the hammer is to be visible always
         attackCollider.enabled = false;
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
@@ -239,10 +237,16 @@ public class PlayerStatus : MonoBehaviour
     {
         previousState = currentState;
         currentState = newState;
+
+        // show hammer always except when climbing, being hit or dead
+        if (newState != climb && newState != hit && newState != dead && newState != defense)
+            hammerMesh.GetComponent<Renderer>().enabled = true;
+        else
+            hammerMesh.GetComponent<Renderer>().enabled = false;
+
         if (newState != attack)
         {
             attackCollider.enabled = false;
-            attackCollider.GetComponent<Renderer>().enabled = false;
         }
         else if (newState != defense)
         {
