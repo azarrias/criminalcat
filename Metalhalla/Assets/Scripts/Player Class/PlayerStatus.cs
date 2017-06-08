@@ -59,7 +59,8 @@ public class PlayerStatus : MonoBehaviour
     public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
     [Header("Magic Setup")]
     public MAGIC magicAtStart = MAGIC.EAGLE;
-    MAGIC magic;  
+    [HideInInspector]
+    public MAGIC magic;  
 
     [Header("Ghost Jump parameters")]
     [Tooltip("Number of frames in which the player can still jump after losing foot in their last platform")]
@@ -388,8 +389,7 @@ public class PlayerStatus : MonoBehaviour
         magicShiftAvailable = false;
         int total = (int)MAGIC.numMagics;
         int current = (int) magic;
-        int newMagic = forwards ? current + 1 + total : current - 1 + total;
-        newMagic = newMagic % total;
+        int newMagic = (forwards ? current + 1 + total : current - 1 + total) % total;
         magic = (MAGIC) newMagic;
     }
 
