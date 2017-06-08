@@ -22,17 +22,16 @@ public class TornadoBehaviour : MonoBehaviour {
 
     public GameObject foggyBaseGO;
     private ParticleSystem foggyBasePS;
-    private ParticleSystem.Particle[] baseEffects;
 
     public GameObject smallFragmentsGO;
     private ParticleSystem smallFragmentsPS;
-    private ParticleSystem.Particle[] smallFragments;
-
+    
     private bool disipating = false;
     private int counter = 0;
     
     public float fadeSpeed = 0.1f;
     public float fadeFrames = 120;
+    float acum = 0.0f;
 
     void Awake()
     {
@@ -50,8 +49,6 @@ public class TornadoBehaviour : MonoBehaviour {
     {                
         tornadoEyeTr = transform.FindChild("TornadoEye");
         tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
-        baseEffects = new ParticleSystem.Particle[foggyBasePS.main.maxParticles];
-        smallFragments = new ParticleSystem.Particle[smallFragmentsPS.main.maxParticles];
     }
 
     void OnEnable()
@@ -83,15 +80,18 @@ public class TornadoBehaviour : MonoBehaviour {
                     RotateEnemy(go);           
                 //}
             }
-        }
+        }        
+    }
 
-        if(disipating)
+    void LateUpdate()
+    {
+        if (disipating)
         {
             int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
             for (int i = 0; i < numParticlesAlive; i++)
             {
                 Color newColor = tornadoCircles[i].GetCurrentColor(tornadoCirclesPS);
-                newColor.a -= fadeSpeed * Time.deltaTime;               
+                newColor.a -= fadeSpeed * Time.deltaTime;
                 if (newColor.a < 0.0f)
                     newColor.a = 0.0f;
 
@@ -99,42 +99,23 @@ public class TornadoBehaviour : MonoBehaviour {
                 tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
             }
 
-            numParticlesAlive = foggyBasePS.GetParticles(baseEffects);
-            for (int i = 0; i < numParticlesAlive; i++)
-            {
-                Color newColor = baseEffects[i].GetCurrentColor(foggyBasePS);
+            ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
+            foggyEmission.rateOverTime = 1.0f;
 
-                Debug.Log("color.a = " + newColor.a);
-
-                newColor.a -= fadeSpeed * Time.deltaTime;
-                if (newColor.a < 0.0f)
-                    newColor.a = 0.0f;
-
-                baseEffects[i].startColor = newColor;
-                foggyBasePS.SetParticles(baseEffects, numParticlesAlive);
-            }
-
-            numParticlesAlive = smallFragmentsPS.GetParticles(smallFragments);
-            for (int i = 0; i < numParticlesAlive; i++)
-            {
-                Color newColor = smallFragments[i].GetCurrentColor(smallFragmentsPS);
-                newColor.a -= fadeSpeed * Time.deltaTime;
-                if (newColor.a < 0.0f)
-                    newColor.a = 0.0f;
-
-                smallFragments[i].startColor = newColor;
-                smallFragmentsPS.SetParticles(smallFragments, numParticlesAlive);
-            }
+            ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
+            dustEmission.rateOverTime = 1.0f;
 
             counter++;
-            if(counter == fadeFrames)
+            if (counter == fadeFrames)
             {
                 gameObject.SetActive(false);
                 counter = 0;
                 disipating = false;
+                foggyEmission.rateOverTime = 50.0f;
+                dustEmission.rateOverTime = 50.0f;
             }
         }
-	}
+    }
 
     void OnTriggerEnter(Collider collider)
     {
