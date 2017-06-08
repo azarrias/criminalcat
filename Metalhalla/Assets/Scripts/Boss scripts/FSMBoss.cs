@@ -40,6 +40,7 @@ public class FSMBoss : MonoBehaviour
 
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
+    IceSpikesBehaviour3D iceSpikesScript3D = null;
 
     private State currState = State.START;
     private State prevState = State.START;
@@ -135,7 +136,11 @@ public class FSMBoss : MonoBehaviour
         
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
         if (iceSpikesScript == null)
-            Debug.LogError("Error: iceSpikesScript not found.");
+        {
+            iceSpikesScript3D = FindObjectOfType<IceSpikesBehaviour3D>();
+            if(iceSpikesScript3D == null)
+                Debug.LogError("Error: iceSpikesScript not found.");
+        }
 
         castingArea = GameObject.FindGameObjectWithTag("CastingArea");
         if (castingArea == null)
@@ -618,8 +623,12 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             
             //Select the safe side to go when spikes are on
-            iceSpikesScript.SelectIceSafe();
-            
+            if(iceSpikesScript != null)
+                iceSpikesScript.SelectIceSafe();
+
+            if (iceSpikesScript3D != null)
+                iceSpikesScript3D.SelectIceSafe();
+
         }
         else
         {
@@ -646,9 +655,18 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
 
-            //Sacar los pinchos y dejarlos durante un tiempo               
-            iceSpikesScript.ShowIceSpikes();         
-            StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));                  
+            //Sacar los pinchos y dejarlos durante un tiempo
+            if (iceSpikesScript != null)
+            {
+                iceSpikesScript.ShowIceSpikes();
+                StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));
+            }
+
+            if (iceSpikesScript3D != null)
+            {
+                iceSpikesScript3D.ShowIceSpikes();
+                StartCoroutine(FinishCastIceSpikesAnimation(castSpikesDuration));
+            }
         } 
     }
 
@@ -659,7 +677,12 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "BackToCenter";
             bossAnimator.SetBool(currAnimation, true);
-            iceSpikesScript.HideIceSpikes();                  
+
+            if(iceSpikesScript != null)
+                iceSpikesScript.HideIceSpikes(); 
+             
+            if(iceSpikesScript3D != null)
+                iceSpikesScript3D.HideIceSpikes();
         }
         else
         {

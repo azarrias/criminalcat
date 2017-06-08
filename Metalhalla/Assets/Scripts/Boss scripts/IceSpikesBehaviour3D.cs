@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class IceSpikesBehaviour : MonoBehaviour {
+public class IceSpikesBehaviour3D : MonoBehaviour {
 
     private Animator spikesAnimator = null;
     private GameObject spikesLeft1 = null;
+    private GameObject spikesLeft2 = null;
     private GameObject spikesRight1 = null;
+    private GameObject spikesRight2 = null;
     public bool leftSafe = false;
     public bool rightSafe = false;
     private GameObject thePlayer = null;
-    public bool isPlayerSafe = false;
     public int spikesDamage = 25;
 
     private SafeAreaRight safeAreaRightScript;
@@ -28,10 +29,18 @@ public class IceSpikesBehaviour : MonoBehaviour {
         if (spikesLeft1 == null)
             Debug.LogError("Error : SpikesLeft1 not found");
 
+        spikesLeft2 = transform.FindChild("SpikesLeft2").gameObject;
+        if (spikesLeft2 == null)
+            Debug.LogError("Error : SpikesLeft2 not found");
+
         spikesRight1 = transform.FindChild("SpikesRight1").gameObject;
         if (spikesRight1 == null)
             Debug.LogError("Error : SpikesRight1 not found");
-        
+
+        spikesRight2 = transform.FindChild("SpikesRight2").gameObject;
+        if (spikesRight2 == null)
+            Debug.LogError("Error : SpikesRight2 not found");
+
         thePlayer = GameObject.FindGameObjectWithTag("Player");
         if (thePlayer == null)
             Debug.Log("Error: player not found.");
@@ -75,33 +84,32 @@ public class IceSpikesBehaviour : MonoBehaviour {
         spikesAnimator.SetBool("ShowIceSpikes", false);
         spikesAnimator.SetBool("HideIceSpikes", false);
         EnableLeftSpikes();
-        EnableRightSpikes();
-        isPlayerSafe = false;
+        EnableRightSpikes();       
         leftSphere.GetComponent<Renderer>().material.color = Color.grey;
         rightSphere.GetComponent<Renderer>().material.color = Color.grey;
     }
 
     public void EnableLeftSpikes()
     {
-        spikesLeft1.SetActive(true);        
+        spikesLeft2.SetActive(true);        
         leftSafe = false;
     }
 
     public void DisableLeftSpikes()
     {
-        spikesLeft1.SetActive(false);        
+        spikesLeft2.SetActive(false);        
         leftSafe = true;
     }
 
     public void EnableRightSpikes()
     {
-        spikesRight1.SetActive(true);       
+        spikesRight2.SetActive(true);       
         rightSafe = false;
     }
 
     public void DisableRightSpikes()
     {
-        spikesRight1.SetActive(false);
+        spikesRight2.SetActive(false);
         rightSafe = true;
     }
 
