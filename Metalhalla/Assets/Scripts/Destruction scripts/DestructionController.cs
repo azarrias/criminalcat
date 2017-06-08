@@ -10,12 +10,9 @@ public class DestructionController : MonoBehaviour
     [Range(-1000, 1000)]
     public int pushForceY = 0;
 
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    [Header("Camera Shake on destruction")]
+    public float magnitude = 0.15f;
+    public float duration = 0.2f;
 
     public void ApplyDamage(int dmg = 0)
     {
@@ -24,6 +21,7 @@ public class DestructionController : MonoBehaviour
         broken.GetComponent<AdjustDirection>().pushForceX = pushForceX;
         broken.GetComponent<AdjustDirection>().pushForceY = pushForceY;
 
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>().StartShake(magnitude, duration);
         Destroy(gameObject);
 
     }

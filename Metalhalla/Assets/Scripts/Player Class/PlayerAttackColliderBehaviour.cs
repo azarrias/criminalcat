@@ -5,11 +5,11 @@ using UnityEngine;
 public class PlayerAttackColliderBehaviour : MonoBehaviour {
 
     public LayerMask hittableLayer;
-    private CameraFollow camFollow;
+ //   private CameraFollow camFollow;
 
     private void Start()
     {
-        camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
+//        camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -17,7 +17,7 @@ public class PlayerAttackColliderBehaviour : MonoBehaviour {
         if (hittableLayer == (hittableLayer | (1 << other.gameObject.layer)))
         {
             other.gameObject.SendMessage("ApplyDamage", 10, SendMessageOptions.DontRequireReceiver);
-            camFollow.StartShake();
+        //    camFollow.StartShake();
         }
     }
 }
