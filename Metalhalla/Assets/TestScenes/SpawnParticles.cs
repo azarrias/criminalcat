@@ -14,10 +14,10 @@ public class SpawnParticles : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //if(Input.GetKeyDown(KeyCode.Space))
-        //      {
-        //          ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true) ;
-        //      }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true);
+        }
 
         //if (Input.GetKeyDown(KeyCode.RightControl))
         //{
@@ -29,10 +29,10 @@ public class SpawnParticles : MonoBehaviour {
         //    ParticlesManager.SpawnElfFireBall(spawnPosition.position, target.transform.position - transform.position);
         //}
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ParticlesManager.SpawnParticle("blood", spawnPosition.position, true);
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    ParticlesManager.SpawnParticle("blood", spawnPosition.position, true);
+        //}
 
     }
 }
