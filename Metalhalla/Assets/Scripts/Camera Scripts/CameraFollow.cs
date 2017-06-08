@@ -29,6 +29,9 @@ public class CameraFollow : MonoBehaviour
     public float magnitude = 0.1f;
     [Tooltip("Shake duration")]
     public float duration= 0.1f;
+
+    private float shakeMagnitude;
+    private float shakeDuration;
     private bool shaking = false; 
 
     private Vector3 playerPosition;
@@ -62,11 +65,9 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
+        
         if (Input.GetKeyDown(KeyCode.Y))
-        {
-            Debug.Log("SHAKEEE");
-            StartShake();
-        }
+            StartShake(0.5f,0.2f);
         SetCameraPosition();
         if (showMoveBox)
             ShowBox();
@@ -231,7 +232,7 @@ public class CameraFollow : MonoBehaviour
         float elapsedTime = 0.0f;
         Vector3 originalCamPos = transform.position;
 
-        while (elapsedTime < duration)
+        while (elapsedTime < shakeDuration)
         {
             elapsedTime += Time.deltaTime;
 
@@ -241,8 +242,8 @@ public class CameraFollow : MonoBehaviour
             float x = Random.value * 2.0f - 1.0f;
             float y = Random.value * 2.0f - 1.0f;
 
-            x *= magnitude * damper;
-            y *= magnitude * damper;
+            x *= shakeMagnitude * damper;
+            y *= shakeMagnitude * damper;
 
 
             transform.position = originalCamPos + new Vector3(x, y, 0);
@@ -253,7 +254,23 @@ public class CameraFollow : MonoBehaviour
         transform.localPosition = originalCamPos;
     }
 
-    public void StartShake() { shaking = true; }
+    public void StartShake( float shakeMag = 0.0f, float shakeTime = 0.0f) {
+        if (shaking == false)
+        {
+            if (shakeMag == 0.0f || shakeTime == 0.0f)
+            {
+                shakeMagnitude = magnitude;
+                shakeDuration = duration;
+            }
+            else
+            {
+                shakeMagnitude = shakeTime;
+                shakeDuration = shakeTime;
+            }
+
+            shaking = true;
+        }
+    }
     void StopShake(){ shaking = false; }
 
 }
