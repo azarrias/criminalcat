@@ -23,6 +23,8 @@ public class DeadState : PlayerState
 
         if (deadFramesCount >= deadFramesDuration)
         {
+            status.ReSpawn();
+            /*
             if (status.facingRight == false)
                 status.Flip();
             status.RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
@@ -31,7 +33,7 @@ public class DeadState : PlayerState
             status.SetPlayerAtRespawnPoint();
             // add hoc for level elements
             GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
-
+            */
             return;
         }
         else

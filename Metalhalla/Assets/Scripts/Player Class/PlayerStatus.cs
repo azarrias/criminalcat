@@ -208,6 +208,21 @@ public class PlayerStatus : MonoBehaviour
         }
     }
 
+    // ---- RESPAWN functions ------------------------------------------------------------------------------------------
+    public void ReSpawn()
+    {
+        RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
+        if (facingRight == false)
+            Flip();
+        SetPlayerAtRespawnPoint();
+        SetMaxHealth();
+        stamina = staminaAtStart;
+        beer = beerAtStart;
+        SetState(PlayerStatus.idle);
+
+        // add hoc for level elements 
+        GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
+    }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
     public void statusUpdateAfterInput(PlayerInput input)
