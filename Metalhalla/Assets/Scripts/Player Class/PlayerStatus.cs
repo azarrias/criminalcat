@@ -55,6 +55,12 @@ public class PlayerStatus : MonoBehaviour
     public int beerHealthRecovery = 20;
     int beer;
 
+    [HideInInspector]
+    public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
+    [Header("Magic Setup")]
+    public MAGIC magicAtStart = MAGIC.EAGLE;
+    MAGIC magic;  
+
     [Header("Ghost Jump parameters")]
     [Tooltip("Number of frames in which the player can still jump after losing foot in their last platform")]
     public int framesToJumpInDelay = 5;
@@ -104,6 +110,7 @@ public class PlayerStatus : MonoBehaviour
     public bool climbLadderAvailable;
     [HideInInspector]
     public bool beerRefillAvailable;
+    bool magicShiftAvailable;
 
     // -- Cross component variables -- // 
     [HideInInspector]
@@ -139,6 +146,7 @@ public class PlayerStatus : MonoBehaviour
         stamina = staminaAtStart;
         staminaRecovery = 0.0f;
         beer = beerAtStart;
+        magic = magicAtStart;
 
         activeRespawnPoint = initialPosition;
         cameraFade = GameObject.Find("PlayerCamera").GetComponent<CameraFade>();
@@ -163,6 +171,7 @@ public class PlayerStatus : MonoBehaviour
         jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
+        magicShiftAvailable = false;
 
         justHit = false;
         jumpFrames = 0;
@@ -225,6 +234,19 @@ public class PlayerStatus : MonoBehaviour
     // ---- STATE functions ---------------------------------------------------------------------------------------------
     public void statusUpdateAfterInput(PlayerInput input)
     {
+        // mod for magic shift
+        if (!magicShiftAvailable && input.newInput.GetLeftTriggerInput() == 0f && input.newInput.GetRightTriggerInput() == 0f)
+            magicShiftAvailable = true;
+
+        if (magicShiftAvailable)
+        {
+            if (input.newInput.GetLeftTriggerInput() >= 0.8f)
+                ShiftMagics(false);
+            else if (input.newInput.GetRightTriggerInput() >= 0.8f)
+                ShiftMagics(true);
+        }
+
+        // update status
         currentState.HandleInput(input, this);
     }
 
@@ -353,6 +375,22 @@ public class PlayerStatus : MonoBehaviour
     public int GetCurrentBeer()
     {
         return beer;
+    }
+
+    //---- MAGIC functions -------------------------------------------------------------------------------------------
+    public int GetCurrentMagic()
+    {
+        return (int) magic;
+    }
+
+    public void ShiftMagics( bool forwards)
+    {
+        magicShiftAvailable = false;
+        int total = (int)MAGIC.numMagics;
+        int current = (int) magic;
+        int newMagic = forwards ? current + 1 + total : current - 1 + total;
+        newMagic = newMagic % total;
+        magic = (MAGIC) newMagic;
     }
 
 

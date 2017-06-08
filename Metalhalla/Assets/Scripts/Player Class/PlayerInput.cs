@@ -18,6 +18,8 @@ public class PlayerInput : MonoBehaviour {
         private bool defenseButtonHeld; 
         private bool castButtonDown;
         private bool contextButtonDown;
+        private float leftTriggerInput;
+        private float rightTriggerInput;
 
         //double tap control
         private bool horizontalDoubleTap;
@@ -34,7 +36,9 @@ public class PlayerInput : MonoBehaviour {
             defenseButtonHeld = false; 
             castButtonDown = false;
             contextButtonDown = false;
-
+            leftTriggerInput = 0f;
+            rightTriggerInput = 0f;
+            
             horizontalDoubleTap = false; 
         }
 
@@ -48,6 +52,8 @@ public class PlayerInput : MonoBehaviour {
         public void SetDefenseButtonHeld(bool value) { defenseButtonHeld = value;  }
         public void SetCastButtonDown(bool value) { castButtonDown = value; }
         public void SetContextButtonDown(bool value) { contextButtonDown = value;  }
+        public void SetLeftTriggerInput( float value) { leftTriggerInput = value; }
+        public void SetRightTriggerInput( float value ) { rightTriggerInput = value; }
 
         public void SetHorizontalDoubleTap(bool value) { horizontalDoubleTap = value; }
 
@@ -61,6 +67,8 @@ public class PlayerInput : MonoBehaviour {
         public bool GetDefenseButtonHeld() { return defenseButtonHeld; }
         public bool GetCastButtonDown() { return castButtonDown; }
         public bool GetContextButtonDown() { return contextButtonDown; }
+        public float GetLeftTriggerInput() { return leftTriggerInput; }
+        public float GetRightTriggerInput() { return rightTriggerInput; }
 
         public bool GetHorizontalDoubleTap() { return horizontalDoubleTap; }
 
@@ -76,6 +84,8 @@ public class PlayerInput : MonoBehaviour {
             defenseButtonHeld = from.defenseButtonHeld;
             castButtonDown = from.castButtonDown;
             contextButtonDown = from.contextButtonDown;
+            leftTriggerInput = from.leftTriggerInput;
+            rightTriggerInput = from.rightTriggerInput;
 
             horizontalDoubleTap = from.horizontalDoubleTap;
 
@@ -114,6 +124,8 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetDefenseButtonHeld(Input.GetButton("Defense"));
         newInput.SetCastButtonDown(Input.GetButtonDown("Cast"));
         newInput.SetContextButtonDown(Input.GetButtonDown("Context"));
+        newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
+        newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
 
         newInput.SetHorizontalDoubleTap(CheckHorizontalDoubleTap());
 	}

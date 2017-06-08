@@ -20,6 +20,10 @@ public class GUIManager : MonoBehaviour {
     private Image[] stmImages;
     private int stmIndx;
 
+    [SerializeField]
+    private Image[] magicImages;
+    private int mgcIndex;
+
     private PlayerStatus playerStatus;
 
     void Start() {
@@ -32,6 +36,9 @@ public class GUIManager : MonoBehaviour {
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
 
+        if (magicImages.Length == 0)
+            Debug.Log("Error - magic images array not set");
+
         playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
         if (playerStatus == null)
             Debug.Log("GUI could not retrieve PlayerHealth component from player");
@@ -39,6 +46,7 @@ public class GUIManager : MonoBehaviour {
         maxHP = playerStatus.healthMaximum;
         hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
+        ResetMagic((int)playerStatus.magicAtStart);
 
         UpdateStaminaMeter(); 
     }
@@ -48,6 +56,7 @@ public class GUIManager : MonoBehaviour {
         SetHealth(playerStatus.GetCurrentHealthRatio());
         SetStamina(playerStatus.GetCurrentStamina());
         SetBeer(playerStatus.GetCurrentBeer());
+        SetMagic( playerStatus.GetCurrentMagic());
 
     }
 
@@ -80,6 +89,24 @@ public class GUIManager : MonoBehaviour {
     void SetBeer( int remainingBeer )
     {
         beerHorn.sprite = hornImages[remainingBeer];
+    }
+
+    void SetMagic( int newMagic)
+    {
+        if (mgcIndex == newMagic)
+            return;
+
+        Debug.Log("new magic: " + newMagic); 
+        magicImages[mgcIndex].color = new Vector4(0, 0, 0, 0);
+        magicImages[newMagic].color = new Vector4(1, 1, 1, 1);
+        mgcIndex = newMagic;
+    }
+
+    void ResetMagic (int initialMagic)
+    {
+        for (int i = 0; i < magicImages.Length; i++)
+            magicImages[i].color = new Vector4(0, 0, 0, 0);
+        magicImages[initialMagic].color = new Vector4(1, 1, 1, 1);
     }
 
 }
