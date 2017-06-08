@@ -420,7 +420,7 @@ public class PlayerStatus : MonoBehaviour
         GetComponent<BoxCollider>().size = colliderSize;
     }
 
-    public void SetColliderYSize( float ySize )
+    public void SetColliderYSize( float ySize = 1.1f)
     {
         Vector3 tmpSize = colliderSize;
         tmpSize.y = ySize;
