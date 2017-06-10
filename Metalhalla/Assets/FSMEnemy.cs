@@ -30,6 +30,7 @@ public class FSMEnemy : MonoBehaviour
 
     Animator animator;
 
+    [Header("Patrol Limits")]
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
     public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
@@ -43,6 +44,9 @@ public class FSMEnemy : MonoBehaviour
     private Material material;
     private BoxCollider[] boxColliders;
 
+    //Mod Jordi 20170610
+    private float patrol2chaseSpeedRatio;
+
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
@@ -52,6 +56,8 @@ public class FSMEnemy : MonoBehaviour
         playerStatus = player.GetComponent<PlayerStatus>();
         material = GetComponentInChildren<Renderer>().material;
         boxColliders = GetComponentsInChildren<BoxCollider>();
+
+        patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed; //Mod Jordi 20170610
     }
 
     private void Start()
@@ -151,35 +157,41 @@ public class FSMEnemy : MonoBehaviour
 
     private void StateEnter(State state)
     {
+        animator.speed = 1; //Mod Jordi 20170610
         switch (state)
         {
             case State.IDLE:
                 animator.SetBool("idle", true);
                 waitingTime = 0.0f;
                 timeToWait = Random.Range(0.5f, 1.5f);
-                break;
+            break;
+
             case State.PATROL:
                 animator.SetBool("walk", true);
                 destination.Set(NextPatrolLocation(), transform.position.y, transform.position.z);
                 faceXCoordinate(destination.x);
                 los.enabled = true;
-                break;
+            break;
+
             case State.BEING_HIT:
                 animator.SetBool("being_hit", true);
                 faceXCoordinate(player.transform.position.x);
-                break;
+            break;
+
             case State.STUNNED:
                 animator.SetBool("idle", true);
-                break;
+            break;
+
             case State.CHASE:
                 animator.SetBool("walk", true);
-                animator.speed = enemyStats.chasingSpeed;
+                //  animator.speed = enemyStats.chasingSpeed;
+                animator.speed = patrol2chaseSpeedRatio;
                 destination.Set(player.transform.position.x, transform.position.y, transform.position.z);
                 faceXCoordinate(destination.x);
                 los.enabled = true;
-                break;
+            break;
+
             case State.ATTACK:
-                animator.SetBool("attack", true);
                 foreach (BoxCollider b in boxColliders)
                 {
                     if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
@@ -187,10 +199,12 @@ public class FSMEnemy : MonoBehaviour
                         b.enabled = true;
                     }
                 }
-                break;
+                animator.SetBool("attack", true);
+            break;
+
             case State.DEAD:
                 animator.SetBool("dead", true);
-                break;
+            break;
         }
     }
 
