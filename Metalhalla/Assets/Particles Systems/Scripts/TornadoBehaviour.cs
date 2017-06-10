@@ -148,7 +148,13 @@ public class TornadoBehaviour : MonoBehaviour {
             FSMBoss.State state = fsmBoss.GetCurrentState();
             if (state != FSMBoss.State.DEAD)
             {
-                if (state == FSMBoss.State.CHASE || state == FSMBoss.State.BALL_ATTACK || state == FSMBoss.State.MELEE_ATTACK)
+                if (state == FSMBoss.State.CHASE || 
+                    state == FSMBoss.State.PRE_MELEE_ATTACK ||
+                    state == FSMBoss.State.MELEE_ATTACK ||
+                    state == FSMBoss.State.POST_MELEE_ATTACK ||
+                    state == FSMBoss.State.PRE_BALL_ATTACK ||
+                    state == FSMBoss.State.BALL_ATTACK || 
+                    state == FSMBoss.State.POST_BALL_ATTACK)           
                 {
                     contains.Add(collider.gameObject);
                     fsmBoss.IsInsideTornado(true);                    

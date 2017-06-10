@@ -44,9 +44,9 @@ public class BossStats : MonoBehaviour {
         }    
     }
 
-    public void ApplyDamage(int value)
+    public void BossApplyDamage(int value)
     {
-        AudioManager.instance.PlayFx(fxEnemyWasHit);
+        //AudioManager.instance.PlayFx(fxEnemyWasHit);
         hitPoints -= value;
     }
 }
