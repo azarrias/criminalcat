@@ -96,17 +96,35 @@ public class GUIManager : MonoBehaviour {
         if (mgcIndex == newMagic)
             return;
 
-        Debug.Log("new magic: " + newMagic); 
-        magicImages[mgcIndex].color = new Vector4(0, 0, 0, 0);
-        magicImages[newMagic].color = new Vector4(1, 1, 1, 1);
+        Vector3 tmp; 
+
+        magicImages[mgcIndex].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
+        tmp = magicImages[mgcIndex].transform.position;
+        tmp.z = 0.1f;
+        magicImages[mgcIndex].transform.position = tmp;
+
+        magicImages[newMagic].color = new Vector4(0f, 0.7f, 1, 1);
+        tmp = magicImages[newMagic].transform.position;
+        tmp.z = 0f;
+        magicImages[newMagic].transform.position = tmp;
+
         mgcIndex = newMagic;
     }
 
     void ResetMagic (int initialMagic)
     {
+        Vector3 tmp; 
         for (int i = 0; i < magicImages.Length; i++)
-            magicImages[i].color = new Vector4(0, 0, 0, 0);
-        magicImages[initialMagic].color = new Vector4(1, 1, 1, 1);
+        {
+            magicImages[i].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
+            tmp = magicImages[i].transform.position;
+            tmp.z = 0.1f;
+            magicImages[i].transform.position = tmp; 
+        }
+        magicImages[initialMagic].color = new Vector4(0, 0.7f, 1, 1);
+        tmp = magicImages[initialMagic].transform.position;
+        tmp.z = 0.0f;
+        magicImages[initialMagic].transform.position = tmp;
     }
 
 }
