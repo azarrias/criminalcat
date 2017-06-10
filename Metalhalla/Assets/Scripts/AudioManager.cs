@@ -80,24 +80,23 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
-    public void PlayFx(AudioClip clip)
+    public void PlayFx(AudioClip clip, float pitch = 1.0f)
     {
         GameObject obj = GetFXAudioSource();
         obj.SetActive(true);
         AudioSource fxSource = obj.GetComponent<AudioSource>();
+
         fxSource.clip = clip;
+        fxSource.pitch = pitch;
         fxSource.Play();
-        StartCoroutine(DisableAudioSource(obj, 1.0f));
+        StartCoroutine(ReleaseAudioSource(obj, 1.0f));
     }
 
     public void RandomizePlayFx(params AudioClip[] clips)
     {
         int randomIndex = Random.Range(0, clips.Length);
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-
-        fxSource.clip = clips[randomIndex];
-        fxSource.pitch = randomPitch;
-        fxSource.Play();
+        PlayFx(clips[randomIndex], randomPitch);
     }
 
     void OnEnable()
@@ -135,7 +134,7 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    IEnumerator DisableAudioSource(GameObject obj, float time)
+    IEnumerator ReleaseAudioSource(GameObject obj, float time)
     {
         do {
             yield return new WaitForSeconds(time);
