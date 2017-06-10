@@ -99,14 +99,14 @@ public class GUIManager : MonoBehaviour {
         Vector3 tmp; 
 
         magicImages[mgcIndex].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
-        tmp = magicImages[mgcIndex].transform.position;
+        tmp = magicImages[mgcIndex].transform.localPosition;
         tmp.z = 0.1f;
-        magicImages[mgcIndex].transform.position = tmp;
+        magicImages[mgcIndex].transform.localPosition = tmp;
 
         magicImages[newMagic].color = new Vector4(0f, 0.7f, 1, 1);
-        tmp = magicImages[newMagic].transform.position;
+        tmp = magicImages[newMagic].transform.localPosition;
         tmp.z = 0f;
-        magicImages[newMagic].transform.position = tmp;
+        magicImages[newMagic].transform.localPosition = tmp;
 
         mgcIndex = newMagic;
     }
@@ -117,14 +117,14 @@ public class GUIManager : MonoBehaviour {
         for (int i = 0; i < magicImages.Length; i++)
         {
             magicImages[i].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
-            tmp = magicImages[i].transform.position;
+            tmp = magicImages[i].transform.localPosition;
             tmp.z = 0.1f;
-            magicImages[i].transform.position = tmp; 
+            magicImages[i].transform.localPosition = tmp; 
         }
         magicImages[initialMagic].color = new Vector4(0, 0.7f, 1, 1);
-        tmp = magicImages[initialMagic].transform.position;
+        tmp = magicImages[initialMagic].transform.localPosition;
         tmp.z = 0.0f;
-        magicImages[initialMagic].transform.position = tmp;
+        magicImages[initialMagic].transform.localPosition = tmp;
     }
 
 }
