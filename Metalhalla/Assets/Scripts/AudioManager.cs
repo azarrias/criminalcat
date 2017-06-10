@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Prefabs")]
     public GameObject fXAudioSourcePrefab;
-    public int numberOfFXAudioSources = 4;
+    public int numberOfFXAudioSources = 5;
 
     [Header("Channels")]
     public AudioSource musicSource;
@@ -89,7 +89,7 @@ public class AudioManager : MonoBehaviour {
         fxSource.clip = clip;
         fxSource.pitch = pitch;
         fxSource.Play();
-        StartCoroutine(ReleaseAudioSource(obj, 1.0f));
+        StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
     }
 
     public void RandomizePlayFx(params AudioClip[] clips)
@@ -156,12 +156,24 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    IEnumerator ReleaseAudioSource(GameObject obj, float time)
+    IEnumerator ReleaseAudioSource(GameObject obj, float delayTime, float timeScale)
     {
-        do {
-            yield return new WaitForSeconds(time);
+        if (timeScale < 0.005f)
+        {
+            do
+            {
+                yield return new WaitForSecondsRealtime(delayTime);
+            }
+            while (obj.GetComponent<AudioSource>().isPlaying);
         }
-        while (obj.GetComponent<AudioSource>().isPlaying);
+        else
+        {
+            do
+            {
+                yield return new WaitForSeconds(delayTime);
+            }
+            while (obj.GetComponent<AudioSource>().isPlaying);
+        }
 
         obj.SetActive(false);
     }
