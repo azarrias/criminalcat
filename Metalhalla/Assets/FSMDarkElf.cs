@@ -315,8 +315,17 @@ public class FSMDarkElf : MonoBehaviour
 
     private void ThrowFireBall()
     {
+        float fbOffsetX = 0.6f;
+        float fbOffsetY = 0.3f;
+
+        if (transform.localEulerAngles.y == 180)
+        {
+        }
+        else
+        {
+        }
+
         AudioManager.instance.PlayFx(fireBall);
-        ParticlesManager.SpawnElfFireBall(transform.position, player.transform.position - transform.position);
     } 
 
     IEnumerator WaitForSeconds(float s)
