@@ -19,6 +19,12 @@ public class FallState : PlayerState
             return;
         }
 
+        if (input.newInput.GetDashButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.dash);
+            return;
+        }
+
         if ((input.newInput.GetJumpButtonDown() ) && status.IsGhostJumpAvailable())
         {
             status.SetState(PlayerStatus.jump);

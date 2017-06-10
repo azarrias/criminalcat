@@ -42,6 +42,12 @@ public class JumpState : PlayerState
             return;
         }
 
+        if (input.newInput.GetDashButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.dash);
+            return;
+        }
+
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
 

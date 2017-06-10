@@ -6,19 +6,28 @@ public class DashState : PlayerState
 {
     int dashFramesDuration;
     int dashFramesCount;
+    bool isAirDash;
 
     public DashState(int framesDuration)
     {
         dashFramesDuration = framesDuration;
         dashFramesCount = 0;
+        isAirDash = false;
     }
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             dashFramesCount = 0;
+            if (status.WasFall() || status.WasJump())
+                isAirDash = true;
+            else
+                isAirDash = false;
+        }
 
-        if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
+        if (status.jumpAvailable == true && isAirDash == false && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
+        //if (status.jumpAvailable == true && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
         {
             status.SetState(PlayerStatus.jump);
             return;

@@ -436,6 +436,8 @@ public class PlayerStatus : MonoBehaviour
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
+    public bool WasJump() { return previousState == jump; }
+    public bool WasFall() { return previousState == fall; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
     public void PlayFx( string fx)
