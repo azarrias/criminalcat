@@ -122,7 +122,7 @@ public class TornadoBehaviour : MonoBehaviour {
         string colliderLayer = LayerMask.LayerToName(collider.gameObject.layer);
         if (colliderLayer == "ground")
         {
-            DisipateTornado();
+            disipating = true;
         }
         else if (colliderLayer == "destroyable" || colliderLayer == "destroyableEagle")
         {
@@ -133,38 +133,18 @@ public class TornadoBehaviour : MonoBehaviour {
             collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.DEAD &&
             collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.STUNNED)
         {
-            collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
-            contains.Add(collider.gameObject);
-            ApplyDamage(damage, collider.gameObject);
-
-            if (enemyInside == false)
-            {
-                enemyInside = true;
-
-                StartCoroutine(ManageRotationDuration(rotationDuration));
-            }
+            PrepareRotation(collider.gameObject);           
         }
 
         if (collider.gameObject.CompareTag("Dark Elf") &&
            collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.DEAD &&
            collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.STUNNED)
         {
-            collider.gameObject.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
-            contains.Add(collider.gameObject);
-            ApplyDamage(damage, collider.gameObject);
-
-            if (enemyInside == false)
-            {
-                enemyInside = true;
-
-                StartCoroutine(ManageRotationDuration(rotationDuration));
-            }
+            PrepareRotation(collider.gameObject);
         }
 
-
         if (collider.gameObject.CompareTag("Boss"))
-        {
-            
+        {           
             FSMBoss.State state = fsmBoss.GetCurrentState();
             if (state != FSMBoss.State.DEAD)
             {
@@ -183,20 +163,11 @@ public class TornadoBehaviour : MonoBehaviour {
         }
     }
 
-    private void DisipateTornado()
-    {
-        //tornado disipation effect
-        //gameObject.GetComponent<ParticleSystem>().Stop();
-        //gameObject.SetActive(false);
-        disipating = true;
-
-    }
-
     private IEnumerator ManageLifeTime(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         if(enemyInside == false)
-            DisipateTornado();
+            disipating = true;
     }
 
 
@@ -206,20 +177,44 @@ public class TornadoBehaviour : MonoBehaviour {
         enemyInside = false;
        
         foreach(GameObject go in contains)
-        {          
-            go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
-            go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;
-            go.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
-
+        {                                 
             if(go.CompareTag("Boss"))
             {
+                go.transform.position = go.GetComponent<BossStats>().initialPosition;
+                go.transform.localRotation = go.GetComponent<BossStats>().initialRotation;
                 ApplyDamageBoss(damage);
             }
+
+            if(go.CompareTag("Viking") || go.CompareTag("Dark Elf"))
+            {
+                go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
+                go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;                
+                go.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
+                ApplyDamage(damage, go);
+            }
         }
-        DisipateTornado();
+
+        disipating = true;
         fsmBoss.IsInsideTornado(false);
         contains.Clear();
         angle = 0.0f;
+    }
+
+    //For Dark Elves and Vikings
+    private void PrepareRotation(GameObject enemy)
+    {
+        enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.localRotation;
+        enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
+
+        enemy.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
+        contains.Add(enemy);
+        
+        if (enemyInside == false)
+        {
+            enemyInside = true;
+
+            StartCoroutine(ManageRotationDuration(rotationDuration));
+        }
     }
 
     private void RotateEnemy(GameObject enemy)
@@ -239,32 +234,6 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
         
-        //if (Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) > 0.5f)
-        //{
-        //    Vector3 direction = (tornadoEyeTr.position - enemy.transform.position).normalized;
-        //    //enemy.transform.Translate(direction * Time.deltaTime);// creo que falla aquí
-        //    Vector3 newPosition = new Vector3(
-        //                        enemy.transform.position.x + direction.x * 5 * Time.deltaTime,
-        //                        enemy.transform.position.y + direction.y + 5 * Time.deltaTime,
-        //                        enemy.transform.position.z);
-
-        //    enemy.transform.position = newPosition;
-
-        //    Debug.Log("distance=" + Vector3.Distance(tornadoEyeTr.position, enemy.transform.position) + " " + "eyePos=" + tornadoEyeTr.position + "  " + "bossPoss=" + enemy.transform.position + " " + "direction=" + direction);
-        //}
-        //else
-        //{
-        //    ret = false;
-        //}
-
-        //return ret;
-
-        //if(enemy.transform.position.x != tornadoEyeTr.position.x)
-        //{
-
-        //return false;
-        //}
-
     }
 
     public void SetFacingRight (bool facingRight)

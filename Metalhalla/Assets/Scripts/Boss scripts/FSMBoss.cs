@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(EnemyStats))]
+[RequireComponent(typeof(BossStats))]
 [RequireComponent(typeof(Animator))]
 public class FSMBoss : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class FSMBoss : MonoBehaviour
         WAIT
     }
  
-    private EnemyStats bossStats = null;
+    private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject castingArea = null;
@@ -131,7 +131,7 @@ public class FSMBoss : MonoBehaviour
         
 
         bossAnimator = GetComponent<Animator>();
-        bossStats = GetComponent<EnemyStats>();
+        bossStats = GetComponent<BossStats>();
         meleeDamage = bossStats.meleeDamage;
         
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
@@ -254,8 +254,7 @@ public class FSMBoss : MonoBehaviour
                         break;
                     }
                     if (insideTornado)
-                    {
-                        InsideTornado();
+                    {                       
                         currState = State.INSIDE_TORNADO;
                         break;
                     }
@@ -281,8 +280,7 @@ public class FSMBoss : MonoBehaviour
                     break;
                 }
                 if (insideTornado)
-                {
-                    InsideTornado();
+                {                   
                     currState = State.INSIDE_TORNADO;
                     break;
                 }
@@ -313,8 +311,7 @@ public class FSMBoss : MonoBehaviour
                     }                  
                 }
                 if (insideTornado)
-                {
-                    InsideTornado();
+                {                    
                     currState = State.INSIDE_TORNADO;
                     break;
                 }
