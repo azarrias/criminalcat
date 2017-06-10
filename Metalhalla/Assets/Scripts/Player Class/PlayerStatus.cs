@@ -205,7 +205,8 @@ public class PlayerStatus : MonoBehaviour
             godMode = !godMode;
 
         // stamina recovery
-        if (stamina < staminaMaximum)
+        //if (stamina < staminaMaximum)
+        if (stamina == 0)
         {
             staminaRecovery += staminaRecoveryRate * Time.deltaTime;
             if (staminaRecovery >= 1.0f)
