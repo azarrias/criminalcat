@@ -125,6 +125,28 @@ public class AudioManager : MonoBehaviour {
 
     }
 
+    public void PauseAllFXs()
+    {
+        for (int i = 0; i < fXAudioSources.Count; ++i)
+        {
+            if (fXAudioSources[i].activeInHierarchy)
+            {
+                fXAudioSources[i].GetComponent<AudioSource>().Pause();
+            }
+        }
+    }
+
+    public void UnPauseAllFXs()
+    {
+        for (int i = 0; i < fXAudioSources.Count; ++i)
+        {
+            if (fXAudioSources[i].activeInHierarchy)
+            {
+                fXAudioSources[i].GetComponent<AudioSource>().UnPause();
+            }
+        }
+    }
+
     IEnumerator FadeIn(float duration)
     {
         while(musicSource.volume < 1.0f)

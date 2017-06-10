@@ -68,6 +68,10 @@ public class MenuManager : MonoBehaviour {
     {
         //Game runs at regular speed
         Time.timeScale = 1f;
+
+        //Unpause all audio FXs
+        AudioManager.instance.UnPauseAllFXs();
+
         menu.SetActive(false);
     }
 

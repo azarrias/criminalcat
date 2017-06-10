@@ -28,7 +28,7 @@ public class TransitionGameToMenu : MonoBehaviour {
                 menu.SetActive(false);
                 
                 //Game runs at regular speed
-                Time.timeScale = 1f; 
+                Time.timeScale = 1f;
             }
             else
             {
@@ -40,6 +40,9 @@ public class TransitionGameToMenu : MonoBehaviour {
                 EventSystem.current.SetSelectedGameObject(null);              
                 GameObject resume = GameObject.FindGameObjectWithTag("GameMenuResume");                            
                 EventSystem.current.SetSelectedGameObject(resume);
+
+                //Pause all audio FXs
+                AudioManager.instance.PauseAllFXs();
                 
             }
         }   
