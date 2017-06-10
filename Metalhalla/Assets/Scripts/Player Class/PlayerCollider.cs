@@ -23,12 +23,8 @@ public class PlayerCollider : MonoBehaviour {
 	RaycastOrigins raycastOrigins;
 	public CollisionInfo collisions;
 
-//	myPlayerInteractor interactor;
-
 	void Start(){
-        //collider = GetComponent<BoxCollider2D> ();
         collider = GetComponent<BoxCollider>();
-//		interactor = GetComponent<myPlayerInteractor> ();
 		CalculateRaySpacing ();
 	}
 
@@ -45,23 +41,21 @@ public class PlayerCollider : MonoBehaviour {
 		float directionX = Mathf.Sign (speed.x);
 		float rayLength = Mathf.Abs (speed.x) + skinWidth;
 		for (int i = 0; i < horizontalRayCount; i++) {
-			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+
+			/*Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-            //RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.right * directionX, rayLength, noCloudCollisionMask);
-           // RaycastHit hit = Physics.Raycast(rayOrigin, Vector3.right * directionX, rayLength, noCloudCollisionMask);
+            */
+            Vector3 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+            rayOrigin += Vector3.up * (horizontalRaySpacing * i);
 
             RaycastHit hit;
-            
 
-			Debug.DrawRay (rayOrigin, Vector2.right*directionX*rayLength , Color.red);
+			Debug.DrawRay (rayOrigin, Vector3.right*directionX*rayLength , Color.red);
 
-            // need to add the cloud platform collisions
-            //if (hit) {
             if (Physics.Raycast(rayOrigin, Vector3.right * directionX, out hit, rayLength, noCloudCollisionMask))
             { 
             // this is ok since we check the bottom most with a slope
             float surfaceAngle = Vector2.Angle (hit.normal, Vector2.up);
-	//			print (surfaceAngle);
 				if (i == 0 && surfaceAngle <= maxSlopeClimbAngle) {
 					float distanceToSlopeStart = 0;
 					if (surfaceAngle != collisions.slopeAngleOld) {
@@ -92,28 +86,35 @@ public class PlayerCollider : MonoBehaviour {
 		float rayLength = Mathf.Abs (speed.y) + skinWidth;
 
 		for (int i = 0; i < verticalRayCount; i++) {
+
+            /*
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + speed.x);
             
             RaycastHit hit;
             bool has_hit = false;
 
-            
-            
-            /*if (directionY < 0 )
-                has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
-            else
-               has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);
-            */
             if (directionY < 0 && status.IsFallCloud() == false )
                 has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, generalCollisionMask);
             else
                 has_hit = Physics.Raycast(rayOrigin, Vector2.up * directionY, out hit, rayLength, noCloudCollisionMask);
 
             Debug.DrawRay (rayOrigin, Vector2.up*directionY *rayLength , Color.red);
+            */
+            Vector3 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
+            rayOrigin += Vector3.right * (verticalRaySpacing * i + speed.x);
 
+            RaycastHit hit;
+            bool has_hit = false;
 
-            if(has_hit )
+            if (directionY < 0 && status.IsFallCloud() == false)
+                has_hit = Physics.Raycast(rayOrigin, Vector3.up * directionY, out hit, rayLength, generalCollisionMask);
+            else
+                has_hit = Physics.Raycast(rayOrigin, Vector3.up * directionY, out hit, rayLength, noCloudCollisionMask);
+
+            Debug.DrawRay(rayOrigin, Vector3.up * directionY * rayLength, Color.red);
+
+            if (has_hit )
             { 
 				speed.y = (hit.distance - skinWidth) * directionY;
 				rayLength = hit.distance;
@@ -145,13 +146,17 @@ public class PlayerCollider : MonoBehaviour {
 	void UpdateRaycastOrigins() {
 		Bounds bounds = collider.bounds;
 		bounds.Expand (skinWidth * -2);
-
+        /*
 		raycastOrigins.bottomLeft = new Vector2 (bounds.min.x, bounds.min.y);
 		raycastOrigins.bottomRight = new Vector2 (bounds.max.x, bounds.min.y);
 		raycastOrigins.topLeft = new Vector2 (bounds.min.x, bounds.max.y);
 		raycastOrigins.topRight = new Vector2 (bounds.max.x, bounds.max.y);
-
-	}
+        */
+        raycastOrigins.bottomLeft = new Vector3(bounds.min.x, bounds.min.y, bounds.center.z);
+        raycastOrigins.bottomRight = new Vector3(bounds.max.x, bounds.min.y, bounds.center.z);
+        raycastOrigins.topLeft = new Vector3(bounds.min.x, bounds.max.y, bounds.center.z);
+        raycastOrigins.topRight = new Vector3(bounds.max.x, bounds.max.y, bounds.center.z);
+    }
 
 	void CalculateRaySpacing(){
 		Bounds bounds = collider.bounds;
@@ -167,11 +172,17 @@ public class PlayerCollider : MonoBehaviour {
     public bool PlayerAboveCloudPlatform()
     {
         for (int i = 0; i < verticalRayCount; i++)
-        {
+        {/*
             Vector2 rayOrigin = raycastOrigins.bottomLeft;
             rayOrigin += Vector2.right * (verticalRaySpacing * i);
             RaycastHit hitinfo;
             if (Physics.Raycast(rayOrigin, -Vector2.up, out hitinfo, skinWidth*2, onlyCloudCollisionMask))
+                return true;
+                */
+            Vector3 rayOrigin = raycastOrigins.bottomLeft;
+            rayOrigin += Vector3.right * (verticalRaySpacing * i);
+            RaycastHit hitinfo;
+            if (Physics.Raycast(rayOrigin, -Vector3.up, out hitinfo, skinWidth * 2, onlyCloudCollisionMask))
                 return true;
         }
         return false;
@@ -183,9 +194,13 @@ public class PlayerCollider : MonoBehaviour {
     }
 
     struct RaycastOrigins {
+        /*
 		public Vector2 topLeft, topRight;
 		public Vector2 bottomLeft, bottomRight;
-	}
+        */
+        public Vector3 topLeft, topRight;
+        public Vector3 bottomLeft, bottomRight;
+    }
 
 	public struct CollisionInfo {
 		public bool above, below;
