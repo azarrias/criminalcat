@@ -10,6 +10,10 @@ public class AudioManager : MonoBehaviour {
     public static AudioManager instance = null;
     public AudioMixer mixer;
 
+    [Header("Prefabs")]
+    public GameObject fXAudioSourcePrefab;
+    public int numberOfFXAudioSources = 4;
+
     [Header("Channels")]
     public AudioSource musicSource;
     public AudioSource fxSource;
@@ -22,6 +26,8 @@ public class AudioManager : MonoBehaviour {
     public float lowPitchRange = .95f;
     public float highPitchRange = 1.05f;
 
+    private List<GameObject> fXAudioSources;
+
     void Awake()
     {
         if (instance == null)
@@ -33,12 +39,35 @@ public class AudioManager : MonoBehaviour {
     }
 
 	// Use this for initialization
-/*	void Start () {
-        musicSource.clip = introCutscene;
-        musicSource.volume = 0.0f;
-        musicSource.Play();
-        StartCoroutine("FadeIn", 10.0f);
-	}*/
+	void Start () {
+        /*        musicSource.clip = introCutscene;
+                musicSource.volume = 0.0f;
+                musicSource.Play();
+                StartCoroutine("FadeIn", 10.0f);*/
+        fXAudioSources = new List<GameObject>();
+        for(int i = 0; i < numberOfFXAudioSources; ++i)
+        {
+            GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+            obj.SetActive(false);
+            fXAudioSources.Add(obj);
+        }
+
+    }
+
+    GameObject GetFXAudioSource()
+    {
+        for(int i = 0; i < fXAudioSources.Count; ++i)
+        {
+            if(!fXAudioSources[i].activeInHierarchy)
+            {
+                return fXAudioSources[i];
+            }
+        }
+
+        GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+        fXAudioSources.Add(obj);
+        return obj;
+    }
 
     public void StopMusic()
     {
@@ -53,8 +82,12 @@ public class AudioManager : MonoBehaviour {
 
     public void PlayFx(AudioClip clip)
     {
+        GameObject obj = GetFXAudioSource();
+        obj.SetActive(true);
+        AudioSource fxSource = obj.GetComponent<AudioSource>();
         fxSource.clip = clip;
         fxSource.Play();
+        StartCoroutine(DisableAudioSource(obj, 1.0f));
     }
 
     public void RandomizePlayFx(params AudioClip[] clips)
@@ -100,6 +133,16 @@ public class AudioManager : MonoBehaviour {
             musicSource.volume += Time.deltaTime / duration;
             yield return null;
         }
+    }
+
+    IEnumerator DisableAudioSource(GameObject obj, float time)
+    {
+        do {
+            yield return new WaitForSeconds(time);
+        }
+        while (obj.GetComponent<AudioSource>().isPlaying);
+
+        obj.SetActive(false);
     }
 
 }
