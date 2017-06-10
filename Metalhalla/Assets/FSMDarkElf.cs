@@ -317,15 +317,19 @@ public class FSMDarkElf : MonoBehaviour
     {
         float fbOffsetX = 0.6f;
         float fbOffsetY = 0.3f;
+        Vector3 iniPos;
 
         if (transform.localEulerAngles.y == 180)
         {
+            iniPos = new Vector3(transform.position.x + fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
         else
         {
+            iniPos = new Vector3(transform.position.x - fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
 
         AudioManager.instance.PlayFx(fireBall);
+        ParticlesManager.SpawnElfFireBall(iniPos, player.transform.position - iniPos);
     } 
 
     IEnumerator WaitForSeconds(float s)
