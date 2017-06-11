@@ -692,7 +692,7 @@ public class FSMBoss : MonoBehaviour
             currState == State.POST_BALL_ATTACK || 
             currState == State.INSIDE_TORNADO)
         {
-            Debug.Log("Damaged");
+            //Debug.Log("Damaged");
             bossStats.BossApplyDamage(damage);
             //create damage effect
             

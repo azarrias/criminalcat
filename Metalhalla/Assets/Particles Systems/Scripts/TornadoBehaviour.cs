@@ -120,7 +120,7 @@ public class TornadoBehaviour : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         string colliderLayer = LayerMask.LayerToName(collider.gameObject.layer);
-        if (colliderLayer == "ground")
+        if (colliderLayer == "ground" || colliderLayer == "wall")
         {
             disipating = true;
         }
@@ -151,8 +151,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 if (state == FSMBoss.State.CHASE || 
                     state == FSMBoss.State.PRE_MELEE_ATTACK ||
                     state == FSMBoss.State.MELEE_ATTACK ||
-                    state == FSMBoss.State.POST_MELEE_ATTACK ||
-                    state == FSMBoss.State.PRE_BALL_ATTACK ||
+                    state == FSMBoss.State.POST_MELEE_ATTACK ||               
                     state == FSMBoss.State.BALL_ATTACK || 
                     state == FSMBoss.State.POST_BALL_ATTACK)           
                 {
@@ -164,9 +163,15 @@ public class TornadoBehaviour : MonoBehaviour {
                         enemyInside = true;
                         StartCoroutine(ManageRotationDuration(rotationDuration));
                     }                   
-                }
+                }               
             }
-        }
+        }     
+    }
+
+    void OnTriggerStay(Collider collider)
+    {
+        if (collider.gameObject.name == "FireAura" && fsmBoss.GetCurrentState() == FSMBoss.State.PRE_BALL_ATTACK)
+            disipating = true;
     }
 
     private IEnumerator ManageLifeTime(float seconds)

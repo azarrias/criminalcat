@@ -9,7 +9,7 @@ public class FireAuraDamage : MonoBehaviour {
     private bool playerInsideFireAura = true;
     private float waitCounter = 0.0f;
     public float waitTime = 0.5f;
-    private bool applyAuraDamage = false;
+    private bool applyAuraDamage = true;
     public int auraDamage = 1;
     private GameObject player;
 
