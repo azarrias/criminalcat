@@ -31,6 +31,11 @@ public class FSMBoss : MonoBehaviour
     private GameObject castingArea = null;
     public GameObject meleeAttackIndicator = null;
     public GameObject ballAttackIndicator = null;
+    public GameObject fireAura = null;
+    private ParticleSystem meleeAttackIndicatorPS = null;
+    private ParticleSystem ballAttackIndicatorPS = null;
+    private ParticleSystem fireAuraPS = null;
+    private FireAuraDamage fireAuraDamageScript = null;
 
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
@@ -126,7 +131,7 @@ public class FSMBoss : MonoBehaviour
     private float thresholdSecondSpikes = 0.25f;
 
     private string currAnimation = "Patrol"; //start animation
-    
+
 
     // ----------------------   COUNTERS TO ALLOW ANIMATION TRANSITIONS ----
     [Tooltip("Minimun number of frames to stay in Patrol state before transition")]
@@ -197,12 +202,16 @@ public class FSMBoss : MonoBehaviour
         }
 
         castingArea = GameObject.FindGameObjectWithTag("CastingArea");
-        
-        //meleeAttackIndicator = GameObject.Find("MeleeIndicator");       
-        meleeAttackIndicator.SetActive(false);
 
-        //ballAttackIndicator = GameObject.Find("FireBallIndicator");        
-        ballAttackIndicator.SetActive(false);
+
+        meleeAttackIndicatorPS = meleeAttackIndicator.GetComponent<ParticleSystem>();
+        meleeAttackIndicatorPS.Stop();
+        ballAttackIndicatorPS = ballAttackIndicator.GetComponent<ParticleSystem>();
+        ballAttackIndicatorPS.Stop();
+        fireAuraPS = fireAura.GetComponent<ParticleSystem>();
+        fireAuraPS.Stop();
+        fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();
+
     }
 
     void Start()
@@ -884,7 +893,8 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PreMeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            meleeAttackIndicator.SetActive(true);           
+            //meleeAttackIndicator.SetActive(true);
+            meleeAttackIndicatorPS.Play();        
         }
 
         FinishPreMeleeAttackAnimation();
@@ -916,7 +926,8 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PostMeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            meleeAttackIndicator.SetActive(false);           
+            //meleeAttackIndicator.SetActive(false);   
+            meleeAttackIndicatorPS.Stop();
         }
 
         FinishPostMeleeAttackAnimation();
@@ -930,7 +941,10 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PreBallAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            ballAttackIndicator.SetActive(true);                   
+            //ballAttackIndicator.SetActive(true);
+            ballAttackIndicatorPS.Play();
+            fireAuraPS.Play();
+            fireAuraDamageScript.preBallAttack = true;           
         }
 
         FinishPreBallAttackAnimation();
@@ -946,7 +960,8 @@ public class FSMBoss : MonoBehaviour
 
             Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
             GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", ballSpawnPosition, facingRight);
-            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);          
+            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
+            fireAuraDamageScript.preBallAttack = false;        
         }
 
         FinishBallAttackAnimation();
@@ -960,7 +975,9 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PostBallAttack";
             bossAnimator.SetBool(currAnimation, true);
 
-            ballAttackIndicator.SetActive(false);           
+            //ballAttackIndicator.SetActive(false);
+            ballAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();          
         }
 
         FinishPostBallAttackAnimation();
@@ -1077,8 +1094,8 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "InsideTornado";
             bossAnimator.SetBool(currAnimation, true);
 
-            ballAttackIndicator.SetActive(false);
-            meleeAttackIndicator.SetActive(false);
+            ballAttackIndicatorPS.Stop();
+            meleeAttackIndicatorPS.Stop();
         }
     }
 
