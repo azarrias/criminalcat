@@ -334,4 +334,51 @@ public class FSMEnemy : MonoBehaviour
         }
         gameObject.SetActive(false);
     }
+
+    // ---- DEAD STATE COLLIDER adjustment functions ------------------------------------------------------------------------------
+
+        // doesn't work as animation events
+    /*public void SetCollider( float xTranslation, float yTranslation, float xSize, float ySize)
+    {
+        BoxCollider box = GetComponent<BoxCollider>();
+
+        Vector3 tmp = box.size;
+        tmp.y = ySize;
+        tmp.x = xSize;
+        box.size = tmp;
+
+        tmp = box.center;
+        tmp.x = xTranslation;
+        tmp.y = yTranslation;
+        box.center = tmp; 
+    }
+    */
+    public void SetColliderXTranslation(float x) {
+        BoxCollider box = GetComponent<BoxCollider>();
+        Vector3 tmp = box.center;
+        tmp.x = x;
+        box.center = tmp;
+    }
+
+    public void SetColliderYTranslation(float y) {
+        BoxCollider box = GetComponent<BoxCollider>();
+        Vector3 tmp = box.center;
+        tmp.y = y;
+        box.center = tmp;
+
+    }
+    public void SetColliderXSize(float xsize) {
+        BoxCollider box = GetComponent<BoxCollider>();
+        Vector3 tmp = box.size;
+        tmp.x = xsize;
+        box.size = tmp;
+    }
+
+    public void SetColliderYSize(float ysize) {
+        BoxCollider box = GetComponent<BoxCollider>();
+        Vector3 tmp = box.size;
+        tmp.y = ysize;
+        box.size = tmp;
+    }
+
 }
