@@ -33,6 +33,16 @@ public class TornadoBehaviour : MonoBehaviour {
     public float fadeFrames = 120;
     float acum = 0.0f;
 
+    private float rotationTimeCounter = 0.0f;
+    private float rotationTime = 3.0f;
+    private float lifeTimeCounter = 0.0f;
+   
+   
+    [HideInInspector]
+    private Quaternion initialRotation = Quaternion.identity;
+    [HideInInspector]
+    private Vector3 initialPosition = Vector3.zero;
+
     void Awake()
     {
         fsmBoss = FindObjectOfType<FSMBoss>();
@@ -53,7 +63,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
     void OnEnable()
     {
-        StartCoroutine(ManageLifeTime(lifeTime));
+       // StartCoroutine(ManageLifeTime(lifeTime));
     }
 	
 	// Update is called once per frame
@@ -74,13 +84,17 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             foreach(GameObject go in contains)
             {
-                //if (!AbsorbEnemy(go))
-                //{              
-                    AbsorbEnemy(go);
-                    RotateEnemy(go);           
-                //}
+                
+                RotateEnemy(go);                           
             }
-        }        
+
+            rotationTimeCounter += Time.deltaTime;
+            if(rotationTimeCounter >= rotationTime)
+            {
+                rotationTimeCounter = 0.0f;
+                StopRotation();
+            }
+        }      
     }
 
     void LateUpdate()
@@ -113,6 +127,17 @@ public class TornadoBehaviour : MonoBehaviour {
                 disipating = false;
                 foggyEmission.rateOverTime = 50.0f;
                 dustEmission.rateOverTime = 50.0f;
+            }                    
+        }
+      
+        //Manage tornado life time
+        if(!enemyInside && !disipating)
+        {
+            lifeTimeCounter += Time.deltaTime;
+            if(lifeTimeCounter >= lifeTime)
+            {
+                lifeTimeCounter = 0.0f;
+                disipating = true;
             }
         }
     }
@@ -146,25 +171,26 @@ public class TornadoBehaviour : MonoBehaviour {
         if (collider.gameObject.CompareTag("Boss"))
         {           
             FSMBoss.State state = fsmBoss.GetCurrentState();
-            if (state != FSMBoss.State.DEAD)
+            
+            if (state == FSMBoss.State.CHASE || 
+                state == FSMBoss.State.PRE_MELEE_ATTACK ||
+                state == FSMBoss.State.MELEE_ATTACK ||
+                state == FSMBoss.State.POST_MELEE_ATTACK ||               
+                state == FSMBoss.State.BALL_ATTACK || 
+                state == FSMBoss.State.POST_BALL_ATTACK)           
             {
-                if (state == FSMBoss.State.CHASE || 
-                    state == FSMBoss.State.PRE_MELEE_ATTACK ||
-                    state == FSMBoss.State.MELEE_ATTACK ||
-                    state == FSMBoss.State.POST_MELEE_ATTACK ||               
-                    state == FSMBoss.State.BALL_ATTACK || 
-                    state == FSMBoss.State.POST_BALL_ATTACK)           
-                {
-                    contains.Add(collider.gameObject);
-                    fsmBoss.IsInsideTornado(true);                    
-                    fsmBoss.NotifyRotationDuration(rotationDuration);
-                    if (enemyInside == false)
-                    {
-                        enemyInside = true;
-                        StartCoroutine(ManageRotationDuration(rotationDuration));
-                    }                   
-                }               
-            }
+
+                initialRotation = collider.gameObject.transform.localRotation;
+                initialPosition = collider.gameObject.transform.position;
+
+                contains.Add(collider.gameObject);                
+                
+                AbsorbEnemy(collider.gameObject);
+                fsmBoss.IsInsideTornado(true);
+                fsmBoss.NotifyRotationDuration(rotationDuration);
+                enemyInside = true;                   
+                                   
+            }                          
         }     
     }
 
@@ -174,25 +200,14 @@ public class TornadoBehaviour : MonoBehaviour {
             disipating = true;
     }
 
-    private IEnumerator ManageLifeTime(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        if(enemyInside == false)
-            disipating = true;
-    }
-
-
-    private IEnumerator ManageRotationDuration(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        enemyInside = false;
-       
+    private void StopRotation()
+    {                
         foreach(GameObject go in contains)
         {                                 
             if(go.CompareTag("Boss"))
             {
-                go.transform.position = go.GetComponent<BossStats>().initialPosition;
-                go.transform.localRotation = go.GetComponent<BossStats>().initialRotation;
+                go.transform.position = initialPosition;
+                go.transform.localRotation = initialRotation;
                 ApplyDamageBoss(damage);
             }
 
@@ -205,10 +220,11 @@ public class TornadoBehaviour : MonoBehaviour {
             }
         }
 
-        disipating = true;
-        fsmBoss.IsInsideTornado(false);
+        disipating = true;       
         contains.Clear();
         angle = 0.0f;
+        enemyInside = false;
+        fsmBoss.IsInsideTornado(false);
     }
 
     //For Dark Elves and Vikings
@@ -216,7 +232,7 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.localRotation;
         enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
-
+        AbsorbEnemy(enemy);
         enemy.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
         contains.Add(enemy);
         
@@ -224,7 +240,7 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             enemyInside = true;
 
-            StartCoroutine(ManageRotationDuration(rotationDuration));
+            //StartCoroutine(ManageRotationDuration(rotationDuration));
         }
     }
 

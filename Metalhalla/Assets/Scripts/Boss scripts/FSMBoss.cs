@@ -181,8 +181,8 @@ public class FSMBoss : MonoBehaviour
     private int backToCenterFrameCounter = 0;
     private int stalkFrameCounter = 0;
     private int insideTornadoFrameCounter = 0;
-    
-    
+
+
     void Awake()
     {   
         currState = State.PATROL;
@@ -327,12 +327,12 @@ public class FSMBoss : MonoBehaviour
                     }
                     if (insideTornado)
                     {
-                        chaseFrameCounter++;
-                        if (chaseFrameCounter == chaseFrames)
-                        {
+                        //chaseFrameCounter++;
+                        //if (chaseFrameCounter == chaseFrames)
+                        //{
                             currState = State.INSIDE_TORNADO;
-                            chaseFrameCounter = 0;
-                        }
+                        //    chaseFrameCounter = 0;
+                        //}
                         break;
                     }
                 }                                         
@@ -363,12 +363,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    preMeleeFrameCounter++;
-                    if (preMeleeFrameCounter == preMeleeFrames)
-                    {
+                    //preMeleeFrameCounter++;
+                    //if (preMeleeFrameCounter == preMeleeFrames)
+                    //{
                         currState = State.INSIDE_TORNADO;
-                        preMeleeFrameCounter = 0;                        
-                    }
+                    //    preMeleeFrameCounter = 0;                        
+                    //}
                     break;                 
                 }
                 break;
@@ -399,12 +399,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    meleeAttackFrameCounter++;
-                    if (meleeAttackFrameCounter == meleeFrames)
-                    {
-                        meleeAttackFrameCounter = 0;
+                    //meleeAttackFrameCounter++;
+                    //if (meleeAttackFrameCounter == meleeFrames)
+                    //{
+                     //   meleeAttackFrameCounter = 0;
                         currState = State.INSIDE_TORNADO;                       
-                    }
+                    //}
                     break;
                 }
 
@@ -437,12 +437,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    postMeleeFrameCounter++;
-                    if (postMeleeFrameCounter == postMeleeFrames)
-                    {
-                        postMeleeFrameCounter = 0;
+                    //postMeleeFrameCounter++;
+                    //if (postMeleeFrameCounter == postMeleeFrames)
+                    //{
+                    //   postMeleeFrameCounter = 0;
                         currState = State.INSIDE_TORNADO;
-                    }
+                    //}
                     break;
                 }
                 break;
@@ -472,12 +472,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    preBallFrameCounter++;
-                    if (preBallFrameCounter == preBallFrames)
-                    {
-                        preBallFrameCounter = 0;
+                    //preBallFrameCounter++;
+                    //if (preBallFrameCounter == preBallFrames)
+                    //{
+                     //   preBallFrameCounter = 0;
                         currState = State.INSIDE_TORNADO;
-                    }
+                    //}
                     break;
                 }
                 break;
@@ -507,12 +507,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    ballAttackFrameCounter++;
-                    if (ballAttackFrameCounter == ballAttackFrames)
-                    {
-                        ballAttackFrameCounter = 0;
+                    //ballAttackFrameCounter++;
+                    //if (ballAttackFrameCounter == ballAttackFrames)
+                    //{
+                    //    ballAttackFrameCounter = 0;
                         currState = State.INSIDE_TORNADO;
-                    }
+                    //}
                     break;
                 }
                 break;
@@ -543,12 +543,12 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (insideTornado)
                 {
-                    postBallAttackFrameCounter++;
-                    if (postBallAttackFrameCounter == postBallFrames)
-                    {
-                        postBallAttackFrameCounter = 0;
+                    //postBallAttackFrameCounter++;
+                    //if (postBallAttackFrameCounter == postBallFrames)
+                    //
+                     //   postBallAttackFrameCounter = 0;
                         currState = State.INSIDE_TORNADO;
-                    }
+                    //}
                     break;
                 }
                 break;
@@ -621,10 +621,10 @@ public class FSMBoss : MonoBehaviour
                 InsideTornado();
                 if(!insideTornado)
                 {
-                    insideTornadoFrameCounter++;
-                    if (insideTornadoFrameCounter == insideTornadoFrames)
-                    {
-                        insideTornadoFrameCounter = 0;
+                    //insideTornadoFrameCounter++;
+                    //if (insideTornadoFrameCounter == insideTornadoFrames)
+                    //{
+                    //    insideTornadoFrameCounter = 0;
                         preMeleeAttackSelected = false; //reset value
                         preBallAttackSelected = false; //reset value
                         if (bossStats.hitPoints <= 0)
@@ -637,7 +637,7 @@ public class FSMBoss : MonoBehaviour
                             currState = State.CHASE;
                         }
                         break;
-                    }
+                   // }
                 }
                 break;
         }
@@ -1096,6 +1096,7 @@ public class FSMBoss : MonoBehaviour
 
             ballAttackIndicatorPS.Stop();
             meleeAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();
         }
     }
 
