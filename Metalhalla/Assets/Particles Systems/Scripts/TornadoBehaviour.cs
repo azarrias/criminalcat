@@ -92,6 +92,7 @@ public class TornadoBehaviour : MonoBehaviour {
             if(rotationTimeCounter >= rotationTime)
             {
                 rotationTimeCounter = 0.0f;
+                Debug.Log("ENTERING STOP - TORNADO ID = " + GetInstanceID());
                 StopRotation();
             }
         }      
@@ -175,12 +176,11 @@ public class TornadoBehaviour : MonoBehaviour {
             if (state == FSMBoss.State.CHASE || 
                 state == FSMBoss.State.PRE_MELEE_ATTACK ||
                 state == FSMBoss.State.MELEE_ATTACK ||
-                state == FSMBoss.State.POST_MELEE_ATTACK ||               
-                state == FSMBoss.State.BALL_ATTACK || 
-                state == FSMBoss.State.POST_BALL_ATTACK)           
+                state == FSMBoss.State.POST_MELEE_ATTACK ||                         
+                state == FSMBoss.State.BALL_ATTACK)           
             {
 
-                initialRotation = collider.gameObject.transform.localRotation;
+                initialRotation = collider.gameObject.transform.Find("ModelContainer").localRotation;
                 initialPosition = collider.gameObject.transform.position;
 
                 contains.Add(collider.gameObject);                
@@ -188,7 +188,8 @@ public class TornadoBehaviour : MonoBehaviour {
                 AbsorbEnemy(collider.gameObject);
                 fsmBoss.IsInsideTornado(true);
                 fsmBoss.NotifyRotationDuration(rotationDuration);
-                enemyInside = true;                   
+                enemyInside = true;
+                Debug.Log("BOSS INSIDE TORNADO ID = " + GetInstanceID());                   
                                    
             }                          
         }     
@@ -207,7 +208,7 @@ public class TornadoBehaviour : MonoBehaviour {
             if(go.CompareTag("Boss"))
             {
                 go.transform.position = initialPosition;
-                go.transform.localRotation = initialRotation;
+                go.transform.Find("ModelContainer").localRotation = initialRotation;
                 ApplyDamageBoss(damage);
             }
 
@@ -224,6 +225,7 @@ public class TornadoBehaviour : MonoBehaviour {
         contains.Clear();
         angle = 0.0f;
         enemyInside = false;
+        Debug.Log("BEFORE fsmBoss.IsInsideTornado(false) ID = " + GetInstanceID());
         fsmBoss.IsInsideTornado(false);
     }
 
@@ -246,7 +248,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
     private void RotateEnemy(GameObject enemy)
     {
-        Transform trf = enemy.transform;
+        Transform trf = enemy.transform.Find("ModelContainer");
 
         angle += angularSpeed * Time.deltaTime;
 
@@ -276,5 +278,10 @@ public class TornadoBehaviour : MonoBehaviour {
     private void ApplyDamageBoss(int damage)
     {
         fsmBoss.ApplyDamage(damage);
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("DISABLED INSTANCE = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
     }
 }

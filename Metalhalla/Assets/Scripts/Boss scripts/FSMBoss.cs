@@ -940,8 +940,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PreBallAttack";
             bossAnimator.SetBool(currAnimation, true);
-
-            //ballAttackIndicator.SetActive(true);
+            
             ballAttackIndicatorPS.Play();
             fireAuraPS.Play();
             fireAuraDamageScript.preBallAttack = true;           

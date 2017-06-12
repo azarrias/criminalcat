@@ -43,7 +43,7 @@ public class FireAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideFireAura = true;
-            Debug.Log("Player inside fire aura");
+            //Debug.Log("Player inside fire aura");
         }
     }
 
@@ -52,7 +52,7 @@ public class FireAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideFireAura = false;
-            Debug.Log("Player outside fire aura");
+            //Debug.Log("Player outside fire aura");
         }
     }
 
