@@ -26,7 +26,7 @@ public class coinItem : MonoBehaviour {
         rotationSpeed = 180f;
         framesToGUICount = 0;
 
-        guiGameObject = GameObject.Find("Beer"); // to be modified to another position
+        guiGameObject = GameObject.Find("CoinGUI"); // to be modified to another position
     }
 
     private void Update()
