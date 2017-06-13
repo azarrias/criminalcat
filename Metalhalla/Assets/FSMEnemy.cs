@@ -44,8 +44,9 @@ public class FSMEnemy : MonoBehaviour
     private Material material;
     private BoxCollider[] boxColliders;
 
-    //Mod Jordi 20170610
     private float patrol2chaseSpeedRatio;
+    private CameraFollow camFollow; 
+
 
     private void Awake()
     {
@@ -57,7 +58,8 @@ public class FSMEnemy : MonoBehaviour
         material = GetComponentInChildren<Renderer>().material;
         boxColliders = GetComponentsInChildren<BoxCollider>();
 
-        patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed; //Mod Jordi 20170610
+        patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed; 
+
     }
 
     private void Start()
@@ -75,6 +77,11 @@ public class FSMEnemy : MonoBehaviour
                 b.enabled = false;
             }
         }
+
+        // get camera component to create Shake effect when being hit
+        camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
+        if (camFollow == null)
+            Debug.Log("FSM Enemy: could not find the component CameraFollow in the MainCamera of the scene");
     }
 
     private void FixedUpdate()
@@ -109,7 +116,8 @@ public class FSMEnemy : MonoBehaviour
                             ChangeState(State.CHASE);
                         else ChangeState(State.DEAD);
                     }*/
-                    break;
+            break;
+
             case State.CHASE:
                 if (PlayerAtRange())
                     ChangeState(State.ATTACK);
@@ -157,7 +165,7 @@ public class FSMEnemy : MonoBehaviour
 
     private void StateEnter(State state)
     {
-        animator.speed = 1; //Mod Jordi 20170610
+        animator.speed = 1; 
         switch (state)
         {
             case State.IDLE:
@@ -283,6 +291,9 @@ public class FSMEnemy : MonoBehaviour
         {
             Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
+            // camera shake when starting being hit state
+            camFollow.StartShake();
+            ParticlesManager.SpawnParticle("blood", transform.position, true);  // blood positioning has to be improved
         }
     }
 
@@ -336,23 +347,6 @@ public class FSMEnemy : MonoBehaviour
     }
 
     // ---- DEAD STATE COLLIDER adjustment functions ------------------------------------------------------------------------------
-
-        // doesn't work as animation events
-    /*public void SetCollider( float xTranslation, float yTranslation, float xSize, float ySize)
-    {
-        BoxCollider box = GetComponent<BoxCollider>();
-
-        Vector3 tmp = box.size;
-        tmp.y = ySize;
-        tmp.x = xSize;
-        box.size = tmp;
-
-        tmp = box.center;
-        tmp.x = xTranslation;
-        tmp.y = yTranslation;
-        box.center = tmp; 
-    }
-    */
     public void SetColliderXTranslation(float x) {
         BoxCollider box = GetComponent<BoxCollider>();
         Vector3 tmp = box.center;
