@@ -45,8 +45,13 @@ public class FSMEnemy : MonoBehaviour
     private BoxCollider[] boxColliders;
 
     private float patrol2chaseSpeedRatio;
-    private CameraFollow camFollow; 
+    private CameraFollow camFollow;
 
+    // Recoil variables 
+    [HideInInspector]
+    public bool facingRight;
+    private float hitRecoil;
+    private float deadRecoil;
 
     private void Awake()
     {
@@ -58,7 +63,9 @@ public class FSMEnemy : MonoBehaviour
         material = GetComponentInChildren<Renderer>().material;
         boxColliders = GetComponentsInChildren<BoxCollider>();
 
-        patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed; 
+        patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed;
+        hitRecoil = enemyStats.hitRecoil;
+        deadRecoil = enemyStats.deadRecoil;
 
     }
 
@@ -109,6 +116,11 @@ public class FSMEnemy : MonoBehaviour
                 {
                     ChangeState(State.CHASE);
                 }
+                else
+                {
+                    int direction = facingRight ? -1 : 1;
+                    transform.position += new Vector3(direction * Time.fixedDeltaTime * hitRecoil, 0, 0);
+                }
                     /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
                             animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
                     {
@@ -148,7 +160,7 @@ public class FSMEnemy : MonoBehaviour
                         animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
                 {
                     StateExit(State.DEAD);
-                }
+                } 
                 break;
         }
     }
@@ -212,7 +224,10 @@ public class FSMEnemy : MonoBehaviour
 
             case State.DEAD:
                 animator.SetBool("dead", true);
-            break;
+                //TODO HERE
+                int direction = facingRight ? -1 : 1;
+                transform.position += new Vector3(direction * deadRecoil, 0, 0);
+                break;
         }
     }
 
@@ -271,11 +286,13 @@ public class FSMEnemy : MonoBehaviour
         if (xcoord > transform.position.x)
         {
             transform.localEulerAngles = new Vector3(0, 180, 0);
+            facingRight = true;
             return -1;
         }
         else
         {
             transform.localEulerAngles = new Vector3(0, 0, 0);
+            facingRight = false; 
             return 1;
         }
     }
@@ -289,7 +306,7 @@ public class FSMEnemy : MonoBehaviour
     {
         if (currentState != State.STUNNED)
         {
-            Debug.Log(name.ToString() + ": I've been hit");
+          //  Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
             // camera shake when starting being hit state
             camFollow.StartShake();
@@ -299,7 +316,7 @@ public class FSMEnemy : MonoBehaviour
 
     public void Stun()
     {
-        Debug.Log(name.ToString() + ": I've been stunned");
+      //  Debug.Log(name.ToString() + ": I've been stunned");
         ChangeState(State.STUNNED);
     }
 

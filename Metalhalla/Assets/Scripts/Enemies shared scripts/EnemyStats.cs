@@ -13,7 +13,11 @@ public class EnemyStats : MonoBehaviour {
     public int hitPoints = 200;
     public int meleeDamage = 5;
     public int specialAttackDamage = 25;
-  
+
+    [Header("Enemy recoils when taking damage")]
+    public float hitRecoil = 2.0f;
+    public float deadRecoil = 0.7f;
+
     [Header("Sound Effects")]
     public AudioClip fxEnemyWasHit;
 
