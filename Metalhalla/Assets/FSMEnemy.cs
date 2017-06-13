@@ -224,7 +224,6 @@ public class FSMEnemy : MonoBehaviour
 
             case State.DEAD:
                 animator.SetBool("dead", true);
-                //TODO HERE
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
                 break;
@@ -310,7 +309,9 @@ public class FSMEnemy : MonoBehaviour
             ChangeState(State.BEING_HIT);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            ParticlesManager.SpawnParticle("blood", transform.position, true);  // blood positioning has to be improved
+            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2*Vector3.back, facingRight);  // blood positioning has to be improved
+            //blood.transform.parent = transform;
+            blood.transform.SetParent(transform);
         }
     }
 

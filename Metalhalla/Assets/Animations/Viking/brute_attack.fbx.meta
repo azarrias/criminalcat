@@ -101,7 +101,7 @@ ModelImporter:
     - serializedVersion: 16
       name: viking_attack
       takeName: Take 001
-      firstFrame: 1
+      firstFrame: 13
       lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
