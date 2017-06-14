@@ -4,44 +4,51 @@ using UnityEngine;
 
 public class TornadoBehaviour : MonoBehaviour {
 
-    public float speed = 1.0f;
-    public int damage = 20;
-    private bool facingRight = true;
+    public enum State
+    {
+        MOVE,
+        ROTATE,
+        DISIPATE
+    }
+    // ---------------------- VARIABLES TO MANAGE TORNADO FSM STATE TRANSITIONS ---------------
+    private bool disipate = false;
+    private bool rotate = false;
+
+    //----------------------- TORNADO PROPERTIES -----------------
+    private State tornadoState = State.MOVE;
+
     public float lifeTime = 10.0f;
-    private float rotationDuration = 3.0f;
-    private bool enemyInside = false;
-    private List<GameObject> contains;
-    private float angularSpeed = 10.0f;
-    private float angle = 0.0f;
+    private float lifeTimeCounter = 0.0f;
+
     private Transform tornadoEyeTr = null;
-    private FSMBoss fsmBoss = null;
-
-    public GameObject tornadoCircleGO;
-    private ParticleSystem tornadoCirclesPS;
-    private ParticleSystem.Particle[] tornadoCircles;
-
-    public GameObject foggyBaseGO;
-    private ParticleSystem foggyBasePS;
-
-    public GameObject smallFragmentsGO;
-    private ParticleSystem smallFragmentsPS;
-    
-    private bool disipating = false;
-    private int counter = 0;
-    
-    public float fadeSpeed = 0.1f;
-    public float fadeFrames = 120;
-    float acum = 0.0f;
-
+    public float speed = 1.0f;
+    private float angle = 0.0f;
+    private float angularSpeed = 10.0f;
     private float rotationTimeCounter = 0.0f;
     private float rotationTime = 3.0f;
-    private float lifeTimeCounter = 0.0f;
    
-   
+    public int damage = 20;
+    private bool facingRight = true;
+    private List<GameObject> contains;
+
+    private FSMBoss fsmBoss = null;
+
     [HideInInspector]
     private Quaternion initialRotation = Quaternion.identity;
     [HideInInspector]
     private Vector3 initialPosition = Vector3.zero;
+ 
+    //------------------------ MANAGING TORNADO PARTICLE SYSTEM ON DISIPATION -----------------
+    public GameObject tornadoCircleGO;
+    private ParticleSystem tornadoCirclesPS;
+    private ParticleSystem.Particle[] tornadoCircles;
+    public GameObject foggyBaseGO;
+    private ParticleSystem foggyBasePS;
+    public float fadeSpeed = 0.1f;
+    public float fadeFrames = 120;
+    public GameObject smallFragmentsGO;
+    private ParticleSystem smallFragmentsPS;
+    private int fadeCounter = 0;
 
     void Awake()
     {
@@ -61,86 +68,45 @@ public class TornadoBehaviour : MonoBehaviour {
         tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
-    void OnEnable()
-    {
-       // StartCoroutine(ManageLifeTime(lifeTime));
-    }
+    
 	
 	// Update is called once per frame
 	void Update () {
-        if (!enemyInside && !disipating)
+        
+        switch(tornadoState)
         {
-            if (facingRight)
-            {
-                gameObject.transform.Translate(Vector3.right * speed * Time.deltaTime);
-            }
-            else
-            {
-                gameObject.transform.Translate(Vector3.left * speed * Time.deltaTime);
-            }
-        }
+            case State.MOVE:               
+                Move();
+                TickLifeTime();
+                if (rotate)
+                {                    
+                    tornadoState = State.ROTATE;
+                    lifeTimeCounter = 0.0f;  //reset counter                  
+                    break;                        
+                }
+                if(disipate)
+                {
+                    OnDisipateEnter();
+                    tornadoState = State.DISIPATE;                   
+                    break;
+                }
+                break;
 
-        if(enemyInside)
-        {
-            foreach(GameObject go in contains)
-            {
-                
-                RotateEnemy(go);                           
-            }
+            case State.ROTATE:               
+                Rotate();
+                TickRotationTime();               
+                if(disipate)
+                {
+                    OnDisipateEnter();
+                    tornadoState = State.DISIPATE;
+                    break;
+                }
+                break;
 
-            rotationTimeCounter += Time.deltaTime;
-            if(rotationTimeCounter >= rotationTime)
-            {
-                rotationTimeCounter = 0.0f;
-                Debug.Log("ENTERING STOP - TORNADO ID = " + GetInstanceID());
-                StopRotation();
-            }
-        }      
-    }
-
-    void LateUpdate()
-    {
-        if (disipating)
-        {
-            int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
-            for (int i = 0; i < numParticlesAlive; i++)
-            {
-                Color newColor = tornadoCircles[i].GetCurrentColor(tornadoCirclesPS);
-                newColor.a -= fadeSpeed * Time.deltaTime;
-                if (newColor.a < 0.0f)
-                    newColor.a = 0.0f;
-
-                tornadoCircles[i].startColor = newColor;
-                tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
-            }
-
-            ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
-            foggyEmission.rateOverTime = 0.0f;
-
-            ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
-            dustEmission.rateOverTime = 0.0f;
-
-            counter++;
-            if (counter == fadeFrames)
-            {
-                gameObject.SetActive(false);
-                counter = 0;
-                disipating = false;
-                foggyEmission.rateOverTime = 50.0f;
-                dustEmission.rateOverTime = 50.0f;
-            }                    
-        }
-      
-        //Manage tornado life time
-        if(!enemyInside && !disipating)
-        {
-            lifeTimeCounter += Time.deltaTime;
-            if(lifeTimeCounter >= lifeTime)
-            {
-                lifeTimeCounter = 0.0f;
-                disipating = true;
-            }
-        }
+            case State.DISIPATE:
+                Disipate();
+                break;                                              
+        }  
     }
 
     void OnTriggerEnter(Collider collider)
@@ -148,28 +114,32 @@ public class TornadoBehaviour : MonoBehaviour {
         string colliderLayer = LayerMask.LayerToName(collider.gameObject.layer);
         if (colliderLayer == "ground" || colliderLayer == "wall")
         {
-            disipating = true;
+            disipate = true;
         }
         else if (colliderLayer == "destroyable" || colliderLayer == "destroyableEagle")
         {
-            ApplyDamage(damage, collider.gameObject);
+            collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
         }
 
-        if (collider.gameObject.CompareTag("Viking")   && 
-            collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.DEAD &&
-            collider.gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.STUNNED)
+        else if (collider.gameObject.CompareTag("Viking"))
         {
-            PrepareRotation(collider.gameObject);           
-        }
-
-        if (collider.gameObject.CompareTag("Dark Elf") &&
-           collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.DEAD &&
-           collider.gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.STUNNED)
+            FSMEnemy.State state = collider.gameObject.GetComponent<FSMEnemy>().currentState;
+            if(state != FSMEnemy.State.DEAD && state != FSMEnemy.State.STUNNED)
         {
-            PrepareRotation(collider.gameObject);
+                PrepareRotation(collider.gameObject);
+            }
         }
 
-        if (collider.gameObject.CompareTag("Boss"))
+        else if (collider.gameObject.CompareTag("Dark Elf"))
+        {
+            FSMDarkElf.State state = collider.gameObject.GetComponent<FSMDarkElf>().currentState;
+            if (state != FSMDarkElf.State.DEAD && state != FSMDarkElf.State.STUNNED)
+            {
+                PrepareRotation(collider.gameObject);
+            }
+        }
+
+        else if (collider.gameObject.name != "FireAura" && collider.gameObject.CompareTag("Boss"))
         {           
             FSMBoss.State state = fsmBoss.GetCurrentState();
             
@@ -179,18 +149,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 state == FSMBoss.State.POST_MELEE_ATTACK ||                         
                 state == FSMBoss.State.BALL_ATTACK)           
             {
-
-                initialRotation = collider.gameObject.transform.Find("ModelContainer").localRotation;
-                initialPosition = collider.gameObject.transform.position;
-
-                contains.Add(collider.gameObject);                
-                
-                AbsorbEnemy(collider.gameObject);
-                fsmBoss.IsInsideTornado(true);
-                fsmBoss.NotifyRotationDuration(rotationDuration);
-                enemyInside = true;
-                Debug.Log("BOSS INSIDE TORNADO ID = " + GetInstanceID());                   
-                                   
+                PrepareRotation(collider.gameObject);
             }                          
         }     
     }
@@ -198,90 +157,119 @@ public class TornadoBehaviour : MonoBehaviour {
     void OnTriggerStay(Collider collider)
     {
         if (collider.gameObject.name == "FireAura" && fsmBoss.GetCurrentState() == FSMBoss.State.PRE_BALL_ATTACK)
-            disipating = true;
+            disipate = true;
     }
 
-    private void StopRotation()
-    {                
-        foreach(GameObject go in contains)
-        {                                 
-            if(go.CompareTag("Boss"))
-            {
-                go.transform.position = initialPosition;
-                go.transform.Find("ModelContainer").localRotation = initialRotation;
-                ApplyDamageBoss(damage);
-            }
 
-            if(go.CompareTag("Viking") || go.CompareTag("Dark Elf"))
-            {
-                go.transform.position = go.GetComponent<EnemyStats>().initialPosition;
-                go.transform.localRotation = go.GetComponent<EnemyStats>().initialRotation;                
-                go.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
-                ApplyDamage(damage, go);
-            }
+
+    // ---------------------- FSM METHODS -------------------------------
+
+    private void TickLifeTime()
+    {
+        lifeTimeCounter += Time.deltaTime;
+        if(lifeTimeCounter >= lifeTime)
+        {
+            lifeTimeCounter = 0.0f;
+            disipate = true;
         }
-
-        disipating = true;       
-        contains.Clear();
-        angle = 0.0f;
-        enemyInside = false;
-        Debug.Log("BEFORE fsmBoss.IsInsideTornado(false) ID = " + GetInstanceID());
-        fsmBoss.IsInsideTornado(false);
     }
 
-    //For Dark Elves and Vikings
+    private void TickRotationTime()
+    {
+        rotationTimeCounter += Time.deltaTime;
+        if(rotationTimeCounter >= rotationTime)
+        {
+            rotationTimeCounter = 0.0f;
+            disipate = true;
+            rotate = false;
+        }
+    }
+
+   private void Move()
+    {
+        if (facingRight)
+        {
+            gameObject.transform.Translate(Vector3.right * speed * Time.deltaTime);
+        }
+        else
+        {
+            gameObject.transform.Translate(Vector3.left * speed * Time.deltaTime);
+        }
+    }
+
     private void PrepareRotation(GameObject enemy)
     {
-        enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.localRotation;
+        enemy.SendMessage("Stunt", SendMessageOptions.DontRequireReceiver);
+        enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.Find("ModelContainer").localRotation;
         enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
-        AbsorbEnemy(enemy);
-        enemy.SendMessage("Stun", SendMessageOptions.DontRequireReceiver);
-        contains.Add(enemy);
-        
-        if (enemyInside == false)
-        {
-            enemyInside = true;
+        Absorb(enemy);       
+        enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+        rotate = true;                   
+    }
 
-            //StartCoroutine(ManageRotationDuration(rotationDuration));
+    private void Rotate()
+    {
+        if(Time.timeScale != 0.0f)
+        {
+            foreach (var enemy in contains)
+            {
+                Transform trf = enemy.transform.Find("ModelContainer");
+                trf.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);
+            }
+            angle += angularSpeed * Time.deltaTime;
+        }       
+    }
+
+    private void OnDisipateEnter()
+    {
+        foreach (var enemy in contains)
+        {
+            enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
+            enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
+            enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
+        }
+    }
+    private void Disipate()
+    {
+        int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
+        for (int i = 0; i < numParticlesAlive; i++)
+        {
+            Color newColor = tornadoCircles[i].GetCurrentColor(tornadoCirclesPS);
+            newColor.a -= fadeSpeed * Time.deltaTime;
+            if (newColor.a < 0.0f)
+                newColor.a = 0.0f;
+
+            tornadoCircles[i].startColor = newColor;
+            tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
+        }
+
+        ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
+        foggyEmission.rateOverTime = 0.0f;
+
+        ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
+        dustEmission.rateOverTime = 0.0f;
+
+        fadeCounter++;
+        if (fadeCounter == fadeFrames)
+        {
+            //Debug.Log("BEFORE DEACTIVATING TORNADO ID = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
+            fadeCounter = 0;
+            disipate = false;
+            foggyEmission.rateOverTime = 50.0f;
+            dustEmission.rateOverTime = 50.0f;
+            gameObject.SetActive(false);
         }
     }
 
-    private void RotateEnemy(GameObject enemy)
-    {
-        Transform trf = enemy.transform.Find("ModelContainer");
-
-        angle += angularSpeed * Time.deltaTime;
-
-        if (Time.timeScale != 0.0f)
-            trf.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);
-        else
-            trf.localRotation = trf.localRotation;
-
-    }
-
-    private void AbsorbEnemy(GameObject enemy)
+    private void Absorb(GameObject enemy)
     {
         enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
-        
+        contains.Add(enemy);
     }
-
-    public void SetFacingRight (bool facingRight)
+     
+    //Method called by the tornado user
+    public void SetFacingRight(bool facingRight)
     {
         this.facingRight = facingRight;
-    }
-
-    private void ApplyDamage(int damage, GameObject go)
-    {
-        go.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
-    }
-
-    private void ApplyDamageBoss(int damage)
-    {
-        fsmBoss.ApplyDamage(damage);
-    }
-
-    void OnDisable()
-    {
-        Debug.Log("DISABLED INSTANCE = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
     }
 }

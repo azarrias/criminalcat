@@ -12,7 +12,7 @@ public class EnemyStats : MonoBehaviour {
     public int maxHitPoints = 200;
     public int hitPoints = 200;
     public int meleeDamage = 5;
-    public int specialAttackDamage = 25;
+    //public int specialAttackDamage = 25;
 
     [Header("Enemy recoils when taking damage")]
     public float hitRecoil = 2.0f;
@@ -32,23 +32,9 @@ public class EnemyStats : MonoBehaviour {
 		
 	}
 
-    //void OnTriggerEnter(Collider collider)
-    //{
-    //    //Save local rotation to return to it when the tornado vanishes
-    //    if(collider.gameObject.CompareTag("Tornado"))
-    //    {
-    //        if (gameObject.CompareTag("Viking") && gameObject.GetComponent<FSMEnemy>().currentState != FSMEnemy.State.STUNNED ||
-    //            gameObject.CompareTag("Dark Elf") && gameObject.GetComponent<FSMDarkElf>().currentState != FSMDarkElf.State.STUNNED)
-    //        {
-    //            initialRotation = transform.localRotation;
-    //            initialPosition = transform.position;
-    //        }            
-    //    } 
-    //}
-
     public void ApplyDamage(int value)
     {
-        AudioManager.instance.PlayFx(fxEnemyWasHit);
+        //AudioManager.instance.PlayFx(fxEnemyWasHit);
         hitPoints -= value;
     }
 }

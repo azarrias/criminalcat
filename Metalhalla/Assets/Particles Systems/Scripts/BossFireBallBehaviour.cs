@@ -7,7 +7,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
     public float lifeTime = 3.0f;
     public float speed = 1.0f;
     private Vector3 direction;
-    public int ballDamage = 10;
+    public int ballDamage = 15;
     private float counter = 0.0f;
 
 
