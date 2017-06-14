@@ -147,7 +147,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 state == FSMBoss.State.PRE_MELEE_ATTACK ||
                 state == FSMBoss.State.MELEE_ATTACK ||
                 state == FSMBoss.State.POST_MELEE_ATTACK ||                         
-                state == FSMBoss.State.BALL_ATTACK)           
+                state == FSMBoss.State.POST_BALL_ATTACK)           
             {
                 PrepareRotation(collider.gameObject);
             }                          

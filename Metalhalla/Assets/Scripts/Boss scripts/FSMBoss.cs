@@ -44,6 +44,7 @@ public class FSMBoss : MonoBehaviour
     [Tooltip("Time until body disappears")]
     public float deadTime = 3.0f;
 
+    [Space(10)]
     [Tooltip("Stalk state transition duration")]
     public float stalkDuration = 0.0f;
     private float stalkCounter = 0.0f;
@@ -911,6 +912,8 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             ballAttackFinished = true;
+            ballAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();
         }
     }
 
@@ -921,15 +924,12 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PostBallAttack";
             bossAnimator.SetBool(currAnimation, true);
-
-            //ballAttackIndicator.SetActive(false);
-            ballAttackIndicatorPS.Stop();
-            fireAuraPS.Stop();          
+            
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            postBallAttackFinished = true;
+            postBallAttackFinished = true;           
         }
     }
 
