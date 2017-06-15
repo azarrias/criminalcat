@@ -17,9 +17,9 @@ public class SpawnParticles : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true);
-            GameObject go = Instantiate(particlesPrefab, spawnPosition.position, Quaternion.identity);
-            go.GetComponent<TornadoBehaviour>().SetFacingRight(true);
+            ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true);
+            //GameObject go = Instantiate(particlesPrefab, spawnPosition.position, Quaternion.identity);
+            //go.GetComponent<TornadoBehaviour>().SetFacingRight(true);
         }
 
         //if (Input.GetKeyDown(KeyCode.RightControl))

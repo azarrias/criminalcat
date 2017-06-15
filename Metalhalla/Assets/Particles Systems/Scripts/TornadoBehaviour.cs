@@ -270,8 +270,9 @@ public class TornadoBehaviour : MonoBehaviour {
             disipate = false;
             foggyEmission.rateOverTime = 50.0f;
             dustEmission.rateOverTime = 50.0f;
-            contains.Clear();
-            gameObject.SetActive(false);           
+            contains.Clear();            
+            gameObject.SetActive(false);
+            tornadoState = State.MOVE; //reset state           
         }
     }
 
