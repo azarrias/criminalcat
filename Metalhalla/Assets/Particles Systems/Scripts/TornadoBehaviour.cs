@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TornadoBehaviour : MonoBehaviour {
 
@@ -56,8 +57,12 @@ public class TornadoBehaviour : MonoBehaviour {
 
     void Awake()
     {
-        fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
-        enemyStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
+        Scene scene = SceneManager.GetActiveScene();
+        if (scene.name == "Dungeon Boss")
+        {
+            fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
+            enemyStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
+        }
 
         contains = new List<GameObject>();
         
