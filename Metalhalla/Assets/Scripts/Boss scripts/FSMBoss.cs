@@ -130,7 +130,8 @@ public class FSMBoss : MonoBehaviour
     private bool ballAttackFinished = false;
     private bool postBallAttackFinished = false;
 
-    private bool prepareCast = false;
+    [HideInInspector]
+    public bool prepareCast = false;
     private bool castIceSpikes = true;
     private bool backToCenter = true;
     private bool insideTornado = false;
@@ -560,19 +561,20 @@ public class FSMBoss : MonoBehaviour
             case State.INSIDE_TORNADO:               
                 InsideTornado();
                 if(!insideTornado)
-                {                       
-                    preMeleeAttackSelected = false; //reset value
-                    preBallAttackSelected = false; //reset value
-                    if (bossStats.hitPoints <= 0)
+                {
+                    if (bossStats.hitPoints > 0)
                     {
-                        currState = State.DEAD;
+                        preMeleeAttackSelected = false; //reset value
+                        preBallAttackSelected = false; //reset value                                      
+                        SelectAttack();
+                        currState = State.CHASE;
+                        break;
                     }
                     else
                     {
-                        SelectAttack();
-                        currState = State.CHASE;
-                    }
-                    break;                   
+                        currState = State.DEAD;
+                        break;
+                    }                   
                 }
                 break;
         }
@@ -633,93 +635,6 @@ public class FSMBoss : MonoBehaviour
         }
     }
 
-    //---------------------------------------METHODS TO NOTIFY THE END OF THE ATTACK ANIMATIONS--------------------------------
-    //private void FinishPreMeleeAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for pre-melee attack to finish");
-    //    preMeleeCounter += Time.deltaTime;
-    //    if (preMeleeCounter >= preMeleeAttackDuration)
-    //    {
-    //        preMeleeCounter = 0.0f;
-    //        //Debug.Log("pre-melee attack animation finished");
-    //        preMeleeAttackFinished = true;
-
-    //    }
-    //}
-
-    //private void FinishMeleeAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for melee attack to finish");
-    //    meleeCounter += Time.deltaTime;
-    //    if (meleeCounter >= meleeAttackDuration)
-    //    {
-    //        meleeCounter = 0.0f;
-    //        //Debug.Log("melee attack animation finished");
-    //        meleeAttackFinished = true;
-    //    }
-    //}
-
-    //private void FinishPostMeleeAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for post-melee attack to finish");
-    //    postMeleeCounter += Time.deltaTime;
-    //    if (postMeleeCounter >= postMeleeAttackDuration)
-    //    {
-    //        postMeleeCounter = 0.0f;
-    //        //Debug.Log("post-melee attack animation finished");
-    //        postMeleeAttackFinished = true;
-    //    }
-    //}
-
-    //private void FinishPreBallAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for pre-ball attack to finish");
-    //    preBallCounter += Time.deltaTime;
-    //    if (preBallCounter >= preBallAttackDuration)
-    //    {
-    //        preBallCounter = 0.0f;
-    //        //Debug.Log("pre-ball attack animation finished");
-    //        preBallAttackFinished = true;
-    //    }
-    //}
-
-    //private void FinishBallAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for ball attack to finish");
-    //    ballCounter += Time.deltaTime;
-    //    if (ballCounter >= ballAttackDuration)
-    //    {
-    //        ballCounter = 0.0f;
-    //        //Debug.Log("ball attack animation finished");
-    //        ballAttackFinished = true;
-    //    }
-    //}
-
-    //private void FinishPostBallAttackAnimation()
-    //{
-    //    //Debug.Log("waiting for post-ball attack to finish");
-    //    postBallcounter += Time.deltaTime;
-    //    if (postBallcounter >= postBallAttackDuration)
-    //    {
-    //        postBallcounter = 0.0f;
-    //        //Debug.Log("post-ball attack animation finished");
-    //        postBallAttackFinished = true;
-    //    }
-    //}
-
-    //private void FinishCastIceSpikesAnimation()
-    //{
-    //    //Debug.Log("waiting for ice spikes cast to finish");
-    //    castSpikesCounter += Time.deltaTime;
-    //    if (castSpikesCounter >= castSpikesDuration)
-    //    {
-    //        castSpikesCounter = 0.0f;
-    //        //Debug.Log("ice spikes cast finished");
-    //        castIceSpikes = false;
-    //        numSpikeAttacks++;
-    //    }
-    //}
-
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Dead()
     {
@@ -731,9 +646,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
-            //Destroy boss
-            //if (currState == State.INSIDE_TORNADO)
-            //    deadTime += (tornadoDuration + 3.0f);
+            //Destroy boss            
             Destroy(gameObject, deadTime);                          
         }
     }
@@ -988,12 +901,13 @@ public class FSMBoss : MonoBehaviour
             {
                 iceSpikesScript3D.ShowIceSpikes();               
             }
+
+            numSpikeAttacks++;
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            castIceSpikes = false;
-            numSpikeAttacks++;
+            castIceSpikes = false;            
         }
     }
 
