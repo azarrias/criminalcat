@@ -145,7 +145,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
         else if (collider.gameObject.name != "FireAura" && collider.gameObject.CompareTag("Boss"))
         {
-            if (!triggerTaken)
+            if (!triggerTaken && !disipate)
             {
                 triggerTaken = true;
 
@@ -270,6 +270,7 @@ public class TornadoBehaviour : MonoBehaviour {
             disipate = false;
             foggyEmission.rateOverTime = 50.0f;
             dustEmission.rateOverTime = 50.0f;
+            contains.Clear();
             gameObject.SetActive(false);           
         }
     }
