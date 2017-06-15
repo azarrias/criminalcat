@@ -132,19 +132,25 @@ public class TornadoBehaviour : MonoBehaviour {
 
         else if (collider.gameObject.CompareTag("Viking"))
         {
-            FSMEnemy.State state = collider.gameObject.GetComponent<FSMEnemy>().currentState;
-            if(state != FSMEnemy.State.DEAD && state != FSMEnemy.State.STUNNED)
-        {
-                PrepareRotation(collider.gameObject);
+            if (!disipate)
+            {
+                FSMEnemy.State state = collider.gameObject.GetComponent<FSMEnemy>().currentState;
+                if (state != FSMEnemy.State.DEAD && state != FSMEnemy.State.STUNNED)
+                {
+                    PrepareRotation(collider.gameObject);
+                }
             }
         }
 
         else if (collider.gameObject.CompareTag("Dark Elf"))
         {
-            FSMDarkElf.State state = collider.gameObject.GetComponent<FSMDarkElf>().currentState;
-            if (state != FSMDarkElf.State.DEAD && state != FSMDarkElf.State.STUNNED)
+            if (!disipate)
             {
-                PrepareRotation(collider.gameObject);
+                FSMDarkElf.State state = collider.gameObject.GetComponent<FSMDarkElf>().currentState;
+                if (state != FSMDarkElf.State.DEAD && state != FSMDarkElf.State.STUNNED)
+                {
+                    PrepareRotation(collider.gameObject);
+                }
             }
         }
 
