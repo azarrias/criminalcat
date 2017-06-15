@@ -221,12 +221,12 @@ public class FSMBoss : MonoBehaviour
             case State.CHASE:
                 if (bossStats.hitPoints <= 0)
                 {
-                    chaseCounter += Time.deltaTime;
-                    if (chaseCounter >= chaseDuration)
-                    {
-                        chaseCounter = 0.0f;                       
+                    //chaseCounter += Time.deltaTime;
+                    //if (chaseCounter >= chaseDuration)
+                    //{
+                     //   chaseCounter = 0.0f;                       
                         currState = State.DEAD;                      
-                    }
+                    //}
                     break;
                 }
                 //Player dead
@@ -562,19 +562,19 @@ public class FSMBoss : MonoBehaviour
                 InsideTornado();
                 if(!insideTornado)
                 {
-                    if (bossStats.hitPoints > 0)
-                    {
+                    //if (bossStats.hitPoints > 0)
+                    //{
                         preMeleeAttackSelected = false; //reset value
                         preBallAttackSelected = false; //reset value                                      
                         SelectAttack();
                         currState = State.CHASE;
                         break;
-                    }
-                    else
-                    {
-                        currState = State.DEAD;
-                        break;
-                    }                   
+                    //}
+                    //else
+                    //{
+                    //    currState = State.DEAD;
+                    //    break;
+                    //}                   
                 }
                 break;
         }
