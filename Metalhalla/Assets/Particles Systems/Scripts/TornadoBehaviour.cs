@@ -31,12 +31,13 @@ public class TornadoBehaviour : MonoBehaviour {
     private bool facingRight = true;
     private List<GameObject> contains;
 
-    private FSMBoss fsmBoss = null;
-
     [HideInInspector]
     private Quaternion initialRotation = Quaternion.identity;
     [HideInInspector]
     private Vector3 initialPosition = Vector3.zero;
+    
+    private static bool triggerTaken = false;
+    
  
     //------------------------ MANAGING TORNADO PARTICLE SYSTEM ON DISIPATION -----------------
     public GameObject tornadoCircleGO;
@@ -50,13 +51,16 @@ public class TornadoBehaviour : MonoBehaviour {
     private ParticleSystem smallFragmentsPS;
     private int fadeCounter = 0;
 
+    private FSMBoss fsmBoss = null;
+    private EnemyStats enemyStats = null;
+
     void Awake()
     {
-        fsmBoss = FindObjectOfType<FSMBoss>();
-        if (fsmBoss == null)
-            Debug.Log("Error: fsmBoss not found.");
-        contains = new List<GameObject>();
+        fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
+        enemyStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
 
+        contains = new List<GameObject>();
+        
         tornadoCirclesPS = tornadoCircleGO.GetComponent<ParticleSystem>();
         foggyBasePS = foggyBaseGO.GetComponent<ParticleSystem>();
         smallFragmentsPS = smallFragmentsGO.GetComponent<ParticleSystem>();
@@ -140,17 +144,22 @@ public class TornadoBehaviour : MonoBehaviour {
         }
 
         else if (collider.gameObject.name != "FireAura" && collider.gameObject.CompareTag("Boss"))
-        {           
-            FSMBoss.State state = fsmBoss.GetCurrentState();
-            
-            if (state == FSMBoss.State.CHASE || 
-                state == FSMBoss.State.PRE_MELEE_ATTACK ||
-                state == FSMBoss.State.MELEE_ATTACK ||
-                state == FSMBoss.State.POST_MELEE_ATTACK ||                         
-                state == FSMBoss.State.POST_BALL_ATTACK)           
+        {
+            if (!triggerTaken)
             {
-                PrepareRotation(collider.gameObject);
-            }                          
+                triggerTaken = true;
+
+                FSMBoss.State state = fsmBoss.GetCurrentState();
+
+                if (state == FSMBoss.State.CHASE && fsmBoss.prepareCast == false && enemyStats.hitPoints > 0 ||
+                    state == FSMBoss.State.PRE_MELEE_ATTACK ||
+                    state == FSMBoss.State.MELEE_ATTACK ||
+                    state == FSMBoss.State.POST_MELEE_ATTACK ||
+                    state == FSMBoss.State.POST_BALL_ATTACK)
+                {
+                    PrepareRotation(collider.gameObject);
+                }              
+            }           
         }     
     }
 
@@ -181,7 +190,7 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             rotationTimeCounter = 0.0f;
             disipate = true;
-            rotate = false;
+            rotate = false;           
         }
     }
 
@@ -204,7 +213,11 @@ public class TornadoBehaviour : MonoBehaviour {
         enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
         Absorb(enemy);       
         enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
-        rotate = true;                   
+
+        if (enemyStats.hitPoints > 0)
+            rotate = true;
+        else
+            disipate = true;                   
     }
 
     private void Rotate()
@@ -231,6 +244,7 @@ public class TornadoBehaviour : MonoBehaviour {
     }
     private void Disipate()
     {
+        triggerTaken = false;
         int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
         for (int i = 0; i < numParticlesAlive; i++)
         {
@@ -242,7 +256,6 @@ public class TornadoBehaviour : MonoBehaviour {
             tornadoCircles[i].startColor = newColor;
             tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
         }
-
         ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
         foggyEmission.rateOverTime = 0.0f;
 
@@ -257,7 +270,7 @@ public class TornadoBehaviour : MonoBehaviour {
             disipate = false;
             foggyEmission.rateOverTime = 50.0f;
             dustEmission.rateOverTime = 50.0f;
-            gameObject.SetActive(false);
+            gameObject.SetActive(false);           
         }
     }
 
