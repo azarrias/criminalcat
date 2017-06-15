@@ -45,6 +45,9 @@ public class CameraFollow : MonoBehaviour
     Vector3 lastTargetPosition;
     float transitionThreshold;
 
+    //mod
+    Vector3 refCameraSpeed;
+
 
     void Start()
     {
@@ -108,7 +111,10 @@ public class CameraFollow : MonoBehaviour
                         cameraPosition.y = limitBottom;
                 }
 
-                transform.position = cameraPosition;
+
+                //transform.position = cameraPosition;
+                Debug.Log("refCameraSpeed: " + refCameraSpeed);
+                transform.position = Vector3.SmoothDamp(transform.position, cameraPosition, ref refCameraSpeed, 0.1f);
 
                 lastCameraPositionBeforeActiveTracking = transform.position;
             }
@@ -246,12 +252,16 @@ public class CameraFollow : MonoBehaviour
             y *= shakeMagnitude * damper;
 
 
-            transform.position = originalCamPos + new Vector3(x, y, 0);
+            //transform.position = originalCamPos + new Vector3(x, y, 0);
+            transform.position = Vector3.SmoothDamp(transform.position, transform.position + new Vector3(x, y, 0), ref refCameraSpeed, 0f);
 
             yield return 0;
         }
         shaking = false;
-        transform.localPosition = originalCamPos;
+        //  transform.localPosition = originalCamPos;
+        //transform.position = originalCamPos;
+        transform.position = Vector3.SmoothDamp(transform.position, originalCamPos, ref refCameraSpeed, 0.1f);
+
     }
 
     public void StartShake( float shakeMag = 0.0f, float shakeTime = 0.0f) {
