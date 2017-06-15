@@ -6,6 +6,7 @@ public class SpawnParticles : MonoBehaviour {
 
     public Transform spawnPosition;
     public GameObject target;
+    public GameObject particlesPrefab;
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +17,9 @@ public class SpawnParticles : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true);
+            //ParticlesManager.SpawnParticle("tornado", spawnPosition.position, true);
+            GameObject go = Instantiate(particlesPrefab, spawnPosition.position, Quaternion.identity);
+            go.GetComponent<TornadoBehaviour>().SetFacingRight(true);
         }
 
         //if (Input.GetKeyDown(KeyCode.RightControl))
