@@ -55,6 +55,11 @@ public class PlayerStatus : MonoBehaviour
     public int beerHealthRecovery = 20;
     int beer;
 
+    [Header("Coin Setup")]
+    [Tooltip("Starting coin count")]
+    public int coinsAtStart = 0;
+    int coins;
+
     [HideInInspector]
     public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
     [Header("Magic Setup")]
@@ -148,6 +153,7 @@ public class PlayerStatus : MonoBehaviour
         staminaRecovery = 0.0f;
         beer = beerAtStart;
         magic = magicAtStart;
+        coins = coinsAtStart;
 
         activeRespawnPoint = initialPosition;
         cameraFade = GameObject.Find("PlayerCamera").GetComponent<CameraFade>();
@@ -394,6 +400,9 @@ public class PlayerStatus : MonoBehaviour
         magic = (MAGIC) newMagic;
     }
 
+    //---- COIN functions -------------------------------------------------------------------------------------------
+    public int GetCurrentCoins() { return coins;}
+    public void CollectCoins( int amount ) { coins += amount; }
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
     int CalculateFramesFromTime(float time)

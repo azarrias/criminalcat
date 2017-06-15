@@ -18,6 +18,7 @@ public class coinItem : MonoBehaviour {
     private int framesToGUICount;
     private GameObject guiGameObject;
     Vector3 takenSpeed;
+    private PlayerStatus playerStatus;
 
     private void Start()
     {
@@ -35,7 +36,10 @@ public class coinItem : MonoBehaviour {
         if (taken)
         {
             if (framesToGUICount >= framesToGUI)
+            {
+                playerStatus.CollectCoins(1);
                 Destroy(this.gameObject);
+            }
             else
             {
 
@@ -51,12 +55,17 @@ public class coinItem : MonoBehaviour {
         if (!taken && collision.tag == "Player")
         {
             taken = true;
-            // add score / items to player
-            GameObject source = GameObject.Instantiate(sourcePrefab, transform.position, Quaternion.identity);
-            source.GetComponent<AudioSource>().clip  = coinFx;
-            source.GetComponent<AudioSource>().Play();
-            Destroy(source, 2.0f);
-           // Destroy(this.gameObject);
+
+            playerStatus = collision.gameObject.GetComponent<PlayerStatus>();
+
+            if (sourcePrefab != null && coinFx != null)
+            {
+                GameObject source = GameObject.Instantiate(sourcePrefab, transform.position, Quaternion.identity);
+                source.GetComponent<AudioSource>().clip = coinFx;
+                source.GetComponent<AudioSource>().Play();
+                Destroy(source, 2.0f);
+                // Destroy(this.gameObject);
+            }
         }
     }
 }
