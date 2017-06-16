@@ -118,6 +118,8 @@ public class ParticlesManager : MonoBehaviour
                 else if (name == "bossFireBall")
                 {
                     particle.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
+                    particle.transform.Find("Ball").gameObject.SetActive(true);
+                    particle.transform.Find("BallExplosion").gameObject.SetActive(false);
                 }
                 else if(name == "blood")
                 {
@@ -151,7 +153,12 @@ public class ParticlesManager : MonoBehaviour
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
             newParticle.SetActive(true);
-            newParticle.transform.parent = particlesManager.transform;
+            if (name == "bossFireBall")
+            {
+                newParticle.transform.Find("Ball").gameObject.SetActive(true);
+                newParticle.transform.Find("BallExplosion").gameObject.SetActive(false);
+            }
+            newParticle.transform.parent = particlesManager.transform;            
             particlesManager.particlesPool[name].Add(newParticle);
             particleToSpawn = newParticle;
         }
