@@ -799,7 +799,7 @@ public class FSMBoss : MonoBehaviour
             
             ballAttackIndicatorPS.Play();
             fireAuraPS.Play();
-            fireAuraDamageScript.preBallAttack = true;           
+            fireAuraDamageScript.auraActive = true;           
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -818,15 +818,12 @@ public class FSMBoss : MonoBehaviour
 
             Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
             GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", ballSpawnPosition, facingRight);
-            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
-            fireAuraDamageScript.preBallAttack = false;        
+            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);                    
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            ballAttackFinished = true;
-            ballAttackIndicatorPS.Stop();
-            fireAuraPS.Stop();
+            ballAttackFinished = true;           
         }
     }
 
@@ -837,12 +834,14 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PostBallAttack";
             bossAnimator.SetBool(currAnimation, true);
-            
+            fireAuraDamageScript.auraActive = false;
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            postBallAttackFinished = true;           
+            postBallAttackFinished = true;
+            ballAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();            
         }
     }
 
