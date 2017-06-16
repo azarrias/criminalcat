@@ -169,6 +169,8 @@ public class ParticlesManager : MonoBehaviour
             if (!particle.activeSelf)
             {
                 particle.SetActive(true);
+                particle.transform.Find("Ball").gameObject.SetActive(true);
+                particle.transform.Find("BallExplosion").gameObject.SetActive(false);
                 particle.transform.position = spawnPosition;
                 particle.GetComponent<ElfFireBallBehaviour>().SetDirection(ballDirection);
 
@@ -185,6 +187,8 @@ public class ParticlesManager : MonoBehaviour
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
             newParticle.GetComponent<ElfFireBallBehaviour>().SetDirection(ballDirection);
             newParticle.SetActive(true);
+            newParticle.transform.Find("Ball").gameObject.SetActive(true);
+            newParticle.transform.Find("BallExplosion").gameObject.SetActive(false);
             newParticle.transform.parent = particlesManager.transform;
             particlesManager.particlesPool["elfFireBall"].Add(newParticle);
             particleToSpawn = newParticle;

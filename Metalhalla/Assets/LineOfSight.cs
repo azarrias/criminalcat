@@ -52,7 +52,7 @@ public class LineOfSight : MonoBehaviour
             playerInSight = PlayerInSight();
             if (playerInSight)
             {
-                Debug.Log(this.name.ToString() + ": I can see the player");
+                //Debug.Log(this.name.ToString() + ": I can see the player");
                 Debug.DrawLine(player.transform.position, transform.position);
             }
             yield return new WaitForSeconds(dt);
