@@ -5,7 +5,7 @@ using UnityEngine;
 public class FireAuraDamage : MonoBehaviour {
 
     [HideInInspector]
-    public bool preBallAttack = false;
+    public bool auraActive = false;
     private bool playerInsideFireAura = true;
     private float waitCounter = 0.0f;
     public float waitTime = 0.5f;
@@ -21,7 +21,7 @@ public class FireAuraDamage : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(preBallAttack)
+		if(auraActive)
         {
             if (playerInsideFireAura && applyAuraDamage)
             {

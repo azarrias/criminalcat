@@ -113,7 +113,7 @@ public class CameraFollow : MonoBehaviour
 
 
                 //transform.position = cameraPosition;
-                Debug.Log("refCameraSpeed: " + refCameraSpeed);
+                //Debug.Log("refCameraSpeed: " + refCameraSpeed);
                 transform.position = Vector3.SmoothDamp(transform.position, cameraPosition, ref refCameraSpeed, 0.1f);
 
                 lastCameraPositionBeforeActiveTracking = transform.position;

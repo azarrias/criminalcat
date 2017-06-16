@@ -35,7 +35,16 @@ public class AudioManager : MonoBehaviour {
         else if (instance != this)
             Destroy(gameObject);
 
-        DontDestroyOnLoad(gameObject);
+        //Dani - He comentado el dontdestroy y la inicialización de fxAudioSources la he puesto en el Awake y parece que va bien - verifícalo por favor ;o)
+        //DontDestroyOnLoad(gameObject);  
+
+        fXAudioSources = new List<GameObject>();
+        for (int i = 0; i < numberOfFXAudioSources; ++i)
+        {
+            GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+            obj.SetActive(false);
+            fXAudioSources.Add(obj);
+        }
     }
 
 	// Use this for initialization
@@ -44,13 +53,13 @@ public class AudioManager : MonoBehaviour {
                 musicSource.volume = 0.0f;
                 musicSource.Play();
                 StartCoroutine("FadeIn", 10.0f);*/
-        fXAudioSources = new List<GameObject>();
-        for(int i = 0; i < numberOfFXAudioSources; ++i)
-        {
-            GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
-            obj.SetActive(false);
-            fXAudioSources.Add(obj);
-        }
+        //fXAudioSources = new List<GameObject>();
+        //for(int i = 0; i < numberOfFXAudioSources; ++i)
+        //{
+        //    GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+        //    obj.SetActive(false);
+        //    fXAudioSources.Add(obj);
+        //}
 
     }
 

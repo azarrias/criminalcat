@@ -53,7 +53,7 @@ public class TornadoBehaviour : MonoBehaviour {
     private int fadeCounter = 0;
 
     private FSMBoss fsmBoss = null;
-    private EnemyStats enemyStats = null;
+    private EnemyStats bossStats = null;
 
     void Awake()
     {
@@ -61,7 +61,7 @@ public class TornadoBehaviour : MonoBehaviour {
         if (scene.name == "Dungeon Boss")
         {
             fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
-            enemyStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
+            bossStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
         }
 
         contains = new List<GameObject>();
@@ -105,7 +105,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 Rotate();
                 TickRotationTime();               
                 if(disipate)
-                {
+                {   
                     OnDisipateEnter();
                     tornadoState = State.DISIPATE;
                     break;
@@ -162,7 +162,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
                 FSMBoss.State state = fsmBoss.GetCurrentState();
 
-                if (state == FSMBoss.State.CHASE && fsmBoss.prepareCast == false && enemyStats.hitPoints > 0 ||
+                if (state == FSMBoss.State.CHASE && fsmBoss.prepareCast == false && bossStats.hitPoints > 0 ||
                     state == FSMBoss.State.PRE_MELEE_ATTACK ||
                     state == FSMBoss.State.MELEE_ATTACK ||
                     state == FSMBoss.State.POST_MELEE_ATTACK ||
@@ -201,7 +201,8 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             rotationTimeCounter = 0.0f;
             disipate = true;
-            rotate = false;           
+            rotate = false;
+            angle = 0.0f;           
         }
     }
 
@@ -223,9 +224,9 @@ public class TornadoBehaviour : MonoBehaviour {
         enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.Find("ModelContainer").localRotation;
         enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
         Absorb(enemy);       
-        enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+        //enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
 
-        if (enemyStats.hitPoints > 0)
+        if (enemy.GetComponent<EnemyStats>().hitPoints > 0)
             rotate = true;
         else
             disipate = true;                   
@@ -250,6 +251,7 @@ public class TornadoBehaviour : MonoBehaviour {
         {
             enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
             enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
+            enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
         }
     }
@@ -289,7 +291,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
     private void Absorb(GameObject enemy)
     {
-        enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, 0.0f);
+        enemy.transform.position = new Vector3(tornadoEyeTr.position.x, tornadoEyeTr.position.y, enemy.transform.position.z);
         contains.Add(enemy);
     }
      
