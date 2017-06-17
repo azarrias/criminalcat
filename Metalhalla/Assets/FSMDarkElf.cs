@@ -215,6 +215,8 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.DEAD:
                 animator.SetBool("dead", true);
+                int direction = facingRight ? -1 : 1;
+                transform.position += new Vector3(direction * deadRecoil, 0, 0);
                 break;
         }
     }
