@@ -31,20 +31,22 @@ public class AudioManager : MonoBehaviour {
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+
+            fXAudioSources = new List<GameObject>();
+            for (int i = 0; i < numberOfFXAudioSources; ++i)
+            {
+                GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+                obj.SetActive(false);
+                fXAudioSources.Add(obj);
+                DontDestroyOnLoad(obj);
+            }
+        }
         else if (instance != this)
             Destroy(gameObject);
 
-        //Dani - He comentado el dontdestroy y la inicialización de fxAudioSources la he puesto en el Awake y parece que va bien - verifícalo por favor ;o)
-        //DontDestroyOnLoad(gameObject);  
-
-        fXAudioSources = new List<GameObject>();
-        for (int i = 0; i < numberOfFXAudioSources; ++i)
-        {
-            GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
-            obj.SetActive(false);
-            fXAudioSources.Add(obj);
-        }
+        DontDestroyOnLoad(gameObject);
     }
 
 	// Use this for initialization
@@ -75,6 +77,7 @@ public class AudioManager : MonoBehaviour {
 
         GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
         fXAudioSources.Add(obj);
+        DontDestroyOnLoad(obj);
         return obj;
     }
 
