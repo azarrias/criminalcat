@@ -30,6 +30,7 @@ public class FSMDarkElf : MonoBehaviour
 
     Animator animator;
 
+    [Header("Patrol Limits")]
     [Tooltip("X world coordinate to be set as a left limit for this enemy")]
     public float leftPatrolLimit;
     [Tooltip("X world coordinate to be set as a right limit for this enemy")]
@@ -46,6 +47,15 @@ public class FSMDarkElf : MonoBehaviour
     private Material material;
     private BoxCollider[] boxColliders;
 
+    //variables for camera shake
+    private CameraFollow camFollow;
+
+    // Recoil variables 
+    [HideInInspector]
+    public bool facingRight;
+    private float hitRecoil;
+    private float deadRecoil;
+
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
@@ -55,6 +65,9 @@ public class FSMDarkElf : MonoBehaviour
         playerStatus = player.GetComponent<PlayerStatus>();
         material = GetComponentInChildren<Renderer>().material;
         boxColliders = GetComponentsInChildren<BoxCollider>();
+
+        hitRecoil = enemyStats.hitRecoil;
+        deadRecoil = enemyStats.deadRecoil;
     }
 
     private void Start()
@@ -72,6 +85,11 @@ public class FSMDarkElf : MonoBehaviour
                 b.enabled = false;
             }
         }
+
+        // get camera component to create Shake effect when being hit
+        camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
+        if (camFollow == null)
+            Debug.Log("FSM Dark Elf: could not find the component CameraFollow in the MainCamera of the scene");
     }
 
     private void FixedUpdate()
@@ -92,6 +110,19 @@ public class FSMDarkElf : MonoBehaviour
                 else ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
+                if (enemyStats.hitPoints <= 0)
+                    ChangeState(State.DEAD);
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
+                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                {
+                    ChangeState(State.CHASE);
+                }
+                else
+                {
+                    int direction = facingRight ? -1 : 1;
+                    transform.position += new Vector3(direction * Time.fixedDeltaTime * hitRecoil, 0, 0);
+                }
+                /*
                 if (waitingTime > timeToWait)
                 {
                     if (enemyStats.hitPoints > 0)
@@ -100,6 +131,7 @@ public class FSMDarkElf : MonoBehaviour
                 }
                 else
                     waitingTime += Time.fixedDeltaTime;
+                    */
                 break;
             case State.CHASE:
                 if (!los.playerInSight)
@@ -165,8 +197,8 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.BEING_HIT:
                 animator.SetBool("being_hit", true);
-                waitingTime = 0.0f;
-                timeToWait = 1.0f;
+                /*waitingTime = 0.0f;
+                timeToWait = 1.0f;*/
                 faceXCoordinate(player.transform.position.x);
                 break;
             case State.STUNNED:
@@ -241,11 +273,13 @@ public class FSMDarkElf : MonoBehaviour
         if (xcoord > transform.position.x)
         {
             transform.localEulerAngles = new Vector3(0, 180, 0);
+            facingRight = true;
             return -1;
         }
         else
         {
             transform.localEulerAngles = new Vector3(0, 0, 0);
+            facingRight = false;
             return 1;
         }
     }
@@ -261,6 +295,11 @@ public class FSMDarkElf : MonoBehaviour
         {
             Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
+            // camera shake when starting being hit state
+            camFollow.StartShake();
+            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
+            //blood.transform.parent = transform;
+            blood.transform.SetParent(transform);
         }
     }
 

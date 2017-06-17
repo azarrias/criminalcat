@@ -66,7 +66,6 @@ public class FSMEnemy : MonoBehaviour
         patrol2chaseSpeedRatio = enemyStats.chasingSpeed / enemyStats.normalSpeed;
         hitRecoil = enemyStats.hitRecoil;
         deadRecoil = enemyStats.deadRecoil;
-
     }
 
     private void Start()
