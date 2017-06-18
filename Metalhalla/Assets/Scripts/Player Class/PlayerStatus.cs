@@ -26,6 +26,7 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxWildboar;
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
+    public AudioClip[] hurtScream;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -296,6 +297,7 @@ public class PlayerStatus : MonoBehaviour
         {
             health -= damage;
             SetState(hit);
+            PlayFx("hurtScream");
         }
     }
 
@@ -468,6 +470,8 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(leftFootsteps);
         else if (fx.Equals("rightFootstep"))
             AudioManager.instance.RandomizePlayFx(rightFootsteps);
+        else if (fx.Equals("hurtScream"))
+            AudioManager.instance.RandomizePlayFx(hurtScream);
     }
 
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
