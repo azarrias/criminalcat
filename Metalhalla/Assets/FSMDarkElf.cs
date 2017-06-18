@@ -39,6 +39,7 @@ public class FSMDarkElf : MonoBehaviour
 
     [Header("Sound FXs")]
     public AudioClip fireBall;
+    public AudioClip[] hurtScream;
 
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
@@ -292,6 +293,7 @@ public class FSMDarkElf : MonoBehaviour
         {
             Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
+            AudioManager.instance.RandomizePlayFx(hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
