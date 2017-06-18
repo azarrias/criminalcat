@@ -55,7 +55,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.name == "MovingDoor")
+        if (collider.gameObject.CompareTag("MovingDoor"))
         {
             gameObject.transform.Find("BallExplosion").gameObject.SetActive(true);
             gameObject.transform.Find("Ball").gameObject.SetActive(false);
