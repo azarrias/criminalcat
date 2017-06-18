@@ -9,7 +9,19 @@ public class SaveMenuState : MonoBehaviour {
     private GameObject fxSoundSliderGO;
     private float musicSliderValue;
     private float fxSoundSliderValue;
-    
+
+    public static SaveMenuState instance = null;
+
+    public void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+            Destroy(gameObject);
+    }
+
 	// Use this for initialization
 	void Start () {
         musicSliderGO = GameObject.FindGameObjectWithTag("OptionsMenuMusicVolume");
