@@ -14,6 +14,9 @@ public class DestructionController : MonoBehaviour
     public float magnitude = 0.15f;
     public float duration = 0.2f;
 
+    [Header("Sound FXs")]
+    public AudioClip destructionSound;
+
     public void ApplyDamage(int dmg = 0)
     {
         GameObject broken = Instantiate(remains, transform.position, transform.rotation);
@@ -21,6 +24,7 @@ public class DestructionController : MonoBehaviour
         broken.GetComponent<AdjustDirection>().pushForceX = pushForceX;
         broken.GetComponent<AdjustDirection>().pushForceY = pushForceY;
 
+        AudioManager.instance.PlayFx(destructionSound);
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>().StartShake(magnitude, duration);
         Destroy(gameObject);
 
