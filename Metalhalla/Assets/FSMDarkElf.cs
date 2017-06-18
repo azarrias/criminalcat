@@ -377,4 +377,56 @@ public class FSMDarkElf : MonoBehaviour
     {
         yield return new WaitForSeconds(s);
     }
+
+    // ---- DEAD STATE COLLIDER adjustment functions ------------------------------------------------------------------------------
+    public void SetGameObjectXTranslation(float x)
+    {
+        Vector3 tmp = transform.position;
+        float sign = facingRight ? -1 : 1;
+        tmp.x += sign * x;
+        transform.position = tmp;
+    }
+
+    public void SetGameObjectYTranslation( float y)
+    {
+        Vector3 tmp = transform.position;
+        tmp.y += y;
+        transform.position = tmp; 
+    }
+
+    public void SetColliderXTranslation(float x)
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        Vector3 tmp = capsule.center;
+        tmp.x = x;
+        capsule.center = tmp;
+    }
+
+    public void SetColliderYTranslation(float y)
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        Vector3 tmp = capsule.center;
+        tmp.y = y;
+        capsule.center = tmp;
+
+    }
+    public void SetColliderRadius(float r)
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        capsule.radius = r;
+    }
+
+    public void SetColliderHeight(float h)
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        capsule.height = h;
+    }
+
+    public void SetColliderDirection( int direction)
+    {
+        // direction (0,1,2) = (X, Y, Z) respectively
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        capsule.direction = direction;
+    }
+
 }
