@@ -37,6 +37,9 @@ public class FSMEnemy : MonoBehaviour
     public float rightPatrolLimit;
     public float attackRange;
 
+    [Header("Sound FXs")]
+    public AudioClip[] hurtScream;
+
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
     private float waitingTime;
@@ -306,6 +309,7 @@ public class FSMEnemy : MonoBehaviour
         {
           //  Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
+            AudioManager.instance.RandomizePlayFx(hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2*Vector3.back, facingRight);  // blood positioning has to be improved
