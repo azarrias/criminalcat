@@ -31,6 +31,7 @@ public class CastState : PlayerState
             
             if (status.magic == PlayerStatus.MAGIC.WILDBOAR)
             {
+                status.PlayFx("wildboar");
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("wildboar", status.transform.position + status.wildboarAttackInstanceOffset, true);
                 else
