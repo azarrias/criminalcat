@@ -89,7 +89,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (status.IsDead())
             return false;
-        if (collider.IsGrounded() == false)
+        if (collider.IsGrounded() == false && status.WasDead() == false)
             return true;
         if (status.IsIdle() || status.IsWalk())
             return true;

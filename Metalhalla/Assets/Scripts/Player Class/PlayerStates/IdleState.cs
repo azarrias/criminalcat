@@ -6,6 +6,12 @@ public class IdleState : PlayerState {
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
+        if (status.WasDead())
+        {
+            status.SetState(this);
+            return;
+        }
+
         // prevent "autofire" when holding buttons
         if (status.previousState == PlayerStatus.fall && input.newInput.GetJumpButtonHeld() == true)
             status.jumpAvailable = false;
