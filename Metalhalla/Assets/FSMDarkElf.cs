@@ -78,13 +78,14 @@ public class FSMDarkElf : MonoBehaviour
         StateEnter(currentState);
 
         // disable attack colliders
-        foreach (BoxCollider b in boxColliders)
+ /*       foreach (BoxCollider b in boxColliders)
         {
             if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
             {
                 b.enabled = false;
             }
         }
+        */
 
         // get camera component to create Shake effect when being hit
         camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>();
@@ -107,7 +108,8 @@ public class FSMDarkElf : MonoBehaviour
                     ChangeState(State.CHASE);
                 else if (Vector3.Distance(transform.position, destination) > 0.1f)
                     transform.position = Vector3.MoveTowards(transform.position, destination, Time.fixedDeltaTime * enemyStats.normalSpeed);
-                else ChangeState(State.IDLE);
+                else
+                    ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
                 if (enemyStats.hitPoints <= 0)
@@ -244,13 +246,6 @@ public class FSMDarkElf : MonoBehaviour
                 break;
             case State.ATTACK:
                 animator.SetBool("attack", false);
-/*                foreach (BoxCollider b in boxColliders)
-                {
-                    if (b.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
-                    {
-                        b.enabled = false;
-                    }
-                }*/
                 break;
             case State.DEAD:
                 animator.SetBool("dead", false);
@@ -370,7 +365,13 @@ public class FSMDarkElf : MonoBehaviour
         }
 
         AudioManager.instance.PlayFx(fireBall);
-        ParticlesManager.SpawnElfFireBall(iniPos, player.transform.position - iniPos);
+        Vector3 direction;
+        if ((facingRight == true && player.transform.position.x >= iniPos.x) || (facingRight == false && player.transform.position.x <= iniPos.x))
+            direction = player.transform.position - iniPos;
+        else
+            direction = facingRight ? Vector3.right : Vector3.left;
+        ParticlesManager.SpawnElfFireBall(iniPos, direction);
+        //ParticlesManager.SpawnElfFireBall(iniPos, player.transform.position - iniPos);
     } 
 
     IEnumerator WaitForSeconds(float s)
