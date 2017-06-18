@@ -12,23 +12,23 @@ public class MovingPlatform : MonoBehaviour {
     private Vector3 pointA;
     private Vector3 pointB;
     private Vector3 directionAtoB;
-    private float distanceThreshold;
+    private float distanceAtoB;
 
 	void Start () {
         pointA = transformA.position;
         pointB = transformB.position;
         directionAtoB = (pointB - pointA).normalized;
-        distanceThreshold = 0.55f * speed * Time.fixedDeltaTime;
+        distanceAtoB = Vector3.Distance(pointA, pointB);
     }
 	
     
 	void Update () {
-    //    UpdatePlatformPosition(); 
+        UpdatePlatformPosition(); 
 	}
     
     private void FixedUpdate()
     {
-        UpdatePlatformPosition();
+    //    UpdatePlatformPosition();
     }
 
     void UpdatePlatformPosition()
@@ -36,9 +36,9 @@ public class MovingPlatform : MonoBehaviour {
         Vector3 pos = transform.position;
         if (goingToB)
         {
-            //pos += directionAtoB * Time.deltaTime * speed;
             pos += directionAtoB * Time.fixedDeltaTime * speed;
-            if (Vector3.Distance(pos, pointB) <= distanceThreshold)
+            //if (Vector3.Distance(pos, pointB) <= distanceThreshold)
+            if (Vector3.Distance(pos, pointA) >= distanceAtoB)
             {
                 pos = pointB;
                 goingToB = false; 
@@ -46,9 +46,10 @@ public class MovingPlatform : MonoBehaviour {
         }
         else
         {
-            //pos -= directionAtoB * Time.deltaTime * speed;
             pos -= directionAtoB * Time.fixedDeltaTime * speed;
-            if (Vector3.Distance(pos, pointA) <= distanceThreshold)
+
+            //if (Vector3.Distance(pos, pointA) <= distanceThreshold)
+            if (Vector3.Distance(pos, pointB) >= distanceAtoB)
             {
                 pos = pointA;
                 goingToB = true;
