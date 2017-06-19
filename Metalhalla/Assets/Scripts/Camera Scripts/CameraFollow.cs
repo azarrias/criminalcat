@@ -13,8 +13,6 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("Player to Screen Ratio (in %). 100% means the player appears as tall as the screen. Calculations used using PERSPECTIVE projection")]
     [Range(1f, 100f)]
     public float playerToScreenHeightRatio = 15;
-    [Tooltip("Camera offset position - added to the camera position after performing all following and limits clamp")]
-    public Vector3 cameraOffset;
 
     [Header("Move Zone Limits")]
     [Tooltip("Zone where the camera follows the player. If the players leaves the zone, the camera snaps to the limits specified.")]
@@ -22,7 +20,6 @@ public class CameraFollow : MonoBehaviour
     public float limitRight;
     public float limitTop;
     public float limitBottom;
-
 
     [Header("Move Zone Debug")]
     [Tooltip("Draws a box with the move zone, and the center position of the camera")]
@@ -48,8 +45,13 @@ public class CameraFollow : MonoBehaviour
     Vector3 lastTargetPosition;
     float transitionThreshold;
 
-    //mod
     Vector3 refCameraSpeed;
+
+    private Vector3 cameraOffset;
+    [SerializeField]
+    private Vector3 targetCameraOffset;
+    private Vector3 refCameraOffsetSpeed;
+
 
 
     void Start()
@@ -114,9 +116,9 @@ public class CameraFollow : MonoBehaviour
                         cameraPosition.y = limitBottom;
                 }
 
-
+                //cameraPosition += cameraOffset;
+                cameraPosition += UpdateCameraOffset();
                 //transform.position = cameraPosition;
-                cameraPosition += cameraOffset; 
                 transform.position = Vector3.SmoothDamp(transform.position, cameraPosition, ref refCameraSpeed, 0.1f);
 
                 lastCameraPositionBeforeActiveTracking = transform.position;
@@ -261,7 +263,7 @@ public class CameraFollow : MonoBehaviour
             yield return 0;
         }
         shaking = false;
-        //  transform.localPosition = originalCamPos;
+
         //transform.position = originalCamPos;
         transform.position = Vector3.SmoothDamp(transform.position, originalCamPos, ref refCameraSpeed, 0.1f);
 
@@ -285,5 +287,23 @@ public class CameraFollow : MonoBehaviour
         }
     }
     void StopShake(){ shaking = false; }
+
+    // ---- OFFSET functions ---------------------------------------------------------
+    public void ChangeCameraOffset( Vector3 newOffset )
+    {
+        targetCameraOffset = newOffset;
+    }
+
+    Vector3 UpdateCameraOffset()
+    {
+        if (targetCameraOffset == cameraOffset)
+            return targetCameraOffset;
+
+        cameraOffset = Vector3.SmoothDamp(cameraOffset, targetCameraOffset, ref refCameraOffsetSpeed, 0.2f);
+        if (Vector3.Distance(cameraOffset, targetCameraOffset) < 0.1f)
+            cameraOffset = targetCameraOffset;
+
+        return cameraOffset;
+    }
 
 }

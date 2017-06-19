@@ -17,6 +17,7 @@ public class ChangeCameraOffsetTrigger : MonoBehaviour {
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.tag == "Player")
-            camFollow.cameraOffset = offsetToApply;
+            camFollow.ChangeCameraOffset(offsetToApply);
+            //camFollow.cameraOffset = offsetToApply;
     }
 }
