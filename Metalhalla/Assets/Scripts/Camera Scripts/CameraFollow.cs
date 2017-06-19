@@ -13,6 +13,8 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("Player to Screen Ratio (in %). 100% means the player appears as tall as the screen. Calculations used using PERSPECTIVE projection")]
     [Range(1f, 100f)]
     public float playerToScreenHeightRatio = 15;
+    [Tooltip("Camera offset position - added to the camera position after performing all following and limits clamp")]
+    public Vector3 cameraOffset;
 
     [Header("Move Zone Limits")]
     [Tooltip("Zone where the camera follows the player. If the players leaves the zone, the camera snaps to the limits specified.")]
@@ -20,6 +22,7 @@ public class CameraFollow : MonoBehaviour
     public float limitRight;
     public float limitTop;
     public float limitBottom;
+
 
     [Header("Move Zone Debug")]
     [Tooltip("Draws a box with the move zone, and the center position of the camera")]
@@ -113,7 +116,7 @@ public class CameraFollow : MonoBehaviour
 
 
                 //transform.position = cameraPosition;
-                //Debug.Log("refCameraSpeed: " + refCameraSpeed);
+                cameraPosition += cameraOffset; 
                 transform.position = Vector3.SmoothDamp(transform.position, cameraPosition, ref refCameraSpeed, 0.1f);
 
                 lastCameraPositionBeforeActiveTracking = transform.position;
