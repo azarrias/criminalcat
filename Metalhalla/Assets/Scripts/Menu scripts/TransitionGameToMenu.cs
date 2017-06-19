@@ -9,6 +9,7 @@ public class TransitionGameToMenu : MonoBehaviour {
     public GameObject menu;
     public GameObject gameOverUI;
     public GameObject endGameUI;
+    public GameObject player;
      
 	// Use this for initialization
 	void Start () {
@@ -21,7 +22,7 @@ public class TransitionGameToMenu : MonoBehaviour {
 	void Update () {
 
         //Toggle menu
-        if (Input.GetButton("DisplayMenu") && !menu.activeSelf && !gameOverUI.activeSelf && !endGameUI.activeSelf)
+        if (player.GetComponent<PlayerStatus>().IsAlive() && Input.GetButton("DisplayMenu") && !menu.activeSelf && !gameOverUI.activeSelf && !endGameUI.activeSelf)
         {
             if (menu.activeSelf)
             {
