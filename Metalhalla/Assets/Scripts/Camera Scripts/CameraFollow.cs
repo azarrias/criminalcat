@@ -234,6 +234,7 @@ public class CameraFollow : MonoBehaviour
             targetPosition.y = playerPosition.y;
 
         targetPosition.z = distanceFromPlayer;
+
         return targetPosition;
     }
 
