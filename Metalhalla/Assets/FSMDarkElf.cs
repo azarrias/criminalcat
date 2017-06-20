@@ -302,7 +302,7 @@ public class FSMDarkElf : MonoBehaviour
         }
     }
 
-    public void Stun()
+    public void Stunt()
     {
         Debug.Log(name.ToString() + ": I've been stunned");
         ChangeState(State.STUNNED);
