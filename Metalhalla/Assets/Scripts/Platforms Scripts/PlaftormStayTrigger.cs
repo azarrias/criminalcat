@@ -8,7 +8,8 @@ public class PlaftormStayTrigger : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
-            other.gameObject.transform.parent = transform.parent;
+            if (other.transform.position.y >= transform.position.y)
+                other.gameObject.transform.parent = transform.parent;
         }
     }
 
