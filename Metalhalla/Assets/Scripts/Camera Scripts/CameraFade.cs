@@ -27,10 +27,6 @@ public class CameraFade : MonoBehaviour {
     }
 	
 	void Update () {
-        // DEBUG
-        if (Input.GetKeyDown(KeyCode.R) == true && isFading == false)
-            ActivateFade();
-
         if ( isFading == true )
         {
             if (fadeTimeCurrent >= fadeTime)
