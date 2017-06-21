@@ -18,19 +18,8 @@ public class SceneLoader : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M) && loadScene == false)
-        {
-            loadScene = true;
-            loadingText.text = "Loading...";
-            loadingBackground.color = new Color(1, 1, 1, 1);
-            StartCoroutine(LoadNewScene()); 
-
-        }
-
         if (loadScene == true )
-        {
             loadingText.color = new Color(loadingText.color.r, loadingText.color.g, loadingText.color.b, Mathf.PingPong(Time.time, 1));
-        }
     }
 
     IEnumerator LoadNewScene()
@@ -44,6 +33,17 @@ public class SceneLoader : MonoBehaviour {
             yield return null;
         }
 
+    }
+
+    public void GoToNextScene()
+    {
+        if (loadScene == false)
+        {
+            loadScene = true;
+            loadingText.text = "Loading...";
+            loadingBackground.color = new Color(1, 1, 1, 1);
+            StartCoroutine(LoadNewScene());
+        }
     }
 
 }
