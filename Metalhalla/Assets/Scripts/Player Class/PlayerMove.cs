@@ -8,8 +8,11 @@ public class PlayerMove : MonoBehaviour
     public float moveSpeed = 8f;
     [Tooltip("Speed at which the player moves when dashing")]
     public float dashSpeed = 15f;
+    public float horizontalClimbMove = 1f;
+
     [Tooltip("Maximum time in which the player horizonal speed switches to its target value")]
     public float xSpeedChangeSpeed = 0.1f; // 0.99f previous value, too low accel
+
 
     [Header("Vertical move, jump & gravity Setup")]
     public float gravity = 40f;
@@ -40,21 +43,12 @@ public class PlayerMove : MonoBehaviour
 
     public void CalculateSpeed(PlayerInput input, PlayerStatus status, PlayerCollider collider)
     {
-        // horizontal speed calculations
-        /*
-        if (status.justHit == true)
-            speed.x = status.facingRight ? -hitRecoil * Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime;
-        else if (status.IsDash() == true)
-            speed.x = status.facingRight ? dashSpeed * Time.fixedDeltaTime : -dashSpeed * Time.fixedDeltaTime;
-        else if (AllowHorizontalInput(status, collider) == true)
-            speed.x = input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime;
-        else
-            speed.x = 0;
- */
         if (status.justHit == true)
             speed.x = Mathf.SmoothDamp(speed.x, status.facingRight ? -hitRecoil * Time.fixedDeltaTime : hitRecoil * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         else if (status.IsDash() == true)
             speed.x = Mathf.SmoothDamp(speed.x, status.facingRight ? dashSpeed * Time.fixedDeltaTime : -dashSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
+        else if (status.IsClimb() == true )
+            speed.x = Mathf.SmoothDamp(speed.x , input.newInput.GetHorizontalInput() * horizontalClimbMove * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         else if (AllowHorizontalInput(status, collider))
             speed.x = Mathf.SmoothDamp(speed.x, input.newInput.GetHorizontalInput() * moveSpeed * Time.fixedDeltaTime, ref xCurrentSpeed, xSpeedChangeSpeed);
         else 
