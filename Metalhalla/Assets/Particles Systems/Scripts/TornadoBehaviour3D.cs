@@ -38,12 +38,16 @@ public class TornadoBehaviour3D : MonoBehaviour {
     private Vector3 initialPosition = Vector3.zero;
     
     private static bool triggerTaken = false;
-    
- 
+
+
     //------------------------ MANAGING TORNADO PARTICLE SYSTEM ON DISIPATION -----------------
-    
-    
-    //public GameObject tornado
+    public GameObject tornadoBodyGO;
+    private ParticleSystem tornadoBodyPS;
+    private TornadoBody tornadoBodyScript;
+    private ParticleSystem.Particle[] tornadoBodyParticles;
+    private ParticleSystem.Particle[] tornadoBaseParticles;
+    public GameObject tornadoBaseGO;
+    private ParticleSystem tornadoBasePS;
     public float fadeSpeed = 0.1f;
     public float fadeFrames = 120;   
     private int fadeCounter = 0;
@@ -61,16 +65,18 @@ public class TornadoBehaviour3D : MonoBehaviour {
         }
 
         contains = new List<GameObject>();
-        
-        //tornadoCirclesPS = tornadoCircleGO.GetComponent<ParticleSystem>();
-        //foggyBasePS = foggyBaseGO.GetComponent<ParticleSystem>();
-        //smallFragmentsPS = smallFragmentsGO.GetComponent<ParticleSystem>();
+        tornadoBodyScript = tornadoBodyGO.GetComponent<TornadoBody>();        
+        tornadoBodyPS = tornadoBodyGO.GetComponent<ParticleSystem>();
+        tornadoBasePS = tornadoBaseGO.GetComponent<ParticleSystem>();
+               
     }
 
 	void Start ()
     {                
         tornadoEyeTr = transform.FindChild("TornadoEye");
-        //tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
+        tornadoBodyScript.CreateHelix();
+        tornadoBodyParticles = new ParticleSystem.Particle[tornadoBodyPS.main.maxParticles];
+        tornadoBaseParticles = new ParticleSystem.Particle[tornadoBasePS.main.maxParticles];
     }
 
     
@@ -250,39 +256,31 @@ public class TornadoBehaviour3D : MonoBehaviour {
             enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
         }
+
+        ParticleSystem.EmissionModule baseParticles = tornadoBasePS.emission;
+        baseParticles.rateOverTime = 0.0f;
+
+        ParticleSystem.EmissionModule bodyParticles = tornadoBodyPS.emission;
+        bodyParticles.rateOverTime = 0.0f;
     }
     private void Disipate()
     {
-    //    triggerTaken = false;
-    //    int numParticlesAlive = tornadoCirclesPS.GetParticles(tornadoCircles);
-    //    for (int i = 0; i < numParticlesAlive; i++)
-    //    {
-    //        Color newColor = tornadoCircles[i].GetCurrentColor(tornadoCirclesPS);
-    //        newColor.a -= fadeSpeed * Time.deltaTime;
-    //        if (newColor.a < 0.0f)
-    //            newColor.a = 0.0f;
-
-    //        tornadoCircles[i].startColor = newColor;
-    //        tornadoCirclesPS.SetParticles(tornadoCircles, numParticlesAlive);
-    //    }
-    //    ParticleSystem.EmissionModule foggyEmission = foggyBasePS.emission;
-    //    foggyEmission.rateOverTime = 0.0f;
-
-    //    ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
-    //    dustEmission.rateOverTime = 0.0f;
-
-    //    fadeCounter++;
-    //    if (fadeCounter == fadeFrames)
-    //    {
-    //        //Debug.Log("BEFORE DEACTIVATING TORNADO ID = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
-    //        fadeCounter = 0;
-    //        disipate = false;
-    //        foggyEmission.rateOverTime = 50.0f;
-    //        dustEmission.rateOverTime = 50.0f;
-    //        contains.Clear();            
-    //        gameObject.SetActive(false);
-    //        tornadoState = State.MOVE; //reset state           
-    //    }
+        triggerTaken = false;
+            
+        fadeCounter++;
+        if (fadeCounter == fadeFrames)
+        {
+            //Debug.Log("BEFORE DEACTIVATING TORNADO ID = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
+            fadeCounter = 0;
+            disipate = false;
+            ParticleSystem.EmissionModule bodyParticles = tornadoBodyPS.emission;
+            bodyParticles.rateOverTime = 15;
+            ParticleSystem.EmissionModule baseParticles = tornadoBasePS.emission;
+            baseParticles.rateOverTime = 10;            
+            contains.Clear();
+            gameObject.SetActive(false);
+            tornadoState = State.MOVE; //reset state           
+        }
     }
 
     private void Absorb(GameObject enemy)

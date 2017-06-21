@@ -13,15 +13,16 @@ public class TornadoBody : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        CreateCircle();
-	}
+        CreateHelix();
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
 
-    void CreateCircle()
+    public void CreateHelix()
     {
         ps = GetComponent<ParticleSystem>();
         ParticleSystem.VelocityOverLifetimeModule vel = ps.velocityOverLifetime;
@@ -29,8 +30,7 @@ public class TornadoBody : MonoBehaviour {
         vel.space = ParticleSystemSimulationSpace.Local;
         ParticleSystem.MainModule main = ps.main;
         main.startSpeed = 0f;
-
-        
+ 
         vel.z = new ParticleSystem.MinMaxCurve(10.0f, zValue);
 
         AnimationCurve curveX = new AnimationCurve();

@@ -12,6 +12,7 @@ public class ParticlesManager : MonoBehaviour
     public GameObject bossFireBallPrefab;
     public GameObject elfFireBallPrefab;
     public GameObject bloodPrefab;
+    public GameObject tornado3DPrefab;
     private GameObject particlesPrefab;
    
 
@@ -43,6 +44,17 @@ public class ParticlesManager : MonoBehaviour
             tornado.SetActive(false);
             tornado.transform.parent = transform;
             particlesPool["tornado"].Add(tornado);
+        }
+
+        //-------------------------------- TORNADO 3D---------------------
+        particlesPool["tornado3D"] = new List<GameObject>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject tornado3D = Instantiate(tornado3DPrefab, Vector3.zero, Quaternion.identity);
+            tornado3D.SetActive(false);
+            tornado3D.transform.parent = transform;
+            particlesPool["tornado3D"].Add(tornado3D);
         }
 
         //------------------------------- WILDBOAR ----------------------------
@@ -111,6 +123,10 @@ public class ParticlesManager : MonoBehaviour
                 {
                     particle.GetComponent<TornadoBehaviour>().SetFacingRight(facingRight);
                 }
+                else if(name == "tornado3D")
+                {
+                    particle.GetComponent<TornadoBehaviour3D>().SetFacingRight(facingRight);
+                }
                 else if (name == "wildboar")
                 {
                     particle.GetComponent<WildBoarBehaviour>().SetFacingRight(facingRight);
@@ -137,6 +153,10 @@ public class ParticlesManager : MonoBehaviour
             if (name == "tornado")
             {
                 particlesManager.particlesPrefab = particlesManager.tornadoPrefab;
+            }
+            else if(name == "tornado3D")
+            {
+                particlesManager.particlesPrefab = particlesManager.tornado3DPrefab;
             }
             else if (name == "wildboar")
             {
