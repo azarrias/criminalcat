@@ -311,7 +311,12 @@ public class FSMDarkElf : MonoBehaviour
     public void WakeUp()
     {
         if (currentState == State.STUNNED)
-            ChangeState(State.IDLE);
+        {
+            if (enemyStats.hitPoints > 0)
+                ChangeState(State.IDLE);
+            else
+                ChangeState(State.BEING_HIT);
+        }
     }
 
     public bool PlayerAtRange()
