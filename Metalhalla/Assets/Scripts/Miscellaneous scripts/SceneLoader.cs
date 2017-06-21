@@ -7,9 +7,6 @@ public class SceneLoader : MonoBehaviour {
 
     private bool loadScene = false; 
 
-    [Tooltip("Scene Number that's shown in File > Build Settings... menu. If the desired scene doesn't have any number, add it to the build order first")]
-    public int sceneNumber = -1;
-
     [Tooltip("Text object where the loading message will appear")]
     public Text loadingText;
 
@@ -18,15 +15,19 @@ public class SceneLoader : MonoBehaviour {
 
     private void Update()
     {
+        //DEBUG
+        if (Input.GetKeyDown(KeyCode.M))
+            GoToNextScene( "Dungeon Boss" );
+
         if (loadScene == true )
             loadingText.color = new Color(loadingText.color.r, loadingText.color.g, loadingText.color.b, Mathf.PingPong(Time.time, 1));
     }
 
-    IEnumerator LoadNewScene()
+    IEnumerator LoadNewScene( string sceneName)
     {
-        yield return new WaitForSeconds(1);
+        //yield return new WaitForSeconds(1); // use to see effect in fast pcs. In old pcs remove or the wait time will high and then will be increased without any reason
 
-        AsyncOperation async = SceneManager.LoadSceneAsync(sceneNumber);
+        AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
 
         while ( !async.isDone)
         {
@@ -35,14 +36,14 @@ public class SceneLoader : MonoBehaviour {
 
     }
 
-    public void GoToNextScene()
+    public void GoToNextScene(string sceneName)
     {
         if (loadScene == false)
         {
             loadScene = true;
             loadingText.text = "Loading...";
             loadingBackground.color = new Color(1, 1, 1, 1);
-            StartCoroutine(LoadNewScene());
+            StartCoroutine(LoadNewScene(sceneName));
         }
     }
 

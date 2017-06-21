@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class ChangeSceneTrigger : MonoBehaviour {
 
+    public string newSceneName = "Dungeon Boss";
     private SceneLoader loader; 
+
 
 	void Start () {
         loader = GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>();
@@ -14,6 +16,6 @@ public class ChangeSceneTrigger : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
-            loader.GoToNextScene(); 
+            loader.GoToNextScene( newSceneName ); 
     }
 }

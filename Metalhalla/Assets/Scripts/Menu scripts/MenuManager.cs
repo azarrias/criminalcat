@@ -79,7 +79,8 @@ public class MenuManager : MonoBehaviour {
     {
         //Game runs at regular speed
         Time.timeScale = 1f;
-        SceneManager.LoadScene(nextScene);
+        //SceneManager.LoadScene(nextScene);
+        GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>().GoToNextScene( nextScene );
     }
 
 	//Activate quit menu
