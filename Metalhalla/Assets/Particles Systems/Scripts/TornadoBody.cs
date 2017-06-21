@@ -37,7 +37,7 @@ public class TornadoBody : MonoBehaviour {
         for(int i = 0; i < resolution; i++)
         {           
             float newTime = (i / (resolution - 1));
-            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Sin(newTime * 2 * Mathf.PI * frequency);           
+            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Cos(newTime * 2 * Mathf.PI * frequency);           
             curveX.AddKey(newTime, value);
         }
         vel.x = new ParticleSystem.MinMaxCurve(10.0f, curveX);
@@ -46,7 +46,7 @@ public class TornadoBody : MonoBehaviour {
         for (int i = 0; i < resolution; i++)
         {            
             float newTime = (i / (resolution - 1));
-            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Cos(newTime * 2 * Mathf.PI * frequency);            
+            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Sin(newTime * 2 * Mathf.PI * frequency);            
             curveY.AddKey(newTime, value);
         }
         vel.y = new ParticleSystem.MinMaxCurve(10.0f, curveY);

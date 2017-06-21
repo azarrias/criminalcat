@@ -266,7 +266,31 @@ public class TornadoBehaviour3D : MonoBehaviour {
     private void Disipate()
     {
         triggerTaken = false;
-            
+
+        int numParticlesAlive = tornadoBodyPS.GetParticles(tornadoBodyParticles);
+        for (int i = 0; i < numParticlesAlive; i++)
+        {
+            Color newColor = tornadoBodyParticles[i].GetCurrentColor(tornadoBodyPS);
+            newColor.a -= fadeSpeed * Time.deltaTime;
+            if (newColor.a < 0.0f)
+                newColor.a = 0.0f;
+
+            tornadoBodyParticles[i].startColor = newColor;
+            tornadoBodyPS.SetParticles(tornadoBodyParticles, numParticlesAlive);
+        }
+
+        numParticlesAlive = tornadoBasePS.GetParticles(tornadoBaseParticles);
+        for (int i = 0; i < numParticlesAlive; i++)
+        {
+            Color newColor = tornadoBaseParticles[i].GetCurrentColor(tornadoBasePS);
+            newColor.a -= fadeSpeed * Time.deltaTime;
+            if (newColor.a < 0.0f)
+                newColor.a = 0.0f;
+
+            tornadoBaseParticles[i].startColor = newColor;
+            tornadoBasePS.SetParticles(tornadoBaseParticles, numParticlesAlive);
+        }
+
         fadeCounter++;
         if (fadeCounter == fadeFrames)
         {
