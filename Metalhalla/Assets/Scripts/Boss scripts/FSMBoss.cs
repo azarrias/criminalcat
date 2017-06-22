@@ -32,10 +32,13 @@ public class FSMBoss : MonoBehaviour
     public GameObject meleeAttackIndicator = null;
     public GameObject ballAttackIndicator = null;
     public GameObject fireAura = null;
+    public GameObject earthAura = null;
     private ParticleSystem meleeAttackIndicatorPS = null;
     private ParticleSystem ballAttackIndicatorPS = null;
     private ParticleSystem fireAuraPS = null;
+    private ParticleSystem earthAuraPS = null;
     private FireAuraDamage fireAuraDamageScript = null;
+    private EarthAuraBehaviour earthAuraScript = null;
 
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
@@ -186,6 +189,7 @@ public class FSMBoss : MonoBehaviour
         fireAuraPS = fireAura.GetComponent<ParticleSystem>();
         fireAuraPS.Stop();
         fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();
+        earthAuraScript = earthAura.GetComponent<EarthAuraBehaviour>();
 
     }
 
@@ -740,7 +744,8 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PreMeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
             
-            meleeAttackIndicatorPS.Play();        
+            meleeAttackIndicatorPS.Play();
+            earthAuraScript.StartEarthAttack();        
         }
        
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
