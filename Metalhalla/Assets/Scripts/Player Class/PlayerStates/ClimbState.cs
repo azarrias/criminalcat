@@ -7,8 +7,8 @@ public class ClimbState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        if (status.previousState != this)
-            status.SetClimbStateModelRotation(); 
+    //    if (status.previousState != this)
+     //       status.SetClimbStateModelRotation(); 
 
         status.playerAnimator.speed = 1;
 
@@ -32,7 +32,7 @@ public class ClimbState : PlayerState
         if (collider.collisions.below == true)
         {
             status.SetState(PlayerStatus.idle);
-            status.SetInitialModelRotation();
+   //         status.SetInitialModelRotation();
         }
     }
 

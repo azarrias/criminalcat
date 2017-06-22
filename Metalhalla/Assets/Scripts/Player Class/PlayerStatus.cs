@@ -277,12 +277,16 @@ public class PlayerStatus : MonoBehaviour
             hammerMesh.GetComponent<Renderer>().enabled = false;
 
         if (newState != attack)
-        {
             attackCollider.enabled = false;
-        }
-        else if (newState != defense)
+        if (newState != defense)
+            shieldMesh.GetComponent<Renderer>().enabled = false;
+
+        if (IsClimb() && WasClimb() == false)
+            SetClimbStateModelRotation();
+        else if (WasClimb() && IsClimb() == false)
         {
-            shieldMesh.GetComponent<Renderer>().enabled = false; 
+            SetInitialModelRotation();
+            playerAnimator.speed = 1;
         }
     }
 
@@ -452,6 +456,7 @@ public class PlayerStatus : MonoBehaviour
     public bool WasJump() { return previousState == jump; }
     public bool WasFall() { return previousState == fall; }
     public bool WasDead() { return previousState == dead; }
+    public bool WasClimb() { return previousState == climb; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
     public void PlayFx( string fx)
