@@ -24,10 +24,10 @@ public class GUIManager : MonoBehaviour {
     private Image[] magicImages;
     private int mgcIndex;
 
-    [SerializeField]
+/*    [SerializeField]
     private Text coinText;
     private int coins;
-
+    */
     private PlayerStatus playerStatus;
 
     void Start() {
@@ -51,7 +51,7 @@ public class GUIManager : MonoBehaviour {
         hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
         ResetMagic((int)playerStatus.magicAtStart);
-        coins = playerStatus.coinsAtStart;
+       // coins = playerStatus.coinsAtStart;
 
         UpdateStaminaMeter(); 
     }
@@ -62,7 +62,7 @@ public class GUIManager : MonoBehaviour {
         SetStamina(playerStatus.GetCurrentStamina());
         SetBeer(playerStatus.GetCurrentBeer());
         SetMagic( playerStatus.GetCurrentMagic());
-        SetCoins(playerStatus.GetCurrentCoins());
+      // SetCoins(playerStatus.GetCurrentCoins());
 
     }
 
@@ -133,11 +133,12 @@ public class GUIManager : MonoBehaviour {
         magicImages[initialMagic].transform.localPosition = tmp;
     }
 
-    public void SetCoins( int value )
+ /*   public void SetCoins( int value )
     {
         if (coins == value)
             return;
         coinText.text = value.ToString();
         coins = value;
     }
+    */
 }

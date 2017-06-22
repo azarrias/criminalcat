@@ -60,6 +60,8 @@ public class PlayerStatus : MonoBehaviour
     [Header("Coin Setup")]
     [Tooltip("Starting coin count")]
     public int coinsAtStart = 0;
+    [Tooltip("How many coins are needed to fill a section of the beer horn?")]
+    public int beerSectionCoinAmount = 10; 
     int coins;
 
     [HideInInspector]
@@ -408,8 +410,16 @@ public class PlayerStatus : MonoBehaviour
     }
 
     //---- COIN functions -------------------------------------------------------------------------------------------
-    public int GetCurrentCoins() { return coins;}
-    public void CollectCoins( int amount ) { coins += amount; }
+    //public int GetCurrentCoins() { return coins;}
+    public void CollectCoins( int amount ) {
+        coins += amount;
+        while (coins >= beerSectionCoinAmount)
+        {
+            if (RefillBeer(1) == false )
+                break; 
+            coins -= beerSectionCoinAmount;
+        }
+    }
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
     int CalculateFramesFromTime(float time)

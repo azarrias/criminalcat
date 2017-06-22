@@ -23,11 +23,10 @@ public class coinItem : MonoBehaviour {
     private void Start()
     {
         transform.Rotate(Random.Range(0, 90) * Vector3.up);
-        //rotationSpeed = Random.Range(100, 150);
         rotationSpeed = 180f;
         framesToGUICount = 0;
 
-        guiGameObject = GameObject.Find("CoinGUI"); // to be modified to another position
+        guiGameObject = GameObject.Find("Beer"); 
     }
 
     private void Update()
@@ -42,7 +41,6 @@ public class coinItem : MonoBehaviour {
             }
             else
             {
-
                 transform.position = Vector3.SmoothDamp(transform.position, guiGameObject.transform.position, ref takenSpeed, 0.2f);
                 framesToGUICount++;
             }
@@ -51,7 +49,6 @@ public class coinItem : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collision)
     {
-        //if (collision.tag == "Player")
         if (!taken && collision.tag == "Player")
         {
             taken = true;
@@ -64,7 +61,6 @@ public class coinItem : MonoBehaviour {
                 source.GetComponent<AudioSource>().clip = coinFx;
                 source.GetComponent<AudioSource>().Play();
                 Destroy(source, 2.0f);
-                // Destroy(this.gameObject);
             }
         }
     }
