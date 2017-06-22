@@ -22,6 +22,8 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxSwing;
     public AudioClip fxJump;
     public AudioClip fxLand;
+    public AudioClip fxRestoreLife;
+    public AudioClip fxRestoreBeer;
     public AudioClip fxTornado;
     public AudioClip fxWildboar;
     public AudioClip[] leftFootsteps;
@@ -315,6 +317,8 @@ public class PlayerStatus : MonoBehaviour
         health += restore;
         if (health >= healthMaximum)
             health = healthMaximum;
+
+        PlayFx("restoreHealth");
         return true;
     }
 
@@ -386,6 +390,7 @@ public class PlayerStatus : MonoBehaviour
         if (beer > beerMaximum)
             beer = beerMaximum;
 
+        PlayFx("restoreBeer");
         return true;
     }
 
@@ -487,6 +492,10 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(rightFootsteps);
         else if (fx.Equals("hurtScream"))
             AudioManager.instance.RandomizePlayFx(hurtScream);
+        else if (fx.Equals("restoreBeer"))
+            AudioManager.instance.PlayFx(fxRestoreBeer);
+        else if (fx.Equals("restoreHealth"))
+            AudioManager.instance.PlayFx(fxRestoreLife);
     }
 
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
