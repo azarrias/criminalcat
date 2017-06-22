@@ -19,14 +19,18 @@ public class StaminaDrop : MonoBehaviour {
 
     private int framesToGUICount;
     private GameObject guiGameObject;
+
     Vector3 takenSpeed;
+    Vector3 scaleSpeed;
 
     private PlayerStatus playerStatus;
+    private Camera mainCamera;
 
     private void Start()
     {
         framesToGUICount = 0;
-        guiGameObject = GameObject.Find("Stamina"); // to be modified dinamically depending on the fill of the bar
+        guiGameObject = GameObject.Find("Background"); // to be modified dinamically depending on the fill of the bar
+        mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
     }
 
     private void Update()
@@ -41,7 +45,13 @@ public class StaminaDrop : MonoBehaviour {
             else
             {
 
-                transform.position = Vector3.SmoothDamp(transform.position, guiGameObject.transform.position, ref takenSpeed, 0.2f);
+                //transform.position = Vector3.SmoothDamp(transform.position, guiGameObject.transform.position, ref takenSpeed, 0.2f);
+                Vector3 targetPosition = GetWorldPositionOnPlane(mainCamera, guiGameObject.transform.position, -9);
+                transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref takenSpeed, 0.2f);
+
+                Vector3 targetScale = new Vector3(finalScale, finalScale, finalScale);
+                transform.localScale = Vector3.SmoothDamp(transform.localScale, targetScale, ref scaleSpeed, 0.2f);
+
                 framesToGUICount++;
             }
         }
@@ -63,5 +73,14 @@ public class StaminaDrop : MonoBehaviour {
                 Destroy(source, 2.0f);
             }
         }
+    }
+
+    private Vector3 GetWorldPositionOnPlane(Camera cam, Vector3 screenPosition, float z)
+    {
+        Ray ray = cam.ScreenPointToRay(screenPosition);
+        Plane playerPlane = new Plane(Vector3.forward, new Vector3(0, 0, z));
+        float distance;
+        playerPlane.Raycast(ray, out distance);
+        return ray.GetPoint(distance);
     }
 }
