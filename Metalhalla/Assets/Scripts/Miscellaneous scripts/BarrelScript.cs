@@ -8,16 +8,17 @@ public class BarrelScript : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<PlayerStatus>().beerRefillAvailable = true;
+            // removed the beer refil in barrels in favor of "coin" collectables
+            //collision.GetComponent<PlayerStatus>().beerRefillAvailable = true;
+
             //collision.GetComponent<PlayerStatus>().activeRespawnPoint = transform.position + Vector3.up;
-            collision.GetComponent<PlayerStatus>().activeRespawnPoint = transform.position + Vector3.up;
             Vector3 respawnPoint;
             respawnPoint = transform.position + Vector3.up;
             respawnPoint.z = collision.transform.position.z;
             collision.GetComponent<PlayerStatus>().activeRespawnPoint = respawnPoint;
         }
     }
-
+    /*
     private void OnTriggerExit(Collider collision)
     {
         if (collision.tag == "Player")
@@ -25,4 +26,5 @@ public class BarrelScript : MonoBehaviour {
             collision.GetComponent<PlayerStatus>().beerRefillAvailable = false;
         }
     }
+    */
 }
