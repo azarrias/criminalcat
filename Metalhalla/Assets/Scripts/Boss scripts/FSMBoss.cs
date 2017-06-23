@@ -33,12 +33,13 @@ public class FSMBoss : MonoBehaviour
     public GameObject ballAttackIndicator = null;
     public GameObject fireAura = null;
     public GameObject earthAura = null;
-    private ParticleSystem meleeAttackIndicatorPS = null;
+    public GameObject levitatingRocks = null;    
     private ParticleSystem ballAttackIndicatorPS = null;
     private ParticleSystem fireAuraPS = null;
     private ParticleSystem earthAuraPS = null;
     private FireAuraDamage fireAuraDamageScript = null;
-    private EarthAuraBehaviour earthAuraScript = null;
+    private LevitatingRocksBehaviour levitatingRocksScript = null;
+    private EarthAuraDamage earthAuraDamageScript = null;
 
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
@@ -182,15 +183,15 @@ public class FSMBoss : MonoBehaviour
         castingArea = GameObject.FindGameObjectWithTag("CastingArea");
 
 
-        meleeAttackIndicatorPS = meleeAttackIndicator.GetComponent<ParticleSystem>();
-        meleeAttackIndicatorPS.Stop();
+        earthAuraPS = earthAura.GetComponent<ParticleSystem>();
+        earthAuraPS.Stop();
         ballAttackIndicatorPS = ballAttackIndicator.GetComponent<ParticleSystem>();
         ballAttackIndicatorPS.Stop();
         fireAuraPS = fireAura.GetComponent<ParticleSystem>();
         fireAuraPS.Stop();
-        fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();
-        earthAuraScript = earthAura.GetComponent<EarthAuraBehaviour>();
-
+        fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();        
+        earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
+        levitatingRocksScript = levitatingRocks.GetComponent<LevitatingRocksBehaviour>();
     }
 
     void Start()
@@ -744,8 +745,9 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PreMeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
             
-            meleeAttackIndicatorPS.Play();
-            earthAuraScript.StartEarthAttack();        
+            earthAuraPS.Play();
+            earthAuraDamageScript.auraActive = true;
+            levitatingRocksScript.StartRocksAttack();        
         }
        
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -783,9 +785,9 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PostMeleeAttack";
             bossAnimator.SetBool(currAnimation, true);
-
-            //meleeAttackIndicator.SetActive(false);   
-            meleeAttackIndicatorPS.Stop();
+              
+            earthAuraPS.Stop();
+            earthAuraDamageScript.auraActive = false;
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -967,7 +969,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
 
             ballAttackIndicatorPS.Stop();
-            meleeAttackIndicatorPS.Stop();
+            earthAuraPS.Stop();
             fireAuraPS.Stop();
         }
     }
@@ -993,10 +995,4 @@ public class FSMBoss : MonoBehaviour
     {
         insideTornado = false;
     }
-
-    //public void NotifyRotationDuration(float duration)
-    //{
-    //    tornadoDuration = duration;
-    //}
-
 }

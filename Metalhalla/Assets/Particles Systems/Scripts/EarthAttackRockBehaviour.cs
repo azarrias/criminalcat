@@ -9,17 +9,14 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
     public int damage;
 
     private bool disipate = false;
-    private float disipationCounter = 0.0f;
-    public float disipationTime;
+    public float disipationScaleSpeed = 1.0f;
+    public float maxScale = 1.0f;
 
-
+    private GameObject rockMesh;
     void Awake()
     {
-        Color color = transform.Find("rock").GetComponent<MeshRenderer>().sharedMaterial.color;
-        color.a = 0.0f;
-        transform.Find("rock").GetComponent<MeshRenderer>().sharedMaterial.color = color;
+        rockMesh = transform.Find("rock").gameObject;      
         dust = GetComponent<ParticleSystem>();
-        dust.Stop();
     }
 
     // Use this for initialization
@@ -36,29 +33,36 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider collider)
-    {
-        if (collider.CompareTag("Player") || collider.gameObject.layer == LayerMask.NameToLayer("ground") || 
+    {      
+        if (collider.CompareTag("Player") || collider.gameObject.layer == LayerMask.NameToLayer("ground") ||
                 collider.gameObject.layer == LayerMask.NameToLayer("wall") || collider.CompareTag("MovingDoor"))
         {
             dust.Play();
             collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
-        }
+                
+        }      
     }
 
     private void Disipate()
-    {     
-        Color color = gameObject.transform.Find("rock").GetComponent<MeshRenderer>().sharedMaterial.color;
-        color.a -= color.a * 1 / disipationTime;
-        if (color.a < 0.0f)
-            color.a = 0.0f;
-        gameObject.transform.Find("rock").GetComponent<MeshRenderer>().sharedMaterial.color = color;
+    {
+        Vector3 scale = rockMesh.transform.localScale;
+        scale.x -= disipationScaleSpeed * Time.deltaTime;
+        if (scale.x <= 0.0f)
+            scale.x = 0.0f;
 
+        scale.y -= disipationScaleSpeed * Time.deltaTime;
+        if (scale.y <= 0.0f)
+            scale.y = 0.0f;
 
-        disipationCounter += Time.deltaTime;
-        if (disipationCounter >= disipationTime)
-        {
-            disipationTime = 0.0f;
+        scale.z -= disipationScaleSpeed * Time.deltaTime;
+        if (scale.z <= 0.0f)
+            scale.z = 0.0f;
+
+        rockMesh.transform.localScale = scale;
+        if (scale.x == 0.0f)
+        {           
             disipate = false;
             gameObject.SetActive(false);                        
         }
