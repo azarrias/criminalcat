@@ -12,6 +12,9 @@ public class EarthAuraDamage : MonoBehaviour {
     public int auraDamage = 1;
     private GameObject player;
 
+    public float allowedTimeNoDamage;
+    private float timeNoDamageCounter = 0.0f;
+
     // Use this for initialization
     void Start()
     {
@@ -24,18 +27,24 @@ public class EarthAuraDamage : MonoBehaviour {
     {
         if (auraActive)
         {
-            if (playerInsideEarthAura && applyAuraDamage)
+            timeNoDamageCounter += Time.deltaTime;
+            if(timeNoDamageCounter >= allowedTimeNoDamage)
             {
-                player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
-                applyAuraDamage = false;
-            }
 
-            waitCounter += Time.deltaTime;
-            if (waitCounter >= waitTime)
-            {
-                waitCounter = 0.0f;
-                applyAuraDamage = true;
-            }
+                if (playerInsideEarthAura && applyAuraDamage)
+                {
+                    player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
+                    applyAuraDamage = false;
+                }
+
+                waitCounter += Time.deltaTime;
+                if (waitCounter >= waitTime)
+                {
+                    waitCounter = 0.0f;
+                    applyAuraDamage = true;
+                }
+
+            }           
         }
     }
 
@@ -45,6 +54,8 @@ public class EarthAuraDamage : MonoBehaviour {
         {
             playerInsideEarthAura = true;
             Debug.Log("Player inside earth aura");
+
+            timeNoDamageCounter = 0.0f;
         }
     }
 

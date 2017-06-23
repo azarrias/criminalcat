@@ -754,7 +754,18 @@ public class FSMBoss : MonoBehaviour
         {
             preMeleeAttackFinished = true;
         }
-        
+
+        //Set the boss looking at the player
+        Vector3 newPos = gameObject.transform.position;
+        int diff = (int)(thePlayer.transform.position.x - newPos.x);
+
+        if (diff > 0)
+            if (!facingRight)
+                Flip();
+        if (diff < 0)
+            if (facingRight)
+                Flip();
+
     }
 
     private void MeleeAttack()
@@ -794,6 +805,17 @@ public class FSMBoss : MonoBehaviour
         {
             postMeleeAttackFinished = true;
         }
+
+        //Set the boss looking at the player
+        Vector3 newPos = gameObject.transform.position;
+        int diff = (int)(thePlayer.transform.position.x - newPos.x);
+
+        if (diff > 0)
+            if (!facingRight)
+                Flip();
+        if (diff < 0)
+            if (facingRight)
+                Flip();
     }
 
     private void PreBallAttack()
@@ -813,6 +835,16 @@ public class FSMBoss : MonoBehaviour
         {
             preBallAttackFinished = true;
         }
+        //Set the boss looking at the player
+        Vector3 newPos = gameObject.transform.position;
+        int diff = (int)(thePlayer.transform.position.x - newPos.x);
+
+        if (diff > 0)
+            if (!facingRight)
+                Flip();
+        if (diff < 0)
+            if (facingRight)
+                Flip();
     }
 
     private void BallAttack()
@@ -850,6 +882,17 @@ public class FSMBoss : MonoBehaviour
             ballAttackIndicatorPS.Stop();
             fireAuraPS.Stop();            
         }
+
+        //Set the boss looking at the player
+        Vector3 newPos = gameObject.transform.position;
+        int diff = (int)(thePlayer.transform.position.x - newPos.x);
+
+        if (diff > 0)
+            if (!facingRight)
+                Flip();
+        if (diff < 0)
+            if (facingRight)
+                Flip();
     }
 
     private void PrepareCast()
@@ -979,6 +1022,9 @@ public class FSMBoss : MonoBehaviour
     {
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
+
+        //Keep levitating rocks rotation
+        gameObject.transform.Find("LevitatingRocks").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
     }
 
     public State GetCurrentState()
