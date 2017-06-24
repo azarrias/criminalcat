@@ -672,15 +672,15 @@ public class FSMBoss : MonoBehaviour
 
                 prevState = State.PATROL;
             }
+            // --------------------------  24/06/17 Boss doesnt need to move in patrol
+            //Vector3 newPos = gameObject.transform.position;
 
-            Vector3 newPos = gameObject.transform.position;
+            //if (facingRight == true)
+            //    newPos.x += bossStats.normalSpeed * Time.deltaTime;
+            //else
+            //    newPos.x -= bossStats.normalSpeed * Time.deltaTime;
 
-            if (facingRight == true)
-                newPos.x += bossStats.normalSpeed * Time.deltaTime;
-            else
-                newPos.x -= bossStats.normalSpeed * Time.deltaTime;
-
-            gameObject.transform.position = newPos;
+            //gameObject.transform.position = newPos;
         }       
     }
 
