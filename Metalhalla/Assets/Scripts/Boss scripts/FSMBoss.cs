@@ -237,12 +237,12 @@ public class FSMBoss : MonoBehaviour
                 //Player dead
                 if (!thePlayerStatus.IsAlive())
                 {
-                    if (prevState == State.BACK_TO_CENTER)
-                    {
-                        gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-                        if (!facingRight)
-                            facingRight = true;
-                    }
+                    //if (prevState == State.BACK_TO_CENTER)
+                    //{
+                    //    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+                    //    if (!facingRight)
+                    //        facingRight = true;
+                    //}
                     chaseCounter += Time.deltaTime;
                     if (chaseCounter >= chaseDuration)
                     {
@@ -694,25 +694,25 @@ public class FSMBoss : MonoBehaviour
         }
         else
         {
-            if (prevState == State.BACK_TO_CENTER)
-            {
-                prevState = State.CHASE;
-                Vector3 bossPos = gameObject.transform.position;
-                int diff = (int)(thePlayer.transform.position.x - bossPos.x);
+            //if (prevState == State.BACK_TO_CENTER)
+            //{
+            //    prevState = State.CHASE;
+            //    Vector3 bossPos = gameObject.transform.position;
+            //    int diff = (int)(thePlayer.transform.position.x - bossPos.x);
               
-                if (diff > 0)
-                {
-                    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-                    if (!facingRight)
-                        facingRight = true;
-                }
-                if (diff < 0)
-                {
-                    gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-                    if (facingRight)
-                        facingRight = false;
-                }
-            }
+            //    if (diff > 0)
+            //    {
+            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+            //        if (!facingRight)
+            //            facingRight = true;
+            //    }
+            //    if (diff < 0)
+            //    {
+            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
+            //        if (facingRight)
+            //            facingRight = false;
+            //    }
+            //}
 
             if (preMeleeAttackSelected && !atMeleeRange || preBallAttackSelected && !atBallRange)
             {
@@ -985,8 +985,25 @@ public class FSMBoss : MonoBehaviour
             {
                 //Return to the exact position
                 gameObject.transform.position = spikesReturnSpot.transform.position;         
-                backToCenter = false;           
-               
+                backToCenter = false;
+
+                //Change boss orientation to face the player
+                Vector3 bossPos = gameObject.transform.position;
+                int diff = (int)(thePlayer.transform.position.x - bossPos.x);
+
+                if (diff > 0)
+                {
+                    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
+                    if (!facingRight)
+                        facingRight = true;
+                }
+                if (diff < 0)
+                {
+                    gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
+                    if (facingRight)
+                        facingRight = false;
+                }
+
             }
         }
         
