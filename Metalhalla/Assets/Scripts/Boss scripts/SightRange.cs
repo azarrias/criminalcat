@@ -6,7 +6,8 @@ public class SightRange : MonoBehaviour {
 
     FSMBoss fsmBoss = null;
     GameObject[] movingDoors;
-
+    BoxCollider sightRange = null;
+    
     void Awake()
     {
         fsmBoss = FindObjectOfType<FSMBoss>();
@@ -16,6 +17,11 @@ public class SightRange : MonoBehaviour {
         movingDoors = GameObject.FindGameObjectsWithTag("MovingDoor");
         if (movingDoors.Length == 0)
             Debug.Log("Error : movingDoor not found.");
+
+        sightRange = GetComponent<BoxCollider>();
+
+        //Collider starting size
+        sightRange.size = new Vector3(24.0f, 7.0f, 5.0f);
     }
 
 	// Use this for initialization
@@ -32,6 +38,8 @@ public class SightRange : MonoBehaviour {
     {
         if (collider.CompareTag("Player"))
         {
+
+            sightRange.size = new Vector3(35.5f, 7.0f, 5.0f);
             foreach (var movingDoor in movingDoors)
             {
                 movingDoor.SendMessage("PlayerInside");
@@ -63,7 +71,11 @@ public class SightRange : MonoBehaviour {
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Player"))
+        {
+            //Collider starting size
+            sightRange.size = new Vector3(24.0f, 7.0f, 5.0f);
             fsmBoss.playerInSight = false;
+        }
 
         if (collider.CompareTag("Boss"))
         {

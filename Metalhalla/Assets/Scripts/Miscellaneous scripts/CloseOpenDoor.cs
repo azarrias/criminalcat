@@ -8,6 +8,7 @@ public class CloseOpenDoor : MonoBehaviour {
     public Vector3 localInitialPosition = new Vector3(87.71f, 27.31f, 0.0f);
     private bool closed = false;   
     private bool playerInside = false;
+    public float speed = 8.0f;
 
     void Awake()
     {
@@ -29,7 +30,7 @@ public class CloseOpenDoor : MonoBehaviour {
 
     public void CloseDoor()
     {
-        transform.position += Vector3.down * 4 * Time.deltaTime;
+        transform.position += Vector3.down * speed * Time.deltaTime;
     }
 
     //To be called when player respawns
