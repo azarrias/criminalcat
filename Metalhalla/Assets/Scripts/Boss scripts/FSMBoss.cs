@@ -430,12 +430,7 @@ public class FSMBoss : MonoBehaviour
                         preBallAttackFinished = false; //reset value
                         break;
                     }                  
-                }
-                if (insideTornado)
-                {                    
-                    currState = State.INSIDE_TORNADO;
-                    break;                   
-                }
+                }               
                 break;
 
             case State.BALL_ATTACK:
@@ -460,12 +455,7 @@ public class FSMBoss : MonoBehaviour
                         ballAttackFinished = false; //reset value
                         break;
                     }                                      
-                }
-                if (insideTornado)
-                {
-                    currState = State.INSIDE_TORNADO;
-                    break;                   
-                }
+                }               
                 break;
 
             case State.POST_BALL_ATTACK:
@@ -1027,10 +1017,11 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "InsideTornado";
             bossAnimator.SetBool(currAnimation, true);
-
+            
             ballAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();         
+            earthAuraDamageScript.auraActive = false;
             earthAuraPS.Stop();
-            fireAuraPS.Stop();
         }
     }
 
