@@ -25,6 +25,8 @@ public class RockFall : MonoBehaviour {
         for (int i = 0; i < maxRocks; i++)
         {
             GameObject rock = Instantiate(rockPrefab, transform.position, Quaternion.identity);
+            int randomRotation = Random.Range(1, 10) * 10;
+            rock.transform.localRotation *= Quaternion.Euler(0.0f, randomRotation, 0.0f); 
             rock.transform.parent = gameObject.transform;
             rock.SetActive(false);          
             rocks[i] = rock;
