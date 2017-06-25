@@ -29,6 +29,7 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
     public AudioClip[] hurtScream;
+    public AudioClip deathScream;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -507,6 +508,8 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.PlayFx(fxRestoreBeer);
         else if (fx.Equals("restoreHealth"))
             AudioManager.instance.PlayFx(fxRestoreLife);
+        else if (fx.Equals("death"))
+            AudioManager.instance.PlayFx(deathScream);
     }
 
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
