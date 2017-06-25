@@ -20,6 +20,8 @@ public class HitState : PlayerState
         {
             hitFramesCount = 0;
             status.justHit = true;
+            if (status.IsAlive())
+                status.PlayFx("hurtScream");
         }
         
         if (hitFramesCount >= hitFramesDuration)

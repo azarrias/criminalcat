@@ -318,7 +318,7 @@ public class PlayerStatus : MonoBehaviour
         {
             health -= damage;
             SetState(hit);
-            PlayFx("hurtScream");
+            //PlayFx("hurtScream");
         }
     }
 
