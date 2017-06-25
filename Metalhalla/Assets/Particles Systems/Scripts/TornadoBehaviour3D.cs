@@ -123,11 +123,11 @@ public class TornadoBehaviour3D : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         string colliderLayer = LayerMask.LayerToName(collider.gameObject.layer);
-        if (colliderLayer == "ground" || colliderLayer == "wall")
+        if (colliderLayer == "ground" || colliderLayer == "wall" || colliderLayer == "destroyableEagle") //Tornado doesnt break vertical walls
         {
             disipate = true;
         }
-        else if (colliderLayer == "destroyable" || colliderLayer == "destroyableEagle")
+        else if (colliderLayer == "destroyable" /*|| colliderLayer == "destroyableEagle"*/)
         {
             collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
         }

@@ -108,10 +108,10 @@ public class WildBoarBehaviour : MonoBehaviour
 
                 for (int i = 0; i < hits.Length; i++)
                 {
-                    if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")
-                    {
+                    //if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")  
+                    //{
                         hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
-                    }
+                    //}
                 }
 
             }
