@@ -113,7 +113,8 @@ public class PlayerInput : MonoBehaviour {
 	public void GetInput()
 	{
 		oldInput.CopyInputFrom (newInput);	//make a savestate from last input
-
+        
+        /*
 		newInput.SetHorizontalInput( Input.GetAxis("DPadHorizontal"));
 		newInput.SetVerticalInput( Input.GetAxis("DPadVertical"));
 		newInput.SetJumpButtonDown(Input.GetButtonDown("Jump"));
@@ -128,7 +129,22 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
 
         newInput.SetHorizontalDoubleTap(CheckHorizontalDoubleTap());
-	}
+        */
+        newInput.SetHorizontalInput(Input.GetAxis("DPadHorizontal"));
+        newInput.SetVerticalInput(Input.GetAxis("DPadVertical"));
+        newInput.SetJumpButtonDown(Input.GetButtonDown("ButtonA"));
+        newInput.SetJumpButtonHeld(Input.GetButton("ButtonA"));
+        newInput.SetAttackButtonDown(Input.GetButtonDown("ButtonX"));
+        newInput.SetDashButtonDown(Input.GetButtonDown("ButtonLB"));
+        newInput.SetDefenseButtonDown(Input.GetButtonDown("ButtonRB"));
+        newInput.SetDefenseButtonHeld(Input.GetButton("ButtonRB"));
+        newInput.SetCastButtonDown(Input.GetButtonDown("ButtonB"));
+        newInput.SetContextButtonDown(Input.GetButtonDown("ButtonY"));
+        newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
+        newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
+
+        newInput.SetHorizontalDoubleTap(false);
+    }
 
     private bool CheckHorizontalDoubleTap()
     {

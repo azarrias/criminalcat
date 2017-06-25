@@ -34,11 +34,13 @@ public class CameraManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.C) == true || Input.GetButtonDown("ShiftCameras"))
+
+        /*if (Input.GetKeyDown(KeyCode.C) == true || Input.GetButtonDown("ShiftCameras"))
         {
             ShiftCameraIndex();
             ShiftCameras();
         }
+        */
        // label.material.color = Color.red;
     }
 
