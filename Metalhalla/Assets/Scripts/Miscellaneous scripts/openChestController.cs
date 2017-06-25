@@ -16,6 +16,9 @@ public class openChestController : MonoBehaviour
     enum state { CLOSED, OPEN, EMPTY };
     state currentState = state.CLOSED;
 
+    [Header("Sound FXs")]
+    public AudioClip openChest;
+
     private void Awake()
     {
         chestAnimator = GetComponentInChildren<Animator>();
@@ -42,6 +45,7 @@ public class openChestController : MonoBehaviour
     {
         if (currentState == state.CLOSED)
         {
+            if (openChest) AudioManager.instance.PlayFx(openChest);
             currentState = state.OPEN;
             chestAnimator.SetBool("open", true);
         }
