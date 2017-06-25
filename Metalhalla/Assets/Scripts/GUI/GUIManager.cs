@@ -46,7 +46,7 @@ public class GUIManager : MonoBehaviour {
         maxHP = playerStatus.healthMaximum;
         hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
-        ResetMagic((int)playerStatus.magicAtStart);
+     //   ResetMagic((int)playerStatus.magicAtStart);
 
         UpdateStaminaMeter(); 
     }
@@ -56,7 +56,7 @@ public class GUIManager : MonoBehaviour {
         SetHealth(playerStatus.GetCurrentHealthRatio());
         SetStamina(playerStatus.GetCurrentStamina());
         SetBeer(playerStatus.GetCurrentBeer());
-        SetMagic( playerStatus.GetCurrentMagic());
+     //   SetMagic( playerStatus.GetCurrentMagic());
 
     }
 
@@ -91,7 +91,7 @@ public class GUIManager : MonoBehaviour {
         beerHorn.sprite = hornImages[remainingBeer];
     }
 
-    void SetMagic( int newMagic)
+/*    void SetMagic( int newMagic)
     {
         if (mgcIndex == newMagic)
             return;
@@ -126,5 +126,5 @@ public class GUIManager : MonoBehaviour {
         tmp.z = 0.0f;
         magicImages[initialMagic].transform.localPosition = tmp;
     }
-
+*/
 }

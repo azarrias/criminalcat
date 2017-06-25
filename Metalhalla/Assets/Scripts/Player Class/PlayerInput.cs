@@ -20,6 +20,8 @@ public class PlayerInput : MonoBehaviour {
         private bool contextButtonDown;
         private float leftTriggerInput;
         private float rightTriggerInput;
+        private bool leftTriggerDown;
+        private bool rightTriggerDown;
 
         //double tap control
         private bool horizontalDoubleTap;
@@ -38,8 +40,11 @@ public class PlayerInput : MonoBehaviour {
             contextButtonDown = false;
             leftTriggerInput = 0f;
             rightTriggerInput = 0f;
-            
-            horizontalDoubleTap = false; 
+            leftTriggerDown = false;
+            rightTriggerDown = false; 
+
+
+        horizontalDoubleTap = false; 
         }
 
         public void SetHorizontalInput(float value)	{ horizontalInput = value; }
@@ -54,6 +59,8 @@ public class PlayerInput : MonoBehaviour {
         public void SetContextButtonDown(bool value) { contextButtonDown = value;  }
         public void SetLeftTriggerInput( float value) { leftTriggerInput = value; }
         public void SetRightTriggerInput( float value ) { rightTriggerInput = value; }
+        public void SetLeftTriggerDown( bool value) { leftTriggerDown = value;  }
+        public void SetRightTriggerDown( bool value ) { rightTriggerDown = value; }
 
         public void SetHorizontalDoubleTap(bool value) { horizontalDoubleTap = value; }
 
@@ -69,6 +76,8 @@ public class PlayerInput : MonoBehaviour {
         public bool GetContextButtonDown() { return contextButtonDown; }
         public float GetLeftTriggerInput() { return leftTriggerInput; }
         public float GetRightTriggerInput() { return rightTriggerInput; }
+        public bool GetLeftTriggerDown() { return leftTriggerDown; }
+        public bool GetRightTriggerDown() { return rightTriggerDown; }
 
         public bool GetHorizontalDoubleTap() { return horizontalDoubleTap; }
 
@@ -86,16 +95,16 @@ public class PlayerInput : MonoBehaviour {
             contextButtonDown = from.contextButtonDown;
             leftTriggerInput = from.leftTriggerInput;
             rightTriggerInput = from.rightTriggerInput;
+            leftTriggerDown = from.leftTriggerDown;
+            rightTriggerDown = from.rightTriggerDown; 
 
             horizontalDoubleTap = from.horizontalDoubleTap;
-
         }
 	};
 
     public pInput newInput;
     pInput oldInput;
     
-    //mod for double tap input
     public int doubleTapFramesMax = 12;
     int doubleTapFramesCount; 
 
@@ -108,28 +117,12 @@ public class PlayerInput : MonoBehaviour {
         doubleTapFramesCount = 0; 
         hDoubleTap = doubleTap.IDLE;
     }
-    // end mod for double tap input
 
 	public void GetInput()
 	{
-		oldInput.CopyInputFrom (newInput);	//make a savestate from last input
-        
+		oldInput.CopyInputFrom (newInput);  //make a savestate from last input
+    // OLD CONTROL MAPPING
         /*
-		newInput.SetHorizontalInput( Input.GetAxis("DPadHorizontal"));
-		newInput.SetVerticalInput( Input.GetAxis("DPadVertical"));
-		newInput.SetJumpButtonDown(Input.GetButtonDown("Jump"));
-		newInput.SetJumpButtonHeld(Input.GetButton ("Jump") );
-        newInput.SetAttackButtonDown(Input.GetButtonDown("Attack"));
-        newInput.SetDashButtonDown(Input.GetButtonDown("Dash"));
-        newInput.SetDefenseButtonDown(Input.GetButtonDown("Defense"));
-        newInput.SetDefenseButtonHeld(Input.GetButton("Defense"));
-        newInput.SetCastButtonDown(Input.GetButtonDown("Cast"));
-        newInput.SetContextButtonDown(Input.GetButtonDown("Context"));
-        newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
-        newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
-
-        newInput.SetHorizontalDoubleTap(CheckHorizontalDoubleTap());
-        */
         newInput.SetHorizontalInput(Input.GetAxis("DPadHorizontal"));
         newInput.SetVerticalInput(Input.GetAxis("DPadVertical"));
         newInput.SetJumpButtonDown(Input.GetButtonDown("ButtonA"));
@@ -143,12 +136,33 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
         newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
 
-        newInput.SetHorizontalDoubleTap(false);
+        newInput.SetHorizontalDoubleTap(CheckHorizontalDoubleTap());
+        */
+    // NEW CONTROL MAPPING
+        newInput.SetHorizontalInput(Input.GetAxis("DPadHorizontal"));
+        newInput.SetVerticalInput(Input.GetAxis("DPadVertical"));
+        newInput.SetJumpButtonDown(Input.GetButtonDown("ButtonA"));
+        newInput.SetJumpButtonHeld(Input.GetButton("ButtonA"));
+        newInput.SetAttackButtonDown(Input.GetButtonDown("ButtonX"));
+        newInput.SetDashButtonDown(Input.GetButtonDown("ButtonB"));
+        newInput.SetDefenseButtonDown(Input.GetButtonDown("ButtonRB") || Input.GetButtonDown("ButtonLB"));
+        newInput.SetDefenseButtonHeld(Input.GetButton("ButtonRB") || Input.GetButton("ButtonLB"));
+        newInput.SetContextButtonDown(Input.GetButtonDown("ButtonY"));
+
+        newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
+        newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
+        newInput.SetLeftTriggerDown(!oldInput.GetLeftTriggerDown() && oldInput.GetLeftTriggerInput() == 0 && newInput.GetLeftTriggerInput() > 0);
+        newInput.SetRightTriggerDown(!oldInput.GetRightTriggerDown() && oldInput.GetRightTriggerInput() == 0 && newInput.GetRightTriggerInput() > 0); 
+
+        newInput.SetCastButtonDown( newInput.GetLeftTriggerDown() || newInput.GetRightTriggerDown() );
     }
 
     private bool CheckHorizontalDoubleTap()
     {
-        bool ret = false; 
+        // mod: always return false and disable double tapping
+        bool ret = false;
+
+        /*
         switch( hDoubleTap)
         {
             case doubleTap.IDLE:
@@ -181,6 +195,7 @@ public class PlayerInput : MonoBehaviour {
                 hDoubleTap = doubleTap.IDLE;
                 break; 
         }
+        */
         return ret; 
     }
 }

@@ -68,8 +68,8 @@ public class PlayerStatus : MonoBehaviour
 
     [HideInInspector]
     public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
-    [Header("Magic Setup")]
-    public MAGIC magicAtStart = MAGIC.EAGLE;
+//    [Header("Magic Setup")]
+//    public MAGIC magicAtStart = MAGIC.EAGLE;
     [HideInInspector]
     public MAGIC magic;  
 
@@ -122,7 +122,7 @@ public class PlayerStatus : MonoBehaviour
     public bool climbLadderAvailable;
     [HideInInspector]
     public bool beerRefillAvailable;
-    bool magicShiftAvailable;
+//    bool magicShiftAvailable;
 
     // -- Cross component variables -- // 
     [HideInInspector]
@@ -158,7 +158,7 @@ public class PlayerStatus : MonoBehaviour
         stamina = staminaAtStart;
         staminaRecovery = 0.0f;
         beer = beerAtStart;
-        magic = magicAtStart;
+     //   magic = magicAtStart;
         coins = coinsAtStart;
 
         activeRespawnPoint = initialPosition;
@@ -184,7 +184,7 @@ public class PlayerStatus : MonoBehaviour
         jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
-        magicShiftAvailable = false;
+//        magicShiftAvailable = false;
 
         justHit = false;
         jumpFrames = 0;
@@ -253,16 +253,18 @@ public class PlayerStatus : MonoBehaviour
     public void statusUpdateAfterInput(PlayerInput input)
     {
         // mod for magic shift
-        if (!magicShiftAvailable && input.newInput.GetLeftTriggerInput() == 0f && input.newInput.GetRightTriggerInput() == 0f)
-            magicShiftAvailable = true;
+        /* 
+         * if (!magicShiftAvailable && input.newInput.GetLeftTriggerInput() == 0f && input.newInput.GetRightTriggerInput() == 0f)
+             magicShiftAvailable = true;
 
-        if (magicShiftAvailable)
-        {
-            if (input.newInput.GetLeftTriggerInput() >= 0.8f)
-                ShiftMagics(false);
-            else if (input.newInput.GetRightTriggerInput() >= 0.8f)
-                ShiftMagics(true);
-        }
+         if (magicShiftAvailable)
+         {
+             if (input.newInput.GetLeftTriggerInput() >= 0.8f)
+                 ShiftMagics(false);
+             else if (input.newInput.GetRightTriggerInput() >= 0.8f)
+                 ShiftMagics(true);
+         }
+         */
 
         // update status
         currentState.HandleInput(input, this);
@@ -404,7 +406,7 @@ public class PlayerStatus : MonoBehaviour
     }
 
     //---- MAGIC functions -------------------------------------------------------------------------------------------
-    public int GetCurrentMagic()
+/*    public int GetCurrentMagic()
     {
         return (int) magic;
     }
@@ -417,7 +419,7 @@ public class PlayerStatus : MonoBehaviour
         int newMagic = (forwards ? current + 1 + total : current - 1 + total) % total;
         magic = (MAGIC) newMagic;
     }
-
+*/
     //---- COIN functions -------------------------------------------------------------------------------------------
     //public int GetCurrentCoins() { return coins;}
     public void CollectCoins( int amount ) {

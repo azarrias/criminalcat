@@ -19,7 +19,8 @@ public class CastState : PlayerState
         {
             castFramesCount = 0;
 
-            if (status.magic == PlayerStatus.MAGIC.EAGLE)
+            //if (status.magic == PlayerStatus.MAGIC.EAGLE)
+           if (input.newInput.GetLeftTriggerInput() > 0 )
             {
                 status.PlayFx("tornado");
                 // New version with ParticlesManager
@@ -29,7 +30,8 @@ public class CastState : PlayerState
                     ParticlesManager.SpawnParticle("tornado", status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up, false);
             }
             
-            if (status.magic == PlayerStatus.MAGIC.WILDBOAR)
+            //if (status.magic == PlayerStatus.MAGIC.WILDBOAR)
+            if (input.newInput.GetRightTriggerInput() > 0)
             {
                 status.PlayFx("wildboar");
                 if (status.facingRight)
