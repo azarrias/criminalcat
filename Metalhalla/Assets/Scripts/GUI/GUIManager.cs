@@ -151,19 +151,19 @@ public class GUIManager : MonoBehaviour {
     }
 */
     
-    public void PressButton( string buttonName)
+    public void StartFeedback( string element )
     {
-        if (buttonName.Equals("YButton"))
+        if (element.Equals("YButton"))
         {
             yButtonFeedback = true;
             yButtonFeedbackTime = 0.0f;
         }
-        else if (buttonName.Equals("Tornado"))
+        else if (element.Equals("Tornado"))
         {
             tornadoFeedback = true;
             tornadoFeedbackTime = 0.0f;
         }
-        else if (buttonName.Equals("Earthquake"))
+        else if (element.Equals("Earthquake"))
         {
             earthquakeFeedback = true;
             earthquakeFeedbackTime = 0.0f;

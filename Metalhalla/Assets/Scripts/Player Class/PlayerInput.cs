@@ -160,18 +160,6 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetRightTriggerDown(!oldInput.GetRightTriggerDown() && oldInput.GetRightTriggerInput() == 0 && newInput.GetRightTriggerInput() > 0); 
 
         newInput.SetCastButtonDown( newInput.GetLeftTriggerDown() || newInput.GetRightTriggerDown() );
-
-        if (guiManager)
-        {
-
-            if (newInput.GetContextButtonDown())
-                guiManager.PressButton("YButton");
-            if (newInput.GetLeftTriggerDown())
-                guiManager.PressButton("Tornado");
-            if (newInput.GetRightTriggerDown())
-                guiManager.PressButton("Earthquake");
-        }
-            
     }
 
     private bool CheckHorizontalDoubleTap()

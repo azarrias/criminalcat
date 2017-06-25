@@ -23,6 +23,7 @@ public class CastState : PlayerState
            if (input.newInput.GetLeftTriggerInput() > 0 )
             {
                 status.PlayFx("tornado");
+                status.StartGUIFeedback("Tornado"); 
                 // New version with ParticlesManager
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("tornado", status.transform.position + status.eagleAttackInstanceOffset, true);
@@ -34,6 +35,7 @@ public class CastState : PlayerState
             if (input.newInput.GetRightTriggerInput() > 0)
             {
                 status.PlayFx("wildboar");
+                status.StartGUIFeedback("Earthquake");
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("wildboar", status.transform.position + status.wildboarAttackInstanceOffset, true);
                 else

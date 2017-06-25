@@ -22,6 +22,7 @@ public class DrinkState : PlayerState
                 status.SetState(PlayerStatus.idle);
                 return;
             }
+            status.StartGUIFeedback("YButton");
         }
 
         if (drinkFramesCount >= drinkFramesDuration)

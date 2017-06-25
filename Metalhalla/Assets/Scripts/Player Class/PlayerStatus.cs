@@ -71,7 +71,9 @@ public class PlayerStatus : MonoBehaviour
 //    [Header("Magic Setup")]
 //    public MAGIC magicAtStart = MAGIC.EAGLE;
     [HideInInspector]
-    public MAGIC magic;  
+    public MAGIC magic;
+
+    private GUIManager guiManager;
 
     [Header("Ghost Jump parameters")]
     [Tooltip("Number of frames in which the player can still jump after losing foot in their last platform")]
@@ -160,6 +162,10 @@ public class PlayerStatus : MonoBehaviour
         beer = beerAtStart;
      //   magic = magicAtStart;
         coins = coinsAtStart;
+
+        GameObject guiObject = GameObject.Find("GUI");
+        if (guiObject)
+            guiManager = guiObject.GetComponent<GUIManager>();
 
         activeRespawnPoint = initialPosition;
         cameraFade = GameObject.Find("PlayerCamera").GetComponent<CameraFade>();
@@ -421,7 +427,6 @@ public class PlayerStatus : MonoBehaviour
     }
 */
     //---- COIN functions -------------------------------------------------------------------------------------------
-    //public int GetCurrentCoins() { return coins;}
     public void CollectCoins( int amount ) {
         coins += amount;
         while (coins >= beerSectionCoinAmount)
@@ -534,5 +539,10 @@ public class PlayerStatus : MonoBehaviour
         GetComponent<BoxCollider>().size = tmpSize;
     }
 
-
+    // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------
+    public void StartGUIFeedback( string element )
+    {
+        if (guiManager)
+            guiManager.StartFeedback(element);
+    }
 }
