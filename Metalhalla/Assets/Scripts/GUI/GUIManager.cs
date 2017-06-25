@@ -20,10 +20,27 @@ public class GUIManager : MonoBehaviour {
     private Image[] stmImages;
     private int stmIndx;
 
-    [SerializeField]
+    /*[SerializeField]
     private Image[] magicImages;
     private int mgcIndex;
+    */
+    [Header("GUI Feedback for player input")]
+    [Tooltip("Duration of the feedback shown to the player")]
+    public float feedbackTime = 0.3f; 
+    [SerializeField]
+    private Image YButtonImage;
+    [SerializeField]
+    private Image tornadoImage;
+    [SerializeField]
+    private Image earthquakeImage;
 
+    private bool  yButtonFeedback;
+    private float yButtonFeedbackTime;
+    private bool  tornadoFeedback;
+    private float tornadoFeedbackTime;
+    private bool  earthquakeFeedback;
+    private float earthquakeFeedbackTime;
+    
     private PlayerStatus playerStatus;
 
     void Start() {
@@ -36,19 +53,24 @@ public class GUIManager : MonoBehaviour {
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
 
-        if (magicImages.Length == 0)
+       /* if (magicImages.Length == 0)
             Debug.Log("Error - magic images array not set");
+            */
 
         playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
         if (playerStatus == null)
-            Debug.Log("GUI could not retrieve PlayerHealth component from player");
+            Debug.Log("GUI could not retrieve PlayerStatus component from player");
 
         maxHP = playerStatus.healthMaximum;
         hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
      //   ResetMagic((int)playerStatus.magicAtStart);
 
-        UpdateStaminaMeter(); 
+        UpdateStaminaMeter();
+
+        yButtonFeedback = false;
+        tornadoFeedback = false;
+        earthquakeFeedback = false;
     }
 
     void Update() {
@@ -56,8 +78,9 @@ public class GUIManager : MonoBehaviour {
         SetHealth(playerStatus.GetCurrentHealthRatio());
         SetStamina(playerStatus.GetCurrentStamina());
         SetBeer(playerStatus.GetCurrentBeer());
-     //   SetMagic( playerStatus.GetCurrentMagic());
+        //   SetMagic( playerStatus.GetCurrentMagic());
 
+        UpdatePressedButtonFeedback();
     }
 
     void SetHealth(float healthRatio)
@@ -127,4 +150,59 @@ public class GUIManager : MonoBehaviour {
         magicImages[initialMagic].transform.localPosition = tmp;
     }
 */
+    
+    public void PressButton( string buttonName)
+    {
+        if (buttonName.Equals("YButton"))
+        {
+            yButtonFeedback = true;
+            yButtonFeedbackTime = 0.0f;
+        }
+        else if (buttonName.Equals("Tornado"))
+        {
+            tornadoFeedback = true;
+            tornadoFeedbackTime = 0.0f;
+        }
+        else if (buttonName.Equals("Earthquake"))
+        {
+            earthquakeFeedback = true;
+            earthquakeFeedbackTime = 0.0f;
+        }
+    }
+
+    private void UpdatePressedButtonFeedback()
+    {
+        if (yButtonFeedback )
+        {
+            yButtonFeedbackTime += Time.deltaTime;
+            Color tmp = YButtonImage.color;
+            tmp.a = yButtonFeedbackTime / feedbackTime;
+            YButtonImage.color = tmp;
+
+            if (yButtonFeedbackTime >= feedbackTime)
+                yButtonFeedback = false;
+        }
+        if (tornadoFeedback )
+        {
+            tornadoFeedbackTime += Time.deltaTime;
+
+            Color tmp = tornadoImage.color;
+            tmp.a = tornadoFeedbackTime / feedbackTime;
+            tornadoImage.color = tmp;
+
+            if (tornadoFeedbackTime >= feedbackTime)
+                tornadoFeedback = false;
+        }
+        if (earthquakeFeedback)
+        {
+            earthquakeFeedbackTime += Time.deltaTime;
+
+            Color tmp = earthquakeImage.color;
+            tmp.a = earthquakeFeedbackTime / feedbackTime;
+            earthquakeImage.color = tmp;
+
+            if (earthquakeFeedbackTime >= feedbackTime)
+                earthquakeFeedback = false; 
+        }
+    }
 }

@@ -104,7 +104,9 @@ public class PlayerInput : MonoBehaviour {
 
     public pInput newInput;
     pInput oldInput;
-    
+
+    GUIManager guiManager; 
+
     public int doubleTapFramesMax = 12;
     int doubleTapFramesCount; 
 
@@ -112,13 +114,16 @@ public class PlayerInput : MonoBehaviour {
     doubleTap hDoubleTap;
     bool facingRightTap; 
 
-    public PlayerInput()
+    private void Start()
     {
-        doubleTapFramesCount = 0; 
+        GameObject guiObject = GameObject.Find("GUI");
+        if (guiObject)
+            guiManager = guiObject.GetComponent<GUIManager>();
+        doubleTapFramesCount = 0;
         hDoubleTap = doubleTap.IDLE;
     }
 
-	public void GetInput()
+    public void GetInput()
 	{
 		oldInput.CopyInputFrom (newInput);  //make a savestate from last input
     // OLD CONTROL MAPPING
@@ -155,6 +160,18 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetRightTriggerDown(!oldInput.GetRightTriggerDown() && oldInput.GetRightTriggerInput() == 0 && newInput.GetRightTriggerInput() > 0); 
 
         newInput.SetCastButtonDown( newInput.GetLeftTriggerDown() || newInput.GetRightTriggerDown() );
+
+        if (guiManager)
+        {
+
+            if (newInput.GetContextButtonDown())
+                guiManager.PressButton("YButton");
+            if (newInput.GetLeftTriggerDown())
+                guiManager.PressButton("Tornado");
+            if (newInput.GetRightTriggerDown())
+                guiManager.PressButton("Earthquake");
+        }
+            
     }
 
     private bool CheckHorizontalDoubleTap()
