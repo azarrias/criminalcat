@@ -242,7 +242,11 @@ public class PlayerStatus : MonoBehaviour
         SetState(PlayerStatus.idle);
 
         // add hoc for level elements 
-        GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
+        //GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
+        GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
+        if (movingDoor)
+            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor(); 
+        
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
