@@ -10,14 +10,18 @@ public class RockBehaviour : MonoBehaviour {
     public bool disipate = false;
     public float disipationTime = 2.0f;
     private float disipationCounter = 0.0f;    
-    private MeshRenderer estalactiteMR;
+    private MeshRenderer rockMR;
     public float fadeoutSpeed = 0.01f;
 
     void Start()
     {
         rockDustParticles = GetComponent<ParticleSystem>();
-        GameObject estalactiteMeshGO = transform.Find("estalactita/Group6554").gameObject;
-        estalactiteMR = estalactiteMeshGO.GetComponent<MeshRenderer>();
+
+        Transform rockTr = transform.Find("estalactita/Group6554");
+        if(rockTr == null)
+            rockTr = transform.Find("rock");
+
+        rockMR = rockTr.gameObject.GetComponent<MeshRenderer>();
     }
 
 
@@ -46,13 +50,13 @@ public class RockBehaviour : MonoBehaviour {
         }
 
         //fadeout
-        Color color = estalactiteMR.materials[0].color;
+        Color color = rockMR.materials[0].color;
 
         color.a -= fadeoutSpeed;
         if (color.a < 0.0f)
             color.a = 0.0f;
 
-        estalactiteMR.materials[0].color = color;
+        rockMR.materials[0].color = color;
 
         disipationCounter += Time.deltaTime;
         if(disipationCounter >= disipationTime)
@@ -61,9 +65,9 @@ public class RockBehaviour : MonoBehaviour {
             disipate = false;
             gameObject.SetActive(false);
             gameObject.GetComponent<Rigidbody>().useGravity = true;
-            Color startingColor = estalactiteMR.materials[0].color;
+            Color startingColor = rockMR.materials[0].color;
             startingColor.a = 1.0f;
-            estalactiteMR.materials[0].color = startingColor;
+            rockMR.materials[0].color = startingColor;
         }
     }
 }
