@@ -92,7 +92,7 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
-    public void PlayFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayFx(AudioClip clip, float pitch = 1.0f)
     {
         GameObject obj = GetFXAudioSource();
         obj.SetActive(true);
@@ -102,6 +102,8 @@ public class AudioManager : MonoBehaviour {
         fxSource.pitch = pitch;
         fxSource.Play();
         StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
+
+        return fxSource;
     }
 
     public void RandomizePlayFx(params AudioClip[] clips)

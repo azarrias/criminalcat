@@ -22,7 +22,7 @@ public class CastState : PlayerState
             //if (status.magic == PlayerStatus.MAGIC.EAGLE)
            if (input.newInput.GetLeftTriggerInput() > 0 )
             {
-                status.PlayFx("tornado");
+//                status.PlayFx("tornado");
                 status.StartGUIFeedback("Tornado"); 
                 // New version with ParticlesManager
                 if (status.facingRight)

@@ -55,6 +55,11 @@ public class TornadoBehaviour : MonoBehaviour {
     private FSMBoss fsmBoss = null;
     private EnemyStats bossStats = null;
 
+    private GameObject player;
+    private PlayerStatus playerStatus;
+    private AudioSource tornadoAudioSource;
+    private bool firstTime = true;
+
     void Awake()
     {
         Scene scene = SceneManager.GetActiveScene();
@@ -69,6 +74,9 @@ public class TornadoBehaviour : MonoBehaviour {
         tornadoCirclesPS = tornadoCircleGO.GetComponent<ParticleSystem>();
         foggyBasePS = foggyBaseGO.GetComponent<ParticleSystem>();
         smallFragmentsPS = smallFragmentsGO.GetComponent<ParticleSystem>();
+
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerStatus = player.GetComponent<PlayerStatus>();
     }
 
 	void Start ()
@@ -77,10 +85,16 @@ public class TornadoBehaviour : MonoBehaviour {
         tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
-    
-	
-	// Update is called once per frame
-	void Update () {
+    private void OnEnable()
+    {
+        if (!firstTime)
+            tornadoAudioSource = AudioManager.instance.PlayFx(playerStatus.fxTornado);
+        else
+            firstTime = false;
+    }
+
+    // Update is called once per frame
+    void Update () {
         
         switch(tornadoState)
         {
@@ -274,7 +288,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
         ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
         dustEmission.rateOverTime = 0.0f;
-
+        tornadoAudioSource.Stop(); //
         fadeCounter++;
         if (fadeCounter == fadeFrames)
         {
