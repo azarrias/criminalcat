@@ -17,6 +17,9 @@ public class RockDestroy : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("RockCollider"))
-            other.transform.parent.gameObject.SetActive(false);
+        {
+            //other.transform.parent.gameObject.SetActive(false);
+            other.transform.parent.gameObject.GetComponent<RockBehaviour>().disipate = true;
+        }
     }
 }
