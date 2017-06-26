@@ -18,8 +18,16 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
     private SafeAreaRight safeAreaRightScript;
     private SafeAreaLeft safeAreaLeftScript;
 
-    private GameObject rightSphere = null;
-    private GameObject leftSphere = null;
+    //private GameObject rightSphere = null;
+    //private GameObject leftSphere = null;
+
+    private ParticleSystem leftDust1PS;
+    private ParticleSystem leftDust2PS;
+    private ParticleSystem middleDustPS;
+    private ParticleSystem rightDust1PS;
+    private ParticleSystem rightDust2PS;
+    
+
 
     // Use this for initialization
     void Start () {
@@ -45,13 +53,13 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         if (thePlayer == null)
             Debug.Log("Error: player not found.");
 
-        rightSphere = transform.parent.FindChild("RightSphere").gameObject;
-        if (rightSphere == null)
-            Debug.Log("Error: rightSphere not found.");
+        //rightSphere = transform.parent.FindChild("RightSphere").gameObject;
+        //if (rightSphere == null)
+        //    Debug.Log("Error: rightSphere not found.");
 
-        leftSphere = transform.parent.FindChild("LeftSphere").gameObject;
-        if (leftSphere == null)
-            Debug.Log("Error: leftSphere not found.");
+        //leftSphere = transform.parent.FindChild("LeftSphere").gameObject;
+        //if (leftSphere == null)
+        //    Debug.Log("Error: leftSphere not found.");
 
         safeAreaRightScript = transform.parent.FindChild("SafeAreaRight").gameObject.GetComponent<SafeAreaRight>();
         if (safeAreaRightScript == null)
@@ -61,6 +69,11 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         if (safeAreaLeftScript == null)
             Debug.Log("Error: safeAreaLeftScript not found");
 
+        leftDust1PS = transform.parent.FindChild("LeftDust1").gameObject.GetComponent<ParticleSystem>();
+        leftDust2PS = transform.parent.FindChild("LeftDust2").gameObject.GetComponent<ParticleSystem>();
+        middleDustPS = transform.parent.FindChild("MiddleDust").gameObject.GetComponent<ParticleSystem>();
+        rightDust1PS = transform.parent.FindChild("RightDust1").gameObject.GetComponent<ParticleSystem>();
+        rightDust2PS = transform.parent.FindChild("RightDust2").gameObject.GetComponent<ParticleSystem>();
     }
 	
 	// Update is called once per frame
@@ -76,6 +89,23 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
     public void HideIceSpikes()
     {
         spikesAnimator.SetBool("HideIceSpikes", true);
+        if (spikesAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
+            leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+            leftDust1PS.Stop();
+
+            leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+            leftDust2PS.Stop();
+
+            middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+            middleDustPS.Stop();
+
+            rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+            rightDust1PS.Stop();
+
+            rightDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+            rightDust2PS.Stop();
+        }
     }
 
     public void ResetAnimator()
@@ -85,8 +115,10 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         spikesAnimator.SetBool("HideIceSpikes", false);
         EnableLeftSpikes();
         EnableRightSpikes();       
-        leftSphere.GetComponent<Renderer>().material.color = Color.grey;
-        rightSphere.GetComponent<Renderer>().material.color = Color.grey;
+        //leftSphere.GetComponent<Renderer>().material.color = Color.grey;
+        //rightSphere.GetComponent<Renderer>().material.color = Color.grey;
+
+
     }
 
     public void EnableLeftSpikes()
@@ -127,13 +159,37 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         //Revisar cuando sepamos qué tipo de objeto nos dirá qué lado es el seguro
         if (leftSafe)
         {
-            leftSphere.GetComponent<Renderer>().material.color = Color.green;
-            rightSphere.GetComponent<Renderer>().material.color = Color.red;
+            leftDust1PS.Play();
+            leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            middleDustPS.Play();
+            middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            rightDust1PS.Play();
+            rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            rightDust2PS.Play();
+            rightDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            //leftSphere.GetComponent<Renderer>().material.color = Color.green;
+            //rightSphere.GetComponent<Renderer>().material.color = Color.red;
         }
         if (rightSafe)
         {
-            leftSphere.GetComponent<Renderer>().material.color = Color.red;
-            rightSphere.GetComponent<Renderer>().material.color = Color.green;
+            rightDust1PS.Play();
+            rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            middleDustPS.Play();
+            middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            leftDust1PS.Play();
+            leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            leftDust2PS.Play();
+            leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
+
+            //leftSphere.GetComponent<Renderer>().material.color = Color.red;
+            //rightSphere.GetComponent<Renderer>().material.color = Color.green;
         }
 
     }
