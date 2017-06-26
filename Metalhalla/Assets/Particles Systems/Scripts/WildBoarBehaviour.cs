@@ -160,7 +160,7 @@ public class WildBoarBehaviour : MonoBehaviour
 
     void DisableWildboar()
     {
-        Debug.Log("Disable wildboar");
+    //    Debug.Log("Disable wildboar");
         gameObject.SetActive(false);
         frames_counter = 0;
         explosion = false;

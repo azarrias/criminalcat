@@ -785,15 +785,14 @@ public class FSMBoss : MonoBehaviour
         {
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PostMeleeAttack";
-            bossAnimator.SetBool(currAnimation, true);
-              
-            earthAuraPS.Stop();
-            earthAuraDamageScript.auraActive = false;
+            bossAnimator.SetBool(currAnimation, true);                       
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             postMeleeAttackFinished = true;
+            earthAuraPS.Stop();
+            earthAuraDamageScript.auraActive = false;
         }
 
         //Set the boss looking at the player

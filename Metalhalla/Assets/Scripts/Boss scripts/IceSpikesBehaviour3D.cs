@@ -151,14 +151,15 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         System.Random rand = new System.Random();
         int num = rand.Next(0, 2);
 
-        if (num == 0)
+        //if (num == 0)
            DisableLeftSpikes();
-        if (num == 1)
-           DisableRightSpikes();
+        //if (num == 1)
+        //   DisableRightSpikes();
 
-        //Revisar cuando sepamos qué tipo de objeto nos dirá qué lado es el seguro
         if (leftSafe)
         {
+            leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+
             leftDust1PS.Play();
             leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
@@ -176,6 +177,8 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         }
         if (rightSafe)
         {
+            rightDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
+
             rightDust1PS.Play();
             rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EarthAuraDamage : MonoBehaviour {
     [HideInInspector]
     public bool auraActive = false;
-    private bool playerInsideEarthAura = true;
+    private bool playerInsideEarthAura = false;
     private float waitCounter = 0.0f;
     public float waitTime = 0.5f;
     private bool applyAuraDamage = true;
@@ -34,6 +34,7 @@ public class EarthAuraDamage : MonoBehaviour {
                 if (playerInsideEarthAura && applyAuraDamage)
                 {
                     player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
+                    Debug.Log("GO Aura damage: " + gameObject.name);
                     applyAuraDamage = false;
                 }
 
@@ -53,7 +54,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = true;
-            Debug.Log("Player inside earth aura");
+            //Debug.Log("Player inside earth aura " + gameObject.name);
 
             timeNoDamageCounter = 0.0f;
         }
@@ -64,7 +65,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = false;
-            Debug.Log("Player outside earth aura");
+            //Debug.Log("Player outside earth aura " + gameObject.name);
         }
     }
 }
