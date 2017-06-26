@@ -151,10 +151,10 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         System.Random rand = new System.Random();
         int num = rand.Next(0, 2);
 
-        //if (num == 0)
+        if (num == 0)
            DisableLeftSpikes();
-        //if (num == 1)
-        //   DisableRightSpikes();
+        if (num == 1)
+           DisableRightSpikes();
 
         if (leftSafe)
         {
