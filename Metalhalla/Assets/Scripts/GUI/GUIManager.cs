@@ -26,7 +26,11 @@ public class GUIManager : MonoBehaviour {
     */
     [Header("GUI Feedback for player input")]
     [Tooltip("Duration of the feedback shown to the player")]
-    public float feedbackTime = 0.3f; 
+    public float feedbackTime = 0.2f;
+    [Tooltip("Scale increase ratio for feedback")]
+    public float feedbackSizeRatio = 1.2f;
+    [Tooltip("Color for the actions that are not available (i.e. not having stamina would make the magic images gray")]
+    public Color disabledImageColorTint = new Color(0.3f, 0.3f, 0.3f, 1);
     [SerializeField]
     private Image YButtonImage;
     [SerializeField]
@@ -36,10 +40,15 @@ public class GUIManager : MonoBehaviour {
 
     private bool  yButtonFeedback;
     private float yButtonFeedbackTime;
+    private Vector3 yButtonOriginalScale;
+
     private bool  tornadoFeedback;
     private float tornadoFeedbackTime;
+    private Vector3 tornadoOriginalScale;
+
     private bool  earthquakeFeedback;
     private float earthquakeFeedbackTime;
+    private Vector3 earthquakeOriginalScale;
     
     private PlayerStatus playerStatus;
 
@@ -62,7 +71,7 @@ public class GUIManager : MonoBehaviour {
             Debug.Log("GUI could not retrieve PlayerStatus component from player");
 
         maxHP = playerStatus.healthMaximum;
-        hornIndx = playerStatus.beerAtStart;
+     //   hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
      //   ResetMagic((int)playerStatus.magicAtStart);
 
@@ -71,6 +80,10 @@ public class GUIManager : MonoBehaviour {
         yButtonFeedback = false;
         tornadoFeedback = false;
         earthquakeFeedback = false;
+
+        yButtonOriginalScale = YButtonImage.transform.localScale;
+        tornadoOriginalScale = tornadoImage.transform.localScale;
+        earthquakeOriginalScale = earthquakeImage.transform.localScale;
     }
 
     void Update() {
@@ -107,11 +120,31 @@ public class GUIManager : MonoBehaviour {
 
         stmIndx = remainingStamina;
         UpdateStaminaMeter(); 
+
+        if (stmIndx == 0)
+        {
+            tornadoImage.color = disabledImageColorTint;
+            earthquakeImage.color = disabledImageColorTint;
+        }
+        else
+        {
+            tornadoImage.color = Color.white;
+            earthquakeImage.color = Color.white;
+        }
     }
 
     void SetBeer( int remainingBeer )
     {
-        beerHorn.sprite = hornImages[remainingBeer];
+        if (hornIndx == remainingBeer)
+            return;
+
+        hornIndx = remainingBeer; 
+        beerHorn.sprite = hornImages[hornIndx];
+
+        if (hornIndx == 0)
+            YButtonImage.color = disabledImageColorTint;
+        else
+            YButtonImage.color = Color.white;
     }
 
 /*    void SetMagic( int newMagic)
@@ -157,16 +190,19 @@ public class GUIManager : MonoBehaviour {
         {
             yButtonFeedback = true;
             yButtonFeedbackTime = 0.0f;
+            YButtonImage.transform.localScale = yButtonOriginalScale * feedbackSizeRatio;
         }
         else if (element.Equals("Tornado"))
         {
             tornadoFeedback = true;
             tornadoFeedbackTime = 0.0f;
+            tornadoImage.transform.localScale = tornadoOriginalScale * feedbackSizeRatio;
         }
         else if (element.Equals("Earthquake"))
         {
             earthquakeFeedback = true;
             earthquakeFeedbackTime = 0.0f;
+            earthquakeImage.transform.localScale = earthquakeOriginalScale * feedbackSizeRatio;
         }
     }
 
@@ -175,12 +211,16 @@ public class GUIManager : MonoBehaviour {
         if (yButtonFeedback )
         {
             yButtonFeedbackTime += Time.deltaTime;
+
             Color tmp = YButtonImage.color;
             tmp.a = yButtonFeedbackTime / feedbackTime;
             YButtonImage.color = tmp;
-
+            
             if (yButtonFeedbackTime >= feedbackTime)
+            {
                 yButtonFeedback = false;
+                YButtonImage.transform.localScale = yButtonOriginalScale;
+            }
         }
         if (tornadoFeedback )
         {
@@ -191,7 +231,10 @@ public class GUIManager : MonoBehaviour {
             tornadoImage.color = tmp;
 
             if (tornadoFeedbackTime >= feedbackTime)
+            {
                 tornadoFeedback = false;
+                tornadoImage.transform.localScale = tornadoOriginalScale;
+            }
         }
         if (earthquakeFeedback)
         {
@@ -202,7 +245,11 @@ public class GUIManager : MonoBehaviour {
             earthquakeImage.color = tmp;
 
             if (earthquakeFeedbackTime >= feedbackTime)
-                earthquakeFeedback = false; 
+            {
+                earthquakeFeedback = false;
+                earthquakeImage.transform.localScale = earthquakeOriginalScale;
+            }
         }
     }
+
 }
