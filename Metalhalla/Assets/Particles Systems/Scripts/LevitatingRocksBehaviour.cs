@@ -27,14 +27,19 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
     public float scaleSpeed = 1.0f;
     public float maxScale = 1.0f;
 
+    private GameObject boss;
+
     void Awake()
     {
+        boss = GameObject.FindGameObjectWithTag("Boss");
+
         rocks = new GameObject[4];
         
         for (int i = 0; i < rocks.Length; i++)
         {
             rocks[i] = Instantiate(rockPrefab, Vector3.zero, Quaternion.identity);
-            rocks[i].transform.Find("rock").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);           
+            rocks[i].transform.Find("rock").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
+            rocks[i].GetComponent<EarthAttackRockBehaviour>().parentGO = boss;
             rocks[i].SetActive(false);
         }
                  
@@ -89,6 +94,8 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
             scale.z += scaleSpeed * Time.deltaTime;
             rocks[i].transform.Find("rock").transform.localScale = scale;
 
+            //Detach rocks from boss
+            rocks[i].transform.parent = boss.transform.parent;
             if (i == rocks.Length-1 && scale.z >= maxScale)
                 state = State.ASCENSION;
         }     

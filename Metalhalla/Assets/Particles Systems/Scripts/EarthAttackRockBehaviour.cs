@@ -13,6 +13,10 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
     public float maxScale = 1.0f;
 
     private GameObject rockMesh;
+
+    [HideInInspector]
+    public GameObject parentGO;
+
     void Awake()
     {
         rockMesh = transform.Find("rock").gameObject;      
@@ -64,7 +68,9 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
         if (scale.x == 0.0f)
         {           
             disipate = false;
-            gameObject.SetActive(false);                        
+            gameObject.SetActive(false);
+            //Set boss as parent
+            gameObject.transform.parent = parentGO.transform;
         }
     }
 }
