@@ -47,10 +47,10 @@ public class TornadoBehaviour : MonoBehaviour {
     public GameObject foggyBaseGO;
     private ParticleSystem foggyBasePS;
     public float fadeSpeed = 0.1f;
-    public float fadeFrames = 120;
+    public float fadeSeconds = 2.0f;
     public GameObject smallFragmentsGO;
     private ParticleSystem smallFragmentsPS;
-    private int fadeCounter = 0;
+    private float fadeCounter = 0.0f;
 
     private FSMBoss fsmBoss = null;
     private EnemyStats bossStats = null;
@@ -289,11 +289,11 @@ public class TornadoBehaviour : MonoBehaviour {
         ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
         dustEmission.rateOverTime = 0.0f;
         tornadoAudioSource.Stop(); //
-        fadeCounter++;
-        if (fadeCounter == fadeFrames)
+        fadeCounter += Time.deltaTime;
+        if (fadeCounter >= fadeSeconds)
         {
             //Debug.Log("BEFORE DEACTIVATING TORNADO ID = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
-            fadeCounter = 0;
+            fadeCounter = 0.0f;
             disipate = false;
             foggyEmission.rateOverTime = 50.0f;
             dustEmission.rateOverTime = 50.0f;

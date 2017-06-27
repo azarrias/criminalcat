@@ -49,8 +49,8 @@ public class TornadoBehaviour3D : MonoBehaviour {
     public GameObject tornadoBaseGO;
     private ParticleSystem tornadoBasePS;
     public float fadeSpeed = 0.1f;
-    public float fadeFrames = 120;   
-    private int fadeCounter = 0;
+    public float fadeSeconds = 2.0f;   
+    private float fadeCounter = 0;
 
     private FSMBoss fsmBoss = null;
     private EnemyStats bossStats = null;
@@ -291,11 +291,11 @@ public class TornadoBehaviour3D : MonoBehaviour {
             tornadoBasePS.SetParticles(tornadoBaseParticles, numParticlesAlive);
         }
 
-        fadeCounter++;
-        if (fadeCounter == fadeFrames)
+        fadeCounter += Time.deltaTime;
+        if (fadeCounter >= fadeSeconds)
         {
             //Debug.Log("BEFORE DEACTIVATING TORNADO ID = " + GetInstanceID() + " ROTATION TIME COUNTER = " + rotationTimeCounter);
-            fadeCounter = 0;
+            fadeCounter = 0.0f;
             disipate = false;
             ParticleSystem.EmissionModule bodyParticles = tornadoBodyPS.emission;
             bodyParticles.rateOverTime = 15;
