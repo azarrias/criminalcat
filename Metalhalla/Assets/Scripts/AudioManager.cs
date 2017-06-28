@@ -192,4 +192,34 @@ public class AudioManager : MonoBehaviour {
         obj.SetActive(false);
     }
 
+    /*    public IEnumerator FadeOut(AudioSource audioSource, float duration)
+        {
+            float startingVolume = audioSource.volume;
+
+            while (audioSource.volume > 0)
+            {
+                if (Time.timeScale > 0.005f)
+                {
+                    audioSource.volume -= startingVolume * Time.deltaTime / duration;
+                    yield return null;
+                }
+                else
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+            }
+            while (Time.timeSca)
+            audioSource.Stop();
+            audioSource.volume = startingVolume;
+        }*/
+
+    public void FadeAudioSource(AudioSource audioSource, FadeAudio.FadeType type, float duration, float targetVolume)
+    {
+        FadeAudio fadeAudioComponent = gameObject.AddComponent<FadeAudio>() as FadeAudio;
+        fadeAudioComponent.fadeType = type;
+        fadeAudioComponent.audioSource = audioSource;
+        fadeAudioComponent.fadeDuration = duration;
+        fadeAudioComponent.targetVolume = targetVolume;
+    }
+
 }

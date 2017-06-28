@@ -88,7 +88,10 @@ public class TornadoBehaviour : MonoBehaviour {
     private void OnEnable()
     {
         if (!firstTime)
+        {
             tornadoAudioSource = AudioManager.instance.PlayFx(playerStatus.fxTornado);
+            AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeIn, fadeSeconds, 1.0f);
+        }
         else
             firstTime = false;
     }
@@ -261,6 +264,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
     private void OnDisipateEnter()
     {
+        AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeOut, fadeSeconds, 0.0f);
         foreach (var enemy in contains)
         {
             enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
@@ -288,7 +292,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
         ParticleSystem.EmissionModule dustEmission = smallFragmentsPS.emission;
         dustEmission.rateOverTime = 0.0f;
-        tornadoAudioSource.Stop(); //
+
         fadeCounter += Time.deltaTime;
         if (fadeCounter >= fadeSeconds)
         {
