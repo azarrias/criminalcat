@@ -371,7 +371,7 @@ public class FSMDarkElf : MonoBehaviour
             iniPos = new Vector3(transform.position.x - fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
 
-        AudioManager.instance.PlayFx(fireBall);
+        AudioManager.instance.PlayDiegeticFx(fireBall);
         Vector3 direction;
         if ((facingRight == true && player.transform.position.x >= iniPos.x) || (facingRight == false && player.transform.position.x <= iniPos.x))
             direction = player.transform.position - iniPos;

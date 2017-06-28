@@ -14,7 +14,7 @@ public class PlayerAttackColliderBehaviour : MonoBehaviour {
             // todo: update with modifiable damage
             other.gameObject.SendMessage("ApplyDamage", 10, SendMessageOptions.DontRequireReceiver);
             if (fxHit && (other.CompareTag("Viking") || other.CompareTag("Dark Elf") || other.CompareTag("Boss")) )
-                AudioManager.instance.PlayFx(fxHit);
+                AudioManager.instance.PlayDiegeticFx(fxHit);
         }
     }
 }

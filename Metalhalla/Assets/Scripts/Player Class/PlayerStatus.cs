@@ -492,15 +492,15 @@ public class PlayerStatus : MonoBehaviour
     public void PlayFx( string fx)
     {
         if (fx.Equals("swing"))
-            AudioManager.instance.PlayFx(fxSwing);
+            AudioManager.instance.PlayDiegeticFx(fxSwing);
         else if (fx.Equals("jump"))
-            AudioManager.instance.PlayFx(fxJump);
+            AudioManager.instance.PlayDiegeticFx(fxJump);
         else if (fx.Equals("land"))
-            AudioManager.instance.PlayFx(fxLand);
+            AudioManager.instance.PlayDiegeticFx(fxLand);
         else if (fx.Equals("tornado"))
-            AudioManager.instance.PlayFx(fxTornado);
+            AudioManager.instance.PlayDiegeticFx(fxTornado);
         else if (fx.Equals("wildboar"))
-            AudioManager.instance.PlayFx(fxWildboar);
+            AudioManager.instance.PlayDiegeticFx(fxWildboar);
         else if (fx.Equals("leftFootstep"))
             AudioManager.instance.RandomizePlayFx(leftFootsteps);
         else if (fx.Equals("rightFootstep"))
@@ -508,11 +508,11 @@ public class PlayerStatus : MonoBehaviour
         else if (fx.Equals("hurtScream"))
             AudioManager.instance.RandomizePlayFx(hurtScream);
         else if (fx.Equals("restoreBeer"))
-            AudioManager.instance.PlayFx(fxRestoreBeer);
+            AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
         else if (fx.Equals("restoreHealth"))
-            AudioManager.instance.PlayFx(fxRestoreLife);
+            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
-            AudioManager.instance.PlayFx(deathScream);
+            AudioManager.instance.PlayDiegeticFx(deathScream);
     }
 
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------

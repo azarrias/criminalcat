@@ -11,12 +11,15 @@ public class AudioManager : MonoBehaviour {
     public AudioMixer mixer;
 
     [Header("Prefabs")]
-    public GameObject fXAudioSourcePrefab;
-    public int numberOfFXAudioSources = 5;
+    public GameObject fXDiegeticAudioSourcePrefab;
+    public int numberOfFXDiegeticAudioSources = 5;
+    public GameObject fXNonDiegeticAudioSourcePrefab;
+    public int numberOfFXNonDiegeticAudioSources = 5;
 
-    [Header("Channels")]
-    public AudioSource musicSource;
-    public AudioSource fxSource;
+        [Header("Channels")]
+        public AudioSource musicSource;
+    /*    public AudioSource diegeticFxSource;
+        public AudioSource nondiegeticFxSource;*/
 
     [Header("Music Tracks")]
     public AudioClip introCutscene;
@@ -26,7 +29,8 @@ public class AudioManager : MonoBehaviour {
     public float lowPitchRange = .95f;
     public float highPitchRange = 1.05f;
 
-    private List<GameObject> fXAudioSources;
+    private List<GameObject> fXDiegeticAudioSources;
+    private List<GameObject> fXNonDiegeticAudioSources;
 
     void Awake()
     {
@@ -34,12 +38,21 @@ public class AudioManager : MonoBehaviour {
         {
             instance = this;
 
-            fXAudioSources = new List<GameObject>();
-            for (int i = 0; i < numberOfFXAudioSources; ++i)
+            fXDiegeticAudioSources = new List<GameObject>();
+            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
             {
-                GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
+                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
                 obj.SetActive(false);
-                fXAudioSources.Add(obj);
+                fXDiegeticAudioSources.Add(obj);
+                DontDestroyOnLoad(obj);
+            }
+
+            fXNonDiegeticAudioSources = new List<GameObject>();
+            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
+            {
+                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
+                obj.SetActive(false);
+                fXDiegeticAudioSources.Add(obj);
                 DontDestroyOnLoad(obj);
             }
         }
@@ -51,32 +64,37 @@ public class AudioManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        /*        musicSource.clip = introCutscene;
-                musicSource.volume = 0.0f;
-                musicSource.Play();
-                StartCoroutine("FadeIn", 10.0f);*/
-        //fXAudioSources = new List<GameObject>();
-        //for(int i = 0; i < numberOfFXAudioSources; ++i)
-        //{
-        //    GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
-        //    obj.SetActive(false);
-        //    fXAudioSources.Add(obj);
-        //}
 
     }
 
-    GameObject GetFXAudioSource()
+    GameObject GetDiegeticFXAudioSource()
     {
-        for(int i = 0; i < fXAudioSources.Count; ++i)
+        for(int i = 0; i < fXDiegeticAudioSources.Count; ++i)
         {
-            if(!fXAudioSources[i].activeInHierarchy)
+            if(!fXDiegeticAudioSources[i].activeInHierarchy)
             {
-                return fXAudioSources[i];
+                return fXDiegeticAudioSources[i];
             }
         }
 
-        GameObject obj = (GameObject)Instantiate(fXAudioSourcePrefab);
-        fXAudioSources.Add(obj);
+        GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
+        fXDiegeticAudioSources.Add(obj);
+        DontDestroyOnLoad(obj);
+        return obj;
+    }
+
+    GameObject GetNonDiegeticFXAudioSource()
+    {
+        for (int i = 0; i < fXNonDiegeticAudioSources.Count; ++i)
+        {
+            if (!fXNonDiegeticAudioSources[i].activeInHierarchy)
+            {
+                return fXNonDiegeticAudioSources[i];
+            }
+        }
+
+        GameObject obj = (GameObject)Instantiate(fXNonDiegeticAudioSourcePrefab);
+        fXNonDiegeticAudioSources.Add(obj);
         DontDestroyOnLoad(obj);
         return obj;
     }
@@ -92,9 +110,20 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
-    public AudioSource PlayFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayDiegeticFx(AudioClip clip, float pitch = 1.0f)
     {
-        GameObject obj = GetFXAudioSource();
+        GameObject obj = GetDiegeticFXAudioSource();
+        return PlayFx(obj, clip, pitch);
+    }
+
+    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f)
+    {
+        GameObject obj = GetNonDiegeticFXAudioSource();
+        return PlayFx(obj, clip, pitch);
+    }
+
+    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f)
+    {
         obj.SetActive(true);
         AudioSource fxSource = obj.GetComponent<AudioSource>();
 
@@ -110,7 +139,7 @@ public class AudioManager : MonoBehaviour {
     {
         int randomIndex = Random.Range(0, clips.Length);
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-        PlayFx(clips[randomIndex], randomPitch);
+        PlayDiegeticFx(clips[randomIndex], randomPitch);
     }
 
     void OnEnable()
@@ -141,22 +170,22 @@ public class AudioManager : MonoBehaviour {
 
     public void PauseAllFXs()
     {
-        for (int i = 0; i < fXAudioSources.Count; ++i)
+        for (int i = 0; i < fXDiegeticAudioSources.Count; ++i)
         {
-            if (fXAudioSources[i].activeInHierarchy)
+            if (fXDiegeticAudioSources[i].activeInHierarchy)
             {
-                fXAudioSources[i].GetComponent<AudioSource>().Pause();
+                fXDiegeticAudioSources[i].GetComponent<AudioSource>().Pause();
             }
         }
     }
 
     public void UnPauseAllFXs()
     {
-        for (int i = 0; i < fXAudioSources.Count; ++i)
+        for (int i = 0; i < fXDiegeticAudioSources.Count; ++i)
         {
-            if (fXAudioSources[i].activeInHierarchy)
+            if (fXDiegeticAudioSources[i].activeInHierarchy)
             {
-                fXAudioSources[i].GetComponent<AudioSource>().UnPause();
+                fXDiegeticAudioSources[i].GetComponent<AudioSource>().UnPause();
             }
         }
     }
@@ -191,27 +220,6 @@ public class AudioManager : MonoBehaviour {
 
         obj.SetActive(false);
     }
-
-    /*    public IEnumerator FadeOut(AudioSource audioSource, float duration)
-        {
-            float startingVolume = audioSource.volume;
-
-            while (audioSource.volume > 0)
-            {
-                if (Time.timeScale > 0.005f)
-                {
-                    audioSource.volume -= startingVolume * Time.deltaTime / duration;
-                    yield return null;
-                }
-                else
-                {
-                    yield return new WaitForFixedUpdate();
-                }
-            }
-            while (Time.timeSca)
-            audioSource.Stop();
-            audioSource.volume = startingVolume;
-        }*/
 
     public void FadeAudioSource(AudioSource audioSource, FadeAudio.FadeType type, float duration, float targetVolume)
     {
