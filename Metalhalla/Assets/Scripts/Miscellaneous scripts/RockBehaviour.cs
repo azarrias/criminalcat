@@ -33,8 +33,10 @@ public class RockBehaviour : MonoBehaviour {
     }
 
     void OnTriggerEnter(Collider collider)
-    {       
-        if(collider.CompareTag("Player") && !disipate)
+    {
+        // mod to teach the player that falling stalagmites are BAD
+        //if (collider.CompareTag("Player") && !disipate)
+        if (!disipate && (collider.CompareTag("Player") || collider.CompareTag("Viking")))
         {
             collider.gameObject.SendMessage("ApplyDamage", damage);
         }
