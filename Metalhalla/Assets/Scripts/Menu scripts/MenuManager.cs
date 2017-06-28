@@ -253,9 +253,14 @@ public class MenuManager : MonoBehaviour {
 
         if (slider.value > 0.05f)
         {
-            AudioManager.instance.mixer.SetFloat("FXVolume", 20.0f * Mathf.Log10(slider.value));
+            AudioManager.instance.mixer.SetFloat("FXDiegeticVolume", 20.0f * Mathf.Log10(slider.value));
+            AudioManager.instance.mixer.SetFloat("FXNonDiegeticVolume", 20.0f * Mathf.Log10(slider.value));
         }
         else
-            AudioManager.instance.mixer.SetFloat("FXVolume", -144.0f);
+        {
+            AudioManager.instance.mixer.SetFloat("FXDiegeticVolume", -144.0f);
+            AudioManager.instance.mixer.SetFloat("FXNonDiegeticVolume", -144.0f);
+        }
+
     }
 }
