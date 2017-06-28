@@ -12,7 +12,13 @@ public class ClimbState : PlayerState
 
         status.playerAnimator.speed = 1;
 
-        if (status.climbLadderAvailable == false || (input.newInput.GetJumpButtonDown() == true  && input.newInput.GetVerticalInput() <= 0 ))
+        if (input.newInput.GetJumpButtonDown() == true && input.newInput.GetVerticalInput() >= 0)
+        {
+            status.SetState(PlayerStatus.jump);
+            status.SetInitialModelRotation();
+        }
+        else if (status.climbLadderAvailable == false || (input.newInput.GetJumpButtonDown() == true && input.newInput.GetVerticalInput() <= 0))
+        //if (status.climbLadderAvailable == false || (input.newInput.GetJumpButtonDown() == true  && input.newInput.GetVerticalInput() <= 0 ))
         //if (input.newInput.GetJumpButtonDown() == true || status.climbLadderAvailable == false)
         {
             status.SetState(PlayerStatus.fall);

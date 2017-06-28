@@ -80,6 +80,10 @@ public class PlayerStatus : MonoBehaviour
     [Tooltip("Number of frames in which the player can still jump after losing foot in their last platform")]
     public int framesToJumpInDelay = 5;
 
+    [Header("Jump from ladder parameters")]
+    [Tooltip("Number of frames at the start of the jump that the player won't be attaching to the ladder in order to be able to jump from it")]
+    public int framesToJumpFromLadder = 15;
+
     [Header("Moveset Durations")]
     public float attackDuration = 0.5f;
     public float castDuration = 0.5f;
@@ -90,7 +94,7 @@ public class PlayerStatus : MonoBehaviour
     public float deadDuration = 3.0f;
     public float dashDuration = 0.4f;
 
-    [Header("Respawn management")]
+    [Header("Respawn parameters")]
     public Vector3 initialPosition;
     [HideInInspector]
     public Vector3 activeRespawnPoint;
@@ -249,7 +253,6 @@ public class PlayerStatus : MonoBehaviour
         SetState(PlayerStatus.idle);
 
         // add hoc for level elements 
-        //GameObject.FindGameObjectWithTag("MovingDoor").GetComponent<CloseOpenDoor>().OpenDoor();
         GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
         if (movingDoor)
             movingDoor.GetComponent<CloseOpenDoor>().OpenDoor(); 

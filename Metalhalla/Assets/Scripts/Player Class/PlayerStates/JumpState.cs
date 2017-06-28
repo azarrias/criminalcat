@@ -30,7 +30,8 @@ public class JumpState : PlayerState
         if (framesToJumpCount < framesToJumpMax)
             status.jumpFrames = framesToJumpCount;
 
-        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0)
+        //if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0)
+        if (status.climbLadderAvailable == true && input.newInput.GetVerticalInput() > 0 && framesToJumpCount >= status.framesToJumpFromLadder )
         {
             status.SetState(PlayerStatus.climb);
             return;
