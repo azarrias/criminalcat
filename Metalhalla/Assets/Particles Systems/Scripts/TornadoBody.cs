@@ -5,10 +5,8 @@ using UnityEngine;
 public class TornadoBody : MonoBehaviour {
 
     public int frequency = 4;
-    public float resolution = 80;
-    public float amplitude = 1.0f;
-    public float zValue = 1.0f;
-
+    public float resolution = 50.0f;
+    public float scaleXZ = 80.0f;
     private ParticleSystem ps;
 
 	// Use this for initialization
@@ -28,27 +26,23 @@ public class TornadoBody : MonoBehaviour {
         ParticleSystem.VelocityOverLifetimeModule vel = ps.velocityOverLifetime;
         vel.enabled = true;
         vel.space = ParticleSystemSimulationSpace.Local;
-        ParticleSystem.MainModule main = ps.main;
-        main.startSpeed = 0f;
- 
-        vel.z = new ParticleSystem.MinMaxCurve(10.0f, zValue);
-
+        
         AnimationCurve curveX = new AnimationCurve();
         for(int i = 0; i < resolution; i++)
         {           
             float newTime = (i / (resolution - 1));
-            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Cos(newTime * 2 * Mathf.PI * frequency);           
+            float value = 1 / (resolution - 1) * i * Mathf.Cos(newTime * 2 * Mathf.PI * frequency);           
             curveX.AddKey(newTime, value);
         }
-        vel.x = new ParticleSystem.MinMaxCurve(10.0f, curveX);
+        vel.x = new ParticleSystem.MinMaxCurve(scaleXZ, curveX);
 
-        AnimationCurve curveY = new AnimationCurve();
+        AnimationCurve curveZ = new AnimationCurve();
         for (int i = 0; i < resolution; i++)
         {            
             float newTime = (i / (resolution - 1));
-            float value = amplitude * 1 / (resolution - 1) * i * Mathf.Sin(newTime * 2 * Mathf.PI * frequency);            
-            curveY.AddKey(newTime, value);
+            float value = 1 / (resolution - 1) * i * Mathf.Sin(newTime * 2 * Mathf.PI * frequency);            
+            curveZ.AddKey(newTime, value);
         }
-        vel.y = new ParticleSystem.MinMaxCurve(10.0f, curveY);
+        vel.z = new ParticleSystem.MinMaxCurve(scaleXZ, curveZ);
     }
 }
