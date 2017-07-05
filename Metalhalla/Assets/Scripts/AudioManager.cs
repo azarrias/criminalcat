@@ -157,7 +157,7 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
-            case 0:
+            case 1:
                 PlayMusic(introCutscene);
                 break;
             case 2:
