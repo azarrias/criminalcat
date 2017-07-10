@@ -157,13 +157,22 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
-            case 1:
+            case 1: //initial menu
+            {
                 PlayMusic(introCutscene);
                 break;
-            case 2:
+            }
+            case 2: // Dungeon entrance
+            { 
                 StopMusic();
-                PlayMusic(playingLevel);
                 break;
+            }
+            case 3: // Dungeon
+                {
+                    StopMusic();
+                    PlayMusic(playingLevel);
+                    break;
+                }
         }
 
     }
