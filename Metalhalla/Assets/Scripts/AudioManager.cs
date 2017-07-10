@@ -168,11 +168,16 @@ public class AudioManager : MonoBehaviour {
                 break;
             }
             case 3: // Dungeon
-                {
-                    StopMusic();
-                    PlayMusic(playingLevel);
-                    break;
-                }
+            {
+                StopMusic();
+                PlayMusic(playingLevel);
+                break;
+            }
+            case 4: // Boss scene
+            {
+                StopMusic(); 
+                break;
+            }
         }
 
     }

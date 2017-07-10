@@ -6,6 +6,7 @@ public class coinItem : MonoBehaviour {
 
     public GameObject sourcePrefab;
     public AudioClip coinFx;
+    public int collectedAmount = 1;
 
     private float rotationSpeed;
 
@@ -42,7 +43,7 @@ public class coinItem : MonoBehaviour {
         {
             if (framesToGUICount >= framesToGUI)
             {
-                playerStatus.CollectCoins(1);
+                playerStatus.CollectCoins(collectedAmount);
                 Destroy(this.gameObject);
             }
             else
