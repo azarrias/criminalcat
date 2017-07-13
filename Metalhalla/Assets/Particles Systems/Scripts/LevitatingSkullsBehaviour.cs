@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevitatingRocksBehaviour : MonoBehaviour {
+public class LevitatingSkullsBehaviour : MonoBehaviour {
 
     private enum State
     {
@@ -15,8 +15,8 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
 
     public Transform[] spawnPoints;
     public Transform[] levitationPoints;
-    public GameObject rockPrefab;
-    private GameObject[] rocks;
+    public GameObject skullPrefab;
+    private GameObject[] skulls;
     public GameObject player;
     private State state;
     public float ascensionSpeed;
@@ -33,14 +33,14 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
     {
         boss = GameObject.FindGameObjectWithTag("Boss");
 
-        rocks = new GameObject[4];
+        skulls = new GameObject[4];
         
-        for (int i = 0; i < rocks.Length; i++)
+        for (int i = 0; i < skulls.Length; i++)
         {
-            rocks[i] = Instantiate(rockPrefab, Vector3.zero, Quaternion.identity);
-            rocks[i].transform.Find("rock").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
-            rocks[i].GetComponent<EarthAttackRockBehaviour>().parentGO = boss;
-            rocks[i].SetActive(false);
+            skulls[i] = Instantiate(skullPrefab, Vector3.zero, Quaternion.identity);
+            skulls[i].transform.Find("SkullMesh").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
+            skulls[i].GetComponent<SkullsAttackBehaviour>().parentGO = boss;
+            skulls[i].SetActive(false);
         }
                  
         state = State.INACTIVITY;       
@@ -86,17 +86,17 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
 
     private void Materialize()
     {
-        for (int i = 0; i < rocks.Length; i++)
+        for (int i = 0; i < skulls.Length; i++)
         {
-            Vector3 scale = rocks[i].transform.Find("rock").transform.localScale;
+            Vector3 scale = skulls[i].transform.Find("SkullMesh").transform.localScale;
             scale.x += scaleSpeed * Time.deltaTime;
             scale.y += scaleSpeed * Time.deltaTime;
             scale.z += scaleSpeed * Time.deltaTime;
-            rocks[i].transform.Find("rock").transform.localScale = scale;
+            skulls[i].transform.Find("SkullMesh").transform.localScale = scale;
 
-            //Detach rocks from boss
-            rocks[i].transform.parent = boss.transform.parent;
-            if (i == rocks.Length-1 && scale.z >= maxScale)
+            //Detach skulls from boss
+            skulls[i].transform.parent = boss.transform.parent;
+            if (i == skulls.Length-1 && scale.z >= maxScale)
                 state = State.ASCENSION;
         }     
     }
@@ -105,10 +105,10 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
     {
         bool targetReached = true;
 
-        for (int i = 0; i < rocks.Length; i++)
+        for (int i = 0; i < skulls.Length; i++)
         {
-            Vector3 newPosition = Vector3.MoveTowards(rocks[i].transform.position, levitationPoints[i].transform.position, ascensionSpeed * Time.deltaTime);
-            rocks[i].transform.position = newPosition;
+            Vector3 newPosition = Vector3.MoveTowards(skulls[i].transform.position, levitationPoints[i].transform.position, ascensionSpeed * Time.deltaTime);
+            skulls[i].transform.position = newPosition;
 
             if (newPosition != levitationPoints[i].transform.position)
                 targetReached = false;
@@ -124,28 +124,33 @@ public class LevitatingRocksBehaviour : MonoBehaviour {
         if (levitationCounter >= levitationTime)
         {
             state = State.ATTACK;
-            targetPosition = player.transform.position;            
+            targetPosition = player.transform.position;
+            for (int i = 0; i < skulls.Length; i++)
+            {
+                skulls[i].transform.Find("SkullMesh").GetComponent<SphereCollider>().enabled = true;
+            }
         }
     }
 
     private void Attack()
     {       
-        for (int i = 0; i < rocks.Length; i++)
+        for (int i = 0; i < skulls.Length; i++)
         {
-            Vector3 forceDir = (targetPosition - rocks[i].transform.position).normalized;
-            rocks[i].GetComponent<Rigidbody>().AddForce(forceMagnitude * forceDir, ForceMode.Impulse);            
+            Vector3 forceDir = (targetPosition - skulls[i].transform.position).normalized;
+            skulls[i].GetComponent<Rigidbody>().AddForce(forceMagnitude * forceDir, ForceMode.Impulse);            
         }
 
         state = State.INACTIVITY;
     }
 
-    public void StartRocksAttack()
+    public void StartSkullsAttack()
     {
         state = State.MATERIALIZATION;
-        for (int i = 0; i < rocks.Length; i++)
+        for (int i = 0; i < skulls.Length; i++)
         {
-            rocks[i].SetActive(true);
-            rocks[i].transform.position = spawnPoints[i].transform.position;
+            skulls[i].transform.Find("SkullMesh").GetComponent<SphereCollider>().enabled = false;
+            skulls[i].SetActive(true);
+            skulls[i].transform.position = spawnPoints[i].transform.position;
         }        
     }
 

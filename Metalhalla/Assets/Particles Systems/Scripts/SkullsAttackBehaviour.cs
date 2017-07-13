@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EarthAttackRockBehaviour : MonoBehaviour {
+public class SkullsAttackBehaviour : MonoBehaviour {
 
     public float rotationSpeed;
     private ParticleSystem dust;
@@ -12,14 +12,14 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
     public float disipationScaleSpeed = 1.0f;
     public float maxScale = 1.0f;
 
-    private GameObject rockMesh;
+    private GameObject skullMesh;
 
     [HideInInspector]
     public GameObject parentGO;
 
     void Awake()
     {
-        rockMesh = transform.Find("rock").gameObject;      
+        skullMesh = transform.Find("SkullMesh").gameObject;      
         dust = GetComponent<ParticleSystem>();
     }
 
@@ -51,7 +51,7 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
 
     private void Disipate()
     {
-        Vector3 scale = rockMesh.transform.localScale;
+        Vector3 scale = skullMesh.transform.localScale;
         scale.x -= disipationScaleSpeed * Time.deltaTime;
         if (scale.x <= 0.0f)
             scale.x = 0.0f;
@@ -64,7 +64,7 @@ public class EarthAttackRockBehaviour : MonoBehaviour {
         if (scale.z <= 0.0f)
             scale.z = 0.0f;
 
-        rockMesh.transform.localScale = scale;
+        skullMesh.transform.localScale = scale;
         if (scale.x == 0.0f)
         {           
             disipate = false;

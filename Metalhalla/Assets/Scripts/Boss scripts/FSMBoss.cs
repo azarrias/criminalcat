@@ -33,12 +33,12 @@ public class FSMBoss : MonoBehaviour
     public GameObject ballAttackIndicator = null;
     public GameObject fireAura = null;
     public GameObject earthAura = null;
-    public GameObject levitatingRocks = null;    
+    public GameObject levitatingSkulls = null;    
     private ParticleSystem ballAttackIndicatorPS = null;
     private ParticleSystem fireAuraPS = null;
     private ParticleSystem earthAuraPS = null;
     private FireAuraDamage fireAuraDamageScript = null;
-    private LevitatingRocksBehaviour levitatingRocksScript = null;
+    private LevitatingSkullsBehaviour levitatingSkullsScript = null;
     private EarthAuraDamage earthAuraDamageScript = null;
 
     [Tooltip("Depth of casting point")]
@@ -191,7 +191,7 @@ public class FSMBoss : MonoBehaviour
         fireAuraPS.Stop();
         fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();        
         earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
-        levitatingRocksScript = levitatingRocks.GetComponent<LevitatingRocksBehaviour>();
+        levitatingSkullsScript = levitatingSkulls.GetComponent<LevitatingSkullsBehaviour>();
     }
 
     void Start()
@@ -225,24 +225,13 @@ public class FSMBoss : MonoBehaviour
 
             case State.CHASE:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //chaseCounter += Time.deltaTime;
-                    //if (chaseCounter >= chaseDuration)
-                    //{
-                     //   chaseCounter = 0.0f;                       
-                        currState = State.DEAD;                      
-                    //}
+                {                                   
+                    currState = State.DEAD;                                         
                     break;
                 }
                 //Player dead
                 if (!thePlayerStatus.IsAlive())
-                {
-                    //if (prevState == State.BACK_TO_CENTER)
-                    //{
-                    //    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-                    //    if (!facingRight)
-                    //        facingRight = true;
-                    //}
+                {                   
                     chaseCounter += Time.deltaTime;
                     if (chaseCounter >= chaseDuration)
                     {
@@ -556,20 +545,12 @@ public class FSMBoss : MonoBehaviour
             case State.INSIDE_TORNADO:               
                 InsideTornado();
                 if(!insideTornado)
-                {
-                    //if (bossStats.hitPoints > 0)
-                    //{
-                        preMeleeAttackSelected = false; //reset value
-                        preBallAttackSelected = false; //reset value                                      
-                        SelectAttack();
-                        currState = State.CHASE;
-                        break;
-                    //}
-                    //else
-                    //{
-                    //    currState = State.DEAD;
-                    //    break;
-                    //}                   
+                {             
+                    preMeleeAttackSelected = false; //reset value
+                    preBallAttackSelected = false; //reset value                                      
+                    SelectAttack();
+                    currState = State.CHASE;
+                    break;                                  
                 }
                 break;
         }
@@ -683,27 +664,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);     
         }
         else
-        {
-            //if (prevState == State.BACK_TO_CENTER)
-            //{
-            //    prevState = State.CHASE;
-            //    Vector3 bossPos = gameObject.transform.position;
-            //    int diff = (int)(thePlayer.transform.position.x - bossPos.x);
-              
-            //    if (diff > 0)
-            //    {
-            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-            //        if (!facingRight)
-            //            facingRight = true;
-            //    }
-            //    if (diff < 0)
-            //    {
-            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-            //        if (facingRight)
-            //            facingRight = false;
-            //    }
-            //}
-
+        {           
             if (preMeleeAttackSelected && !atMeleeRange || preBallAttackSelected && !atBallRange)
             {
                 Vector3 newPos = gameObject.transform.position;
@@ -737,7 +698,7 @@ public class FSMBoss : MonoBehaviour
             
             earthAuraPS.Play();
             earthAuraDamageScript.auraActive = true;
-            levitatingRocksScript.StartRocksAttack();        
+            levitatingSkullsScript.StartSkullsAttack();        
         }
        
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -1030,8 +991,8 @@ public class FSMBoss : MonoBehaviour
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
 
-        //Keep levitating rocks rotation
-        gameObject.transform.Find("LevitatingRocks").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
+        //Keep levitating skulls rotation
+        gameObject.transform.Find("LevitatingSkulls").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
     }
 
     public State GetCurrentState()
