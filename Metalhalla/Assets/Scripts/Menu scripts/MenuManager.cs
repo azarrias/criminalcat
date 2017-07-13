@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour {
         helpButton = helpButton.GetComponent<Button>();
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
-        saveMenuStateScript = GameObject.FindGameObjectWithTag("GameManager").GetComponent<SaveMenuState>();
+        saveMenuStateScript = GameObject.FindGameObjectWithTag("GameSession").GetComponent<SaveMenuState>();
         menuBG = GameObject.FindGameObjectWithTag("MenuBG");
 
         if (isIngameMenu)
