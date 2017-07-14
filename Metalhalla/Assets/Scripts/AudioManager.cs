@@ -164,21 +164,21 @@ public class AudioManager : MonoBehaviour {
                 break;
             }
             case 2: // Dungeon entrance
-            { 
-                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.0f);
+            {
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
                 StopMusic();
                 break;
             }
             case 3: // Dungeon
             {
-                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.15f);
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                 StopMusic();
                 PlayMusic(playingLevel);
                 break;
             }
             case 4: // Boss scene
             {
-                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.15f);
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                 StopMusic(); 
                 break;
             }
@@ -247,6 +247,13 @@ public class AudioManager : MonoBehaviour {
         fadeAudioComponent.audioSource = audioSource;
         fadeAudioComponent.fadeDuration = duration;
         fadeAudioComponent.targetVolume = targetVolume;
+    }
+
+    IEnumerator SetMixerParameter(string parameter, float value)
+    {
+        // I know this looks silly, but it is a workaround to a unity bug
+        yield return new WaitForEndOfFrame();
+        AudioManager.instance.mixer.SetFloat(parameter, value);
     }
 
 }
