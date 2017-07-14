@@ -157,27 +157,32 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
-            case 1: //initial menu
+            // case 0: break; // Title
+            case 1: // Initial menu
             {
                 PlayMusic(introCutscene);
                 break;
             }
             case 2: // Dungeon entrance
             { 
+                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.0f);
                 StopMusic();
                 break;
             }
             case 3: // Dungeon
             {
+                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.15f);
                 StopMusic();
                 PlayMusic(playingLevel);
                 break;
             }
             case 4: // Boss scene
             {
+                AudioManager.instance.mixer.SetFloat("FXDiegeticEchoWetmix", 0.15f);
                 StopMusic(); 
                 break;
             }
+            // case 5: break; // End
         }
 
     }
