@@ -125,7 +125,7 @@ public class ParticlesManager : MonoBehaviour
                 }
                 else if(name == "tornado3D")
                 {
-                    particle.GetComponent<TornadoBehaviour3D>().SetFacingRight(facingRight);
+                    particle.GetComponent<TornadoBehaviour>().SetFacingRight(facingRight);
                 }
                 else if (name == "wildboar")
                 {
