@@ -16,7 +16,11 @@ public class SceneLoader : MonoBehaviour {
     private void Update()
     {
         //DEBUG
-        if (Input.GetKeyDown(KeyCode.Alpha0))
+        if (Input.GetKeyDown(KeyCode.F9))
+            GoToNextScene("Dungeon entrance");
+        if (Input.GetKeyDown(KeyCode.F10))
+            GoToNextScene("Dungeon");
+        if (Input.GetKeyDown(KeyCode.F11))
             GoToNextScene( "Dungeon Boss" );
 
         if (loadScene == true )
