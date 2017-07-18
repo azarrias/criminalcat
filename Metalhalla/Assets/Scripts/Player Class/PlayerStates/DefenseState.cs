@@ -13,6 +13,9 @@ public class DefenseState : PlayerState
         if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true )
         {
             status.SetState(this);
+            status.SetShieldTransform(input.newInput.GetVerticalInput(), input.newInput.GetHorizontalInput());
+            if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
+                status.Flip();
             return;
         }
 

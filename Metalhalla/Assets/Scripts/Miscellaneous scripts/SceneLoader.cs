@@ -39,7 +39,7 @@ public class SceneLoader : MonoBehaviour {
         while ( !async.isDone)
         {
             if (showLoadedPercentage)
-                progressText.text = "Loading " + async.progress*100.0f + "%";
+                progressText.text = "Loading " + (async.progress * 100.0f).ToString("#0") + "%";
             yield return null;
         }
 

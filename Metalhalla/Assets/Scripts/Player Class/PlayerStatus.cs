@@ -16,7 +16,10 @@ public class PlayerStatus : MonoBehaviour
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
     [Header("Defense Elements")]
+    public GameObject shield; 
     public GameObject shieldMesh;
+    public Transform shieldFrontTransform;
+    public Transform shieldUpTransform;
 
     [Header("Sound Effects")]
     public AudioClip fxSwing;
@@ -544,6 +547,36 @@ public class PlayerStatus : MonoBehaviour
         tmpSize.y = ySize;
         GetComponent<BoxCollider>().size = tmpSize;
     }
+
+    // ---- SHIELD transform functions
+    public void SetShieldTransform( float verticalInput, float horizontalInput)
+    {
+        if (verticalInput <= 0)
+        {
+            shield.transform.position = shieldFrontTransform.position;
+            shield.transform.rotation = shieldFrontTransform.rotation;
+            return;
+        }
+        if (facingRight == true && horizontalInput <= 0)
+            horizontalInput = 0;
+        else if (facingRight == false && horizontalInput >= 0)
+            horizontalInput = 0; 
+
+        float angle = Mathf.Atan(verticalInput / horizontalInput);
+        float maxAngle = Mathf.PI / 2f;
+        float lambda = Mathf.Abs(angle / maxAngle);
+
+        shield.transform.position = Vector3.Slerp(shieldFrontTransform.position, shieldUpTransform.position, lambda); 
+        Quaternion rot; 
+        rot.x = shieldFrontTransform.rotation.x * (1 - lambda) + shieldUpTransform.rotation.x * lambda;
+        rot.y = shieldFrontTransform.rotation.y * (1 - lambda) + shieldUpTransform.rotation.y * lambda;
+        rot.z = shieldFrontTransform.rotation.z * (1 - lambda) + shieldUpTransform.rotation.z * lambda;
+        rot.w = shieldFrontTransform.rotation.w * (1 - lambda) + shieldUpTransform.rotation.w * lambda;
+        
+        shield.transform.rotation = rot;
+
+    }
+
 
     // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------
     public void StartGUIFeedback( string element )
