@@ -320,7 +320,8 @@ public class PlayerStatus : MonoBehaviour
     {
         if (!godMode && currentState != dead)
             camFollow.StartShake();
-        if (!godMode && currentState != defense && currentState != dead)
+        //if (!godMode && currentState != defense && currentState != dead)
+        if (!godMode && currentState != dead)
         {
             health -= damage;
             SetState(hit);
