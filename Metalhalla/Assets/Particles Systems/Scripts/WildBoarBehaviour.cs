@@ -63,13 +63,12 @@ public class WildBoarBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (!stop)
         {
-            MoveParticleSystem(moveDirection.normalized);
+            MoveParticleSystem(moveDirection);
         }
 
-        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection.normalized, transform.position + attackHorizontalRadius * moveDirection.normalized, Color.red);
+        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection, transform.position + attackHorizontalRadius * moveDirection, Color.red);
         Debug.DrawLine(transform.position, transform.position + Vector3.up * attackVerticalRange, Color.red);
         Debug.DrawLine(transform.position, transform.position - Vector3.up * attackVerticalRange, Color.red);
     }
@@ -107,11 +106,8 @@ public class WildBoarBehaviour : MonoBehaviour
                 ActivateStoneExplosion();
 
                 for (int i = 0; i < hits.Length; i++)
-                {
-                    //if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")  
-                    //{
-                        hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
-                    //}
+                {                    
+                     hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
                 }
 
             }
@@ -162,6 +158,7 @@ public class WildBoarBehaviour : MonoBehaviour
     {
     //    Debug.Log("Disable wildboar");
         gameObject.SetActive(false);
+        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
         frames_counter = 0;
         explosion = false;
         stop = false;
