@@ -8,7 +8,10 @@ public class DefenseState : PlayerState
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
+        {
             status.shieldMesh.GetComponent<Renderer>().enabled = true;
+            status.shieldCollider.enabled = true; 
+        }
 
         if (input.newInput.GetDefenseButtonDown() == true || input.newInput.GetDefenseButtonHeld() == true )
         {
@@ -24,6 +27,7 @@ public class DefenseState : PlayerState
         else
             status.SetState(PlayerStatus.idle);
         status.shieldMesh.GetComponent<Renderer>().enabled = false;
+        status.shieldCollider.enabled = false; 
 
     }
 

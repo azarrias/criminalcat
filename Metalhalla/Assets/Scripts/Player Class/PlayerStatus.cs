@@ -18,6 +18,7 @@ public class PlayerStatus : MonoBehaviour
     [Header("Defense Elements")]
     public GameObject shield; 
     public GameObject shieldMesh;
+    public BoxCollider shieldCollider; 
     public Transform shieldFrontTransform;
     public Transform shieldUpTransform;
 
@@ -72,8 +73,6 @@ public class PlayerStatus : MonoBehaviour
 
     [HideInInspector]
     public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
-//    [Header("Magic Setup")]
-//    public MAGIC magicAtStart = MAGIC.EAGLE;
     [HideInInspector]
     public MAGIC magic;
 
@@ -132,7 +131,6 @@ public class PlayerStatus : MonoBehaviour
     public bool climbLadderAvailable;
     [HideInInspector]
     public bool beerRefillAvailable;
-//    bool magicShiftAvailable;
 
     // -- Cross component variables -- // 
     [HideInInspector]
@@ -160,6 +158,7 @@ public class PlayerStatus : MonoBehaviour
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
 
+        shieldCollider.enabled = false; 
         shieldMesh.GetComponent<Renderer>().enabled = false;
 
         playerAnimator = GetComponent<Animator>();
@@ -168,7 +167,6 @@ public class PlayerStatus : MonoBehaviour
         stamina = staminaAtStart;
         staminaRecovery = 0.0f;
         beer = beerAtStart;
-     //   magic = magicAtStart;
         coins = coinsAtStart;
 
         GameObject guiObject = GameObject.Find("GUI");
@@ -198,7 +196,6 @@ public class PlayerStatus : MonoBehaviour
         jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
-//        magicShiftAvailable = false;
 
         justHit = false;
         jumpFrames = 0;
@@ -231,7 +228,6 @@ public class PlayerStatus : MonoBehaviour
             godMode = !godMode;
 
         // stamina recovery
-        //if (stamina < staminaMaximum)
         if (stamina == 0)
         {
             staminaRecovery += staminaRecoveryRate * Time.deltaTime;
@@ -265,21 +261,6 @@ public class PlayerStatus : MonoBehaviour
     // ---- STATE functions ---------------------------------------------------------------------------------------------
     public void statusUpdateAfterInput(PlayerInput input)
     {
-        // mod for magic shift
-        /* 
-         * if (!magicShiftAvailable && input.newInput.GetLeftTriggerInput() == 0f && input.newInput.GetRightTriggerInput() == 0f)
-             magicShiftAvailable = true;
-
-         if (magicShiftAvailable)
-         {
-             if (input.newInput.GetLeftTriggerInput() >= 0.8f)
-                 ShiftMagics(false);
-             else if (input.newInput.GetRightTriggerInput() >= 0.8f)
-                 ShiftMagics(true);
-         }
-         */
-
-        // update status
         currentState.HandleInput(input, this);
     }
 
@@ -320,12 +301,11 @@ public class PlayerStatus : MonoBehaviour
     {
         if (!godMode && currentState != dead)
             camFollow.StartShake();
-        //if (!godMode && currentState != defense && currentState != dead)
+
         if (!godMode && currentState != dead)
         {
             health -= damage;
             SetState(hit);
-            //PlayFx("hurtScream");
         }
     }
 
@@ -389,11 +369,9 @@ public class PlayerStatus : MonoBehaviour
         if (beer == 0)
             return false;
 
-        //UPDATE: allowed to drink even if health is full for the sake of the animation
-        /*
-         * if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
+        if (RestoreHealth(beerHealthRecovery) == false)
              return false;
-         */
+
         RestoreHealth(beerHealthRecovery);
 
         beer -= consumption;
@@ -419,21 +397,6 @@ public class PlayerStatus : MonoBehaviour
         return beer;
     }
 
-    //---- MAGIC functions -------------------------------------------------------------------------------------------
-/*    public int GetCurrentMagic()
-    {
-        return (int) magic;
-    }
-
-    public void ShiftMagics( bool forwards)
-    {
-        magicShiftAvailable = false;
-        int total = (int)MAGIC.numMagics;
-        int current = (int) magic;
-        int newMagic = (forwards ? current + 1 + total : current - 1 + total) % total;
-        magic = (MAGIC) newMagic;
-    }
-*/
     //---- COIN functions -------------------------------------------------------------------------------------------
     public void CollectCoins( int amount ) {
         coins += amount;
@@ -575,9 +538,7 @@ public class PlayerStatus : MonoBehaviour
         rot.w = shieldFrontTransform.rotation.w * (1 - lambda) + shieldUpTransform.rotation.w * lambda;
         
         shield.transform.rotation = rot;
-
     }
-
 
     // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------
     public void StartGUIFeedback( string element )
