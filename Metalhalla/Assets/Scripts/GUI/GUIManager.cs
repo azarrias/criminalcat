@@ -9,6 +9,8 @@ public class GUIManager : MonoBehaviour {
 
     [SerializeField]
     private RectTransform HPBar;
+    [SerializeField]
+    private RectTransform HPbackground;
 
     [SerializeField]
     private Sprite[] hornImages;
@@ -20,11 +22,12 @@ public class GUIManager : MonoBehaviour {
     private Image[] stmImages;
     private int stmIndx;
 
-    /*[SerializeField]
-    private Image[] magicImages;
-    private int mgcIndex;
-    */
     [Header("GUI Feedback for player input")]
+    [Tooltip("HP animation time")]
+    public float hpAnimationTime = 0.1f;
+    private float hpBarAnimationTime;
+    private float hpBackgroundAnimationTime;
+
     [Tooltip("Duration of the feedback shown to the player")]
     public float feedbackTime = 0.2f;
     [Tooltip("Scale increase ratio for feedback")]
@@ -49,12 +52,21 @@ public class GUIManager : MonoBehaviour {
     private bool  earthquakeFeedback;
     private float earthquakeFeedbackTime;
     private Vector3 earthquakeOriginalScale;
-    
+
+    // GUI HP animation when winning or losing HP
+    private float healthRatioCurrentPlayer = 1.0f;
+    private float healthRatioCurrentGUI = 1.0f;
+    private float healthRatioTarget = 1.0f;
+    private float healthRatioOrigin = 1.0f; 
+
     private PlayerStatus playerStatus;
 
     void Start() {
         if (HPBar == null)
             Debug.Log("Error - HP bar not set");
+
+        if (HPbackground == null)
+            Debug.Log("Error - HP greyed bar not set");
 
         if (hornImages.Length == 0)
             Debug.Log("Error - horn images array not set");
@@ -62,18 +74,12 @@ public class GUIManager : MonoBehaviour {
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
 
-       /* if (magicImages.Length == 0)
-            Debug.Log("Error - magic images array not set");
-            */
-
         playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
         if (playerStatus == null)
             Debug.Log("GUI could not retrieve PlayerStatus component from player");
 
         maxHP = playerStatus.healthMaximum;
-     //   hornIndx = playerStatus.beerAtStart;
         stmIndx = playerStatus.staminaAtStart;
-     //   ResetMagic((int)playerStatus.magicAtStart);
 
         UpdateStaminaMeter();
 
@@ -91,17 +97,32 @@ public class GUIManager : MonoBehaviour {
         SetHealth(playerStatus.GetCurrentHealthRatio());
         SetStamina(playerStatus.GetCurrentStamina());
         SetBeer(playerStatus.GetCurrentBeer());
-        //   SetMagic( playerStatus.GetCurrentMagic());
+
+        UpdateHPbar();
+        UpdateHPbackground(); 
 
         UpdatePressedButtonFeedback();
     }
 
     void SetHealth(float healthRatio)
     {
-        if (healthRatio < 0.0f)
-            healthRatio = 0.0f;
+        if (healthRatioTarget == healthRatio)
+            return;
 
-        HPBar.localScale = new Vector3(healthRatio, 1, 1);
+        healthRatio = healthRatio < 0.0f ? 0.0f : healthRatio;
+
+        if (healthRatio > healthRatioTarget) // health recovery
+        {
+            hpBackgroundAnimationTime = 2*Time.fixedDeltaTime;
+            hpBarAnimationTime = hpAnimationTime;
+        }
+        else 
+        {
+            hpBackgroundAnimationTime = hpAnimationTime;
+            hpBarAnimationTime = 2*Time.fixedDeltaTime;
+        }
+        healthRatioOrigin = healthRatioTarget;
+        healthRatioTarget = healthRatio;
     }
 
     void UpdateStaminaMeter()
@@ -146,43 +167,6 @@ public class GUIManager : MonoBehaviour {
         else
             YButtonImage.color = Color.white;
     }
-
-/*    void SetMagic( int newMagic)
-    {
-        if (mgcIndex == newMagic)
-            return;
-
-        Vector3 tmp; 
-
-        magicImages[mgcIndex].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
-        tmp = magicImages[mgcIndex].transform.localPosition;
-        tmp.z = 0.1f;
-        magicImages[mgcIndex].transform.localPosition = tmp;
-
-        magicImages[newMagic].color = new Vector4(0f, 0.7f, 1, 1);
-        tmp = magicImages[newMagic].transform.localPosition;
-        tmp.z = 0f;
-        magicImages[newMagic].transform.localPosition = tmp;
-
-        mgcIndex = newMagic;
-    }
-
-    void ResetMagic (int initialMagic)
-    {
-        Vector3 tmp; 
-        for (int i = 0; i < magicImages.Length; i++)
-        {
-            magicImages[i].color = new Vector4(0.2f, 0.2f, 0.2f, 0.1f);
-            tmp = magicImages[i].transform.localPosition;
-            tmp.z = 0.1f;
-            magicImages[i].transform.localPosition = tmp; 
-        }
-        magicImages[initialMagic].color = new Vector4(0, 0.7f, 1, 1);
-        tmp = magicImages[initialMagic].transform.localPosition;
-        tmp.z = 0.0f;
-        magicImages[initialMagic].transform.localPosition = tmp;
-    }
-*/
     
     public void StartFeedback( string element )
     {
@@ -250,6 +234,31 @@ public class GUIManager : MonoBehaviour {
                 earthquakeImage.transform.localScale = earthquakeOriginalScale;
             }
         }
+    }
+
+    private void UpdateHPbar()
+    {
+        if (healthRatioCurrentPlayer == healthRatioTarget)
+            return;
+
+        hpBarAnimationTime -= Time.deltaTime;
+
+        float lambda = hpBarAnimationTime > 0.0f ? hpBarAnimationTime / hpAnimationTime : 0.0f;
+        healthRatioCurrentPlayer = healthRatioOrigin * lambda + healthRatioTarget * (1 - lambda);
+
+        HPBar.localScale = new Vector3(healthRatioCurrentPlayer, 1, 1);
+    }
+
+    private void UpdateHPbackground()
+    {
+        if (healthRatioCurrentGUI == healthRatioTarget)
+            return;
+
+        hpBackgroundAnimationTime -= Time.deltaTime;
+        float lambda = hpBackgroundAnimationTime > 0.0f ? hpBackgroundAnimationTime / hpAnimationTime : 0.0f;
+        healthRatioCurrentGUI = healthRatioOrigin * lambda + healthRatioTarget * (1 - lambda); 
+
+        HPbackground.localScale = new Vector3(healthRatioCurrentGUI, 1, 1);
     }
 
 }

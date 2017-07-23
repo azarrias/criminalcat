@@ -28,7 +28,6 @@ public class DefenseState : PlayerState
             status.SetState(PlayerStatus.idle);
         status.shieldMesh.GetComponent<Renderer>().enabled = false;
         status.shieldCollider.enabled = false; 
-
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
