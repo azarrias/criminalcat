@@ -15,7 +15,7 @@ public class SkullsAttackBehaviour : MonoBehaviour {
     private GameObject skullMesh;
 
     [HideInInspector]
-    public GameObject parentGO;
+    public GameObject parentGO; //boss
 
     void Awake()
     {
@@ -30,10 +30,18 @@ public class SkullsAttackBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (parentGO.activeSelf == false) //boss is dead
+        {           
+            skullMesh.GetComponent<SphereCollider>().enabled = false;               
+        }
+
         if (!disipate)
             gameObject.transform.localRotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up);
         else
-            Disipate();
+        {           
+           skullMesh.GetComponent<SphereCollider>().enabled = false;              
+           Disipate();
+        }
 	}
 
     void OnTriggerEnter(Collider collider)
