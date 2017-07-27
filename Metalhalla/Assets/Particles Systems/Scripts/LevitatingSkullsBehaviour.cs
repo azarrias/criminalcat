@@ -154,4 +154,15 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
         }        
     }
 
+    public void StopSkullsAttack()
+    {
+        if (skulls[0].activeSelf)
+        {
+            for (int i = 0; i < skulls.Length; i++)
+            {
+                skulls[i].GetComponent<SkullsAttackBehaviour>().ShrinkSkulls();
+            }
+        }
+    }
+
 }

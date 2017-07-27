@@ -33,7 +33,8 @@ public class FSMBoss : MonoBehaviour
     public GameObject ballAttackIndicator = null;
     public GameObject fireAura = null;
     public GameObject earthAura = null;
-    public GameObject levitatingSkulls = null;    
+    public GameObject levitatingSkulls = null;
+    public GameObject bossSpirit = null;
     private ParticleSystem ballAttackIndicatorPS = null;
     private ParticleSystem fireAuraPS = null;
     private ParticleSystem earthAuraPS = null;
@@ -160,10 +161,12 @@ public class FSMBoss : MonoBehaviour
     private float thresholdSecondSpikes = 0.25f;
 
     private string currAnimation = "Patrol"; //start animation
-    private bool fadeOut = false;
+    private bool shrink = false;
     private float fadeSpeed = 0.01f;
-    private SkinnedMeshRenderer meshRenderer;
-
+    private GameObject bodyMesh;
+    private bool instantiated;
+    private float deadCounter = 0.0f;
+    private float beforeShrinkTime = 2.0f;
 
     void Awake()
     {   
@@ -196,7 +199,7 @@ public class FSMBoss : MonoBehaviour
         earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
         levitatingSkullsScript = levitatingSkulls.GetComponent<LevitatingSkullsBehaviour>();
 
-        meshRenderer = GameObject.Find("ModelContainer/friekgart_chase/Group35414/polySurface2").GetComponent<SkinnedMeshRenderer>();
+        bodyMesh = GameObject.Find("ModelContainer");       
     }
 
     void Start()
@@ -619,36 +622,41 @@ public class FSMBoss : MonoBehaviour
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Dead()
     {
-
-        //Apagar los efectos de aviso del bastón y después morir
-
         if (currAnimation != "Dead")
         {
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
-            GetComponent<CapsuleCollider>().enabled = false;
-            //Destroy boss          
-            //Destroy(gameObject, deadTime);                                                        
+            GetComponent<CapsuleCollider>().enabled = false;            
+            levitatingSkullsScript.StopSkullsAttack();
+            if (earthAuraPS.isPlaying)
+            {
+                earthAuraDamageScript.auraActive = false;
+                earthAuraPS.Stop();
+            }
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            fadeOut = true;                     
+            shrink = true;                     
         }
 
-        if (fadeOut)
+        if (shrink)
         {
-            Color color = meshRenderer.materials[0].color;
-            color.a -= fadeSpeed;
-            if (color.a <= 0.0f)
-            {
-                color.a = 0.0f;
-                meshRenderer.materials[0].color = color;
-                fadeOut = false;
-                gameObject.SetActive(false);
+            deadCounter += Time.deltaTime;
+            if (deadCounter >= beforeShrinkTime)
+            { 
+                bodyMesh.transform.localScale *= 0.9f;
+                if (bodyMesh.transform.localScale.x <= 0.1f)
+                {
+                    //if (!instantiated) //test debug
+                    //{
+                        Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
+                    //    instantiated = true;
+                        Destroy(gameObject); 
+                    //}
+                }
             }
-          meshRenderer.materials[0].color = color;
         }
     }
 

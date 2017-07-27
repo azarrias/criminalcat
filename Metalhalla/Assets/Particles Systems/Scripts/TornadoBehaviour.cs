@@ -77,12 +77,15 @@ public class TornadoBehaviour : MonoBehaviour {
 
         player = GameObject.FindGameObjectWithTag("Player");
         playerStatus = player.GetComponent<PlayerStatus>();
+
+        tornadoEyeTr = transform.FindChild("TornadoEye");
+        tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
 	void Start ()
     {                
-        tornadoEyeTr = transform.FindChild("TornadoEye");
-        tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
+        //tornadoEyeTr = transform.FindChild("TornadoEye");
+        //tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
     private void OnEnable()

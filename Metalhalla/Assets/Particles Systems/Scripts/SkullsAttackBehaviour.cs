@@ -81,4 +81,9 @@ public class SkullsAttackBehaviour : MonoBehaviour {
             gameObject.transform.parent = parentGO.transform;
         }
     }
+
+    public void ShrinkSkulls()
+    {
+        disipate = true;
+    }
 }
