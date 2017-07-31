@@ -16,9 +16,9 @@ public class PlayerStatus : MonoBehaviour
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
     [Header("Defense Elements")]
-    public GameObject shield; 
+    public GameObject shield;
     public GameObject shieldMesh;
-    public BoxCollider shieldCollider; 
+    public BoxCollider shieldCollider;
     public Transform shieldFrontTransform;
     public Transform shieldUpTransform;
 
@@ -68,7 +68,7 @@ public class PlayerStatus : MonoBehaviour
     [Tooltip("Starting coin count")]
     public int coinsAtStart = 0;
     [Tooltip("How many coins are needed to fill a section of the beer horn?")]
-    public int beerSectionCoinAmount = 10; 
+    public int beerSectionCoinAmount = 10;
     int coins;
 
     [HideInInspector]
@@ -106,7 +106,7 @@ public class PlayerStatus : MonoBehaviour
     public static AttackState attack;
     public static CastState cast;
     public static ClimbState climb;
-    public static DashState dash; 
+    public static DashState dash;
     public static DeadState dead;
     public static DefenseState defense;
     public static DrinkState drink;
@@ -158,7 +158,7 @@ public class PlayerStatus : MonoBehaviour
         attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
 
-        shieldCollider.enabled = false; 
+        shieldCollider.enabled = false;
         shieldMesh.GetComponent<Renderer>().enabled = false;
 
         playerAnimator = GetComponent<Animator>();
@@ -254,8 +254,8 @@ public class PlayerStatus : MonoBehaviour
         // add hoc for level elements 
         GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
         if (movingDoor)
-            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor(); 
-        
+            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ public class PlayerStatus : MonoBehaviour
             return false;
 
         if (RestoreHealth(beerHealthRecovery) == false)
-             return false;
+            return false;
 
         RestoreHealth(beerHealthRecovery);
 
@@ -398,12 +398,12 @@ public class PlayerStatus : MonoBehaviour
     }
 
     //---- COIN functions -------------------------------------------------------------------------------------------
-    public void CollectCoins( int amount ) {
+    public void CollectCoins(int amount) {
         coins += amount;
         while (coins >= beerSectionCoinAmount)
         {
-            if (RefillBeer(1) == false )
-                break; 
+            if (RefillBeer(1) == false)
+                break;
             coins -= beerSectionCoinAmount;
         }
     }
@@ -445,7 +445,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsDrink() { return currentState == drink; }
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
-    public bool IsDash() { return currentState == dash;  }
+    public bool IsDash() { return currentState == dash; }
     public bool IsDead() { return currentState == dead; }
 
     public bool WasIdle() { return previousState == idle; }
@@ -456,7 +456,7 @@ public class PlayerStatus : MonoBehaviour
     public bool WasClimb() { return previousState == climb; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
-    public void PlayFx( string fx)
+    public void PlayFx(string fx)
     {
         if (fx.Equals("swing"))
             AudioManager.instance.PlayDiegeticFx(fxSwing);
@@ -480,6 +480,17 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
             AudioManager.instance.PlayDiegeticFx(deathScream);
+    }
+
+    // --- ANIMATION LAYER MANAGEMENT functions ---------------------------------------------------------------------------------
+    public void ResetAnimationLayerWeights()
+    {
+        playerAnimator.SetLayerWeight(1, 0f);
+    }
+
+    public void SetPlayerDefenseAnimationLayerWeight(float weight)
+    {
+        playerAnimator.SetLayerWeight(1, weight);
     }
 
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
@@ -512,13 +523,14 @@ public class PlayerStatus : MonoBehaviour
         GetComponent<BoxCollider>().size = tmpSize;
     }
 
-    // ---- SHIELD transform functions
+    // ---- SHIELD transform functions - to be used from player DefenseState
     public void SetShieldTransform( float verticalInput, float horizontalInput)
     {
         if (verticalInput <= 0)
         {
             shield.transform.position = shieldFrontTransform.position;
             shield.transform.rotation = shieldFrontTransform.rotation;
+            SetPlayerDefenseAnimationLayerWeight(0f);
             return;
         }
         if (facingRight == true && horizontalInput <= 0)
@@ -538,6 +550,8 @@ public class PlayerStatus : MonoBehaviour
         rot.w = shieldFrontTransform.rotation.w * (1 - lambda) + shieldUpTransform.rotation.w * lambda;
         
         shield.transform.rotation = rot;
+
+        SetPlayerDefenseAnimationLayerWeight(lambda);
     }
 
     // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------

@@ -27,7 +27,8 @@ public class DefenseState : PlayerState
         else
             status.SetState(PlayerStatus.idle);
         status.shieldMesh.GetComponent<Renderer>().enabled = false;
-        status.shieldCollider.enabled = false; 
+        status.shieldCollider.enabled = false;
+        status.ResetAnimationLayerWeights();
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
