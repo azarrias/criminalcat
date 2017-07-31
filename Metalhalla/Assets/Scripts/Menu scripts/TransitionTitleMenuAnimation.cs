@@ -31,7 +31,6 @@ public class TransitionTitleMenuAnimation : MonoBehaviour
 
     public void ChangeScene()
     {
-        //SceneManager.LoadScene(sceneName);
         loader.GoToNextScene(sceneName);
     }
 }

@@ -79,8 +79,13 @@ public class MenuManager : MonoBehaviour {
     {
         //Game runs at regular speed
         Time.timeScale = 1f;
-        //SceneManager.LoadScene(nextScene);
+        
         GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>().GoToNextScene( nextScene );
+        SavePlayerState sps = GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>();
+        if (sps)
+        {
+            sps.ResetPlayerStatusValues();
+        }
     }
 
 	//Activate quit menu

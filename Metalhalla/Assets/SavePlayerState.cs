@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class SavePlayerState : MonoBehaviour {
 
-    private int _health = 100;
-    private int _stamina = 10;
-    private int _beer = 5;
-    private int _coins = 9; 
+    private int _healthDefault;
+    private int _staminaDefault;
+    private int _beerDefault;
+    private int _coinsDefault;
+    private int _health;
+    private int _stamina;
+    private int _beer;
+    private int _coins;
 
     public static SavePlayerState instance = null;
 
@@ -40,9 +44,26 @@ public class SavePlayerState : MonoBehaviour {
 
     private void GetPlayerStatusDefaultValues(PlayerStatus playerStatus)
     {
+        _healthDefault = playerStatus.healthAtStart;
+        _staminaDefault = playerStatus.staminaAtStart;
+        _beerDefault = playerStatus.beerAtStart;
+        _coinsDefault = playerStatus.coinsAtStart;
+        GetPlayerStatusValues(playerStatus);
+    }
+
+    private void GetPlayerStatusValues(PlayerStatus playerStatus)
+    {
         _health = playerStatus.healthAtStart;
         _stamina = playerStatus.staminaAtStart;
         _beer = playerStatus.beerAtStart;
         _coins = playerStatus.coinsAtStart;
+    }
+
+    public void ResetPlayerStatusValues()
+    {
+        _health = _healthDefault;
+        _stamina = _staminaDefault;
+        _beer = _beerDefault;
+        _coins = _coinsDefault;
     }
 }
