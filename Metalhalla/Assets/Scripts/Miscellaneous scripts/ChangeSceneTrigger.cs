@@ -5,17 +5,21 @@ using UnityEngine;
 public class ChangeSceneTrigger : MonoBehaviour {
 
     public string newSceneName = "Dungeon Boss";
-    private SceneLoader loader; 
+    private SceneLoader loader;
+    private SavePlayerState savePlayerStateScript;
 
-
-	void Start () {
+    void Start () {
         loader = GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>();
-        GetComponent<Renderer>().enabled = false; 
-	}
+        GetComponent<Renderer>().enabled = false;
+        savePlayerStateScript = GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
-            loader.GoToNextScene( newSceneName ); 
+        {
+            savePlayerStateScript.SavePlayerStatusValues(other.GetComponent<PlayerStatus>());
+            loader.GoToNextScene(newSceneName);
+        }
     }
 }

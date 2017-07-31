@@ -61,6 +61,15 @@ public class GUIManager : MonoBehaviour {
 
     private PlayerStatus playerStatus;
 
+    private void Awake()
+    {
+        playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
+        if (playerStatus == null)
+            Debug.Log("GUI could not retrieve PlayerStatus component from player");
+        //prevents animation of HP bar when transitioning between scenes and not having full health
+        SetHealthRatioPositions();
+    }
+
     void Start() {
         if (HPBar == null)
             Debug.Log("Error - HP bar not set");
@@ -73,10 +82,6 @@ public class GUIManager : MonoBehaviour {
 
         if (stmImages.Length == 0)
             Debug.Log("Error - stamina images array not set");
-
-        playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
-        if (playerStatus == null)
-            Debug.Log("GUI could not retrieve PlayerStatus component from player");
 
         maxHP = playerStatus.healthMaximum;
         stmIndx = playerStatus.staminaAtStart;
@@ -260,5 +265,13 @@ public class GUIManager : MonoBehaviour {
 
         HPbackground.localScale = new Vector3(healthRatioCurrentGUI, 1, 1);
     }
-
+    
+    private void SetHealthRatioPositions()
+    {
+        float ratio = playerStatus.GetCurrentHealthRatio();
+        healthRatioOrigin = ratio;
+        healthRatioTarget = ratio;
+        healthRatioCurrentPlayer = ratio;
+        healthRatioCurrentGUI = ratio;
+    }
 }

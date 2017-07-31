@@ -163,11 +163,13 @@ public class PlayerStatus : MonoBehaviour
 
         playerAnimator = GetComponent<Animator>();
 
-        health = healthAtStart;
-        stamina = staminaAtStart;
+//        health = healthAtStart;
+//        stamina = staminaAtStart;
+//        beer = beerAtStart;
+//        coins = coinsAtStart;
+        GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>().RecoverPlayerStatusValues( this);
+        Debug.Log("health: " + health + " stamina: " + stamina + " beer: " + beer + " coins: " + coins);
         staminaRecovery = 0.0f;
-        beer = beerAtStart;
-        coins = coinsAtStart;
 
         GameObject guiObject = GameObject.Find("GUI");
         if (guiObject)
@@ -327,6 +329,11 @@ public class PlayerStatus : MonoBehaviour
         return (float)health / (float)healthMaximum;
     }
 
+    public void SetCurrentHealth(int value)
+    {
+        health = value;
+    }
+
     public int GetCurrentHealth()
     {
         return health;
@@ -362,6 +369,10 @@ public class PlayerStatus : MonoBehaviour
         return stamina;
     }
 
+    public void SetCurrentStamina(int value)
+    {
+        stamina = value;
+    }
 
     // ---- BEER functions ---------------------------------------------------------------------------------------------
     public bool ConsumeBeer(int consumption)
@@ -397,6 +408,11 @@ public class PlayerStatus : MonoBehaviour
         return beer;
     }
 
+    public void SetCurrentBeer(int value)
+    {
+        beer = value; 
+    }
+
     //---- COIN functions -------------------------------------------------------------------------------------------
     public void CollectCoins(int amount) {
         coins += amount;
@@ -406,6 +422,16 @@ public class PlayerStatus : MonoBehaviour
                 break;
             coins -= beerSectionCoinAmount;
         }
+    }
+
+    public int GetCurrentCoins()
+    {
+        return coins; 
+    }
+
+    public void SetCurrentCoins(int value)
+    {
+        coins = value; 
     }
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
