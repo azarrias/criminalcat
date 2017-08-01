@@ -22,6 +22,9 @@ public class PlayerStatus : MonoBehaviour
     public Transform shieldFrontTransform;
     public Transform shieldUpTransform;
 
+    [Header("Horn Elements")]
+    public GameObject hornMesh;
+
     [Header("Sound Effects")]
     public AudioClip fxSwing;
     public AudioClip fxJump;
@@ -159,16 +162,13 @@ public class PlayerStatus : MonoBehaviour
         lightningGenerator.SetActive(false);    // temp
 
         shieldCollider.enabled = false;
-        shieldMesh.GetComponent<Renderer>().enabled = false;
+        ShowShield(false);
+
+        ShowHorn(false);
 
         playerAnimator = GetComponent<Animator>();
 
-//        health = healthAtStart;
-//        stamina = staminaAtStart;
-//        beer = beerAtStart;
-//        coins = coinsAtStart;
         GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>().RecoverPlayerStatusValues( this);
-        Debug.Log("health: " + health + " stamina: " + stamina + " beer: " + beer + " coins: " + coins);
         staminaRecovery = 0.0f;
 
         GameObject guiObject = GameObject.Find("GUI");
@@ -208,7 +208,6 @@ public class PlayerStatus : MonoBehaviour
         colliderSize = GetComponent<BoxCollider>().size;
 
         godMode = false;
-
     }
 
     void Update()
@@ -277,15 +276,18 @@ public class PlayerStatus : MonoBehaviour
         currentState = newState;
 
         // show hammer always except when climbing, being hit or dead
-        if (newState != climb && newState != hit && newState != dead && newState != defense)
-            hammerMesh.GetComponent<Renderer>().enabled = true;
+        if (newState != climb && newState != hit && newState != dead && newState != defense && newState != drink)
+            ShowHammer(true);
         else
-            hammerMesh.GetComponent<Renderer>().enabled = false;
+            ShowHammer(false);
 
         if (newState != attack)
             attackCollider.enabled = false;
         if (newState != defense)
-            shieldMesh.GetComponent<Renderer>().enabled = false;
+            ShowShield(false);
+
+        if (newState != drink)
+            ShowHorn(false);
 
         if (IsClimb() && WasClimb() == false)
             SetClimbStateModelRotation();
@@ -585,5 +587,21 @@ public class PlayerStatus : MonoBehaviour
     {
         if (guiManager)
             guiManager.StartFeedback(element);
+    }
+
+    // ---- SHOW MESHES functions -----------------------------------------------------------------------------------------------------
+    public void ShowHorn(bool visible)
+    {
+        hornMesh.GetComponent<Renderer>().enabled = visible;
+    }
+
+    public void ShowShield(bool visible)
+    {
+        shieldMesh.GetComponent<Renderer>().enabled = visible;
+    }
+
+    public void ShowHammer(bool visible)
+    {
+        hammerMesh.GetComponent<Renderer>().enabled = visible;
     }
 }

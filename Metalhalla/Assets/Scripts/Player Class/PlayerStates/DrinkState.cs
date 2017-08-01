@@ -23,6 +23,7 @@ public class DrinkState : PlayerState
                 return;
             }
             status.StartGUIFeedback("YButton");
+            status.ShowHorn(true);
         }
 
         if (drinkFramesCount >= drinkFramesDuration)

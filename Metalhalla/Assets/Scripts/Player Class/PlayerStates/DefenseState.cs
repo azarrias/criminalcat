@@ -9,7 +9,7 @@ public class DefenseState : PlayerState
     {
         if (status.previousState != this)
         {
-            status.shieldMesh.GetComponent<Renderer>().enabled = true;
+            status.ShowShield(true);
             status.shieldCollider.enabled = true; 
         }
 
