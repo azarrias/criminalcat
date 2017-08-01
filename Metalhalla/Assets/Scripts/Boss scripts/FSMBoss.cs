@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(EnemyStats))]
-[RequireComponent(typeof(Animator))]
 public class FSMBoss : MonoBehaviour
 {
     public enum State
@@ -25,7 +23,7 @@ public class FSMBoss : MonoBehaviour
         WAIT
     }
  
-    private EnemyStats bossStats = null;
+    private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject castingArea = null;
@@ -175,7 +173,7 @@ public class FSMBoss : MonoBehaviour
         thePlayer = GameObject.FindGameObjectWithTag("Player");       
         thePlayerStatus = thePlayer.GetComponent<PlayerStatus>();       
         bossAnimator = GetComponent<Animator>();
-        bossStats = GetComponent<EnemyStats>();
+        bossStats = GetComponent<BossStats>();
         meleeDamage = bossStats.meleeDamage;
         
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
@@ -613,7 +611,7 @@ public class FSMBoss : MonoBehaviour
             currState == State.INSIDE_TORNADO)
         {
             //Debug.Log("Damaged");
-            bossStats.ApplyDamage(damage);
+            bossStats.ApplyDamageToBoss(damage);
             //create damage effect
             
         }
