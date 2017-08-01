@@ -6,61 +6,47 @@ using UnityStandardAssets.ImageEffects;
 
 public class CameraManager : MonoBehaviour {
 
-    [Header("Cameras to manage")]
-    [Tooltip("Add here all the cameras that will be managed from this GameObject")]
-    public Camera[] cameras;
-
-    [Tooltip("Label that will show when the i-th camera is active")]
-    public string[] cameraLabels;
-
-    [Tooltip("Index of the camera that will be loaded in the scene the first.")]
-    public int defaultCameraIndex = 0;
-
-    [Header("Map Camera")]
+    [Header("Cameras")]
+    [Tooltip("Add here the camera that follows the player")]
+    public Camera playerCamera;
     [Tooltip("Camera that will be responsible for rendering the map")]
     public Camera mapCamera;
-    private int currentCameraIndex;
 
-    private Text label;
-//    private Text
-    // Use this for initialization
-    void Start () {
-        label = GetComponentInChildren<Text>();
-      //  label.material.color = Color.red;
-        currentCameraIndex = defaultCameraIndex;
-        ShiftCameras();
-        mapCamera.gameObject.SetActive(true);
+    [Header("Labels")]
+    [Tooltip("Labels to be managed in CameraCanvas - i.e. checkpoint label")]
+    public Text checkpointLabel;
+
+    [Header("Timings")]
+    public float showCheckpointTime = 2.0f;
+    float showCheckpointTimeAccum; 
+    bool showCheckpoint = false; 
+
+    void Start ()
+    {
+        HideCheckpointLabel();
     }
 	
 	// Update is called once per frame
-	void Update () {
-
-        /*if (Input.GetKeyDown(KeyCode.C) == true || Input.GetButtonDown("ShiftCameras"))
-        {
-            ShiftCameraIndex();
-            ShiftCameras();
-        }
-        */
-       // label.material.color = Color.red;
-    }
-
-
-    // get next gamera in array and set it active
-    void ShiftCameraIndex()
+	void Update ()
     {
-        currentCameraIndex = (currentCameraIndex + 1) % cameras.Length;
-    }
-
-    void ShiftCameras()
-    {
-        for (int i = 0; i < cameras.Length; i++)
+        if (showCheckpoint)
         {
-            if (i == currentCameraIndex)
-                cameras[i].gameObject.SetActive(true);
-            else
-                cameras[i].gameObject.SetActive(false);
+            showCheckpointTimeAccum += Time.deltaTime;
+            if (showCheckpointTimeAccum >= showCheckpointTime)
+                HideCheckpointLabel();
         }
-        label.text = cameraLabels[currentCameraIndex];
     }
 
+    void ShowCheckpointLabel()
+    {
+        showCheckpoint = true;
+        checkpointLabel.enabled = true;
+        showCheckpointTimeAccum = 0.0f;
+    }
+
+    void HideCheckpointLabel()
+    {
+        showCheckpoint = false;
+        checkpointLabel.enabled = false;
+    }
 }
