@@ -158,7 +158,6 @@ public class PlayerStatus : MonoBehaviour
         playerModelClimbRotation = Quaternion.identity;
 
         attackCollider.enabled = false;
-        attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
 
         shieldCollider.enabled = false;
@@ -214,17 +213,17 @@ public class PlayerStatus : MonoBehaviour
     {
         // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
-            ApplyDamage(30);
+            ApplyDamage(20);
         if (Input.GetKeyDown(KeyCode.F2) == true)
-            RestoreHealth(30);
+            RestoreHealth(20);
         if (Input.GetKeyDown(KeyCode.F3) == true)
-            ConsumeStamina(7);
+            ConsumeStamina(1);
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
         if (Input.GetKeyDown(KeyCode.F5) == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
-            RefillBeer(5);
+            RefillBeer(1);
         if (Input.GetKeyDown(KeyCode.G) == true)
             godMode = !godMode;
 
@@ -275,7 +274,9 @@ public class PlayerStatus : MonoBehaviour
         previousState = currentState;
         currentState = newState;
 
-        // show hammer always except when climbing, being hit or dead
+        if (newState != walk)
+            SetAnimatorSpeed(1.0f);
+
         if (newState != climb && newState != hit && newState != dead && newState != defense && newState != drink)
             ShowHammer(true);
         else
@@ -294,7 +295,7 @@ public class PlayerStatus : MonoBehaviour
         else if (WasClimb() && IsClimb() == false)
         {
             SetInitialModelRotation();
-            playerAnimator.speed = 1;
+            SetAnimatorSpeed(1.0f);
         }
     }
 
@@ -510,17 +511,37 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.PlayDiegeticFx(deathScream);
     }
 
-    // --- ANIMATION LAYER MANAGEMENT functions ---------------------------------------------------------------------------------
-    public void ResetAnimationLayerWeights()
+    // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------
+    public void ResetAnimatorLayerWeights()
     {
         playerAnimator.SetLayerWeight(1, 0f);
     }
 
-    public void SetPlayerDefenseAnimationLayerWeight(float weight)
+    public void SetPlayerDefenseAnimatorLayerWeight(float weight)
     {
         playerAnimator.SetLayerWeight(1, weight);
     }
 
+    public void SetAnimatorSpeed(float speed = 1.0f)
+    {
+        playerAnimator.speed = speed;
+    }
+
+    public void SetAnimatorWalkingSpeed(float horizontalInput)
+    {
+        float speed = Mathf.Abs(horizontalInput);
+        if (speed <= 0.2f)
+            speed = 0.4f;
+        else if (speed <= 0.4f)
+            speed = 0.5f;
+        else if (speed <= 0.6f)
+            speed = 0.6f;
+        else if (speed <= 0.8f)
+            speed = 0.8f;
+        else
+            speed = 1.0f;
+        SetAnimatorSpeed(speed);
+    }
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
     public void SetClimbStateModelRotation()
     {
@@ -558,7 +579,7 @@ public class PlayerStatus : MonoBehaviour
         {
             shield.transform.position = shieldFrontTransform.position;
             shield.transform.rotation = shieldFrontTransform.rotation;
-            SetPlayerDefenseAnimationLayerWeight(0f);
+            SetPlayerDefenseAnimatorLayerWeight(0f);
             return;
         }
         if (facingRight == true && horizontalInput <= 0)
@@ -579,7 +600,7 @@ public class PlayerStatus : MonoBehaviour
         
         shield.transform.rotation = rot;
 
-        SetPlayerDefenseAnimationLayerWeight(lambda);
+        SetPlayerDefenseAnimatorLayerWeight(lambda);
     }
 
     // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------
@@ -614,5 +635,5 @@ public class PlayerStatus : MonoBehaviour
         activeRespawnPoint = newRespawnPoint;
         return true;
     }
-        
+    
 }

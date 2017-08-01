@@ -7,12 +7,10 @@ public class WalkState : PlayerState
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
-        // prevent "autofire" when holding buttons
         if (status.previousState == PlayerStatus.fall && input.newInput.GetJumpButtonHeld() == true)
             status.jumpAvailable = false;
         else if (status.jumpAvailable == false && input.newInput.GetJumpButtonHeld() == false)
             status.jumpAvailable = true;
-
 
         if (input.newInput.GetVerticalInput() != 0 && status.climbLadderAvailable == true)
         {
@@ -73,10 +71,8 @@ public class WalkState : PlayerState
 
         if ((input.newInput.GetHorizontalInput() < 0 && status.facingRight) || (input.newInput.GetHorizontalInput() > 0 && !status.facingRight))
             status.Flip();
-
-
+        status.SetAnimatorWalkingSpeed(input.newInput.GetHorizontalInput());
         status.SetState(this);
-
     }
 
     public override void UpdateAfterCollisionCheck(PlayerCollider collider, PlayerStatus status, PlayerInput input)
