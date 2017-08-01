@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class SavePlayerState : MonoBehaviour {
 
-    private int _healthDefault;
-    private int _staminaDefault;
-    private int _beerDefault;
-    private int _coinsDefault;
+    [Header("Defalt values - in case player is not in scene")]
+    [SerializeField]
+    private int _healthDefault = 100;
+    [SerializeField]
+    private int _staminaDefault = 4;
+    [SerializeField]
+    private int _beerDefault = 1;
+    [SerializeField]
+    private int _coinsDefault = 0;
     private int _health;
     private int _stamina;
     private int _beer;
@@ -20,7 +25,9 @@ public class SavePlayerState : MonoBehaviour {
         if (instance == null)
         {
             instance = this;
-            GetPlayerStatusDefaultValues(GameObject.Find("Player").GetComponent<PlayerStatus>());
+            GameObject player = GameObject.Find("Player");
+            if (player)
+                GetPlayerStatusDefaultValues(GetComponent<PlayerStatus>());
         }
         else if (instance != this)
             Destroy(gameObject);
