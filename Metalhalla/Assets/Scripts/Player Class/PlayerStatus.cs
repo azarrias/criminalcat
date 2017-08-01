@@ -604,4 +604,15 @@ public class PlayerStatus : MonoBehaviour
     {
         hammerMesh.GetComponent<Renderer>().enabled = visible;
     }
+
+    // ---- RESPAWN MANAGEMENT functions ------------------------------------------------------------------------------------------------
+    public bool SetRespawnPoint(Vector3 newRespawnPoint)
+    {
+        if (newRespawnPoint == activeRespawnPoint)
+            return false;
+
+        activeRespawnPoint = newRespawnPoint;
+        return true;
+    }
+        
 }

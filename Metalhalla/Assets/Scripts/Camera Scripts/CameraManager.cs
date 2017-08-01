@@ -37,7 +37,7 @@ public class CameraManager : MonoBehaviour {
         }
     }
 
-    void ShowCheckpointLabel()
+    public void ShowCheckpointLabel()
     {
         showCheckpoint = true;
         checkpointLabel.enabled = true;
