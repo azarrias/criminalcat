@@ -6,6 +6,7 @@ public class FSMBoss : MonoBehaviour
     public enum State
     {
         START,
+        DAMAGED,
         DEAD,
         PATROL,
         CHASE,
@@ -99,6 +100,10 @@ public class FSMBoss : MonoBehaviour
     public float backDuration = 0.0f;
     private float backCounter = 0.0f;
 
+    [Tooltip("Damaged state transition duration")]
+    public float damagedDuration = 0.0f;
+    private float damagedCounter = 0.0f;
+
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
     IceSpikesBehaviour3D iceSpikesScript3D = null;
@@ -132,6 +137,8 @@ public class FSMBoss : MonoBehaviour
 
     private bool ballAttackFinished = false;
     private bool postBallAttackFinished = false;
+
+    private bool damaged = false;
 
     [HideInInspector]
     public bool prepareCast = false;
@@ -309,19 +316,20 @@ public class FSMBoss : MonoBehaviour
                         currState = State.INSIDE_TORNADO;
                         break;                       
                     }
+                }
+                if(damaged)
+                {
+                    prevState = State.CHASE;
+                    currState = State.DAMAGED;
+                    break;
                 }                                         
                 break;
 
             case State.PRE_MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //preMeleeCounter += Time.deltaTime;
-                    //if (preMeleeCounter >= preMeleeAttackDuration)
-                    //{
-                    //    preMeleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    //}
+                {                   
+                    currState = State.DEAD;
+                    break;                    
                 }
                 PreMeleeAttack();
                 if (preMeleeAttackFinished) 
@@ -340,18 +348,19 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                                
                 }
+                if (damaged)
+                {
+                    prevState = State.PRE_MELEE_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
+                }
                 break;
              
             case State.MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //meleeCounter += Time.deltaTime;
-                    //if (meleeCounter >= meleeAttackDuration)
-                    //{
-                    //    meleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    //}
+                {                 
+                    currState = State.DEAD;
+                    break;                   
                 }
                 MeleeAttack();
                 if (meleeAttackFinished) 
@@ -370,18 +379,19 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                   
                 }
+                if (damaged)
+                {
+                    prevState = State.MELEE_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
+                }
                 break;
 
             case State.POST_MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //postMeleeCounter += Time.deltaTime;
-                    //if (postMeleeCounter >= postMeleeAttackDuration)
-                    //{
-                   //     postMeleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                   // }
+                {                  
+                    currState = State.DEAD;
+                    break;                   
                 }
                 PostMeleeAttack();
                 if (postMeleeAttackFinished) //attack has finished
@@ -401,18 +411,19 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                   
                 }
+                if (damaged)
+                {
+                    prevState = State.POST_MELEE_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
+                }
                 break;
 
             case State.PRE_BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //preBallCounter += Time.deltaTime;
-                    //if (preBallCounter >= preBallAttackDuration)
-                    //{
-                    //    preBallCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    //}                   
+                {                  
+                    currState = State.DEAD;
+                    break;                                    
                 }
                 PreBallAttack();
                 if (preBallAttackFinished) 
@@ -425,19 +436,20 @@ public class FSMBoss : MonoBehaviour
                         preBallAttackFinished = false; //reset value
                         break;
                     }                  
-                }               
+                }
+                if (damaged)
+                {
+                    prevState = State.PRE_BALL_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
+                }
                 break;
 
             case State.BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //ballCounter += Time.deltaTime;
-                    //if (ballCounter >= ballAttackDuration)
-                    //{
-                   //     ballCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                   // }                                     
+                {                   
+                    currState = State.DEAD;
+                    break;                                                    
                 }
                 BallAttack();               
                 if (ballAttackFinished) //attack has finished
@@ -450,19 +462,20 @@ public class FSMBoss : MonoBehaviour
                         ballAttackFinished = false; //reset value
                         break;
                     }                                      
-                }               
+                }
+                if (damaged)
+                {
+                    prevState = State.BALL_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
+                }
                 break;
 
             case State.POST_BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //postBallcounter += Time.deltaTime;
-                    //if (postBallcounter >= postBallAttackDuration)
-                    //{
-                    //    postBallcounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    //}                 
+                {                    
+                    currState = State.DEAD;
+                    break;                                    
                 }
                 PostBallAttack();
                 if (postBallAttackFinished) //attack has finished
@@ -481,6 +494,12 @@ public class FSMBoss : MonoBehaviour
                 {                                          
                     currState = State.INSIDE_TORNADO;
                     break;                    
+                }
+                if (damaged)
+                {
+                    prevState = State.POST_BALL_ATTACK;
+                    currState = State.DAMAGED;
+                    break;
                 }
                 break;
 
@@ -558,6 +577,31 @@ public class FSMBoss : MonoBehaviour
                     currState = State.CHASE;
                     break;                                  
                 }
+                if (damaged)
+                {
+                    prevState = State.INSIDE_TORNADO;
+                    currState = State.DAMAGED;
+                    break;
+                }
+                break;
+
+            case State.DAMAGED:
+                Damaged();
+                if(!damaged)
+                {
+                    damagedCounter += Time.deltaTime;
+                    if(damagedCounter >= damagedDuration)
+                    {
+                        damagedCounter = 0.0f;
+                        currState = prevState;
+                        break;
+                    }
+                }
+                if (insideTornado)
+                {
+                    currState = State.INSIDE_TORNADO;
+                    break;
+                }
                 break;
         }
     }
@@ -612,12 +656,27 @@ public class FSMBoss : MonoBehaviour
         {
             //Debug.Log("Damaged");
             bossStats.ApplyDamageToBoss(damage);
-            //create damage effect
-            
+            damaged = true;                     
         }
     }
 
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
+    private void Damaged()
+    {
+        if(currAnimation != "Damaged")
+        {
+            bossAnimator.SetBool(currAnimation, false);
+            currAnimation = "Damaged";
+            bossAnimator.SetBool(currAnimation, true);
+        }
+
+        if(bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
+            damaged = false;
+            bossAnimator.SetBool(currAnimation, false);
+        }
+    }
+
     private void Dead()
     {
         if (currAnimation != "Dead")
