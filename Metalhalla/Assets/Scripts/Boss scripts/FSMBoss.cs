@@ -155,9 +155,9 @@ public class FSMBoss : MonoBehaviour
     private float castingPosSpeed = 1.5f;
     //Ball attack allowed at HP <= 75% maxHP
     private float thresholdBallAttack = 0.75f;
-    //first ice spikes at 50% maxHP
+    //first stone spikes at 50% maxHP
     private float thresholdFirstSpikes = 0.50f;
-    //second ice spikes at 25% maxHP
+    //second stone spikes at 25% maxHP
     private float thresholdSecondSpikes = 0.25f;
 
     private string currAnimation = "Patrol"; //start animation

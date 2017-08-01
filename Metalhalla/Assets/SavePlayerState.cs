@@ -27,7 +27,7 @@ public class SavePlayerState : MonoBehaviour {
             instance = this;
             GameObject player = GameObject.Find("Player");
             if (player)
-                GetPlayerStatusDefaultValues(GetComponent<PlayerStatus>());
+                GetPlayerStatusDefaultValues(player.GetComponent<PlayerStatus>());
         }
         else if (instance != this)
             Destroy(gameObject);
