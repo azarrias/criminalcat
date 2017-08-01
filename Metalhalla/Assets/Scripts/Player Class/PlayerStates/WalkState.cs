@@ -32,7 +32,6 @@ public class WalkState : PlayerState
             return;
         }
 
-        //if (input.newInput.GetCastButtonDown() == true)
         if (input.newInput.GetCastButtonDown() == true && status.ConsumeStamina(1) == true)
         {
             status.SetState(PlayerStatus.cast);
@@ -59,17 +58,10 @@ public class WalkState : PlayerState
             }
         }
 
-        if( input.newInput.GetContextButtonDown() == true )
+        if (input.newInput.GetContextButtonDown() == true && status.ConsumeBeer(1) == true)
         {
-            if (status.beerRefillAvailable == true )
-            {
-                status.SetState(PlayerStatus.refill);
-                return;
-            }
-            else {
-                status.SetState(PlayerStatus.drink);
-                return;
-            }
+            status.SetState(PlayerStatus.drink);
+            return;
         }
 
 
