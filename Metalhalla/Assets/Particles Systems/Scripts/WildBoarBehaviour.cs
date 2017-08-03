@@ -35,6 +35,7 @@ public class WildBoarBehaviour : MonoBehaviour
     private PlayerStatus playerStatus;
     private AudioSource wildboardAudioSource;
     private bool firstTime = true;
+    float fadeOutTime = 1.0f;
 
     void Awake()
     {
@@ -155,6 +156,8 @@ public class WildBoarBehaviour : MonoBehaviour
 
     void StopAttack()
     {
+        AudioManager.instance.FadeAudioSource(wildboardAudioSource, FadeAudio.FadeType.FadeOut, fadeOutTime, 0.0f);
+
         if (!explosion)
         {
             trailParticles.Stop();
