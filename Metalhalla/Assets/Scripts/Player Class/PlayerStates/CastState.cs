@@ -34,7 +34,7 @@ public class CastState : PlayerState
             //if (status.magic == PlayerStatus.MAGIC.WILDBOAR)
             if (input.newInput.GetRightTriggerInput() > 0)
             {
-                status.PlayFx("wildboar");
+//                status.PlayFx("wildboar");
                 status.StartGUIFeedback("Earthquake");
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("wildboar", status.transform.position + status.wildboarAttackInstanceOffset, true);

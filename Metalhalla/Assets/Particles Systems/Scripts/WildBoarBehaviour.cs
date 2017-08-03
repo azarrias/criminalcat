@@ -31,6 +31,10 @@ public class WildBoarBehaviour : MonoBehaviour
     private Vector3 halfExtents;
     public int damage = 20;
     private bool allowApplyDamage = true;
+    private GameObject player;
+    private PlayerStatus playerStatus;
+    private AudioSource wildboardAudioSource;
+    private bool firstTime = true;
 
     void Awake()
     {
@@ -42,6 +46,8 @@ public class WildBoarBehaviour : MonoBehaviour
         timeToDeactivateWithExplosion = timeToDeactivateNoExplosion + stoneParticles.main.startLifetime.constant;
         attackHorizontalRadius = stoneParticles.shape.radius;
         halfExtents = new Vector3(0.1f, attackVerticalRange, 1.0f);
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerStatus = player.GetComponent<PlayerStatus>();
     }
 
     // Use this for initialization
@@ -58,6 +64,13 @@ public class WildBoarBehaviour : MonoBehaviour
         stoneParticles.Stop();
         smallFragmentsParticles.Stop();
         allowApplyDamage = true;
+
+        if (!firstTime)
+        {
+            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(playerStatus.fxWildboar);    
+        }
+        else
+            firstTime = false;
     }
 
     // Update is called once per frame
