@@ -118,6 +118,7 @@ public class WildBoarBehaviour : MonoBehaviour
             if (hits.Length != 0)
             {
                 ActivateStoneExplosion();
+                AudioManager.instance.PlayDiegeticFx(playerStatus.fxWildboarDestruction);
 
                 for (int i = 0; i < hits.Length; i++)
                 {                    

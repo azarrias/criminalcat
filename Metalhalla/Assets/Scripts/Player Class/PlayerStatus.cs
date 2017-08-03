@@ -33,6 +33,7 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxRestoreBeer;
     public AudioClip fxTornado;
     public AudioClip fxWildboar;
+    public AudioClip fxWildboarDestruction;
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
     public AudioClip[] hurtScream;
