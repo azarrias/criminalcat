@@ -14,19 +14,20 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
     }
 
     public Transform[] spawnPoints;
-    public Transform[] levitationPoints;
     public GameObject skullPrefab;
     private GameObject[] skulls;
     public GameObject player;
     private State state;
-    public float ascensionSpeed;
+    public float ascensionSpeed = 2.0f;
+    private float ascensionCounter = 0.0f;
+    public float ascensionTime = 4.0f;
     private float levitationCounter = 0.0f;
-    public float levitationTime;
+    public float levitationTime = 2.0f;
     public float forceMagnitude;
     private Vector3 targetPosition;
     public float scaleSpeed = 1.0f;
     public float maxScale = 1.0f;
-
+    
     private GameObject boss;
 
     void Awake()
@@ -103,15 +104,17 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
 
     private void Ascend()
     {
-        bool targetReached = true;
+        bool targetReached = false;
 
         for (int i = 0; i < skulls.Length; i++)
-        {
-            Vector3 newPosition = Vector3.MoveTowards(skulls[i].transform.position, levitationPoints[i].transform.position, ascensionSpeed * Time.deltaTime);
-            skulls[i].transform.position = newPosition;
-
-            if (newPosition != levitationPoints[i].transform.position)
-                targetReached = false;
+        {          
+            skulls[i].transform.position += Vector3.up * Time.deltaTime * ascensionSpeed;
+            ascensionCounter += Time.deltaTime;
+            if(ascensionCounter >= ascensionTime)
+            {
+                ascensionCounter = 0.0f;
+                targetReached = true;            
+            }
         }
 
         if (targetReached)
@@ -123,6 +126,7 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
         levitationCounter += Time.deltaTime;
         if (levitationCounter >= levitationTime)
         {
+            levitationCounter = 0.0f;
             state = State.ATTACK;
             targetPosition = player.transform.position;
             for (int i = 0; i < skulls.Length; i++)
