@@ -6,7 +6,6 @@ public class FSMBoss : MonoBehaviour
     public enum State
     {
         START,
-        DAMAGED,
         DEAD,
         PATROL,
         CHASE,
@@ -319,8 +318,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if(damaged)
                 {
-                    prevState = State.CHASE;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }                                         
                 break;
@@ -350,8 +348,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.PRE_MELEE_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -381,8 +378,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.MELEE_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -413,8 +409,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.POST_MELEE_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -439,8 +434,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.PRE_BALL_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -465,8 +459,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.BALL_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -497,8 +490,7 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.POST_BALL_ATTACK;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
                 break;
@@ -579,30 +571,10 @@ public class FSMBoss : MonoBehaviour
                 }
                 if (damaged)
                 {
-                    prevState = State.INSIDE_TORNADO;
-                    currState = State.DAMAGED;
+                    Damaged();
                     break;
                 }
-                break;
-
-            case State.DAMAGED:
-                Damaged();
-                if(!damaged)
-                {
-                    damagedCounter += Time.deltaTime;
-                    if(damagedCounter >= damagedDuration)
-                    {
-                        damagedCounter = 0.0f;
-                        currState = prevState;
-                        break;
-                    }
-                }
-                if (insideTornado)
-                {
-                    currState = State.INSIDE_TORNADO;
-                    break;
-                }
-                break;
+                break;          
         }
     }
     //Method called by the FSM
@@ -663,18 +635,8 @@ public class FSMBoss : MonoBehaviour
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Damaged()
     {
-        if(currAnimation != "Damaged")
-        {
-            bossAnimator.SetBool(currAnimation, false);
-            currAnimation = "Damaged";
-            bossAnimator.SetBool(currAnimation, true);
-        }
-
-        if(bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-        {
-            damaged = false;
-            bossAnimator.SetBool(currAnimation, false);
-        }
+        bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
+        damaged = false;
     }
 
     private void Dead()
