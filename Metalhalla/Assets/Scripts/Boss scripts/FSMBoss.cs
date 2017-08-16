@@ -172,6 +172,8 @@ public class FSMBoss : MonoBehaviour
     private float deadCounter = 0.0f;
     private float beforeShrinkTime = 2.0f;
 
+    public GameObject exitDoor;
+
     void Awake()
     {   
         currState = State.PATROL;
@@ -667,13 +669,9 @@ public class FSMBoss : MonoBehaviour
             { 
                 bodyMesh.transform.localScale *= 0.9f;
                 if (bodyMesh.transform.localScale.x <= 0.1f)
-                {
-                    //if (!instantiated) //test debug
-                    //{
-                        Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
-                    //    instantiated = true;
-                        Destroy(gameObject); 
-                    //}
+                {                   
+                    GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
+                    transform.parent.gameObject.SetActive(false);                   
                 }
             }
         }
