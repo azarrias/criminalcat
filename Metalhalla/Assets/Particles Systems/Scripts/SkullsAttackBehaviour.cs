@@ -23,12 +23,6 @@ public class SkullsAttackBehaviour : MonoBehaviour {
         dust = GetComponent<ParticleSystem>();
     }
 
-    // Use this for initialization
-    void Start () {
-        
-	}
-	
-	// Update is called once per frame
 	void Update () {
         if (parentGO.activeSelf == false) //boss is dead
         {           
@@ -45,16 +39,18 @@ public class SkullsAttackBehaviour : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider collider)
-    {      
-        if (collider.CompareTag("Player") || collider.gameObject.layer == LayerMask.NameToLayer("ground") ||
+    {
+        bool hasHitShield = collider.gameObject.layer == LayerMask.NameToLayer("shield");
+
+        if ( hasHitShield || collider.CompareTag("Player") || collider.gameObject.layer == LayerMask.NameToLayer("ground") ||
                 collider.gameObject.layer == LayerMask.NameToLayer("wall") || collider.CompareTag("MovingDoor"))
         {
             dust.Play();
-            collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+            if (!hasHitShield)
+                collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
-                
-        }      
+        }
     }
 
     private void Disipate()
