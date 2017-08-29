@@ -39,6 +39,10 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] hurtScream;
     public AudioClip deathScream;
 
+    [Header("Sound FXs parameters")]
+    [Range(0.0f, 1.0f)]
+    public float footstepVolume = 0.4f;
+
     [HideInInspector]
     public Animator playerAnimator;
 
@@ -499,9 +503,9 @@ public class PlayerStatus : MonoBehaviour
         else if (fx.Equals("wildboar"))
             AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, rightFootsteps);
         else if (fx.Equals("hurtScream"))
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
         else if (fx.Equals("restoreBeer"))

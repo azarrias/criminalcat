@@ -27,8 +27,10 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Randomization")]
     [Tooltip("Pitch Offset (relative to the base pitch)")]
+    [Range(0.0f, 0.5f)]
     public float pitchRelativeOffset = 0.1f;
     [Tooltip("Volume Offset (relative to the base volume)")]
+    [Range(0.0f, 0.5f)]
     public float volumeRelativeOffset = 0.1f;
 
     private GameObject cameraManagerGO;
