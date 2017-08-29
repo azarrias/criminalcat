@@ -499,11 +499,11 @@ public class PlayerStatus : MonoBehaviour
         else if (fx.Equals("wildboar"))
             AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, rightFootsteps);
         else if (fx.Equals("hurtScream"))
-            AudioManager.instance.RandomizePlayFx(gameObject, hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
         else if (fx.Equals("restoreBeer"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
         else if (fx.Equals("restoreHealth"))

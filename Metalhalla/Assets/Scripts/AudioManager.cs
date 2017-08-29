@@ -26,8 +26,10 @@ public class AudioManager : MonoBehaviour {
     public AudioClip playingLevel;
 
     [Header("Randomization")]
-    public float lowPitchRange = .95f;
-    public float highPitchRange = 1.05f;
+    [Tooltip("Pitch Offset (relative to the base pitch)")]
+    public float pitchRelativeOffset = 0.1f;
+    [Tooltip("Volume Offset (relative to the base volume)")]
+    public float volumeRelativeOffset = 0.1f;
 
     private GameObject cameraManagerGO;
     private CameraManager cameraManager;
@@ -119,7 +121,7 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
-    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
         // Play diegetic sound fx only if they are produced by the player
         // or if their source GO position is within player camera boundaries 
@@ -127,35 +129,38 @@ public class AudioManager : MonoBehaviour {
         if (sourceGO.tag.Equals("Player") || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
         {
             obj = GetDiegeticFXAudioSource();
-            return PlayFx(obj, clip, pitch);
+            return PlayFx(obj, clip, pitch, volume);
         }
         else return null;
     }
 
-    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
         GameObject obj = GetNonDiegeticFXAudioSource();
-        return PlayFx(obj, clip, pitch);
+        return PlayFx(obj, clip, pitch, volume);
     }
 
-    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
         obj.SetActive(true);
         AudioSource fxSource = obj.GetComponent<AudioSource>();
 
         fxSource.clip = clip;
         fxSource.pitch = pitch;
+        fxSource.volume = volume;
         fxSource.Play();
         StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
 
         return fxSource;
     }
 
-    public void RandomizePlayFx(GameObject sourceGO, params AudioClip[] clips)
+    public void RandomizePlayFx(GameObject sourceGO, float basePitch = 1.0f, float baseVolume = 1.0f, params AudioClip[] clips)
     {
         int randomIndex = Random.Range(0, clips.Length);
-        float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-        PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch);
+        float randomPitch = Random.Range(basePitch - basePitch * pitchRelativeOffset, 
+            basePitch + basePitch * pitchRelativeOffset);
+        float randomVolume = Random.Range(baseVolume - 2 * baseVolume * volumeRelativeOffset, baseVolume);
+        PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch, randomVolume);
     }
 
     void OnEnable()

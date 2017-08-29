@@ -16,6 +16,6 @@ public class BatBehaviour : MonoBehaviour {
 
     public void FlapWings()
     {
-        AudioManager.instance.RandomizePlayFx(gameObject, fxFlapWings);
+        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 0.3f, fxFlapWings);
     }
 }
