@@ -29,6 +29,8 @@ public class AudioManager : MonoBehaviour {
     public float lowPitchRange = .95f;
     public float highPitchRange = 1.05f;
 
+    private GameObject cameraManagerGO;
+    private CameraManager cameraManager;
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
 
@@ -55,6 +57,13 @@ public class AudioManager : MonoBehaviour {
                 fXDiegeticAudioSources.Add(obj);
                 DontDestroyOnLoad(obj);
             }
+
+            cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
+            if (cameraManagerGO)
+            {
+                cameraManager = cameraManagerGO.GetComponent<CameraManager>();
+            }
+
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -110,10 +119,17 @@ public class AudioManager : MonoBehaviour {
         musicSource.Play();
     }
 
-    public AudioSource PlayDiegeticFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f)
     {
-        GameObject obj = GetDiegeticFXAudioSource();
-        return PlayFx(obj, clip, pitch);
+        // Play diegetic sound fx only if they are produced by the player
+        // or if their source GO position is within player camera boundaries 
+        GameObject obj;
+        if (sourceGO.tag.Equals("Player") || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
+        {
+            obj = GetDiegeticFXAudioSource();
+            return PlayFx(obj, clip, pitch);
+        }
+        else return null;
     }
 
     public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f)
@@ -135,11 +151,11 @@ public class AudioManager : MonoBehaviour {
         return fxSource;
     }
 
-    public void RandomizePlayFx(params AudioClip[] clips)
+    public void RandomizePlayFx(GameObject sourceGO, params AudioClip[] clips)
     {
         int randomIndex = Random.Range(0, clips.Length);
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-        PlayDiegeticFx(clips[randomIndex], randomPitch);
+        PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch);
     }
 
     void OnEnable()
@@ -154,6 +170,11 @@ public class AudioManager : MonoBehaviour {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
      {
+        cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
+        if (cameraManagerGO)
+        {
+            cameraManager = cameraManagerGO.GetComponent<CameraManager>();
+        }
 
         switch (scene.buildIndex)
         {

@@ -293,7 +293,7 @@ public class FSMDarkElf : MonoBehaviour
         {
             Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
-            AudioManager.instance.RandomizePlayFx(hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
@@ -371,7 +371,7 @@ public class FSMDarkElf : MonoBehaviour
             iniPos = new Vector3(transform.position.x - fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
 
-        AudioManager.instance.PlayDiegeticFx(fireBall);
+        AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
         Vector3 direction;
         if ((facingRight == true && player.transform.position.x >= iniPos.x) || (facingRight == false && player.transform.position.x <= iniPos.x))
             direction = player.transform.position - iniPos;

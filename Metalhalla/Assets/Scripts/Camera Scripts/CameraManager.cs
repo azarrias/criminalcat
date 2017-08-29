@@ -49,4 +49,14 @@ public class CameraManager : MonoBehaviour {
         showCheckpoint = false;
         checkpointLabel.enabled = false;
     }
+
+    public bool Is3DPositionOnScreen(Vector3 pos)
+    {
+        Vector3 viewPos = playerCamera.WorldToViewportPoint(pos);
+        if (viewPos.x > 0.0f && viewPos.x < 1.0f && viewPos.y > 0.0f && viewPos.y < 1.0f
+            && viewPos.z > 0.0f)
+            return true;
+        else return false;
+    }
+
 }

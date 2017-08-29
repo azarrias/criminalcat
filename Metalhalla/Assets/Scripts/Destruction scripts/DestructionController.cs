@@ -24,7 +24,7 @@ public class DestructionController : MonoBehaviour
         broken.GetComponent<AdjustDirection>().pushForceX = pushForceX;
         broken.GetComponent<AdjustDirection>().pushForceY = pushForceY;
 
-        AudioManager.instance.PlayDiegeticFx(destructionSound);
+        AudioManager.instance.PlayDiegeticFx(gameObject, destructionSound);
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>().StartShake(magnitude, duration);
         Destroy(gameObject);
 

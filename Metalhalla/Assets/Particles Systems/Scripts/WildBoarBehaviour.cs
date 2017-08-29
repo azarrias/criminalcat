@@ -68,7 +68,7 @@ public class WildBoarBehaviour : MonoBehaviour
 
         if (!firstTime)
         {
-            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(playerStatus.fxWildboar);    
+            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboar);    
         }
         else
             firstTime = false;
@@ -118,7 +118,7 @@ public class WildBoarBehaviour : MonoBehaviour
             if (hits.Length != 0)
             {
                 ActivateStoneExplosion();
-                AudioManager.instance.PlayDiegeticFx(playerStatus.fxWildboarDestruction);
+                AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboarDestruction);
 
                 for (int i = 0; i < hits.Length; i++)
                 {                    
@@ -157,7 +157,10 @@ public class WildBoarBehaviour : MonoBehaviour
 
     void StopAttack()
     {
-        AudioManager.instance.FadeAudioSource(wildboardAudioSource, FadeAudio.FadeType.FadeOut, fadeOutTime, 0.0f);
+        if (wildboardAudioSource)
+        {
+            AudioManager.instance.FadeAudioSource(wildboardAudioSource, FadeAudio.FadeType.FadeOut, fadeOutTime, 0.0f);
+        }
 
         if (!explosion)
         {

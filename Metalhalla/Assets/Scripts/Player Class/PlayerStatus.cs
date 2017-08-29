@@ -489,27 +489,27 @@ public class PlayerStatus : MonoBehaviour
     public void PlayFx(string fx)
     {
         if (fx.Equals("swing"))
-            AudioManager.instance.PlayDiegeticFx(fxSwing);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing);
         else if (fx.Equals("jump"))
-            AudioManager.instance.PlayDiegeticFx(fxJump);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump);
         else if (fx.Equals("land"))
-            AudioManager.instance.PlayDiegeticFx(fxLand);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand);
         else if (fx.Equals("tornado"))
-            AudioManager.instance.PlayDiegeticFx(fxTornado);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado);
         else if (fx.Equals("wildboar"))
-            AudioManager.instance.PlayDiegeticFx(fxWildboar);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, rightFootsteps);
         else if (fx.Equals("hurtScream"))
-            AudioManager.instance.RandomizePlayFx(hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, hurtScream);
         else if (fx.Equals("restoreBeer"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
         else if (fx.Equals("restoreHealth"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
-            AudioManager.instance.PlayDiegeticFx(deathScream);
+            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
     }
 
     // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------
