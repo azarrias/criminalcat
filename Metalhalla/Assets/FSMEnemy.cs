@@ -245,7 +245,7 @@ public class FSMEnemy : MonoBehaviour
                 los.enabled = false;
                 break;
             case State.BEING_HIT:
-                animator.SetBool("being_hit", false);
+//                animator.SetBool("being_hit", false);
                 break;
             case State.STUNNED:
                 animator.SetBool("idle", false);

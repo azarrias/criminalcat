@@ -115,8 +115,8 @@ public class FSMDarkElf : MonoBehaviour
             case State.BEING_HIT:
                 if (enemyStats.hitPoints <= 0)
                     ChangeState(State.DEAD);
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
-                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                else if (animator.GetCurrentAnimatorStateInfo(1).IsName("Damaged") &&
+                        animator.GetCurrentAnimatorStateInfo(1).normalizedTime > 1 && !animator.IsInTransition(1))
                 {
                     ChangeState(State.CHASE);
                 }
@@ -199,10 +199,11 @@ public class FSMDarkElf : MonoBehaviour
                 los.enabled = true;
                 break;
             case State.BEING_HIT:
-                animator.SetBool("being_hit", true);
+//                animator.SetBool("being_hit", true);
                 /*waitingTime = 0.0f;
                 timeToWait = 1.0f;*/
                 faceXCoordinate(player.transform.position.x);
+                animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
                 break;
             case State.STUNNED:
                 animator.SetBool("idle", true);
@@ -236,7 +237,7 @@ public class FSMDarkElf : MonoBehaviour
                 los.enabled = false;
                 break;
             case State.BEING_HIT:
-                animator.SetBool("being_hit", false);
+//                animator.SetBool("being_hit", false);
                 break;
             case State.STUNNED:
                 animator.SetBool("idle", false);
