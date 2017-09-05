@@ -128,7 +128,8 @@ public class AudioManager : MonoBehaviour {
         // Play diegetic sound fx only if they are produced by the player
         // or if their source GO position is within player camera boundaries 
         GameObject obj;
-        if (sourceGO.tag.Equals("Player") || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
+        if (sourceGO.tag.Equals("Player") || sourceGO.layer == LayerMask.NameToLayer("totem attack") 
+            || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
         {
             obj = GetDiegeticFXAudioSource();
             return PlayFx(obj, clip, pitch, volume);
