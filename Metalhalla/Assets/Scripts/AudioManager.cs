@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance = null;
@@ -12,14 +11,11 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Prefabs")]
     public GameObject fXDiegeticAudioSourcePrefab;
-    public int numberOfFXDiegeticAudioSources = 5;
     public GameObject fXNonDiegeticAudioSourcePrefab;
-    public int numberOfFXNonDiegeticAudioSources = 5;
-
-        [Header("Channels")]
-        public AudioSource musicSource;
-    /*    public AudioSource diegeticFxSource;
-        public AudioSource nondiegeticFxSource;*/
+    public GameObject musicAudioSourcePrefab;
+    private int numberOfFXDiegeticAudioSources = 5;
+    private int numberOfFXNonDiegeticAudioSources = 5;
+    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
     public AudioClip introCutscene;
@@ -37,6 +33,7 @@ public class AudioManager : MonoBehaviour {
     private CameraManager cameraManager;
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
+    private List<GameObject> musicAudioSources;
 
     void Awake()
     {
@@ -44,23 +41,9 @@ public class AudioManager : MonoBehaviour {
         {
             instance = this;
 
-            fXDiegeticAudioSources = new List<GameObject>();
-            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
-            {
-                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-                obj.SetActive(false);
-                fXDiegeticAudioSources.Add(obj);
-                DontDestroyOnLoad(obj);
-            }
-
-            fXNonDiegeticAudioSources = new List<GameObject>();
-            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
-            {
-                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-                obj.SetActive(false);
-                fXDiegeticAudioSources.Add(obj);
-                DontDestroyOnLoad(obj);
-            }
+            fXDiegeticAudioSources = InitializeAudioSources(fXDiegeticAudioSourcePrefab, numberOfFXDiegeticAudioSources);
+            fXNonDiegeticAudioSources = InitializeAudioSources(fXNonDiegeticAudioSourcePrefab, numberOfFXNonDiegeticAudioSources);
+            musicAudioSources = InitializeAudioSources(musicAudioSourcePrefab, numberOfMusicAudioSources);
 
             cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
             if (cameraManagerGO)
@@ -75,8 +58,8 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
     }
 
@@ -114,13 +97,13 @@ public class AudioManager : MonoBehaviour {
 
     public void StopMusic()
     {
-        musicSource.Stop();
+//        musicSource.Stop();
     }
 
     public void PlayMusic(AudioClip clip)
     {
-        musicSource.clip = clip;
-        musicSource.Play();
+//        musicSource.clip = clip;
+//        musicSource.Play();
     }
 
     public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
@@ -240,11 +223,11 @@ public class AudioManager : MonoBehaviour {
 
     IEnumerator FadeIn(float duration)
     {
-        while(musicSource.volume < 1.0f)
-        {
-            musicSource.volume += Time.deltaTime / duration;
+//        while(musicSource.volume < 1.0f)
+ //       {
+ //           musicSource.volume += Time.deltaTime / duration;
             yield return null;
-        }
+ //       }
     }
 
     IEnumerator ReleaseAudioSource(GameObject obj, float delayTime, float timeScale)
@@ -285,4 +268,17 @@ public class AudioManager : MonoBehaviour {
         AudioManager.instance.mixer.SetFloat(parameter, value);
     }
 
+    private List<GameObject> InitializeAudioSources(GameObject audioSourcePrefab, int numberOfAudioSources)
+    {
+        List<GameObject> audioSourceList = new List<GameObject>();
+        for (int i = 0; i < numberOfAudioSources; ++i)
+        {
+            GameObject obj = (GameObject)Instantiate(audioSourcePrefab);
+            obj.SetActive(false);
+            audioSourceList.Add(obj);
+            DontDestroyOnLoad(obj);
+        }
+
+        return audioSourceList;
+    }
 }
