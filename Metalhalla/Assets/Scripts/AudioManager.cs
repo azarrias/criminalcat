@@ -63,34 +63,18 @@ public class AudioManager : MonoBehaviour {
 
     }
 
-    GameObject GetDiegeticFXAudioSource()
+    GameObject GetAudioSource(GameObject audioSourcePrefab, ref List<GameObject> audioSourceList)
     {
-        for(int i = 0; i < fXDiegeticAudioSources.Count; ++i)
+        for (int i = 0; i < audioSourceList.Count; ++i)
         {
-            if(!fXDiegeticAudioSources[i].activeInHierarchy)
+            if (!audioSourceList[i].activeInHierarchy)
             {
-                return fXDiegeticAudioSources[i];
+                return audioSourceList[i];
             }
         }
 
-        GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-        fXDiegeticAudioSources.Add(obj);
-        DontDestroyOnLoad(obj);
-        return obj;
-    }
-
-    GameObject GetNonDiegeticFXAudioSource()
-    {
-        for (int i = 0; i < fXNonDiegeticAudioSources.Count; ++i)
-        {
-            if (!fXNonDiegeticAudioSources[i].activeInHierarchy)
-            {
-                return fXNonDiegeticAudioSources[i];
-            }
-        }
-
-        GameObject obj = (GameObject)Instantiate(fXNonDiegeticAudioSourcePrefab);
-        fXNonDiegeticAudioSources.Add(obj);
+        GameObject obj = (GameObject)Instantiate(audioSourcePrefab);
+        audioSourceList.Add(obj);
         DontDestroyOnLoad(obj);
         return obj;
     }
@@ -114,7 +98,7 @@ public class AudioManager : MonoBehaviour {
         if (sourceGO.tag.Equals("Player") || sourceGO.layer == LayerMask.NameToLayer("totem attack") 
             || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
         {
-            obj = GetDiegeticFXAudioSource();
+            obj = GetAudioSource(fXDiegeticAudioSourcePrefab, ref fXDiegeticAudioSources);
             return PlayFx(obj, clip, pitch, volume);
         }
         else return null;
@@ -122,7 +106,7 @@ public class AudioManager : MonoBehaviour {
 
     public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
-        GameObject obj = GetNonDiegeticFXAudioSource();
+        GameObject obj = GetAudioSource(fXNonDiegeticAudioSourcePrefab, ref fXNonDiegeticAudioSources);
         return PlayFx(obj, clip, pitch, volume);
     }
 
