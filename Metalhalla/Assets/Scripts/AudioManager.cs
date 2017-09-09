@@ -18,8 +18,17 @@ public class AudioManager : MonoBehaviour {
     private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
-    public AudioClip introCutscene;
-    public AudioClip playingLevel;
+    public MusicTrack cinematicaInicio;
+    public MusicTrack menuInicial;
+    public MusicTrack tutorial;
+    public MusicTrack[] warmUp;
+    public MusicTrack koreanMode;
+    public MusicTrack hardcoreBattle;
+    public MusicTrack liftablePlatforms;
+    public MusicTrack cinematicaBoss;
+    public MusicTrack boss;
+    public MusicTrack finalComico;
+    public MusicTrack creditos;
 
     [Header("Randomization")]
     [Tooltip("Pitch Offset (relative to the base pitch)")]
@@ -34,6 +43,60 @@ public class AudioManager : MonoBehaviour {
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
     private List<GameObject> musicAudioSources;
+
+    [System.Serializable]
+    public class MusicTrack
+    {
+        public AudioClip audioClip;
+        public float MusicLoopPointStart, MusicLoopPointEnd;
+
+        //        public AudioSource audioSource;
+
+        float[] audioData;
+        long position;
+        int sampleLoopPointStart, sampleLoopPointEnd;
+        int start;
+
+        public void Init()
+        {
+            double multiplier = MusicLoopPointStart / audioClip.length;
+            sampleLoopPointStart = (int)(multiplier * audioClip.samples * audioClip.channels);
+            multiplier = MusicLoopPointEnd / audioClip.length;
+            sampleLoopPointEnd = (int)(multiplier * audioClip.samples * audioClip.channels);
+            audioData = new float[audioClip.samples * audioClip.channels];
+
+            audioClip.GetData(audioData, 0);
+            audioClip = AudioClip.Create(audioClip.name + "_Loop", audioClip.samples, audioClip.channels, audioClip.frequency, true, OnAudioRead, OnAudioSetPos);
+        }
+
+        void OnAudioRead(float[] data)
+        {
+            if (start < 64)
+            {
+                start++;
+                position = 0;
+                return;
+            }
+            int count = 0;
+            while (count < data.Length)
+            {
+                data[count] = audioData[position];
+
+                position++;
+                count++;
+
+                if (position >= sampleLoopPointEnd)
+                {
+                    position = sampleLoopPointStart;
+                }
+            }
+        }
+
+        void OnAudioSetPos(int newPos)
+        {
+
+        }
+    }
 
     void Awake()
     {
@@ -84,10 +147,19 @@ public class AudioManager : MonoBehaviour {
 //        musicSource.Stop();
     }
 
-    public void PlayMusic(AudioClip clip)
+    public AudioSource PlayMusic(AudioClip clip, float loopStart = 0.0f, float loopEnd = 0.0f)
     {
-//        musicSource.clip = clip;
-//        musicSource.Play();
+        GameObject obj = GetAudioSource(musicAudioSourcePrefab, ref musicAudioSources);
+        obj.SetActive(true);
+        AudioSource musicSource = obj.GetComponent<AudioSource>();
+
+        musicSource.clip = clip;
+        musicSource.Play();
+
+        StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
+        return musicSource;
+        //        musicSource.clip = clip;
+        //        musicSource.Play();
     }
 
     public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
@@ -156,7 +228,9 @@ public class AudioManager : MonoBehaviour {
             // case 0: break; // Title
             case 1: // Initial menu
             {
-                PlayMusic(introCutscene);
+                menuInicial.Init();
+                PlayMusic(menuInicial.audioClip);
+//                PlayMusic(introCutscene);
                 break;
             }
             case 2: // Dungeon entrance
@@ -169,7 +243,7 @@ public class AudioManager : MonoBehaviour {
             {
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                 StopMusic();
-                PlayMusic(playingLevel);
+//                PlayMusic(playingLevel);
                 break;
             }
             case 4: // Boss scene
