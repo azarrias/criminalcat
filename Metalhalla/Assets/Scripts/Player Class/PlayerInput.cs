@@ -103,7 +103,8 @@ public class PlayerInput : MonoBehaviour {
 	};
 
     public pInput newInput;
-    pInput oldInput;
+    [HideInInspector]
+    public pInput oldInput;
 
     GUIManager guiManager; 
 

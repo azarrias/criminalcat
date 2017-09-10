@@ -9,7 +9,9 @@ public class PlayerInputAI : PlayerInput
         None,
         AfterBossDefeat,
         MainMenuAnimation
-    };[System.Serializable]
+    };
+
+    [System.Serializable]
     public enum AIAction
     {
         None,
@@ -43,11 +45,16 @@ public class PlayerInputAI : PlayerInput
 
     [Header("MainMenuAnimation program parameters")]
     [SerializeField]
-    private AIStep[] stepsMainMenuAnimation = { new AIStep( AIAction.Idle, 0.5f ),
-                                                new AIStep(AIAction.Walk, 2.0f),
-                                                new AIStep(AIAction.Dash) };
+    private AIStep[] stepsMainMenuAnimation = { new AIStep(AIAction.Idle, 0.5f ),
+                                                new AIStep(AIAction.Attack,1.0f),
+                                                new AIStep(AIAction.Jump, 1.0f) };
     public bool loopMainMenuAnimation = true;
 
+    private AIStep[] _currentProgramSteps;
+    private int _currentProgramStepIndex;
+    private bool _currentProgramLoop;
+    private float _currentProgramTime;
+    
     public PlayerInputAI() : base()
     {
     }
@@ -55,27 +62,78 @@ public class PlayerInputAI : PlayerInput
     private void Start()
     {
         base.StartPlayerInput();    // substitute to base.Start() due to protection level and override not feasible
-    }
-
-    public override void GetInput()
-    {
         switch (program)
         {
             case AIProgram.None: break;
             case AIProgram.AfterBossDefeat:
-                UpdateRunRightToDie();
+                SetAIProgram(stepsAfterBossDefeat, loopAfterBossDefeat);
                 break;
             case AIProgram.MainMenuAnimation:
-                UpdateMainMenuAnimation();
+                SetAIProgram(stepsMainMenuAnimation, loopMainMenuAnimation);
                 break;
         }
-    }
-    private void UpdateRunRightToDie()
-    {
 
     }
-    private void UpdateMainMenuAnimation()
+
+    public override void GetInput()
     {
+        ExecuteCurrentAIProgram();
+    }
+
+
+    private void SetAIProgram(AIStep[] steps, bool loop)
+    {
+        _currentProgramSteps = steps;
+        _currentProgramLoop = loop;
+        _currentProgramStepIndex = 0;
+        _currentProgramTime = -0.001f;
+    }
+    private void ExecuteCurrentAIProgram()
+    {
+        newInput.Reset();
+
+        AIAction stepAction = _currentProgramSteps[_currentProgramStepIndex].action;
+        float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
+
+        if (stepAction == AIAction.Walk)
+        {
+            newInput.SetHorizontalInput(1.0f);
+        }
+        else if (_currentProgramTime <= 0.0f)
+        {
+            switch(stepAction)
+            {
+                case AIAction.Jump:
+                    newInput.SetJumpButtonDown(true);
+                    break;
+                case AIAction.Attack:
+                    newInput.SetAttackButtonDown(true);
+                    break;
+                case AIAction.Dash:
+                    newInput.SetDashButtonDown(true);
+                    break;
+                default: break;
+            }
+        }
+        _currentProgramTime += Time.deltaTime;
+        if (_currentProgramTime >= stepTime)
+        {
+            int totalSteps = _currentProgramSteps.Length;
+            if (_currentProgramLoop)
+            {
+                _currentProgramStepIndex = (_currentProgramStepIndex + 1) % totalSteps;
+                _currentProgramTime = -0.001f;
+            }
+            else
+            {
+                if (_currentProgramStepIndex + 1 != totalSteps)
+                {
+                    _currentProgramStepIndex++;
+                    _currentProgramTime = -0.001f;
+                }
+            }
+
+        }
 
     }
 }
