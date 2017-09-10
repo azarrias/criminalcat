@@ -116,14 +116,10 @@ public class PlayerInput : MonoBehaviour {
 
     private void Start()
     {
-        GameObject guiObject = GameObject.Find("GUI");
-        if (guiObject)
-            guiManager = guiObject.GetComponent<GUIManager>();
-        doubleTapFramesCount = 0;
-        hDoubleTap = doubleTap.IDLE;
+        StartPlayerInput();
     }
 
-    public void GetInput()
+    public virtual void GetInput()
 	{
 		oldInput.CopyInputFrom (newInput);  //make a savestate from last input
     // OLD CONTROL MAPPING
@@ -202,5 +198,14 @@ public class PlayerInput : MonoBehaviour {
         }
         */
         return ret; 
+    }
+
+    public void StartPlayerInput()
+    {
+        GameObject guiObject = GameObject.Find("GUI");
+        if (guiObject)
+            guiManager = guiObject.GetComponent<GUIManager>();
+        doubleTapFramesCount = 0;
+        hDoubleTap = doubleTap.IDLE;
     }
 }
