@@ -16,7 +16,14 @@ public class PlayerStatus : MonoBehaviour
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
 
     [Header("Defense Elements")]
+    public GameObject shield;
     public GameObject shieldMesh;
+    public BoxCollider shieldCollider;
+    public Transform shieldFrontTransform;
+    public Transform shieldUpTransform;
+
+    [Header("Horn Elements")]
+    public GameObject hornMesh;
 
     [Header("Sound Effects")]
     public AudioClip fxSwing;
@@ -26,10 +33,15 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip fxRestoreBeer;
     public AudioClip fxTornado;
     public AudioClip fxWildboar;
+    public AudioClip fxWildboarDestruction;
     public AudioClip[] leftFootsteps;
     public AudioClip[] rightFootsteps;
     public AudioClip[] hurtScream;
     public AudioClip deathScream;
+
+    [Header("Sound FXs parameters")]
+    [Range(0.0f, 1.0f)]
+    public float footstepVolume = 0.4f;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -64,13 +76,11 @@ public class PlayerStatus : MonoBehaviour
     [Tooltip("Starting coin count")]
     public int coinsAtStart = 0;
     [Tooltip("How many coins are needed to fill a section of the beer horn?")]
-    public int beerSectionCoinAmount = 10; 
+    public int beerSectionCoinAmount = 10;
     int coins;
 
     [HideInInspector]
     public enum MAGIC { EAGLE = 0, WILDBOAR, numMagics };
-//    [Header("Magic Setup")]
-//    public MAGIC magicAtStart = MAGIC.EAGLE;
     [HideInInspector]
     public MAGIC magic;
 
@@ -104,7 +114,7 @@ public class PlayerStatus : MonoBehaviour
     public static AttackState attack;
     public static CastState cast;
     public static ClimbState climb;
-    public static DashState dash; 
+    public static DashState dash;
     public static DeadState dead;
     public static DefenseState defense;
     public static DrinkState drink;
@@ -129,7 +139,6 @@ public class PlayerStatus : MonoBehaviour
     public bool climbLadderAvailable;
     [HideInInspector]
     public bool beerRefillAvailable;
-//    bool magicShiftAvailable;
 
     // -- Cross component variables -- // 
     [HideInInspector]
@@ -154,19 +163,17 @@ public class PlayerStatus : MonoBehaviour
         playerModelClimbRotation = Quaternion.identity;
 
         attackCollider.enabled = false;
-        attackCollider.GetComponent<Renderer>().enabled = false;    // to remove when finished debugging
         lightningGenerator.SetActive(false);    // temp
 
-        shieldMesh.GetComponent<Renderer>().enabled = false;
+        shieldCollider.enabled = false;
+        ShowShield(false);
+
+        ShowHorn(false);
 
         playerAnimator = GetComponent<Animator>();
 
-        health = healthAtStart;
-        stamina = staminaAtStart;
+        GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>().RecoverPlayerStatusValues( this);
         staminaRecovery = 0.0f;
-        beer = beerAtStart;
-     //   magic = magicAtStart;
-        coins = coinsAtStart;
 
         GameObject guiObject = GameObject.Find("GUI");
         if (guiObject)
@@ -195,7 +202,6 @@ public class PlayerStatus : MonoBehaviour
         jumpAvailable = true;
         climbLadderAvailable = false;
         beerRefillAvailable = false;
-//        magicShiftAvailable = false;
 
         justHit = false;
         jumpFrames = 0;
@@ -206,29 +212,27 @@ public class PlayerStatus : MonoBehaviour
         colliderSize = GetComponent<BoxCollider>().size;
 
         godMode = false;
-
     }
 
     void Update()
     {
         // TODO - Remove this shortcuts when other entities and interactions are in place
         if (Input.GetKeyDown(KeyCode.F1) == true)
-            ApplyDamage(30);
+            ApplyDamage(20);
         if (Input.GetKeyDown(KeyCode.F2) == true)
-            RestoreHealth(30);
+            RestoreHealth(20);
         if (Input.GetKeyDown(KeyCode.F3) == true)
-            ConsumeStamina(7);
+            ConsumeStamina(1);
         if (Input.GetKeyDown(KeyCode.F4) == true)
             RestoreStamina(1);
         if (Input.GetKeyDown(KeyCode.F5) == true)
             ConsumeBeer(1);
         if (Input.GetKeyDown(KeyCode.F6) == true)
-            RefillBeer(5);
+            RefillBeer(1);
         if (Input.GetKeyDown(KeyCode.G) == true)
             godMode = !godMode;
 
         // stamina recovery
-        //if (stamina < staminaMaximum)
         if (stamina == 0)
         {
             staminaRecovery += staminaRecoveryRate * Time.deltaTime;
@@ -255,28 +259,13 @@ public class PlayerStatus : MonoBehaviour
         // add hoc for level elements 
         GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
         if (movingDoor)
-            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor(); 
-        
+            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
     public void statusUpdateAfterInput(PlayerInput input)
     {
-        // mod for magic shift
-        /* 
-         * if (!magicShiftAvailable && input.newInput.GetLeftTriggerInput() == 0f && input.newInput.GetRightTriggerInput() == 0f)
-             magicShiftAvailable = true;
-
-         if (magicShiftAvailable)
-         {
-             if (input.newInput.GetLeftTriggerInput() >= 0.8f)
-                 ShiftMagics(false);
-             else if (input.newInput.GetRightTriggerInput() >= 0.8f)
-                 ShiftMagics(true);
-         }
-         */
-
-        // update status
         currentState.HandleInput(input, this);
     }
 
@@ -290,23 +279,28 @@ public class PlayerStatus : MonoBehaviour
         previousState = currentState;
         currentState = newState;
 
-        // show hammer always except when climbing, being hit or dead
-        if (newState != climb && newState != hit && newState != dead && newState != defense)
-            hammerMesh.GetComponent<Renderer>().enabled = true;
+        if (newState != walk)
+            SetAnimatorSpeed(1.0f);
+
+        if (newState != climb && newState != hit && newState != dead && newState != defense && newState != drink)
+            ShowHammer(true);
         else
-            hammerMesh.GetComponent<Renderer>().enabled = false;
+            ShowHammer(false);
 
         if (newState != attack)
             attackCollider.enabled = false;
         if (newState != defense)
-            shieldMesh.GetComponent<Renderer>().enabled = false;
+            ShowShield(false);
+
+        if (newState != drink)
+            ShowHorn(false);
 
         if (IsClimb() && WasClimb() == false)
             SetClimbStateModelRotation();
         else if (WasClimb() && IsClimb() == false)
         {
             SetInitialModelRotation();
-            playerAnimator.speed = 1;
+            SetAnimatorSpeed(1.0f);
         }
     }
 
@@ -317,11 +311,11 @@ public class PlayerStatus : MonoBehaviour
     {
         if (!godMode && currentState != dead)
             camFollow.StartShake();
-        if (!godMode && currentState != defense && currentState != dead)
+
+        if (!godMode && currentState != dead)
         {
             health -= damage;
             SetState(hit);
-            //PlayFx("hurtScream");
         }
     }
 
@@ -341,6 +335,11 @@ public class PlayerStatus : MonoBehaviour
     public float GetCurrentHealthRatio()
     {
         return (float)health / (float)healthMaximum;
+    }
+
+    public void SetCurrentHealth(int value)
+    {
+        health = value;
     }
 
     public int GetCurrentHealth()
@@ -378,6 +377,10 @@ public class PlayerStatus : MonoBehaviour
         return stamina;
     }
 
+    public void SetCurrentStamina(int value)
+    {
+        stamina = value;
+    }
 
     // ---- BEER functions ---------------------------------------------------------------------------------------------
     public bool ConsumeBeer(int consumption)
@@ -385,11 +388,9 @@ public class PlayerStatus : MonoBehaviour
         if (beer == 0)
             return false;
 
-        //UPDATE: allowed to drink even if health is full for the sake of the animation
-        /*
-         * if (RestoreHealth(beerHealthRecovery) == false)     // no health recovery, no beer drink
-             return false;
-         */
+        if (RestoreHealth(beerHealthRecovery) == false)
+            return false;
+
         RestoreHealth(beerHealthRecovery);
 
         beer -= consumption;
@@ -415,30 +416,30 @@ public class PlayerStatus : MonoBehaviour
         return beer;
     }
 
-    //---- MAGIC functions -------------------------------------------------------------------------------------------
-/*    public int GetCurrentMagic()
+    public void SetCurrentBeer(int value)
     {
-        return (int) magic;
+        beer = value; 
     }
 
-    public void ShiftMagics( bool forwards)
-    {
-        magicShiftAvailable = false;
-        int total = (int)MAGIC.numMagics;
-        int current = (int) magic;
-        int newMagic = (forwards ? current + 1 + total : current - 1 + total) % total;
-        magic = (MAGIC) newMagic;
-    }
-*/
     //---- COIN functions -------------------------------------------------------------------------------------------
-    public void CollectCoins( int amount ) {
+    public void CollectCoins(int amount) {
         coins += amount;
         while (coins >= beerSectionCoinAmount)
         {
-            if (RefillBeer(1) == false )
-                break; 
+            if (RefillBeer(1) == false)
+                break;
             coins -= beerSectionCoinAmount;
         }
+    }
+
+    public int GetCurrentCoins()
+    {
+        return coins; 
+    }
+
+    public void SetCurrentCoins(int value)
+    {
+        coins = value; 
     }
 
     // ---- UTIL functions ---------------------------------------------------------------------------------------------
@@ -478,7 +479,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsDrink() { return currentState == drink; }
     public bool IsClimb() { return currentState == climb; }
     public bool IsHit() { return currentState == hit; }
-    public bool IsDash() { return currentState == dash;  }
+    public bool IsDash() { return currentState == dash; }
     public bool IsDead() { return currentState == dead; }
 
     public bool WasIdle() { return previousState == idle; }
@@ -489,32 +490,63 @@ public class PlayerStatus : MonoBehaviour
     public bool WasClimb() { return previousState == climb; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
-    public void PlayFx( string fx)
+    public void PlayFx(string fx)
     {
         if (fx.Equals("swing"))
-            AudioManager.instance.PlayDiegeticFx(fxSwing);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing);
         else if (fx.Equals("jump"))
-            AudioManager.instance.PlayDiegeticFx(fxJump);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump);
         else if (fx.Equals("land"))
-            AudioManager.instance.PlayDiegeticFx(fxLand);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand);
         else if (fx.Equals("tornado"))
-            AudioManager.instance.PlayDiegeticFx(fxTornado);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado);
         else if (fx.Equals("wildboar"))
-            AudioManager.instance.PlayDiegeticFx(fxWildboar);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, rightFootsteps);
         else if (fx.Equals("hurtScream"))
-            AudioManager.instance.RandomizePlayFx(hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
         else if (fx.Equals("restoreBeer"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
         else if (fx.Equals("restoreHealth"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
-            AudioManager.instance.PlayDiegeticFx(deathScream);
+            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
     }
 
+    // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------
+    public void ResetAnimatorLayerWeights()
+    {
+        playerAnimator.SetLayerWeight(1, 0f);
+    }
+
+    public void SetPlayerDefenseAnimatorLayerWeight(float weight)
+    {
+        playerAnimator.SetLayerWeight(1, weight);
+    }
+
+    public void SetAnimatorSpeed(float speed = 1.0f)
+    {
+        playerAnimator.speed = speed;
+    }
+
+    public void SetAnimatorWalkingSpeed(float horizontalInput)
+    {
+        float speed = Mathf.Abs(horizontalInput);
+        if (speed <= 0.2f)
+            speed = 0.4f;
+        else if (speed <= 0.4f)
+            speed = 0.5f;
+        else if (speed <= 0.6f)
+            speed = 0.6f;
+        else if (speed <= 0.8f)
+            speed = 0.8f;
+        else
+            speed = 1.0f;
+        SetAnimatorSpeed(speed);
+    }
     // ---- MODEL ROTATION functions --------------------------------------------------------------------------------------------
     public void SetClimbStateModelRotation()
     {
@@ -545,10 +577,68 @@ public class PlayerStatus : MonoBehaviour
         GetComponent<BoxCollider>().size = tmpSize;
     }
 
+    // ---- SHIELD transform functions - to be used from player DefenseState
+    public void SetShieldTransform( float verticalInput, float horizontalInput)
+    {
+        if (verticalInput <= 0)
+        {
+            shield.transform.position = shieldFrontTransform.position;
+            shield.transform.rotation = shieldFrontTransform.rotation;
+            SetPlayerDefenseAnimatorLayerWeight(0f);
+            return;
+        }
+        if (facingRight == true && horizontalInput <= 0)
+            horizontalInput = 0;
+        else if (facingRight == false && horizontalInput >= 0)
+            horizontalInput = 0; 
+
+        float angle = Mathf.Atan(verticalInput / horizontalInput);
+        float maxAngle = Mathf.PI / 2f;
+        float lambda = Mathf.Abs(angle / maxAngle);
+
+        shield.transform.position = Vector3.Slerp(shieldFrontTransform.position, shieldUpTransform.position, lambda); 
+        Quaternion rot; 
+        rot.x = shieldFrontTransform.rotation.x * (1 - lambda) + shieldUpTransform.rotation.x * lambda;
+        rot.y = shieldFrontTransform.rotation.y * (1 - lambda) + shieldUpTransform.rotation.y * lambda;
+        rot.z = shieldFrontTransform.rotation.z * (1 - lambda) + shieldUpTransform.rotation.z * lambda;
+        rot.w = shieldFrontTransform.rotation.w * (1 - lambda) + shieldUpTransform.rotation.w * lambda;
+        
+        shield.transform.rotation = rot;
+
+        SetPlayerDefenseAnimatorLayerWeight(lambda);
+    }
+
     // ---- GUI SYNC functions ----------------------------------------------------------------------------------------------------------
     public void StartGUIFeedback( string element )
     {
         if (guiManager)
             guiManager.StartFeedback(element);
     }
+
+    // ---- SHOW MESHES functions -----------------------------------------------------------------------------------------------------
+    public void ShowHorn(bool visible)
+    {
+        hornMesh.GetComponent<Renderer>().enabled = visible;
+    }
+
+    public void ShowShield(bool visible)
+    {
+        shieldMesh.GetComponent<Renderer>().enabled = visible;
+    }
+
+    public void ShowHammer(bool visible)
+    {
+        hammerMesh.GetComponent<Renderer>().enabled = visible;
+    }
+
+    // ---- RESPAWN MANAGEMENT functions ------------------------------------------------------------------------------------------------
+    public bool SetRespawnPoint(Vector3 newRespawnPoint)
+    {
+        if (newRespawnPoint == activeRespawnPoint)
+            return false;
+
+        activeRespawnPoint = newRespawnPoint;
+        return true;
+    }
+    
 }

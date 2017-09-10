@@ -45,7 +45,7 @@ public class openChestController : MonoBehaviour
     {
         if (currentState == state.CLOSED)
         {
-            if (openChest) AudioManager.instance.PlayDiegeticFx(openChest);
+            if (openChest) AudioManager.instance.PlayDiegeticFx(gameObject, openChest);
             currentState = state.OPEN;
             chestAnimator.SetBool("open", true);
         }

@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(EnemyStats))]
-[RequireComponent(typeof(Animator))]
 public class FSMBoss : MonoBehaviour
 {
     public enum State
@@ -25,7 +23,7 @@ public class FSMBoss : MonoBehaviour
         WAIT
     }
  
-    private EnemyStats bossStats = null;
+    private BossStats bossStats = null;
     public GameObject spikesCastingSpot = null;
     public GameObject spikesReturnSpot = null;
     private GameObject castingArea = null;
@@ -33,12 +31,13 @@ public class FSMBoss : MonoBehaviour
     public GameObject ballAttackIndicator = null;
     public GameObject fireAura = null;
     public GameObject earthAura = null;
-    public GameObject levitatingRocks = null;    
+    public GameObject levitatingSkulls = null;
+    public GameObject bossSpirit = null;
     private ParticleSystem ballAttackIndicatorPS = null;
     private ParticleSystem fireAuraPS = null;
     private ParticleSystem earthAuraPS = null;
     private FireAuraDamage fireAuraDamageScript = null;
-    private LevitatingRocksBehaviour levitatingRocksScript = null;
+    private LevitatingSkullsBehaviour levitatingSkullsScript = null;
     private EarthAuraDamage earthAuraDamageScript = null;
 
     [Tooltip("Depth of casting point")]
@@ -100,6 +99,10 @@ public class FSMBoss : MonoBehaviour
     public float backDuration = 0.0f;
     private float backCounter = 0.0f;
 
+    [Tooltip("Damaged state transition duration")]
+    public float damagedDuration = 0.0f;
+    private float damagedCounter = 0.0f;
+
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
     IceSpikesBehaviour3D iceSpikesScript3D = null;
@@ -134,6 +137,8 @@ public class FSMBoss : MonoBehaviour
     private bool ballAttackFinished = false;
     private bool postBallAttackFinished = false;
 
+    private bool damaged = false;
+
     [HideInInspector]
     public bool prepareCast = false;
     private bool castIceSpikes = true;
@@ -154,13 +159,20 @@ public class FSMBoss : MonoBehaviour
     private float castingPosSpeed = 1.5f;
     //Ball attack allowed at HP <= 75% maxHP
     private float thresholdBallAttack = 0.75f;
-    //first ice spikes at 50% maxHP
+    //first stone spikes at 50% maxHP
     private float thresholdFirstSpikes = 0.50f;
-    //second ice spikes at 25% maxHP
+    //second stone spikes at 25% maxHP
     private float thresholdSecondSpikes = 0.25f;
 
     private string currAnimation = "Patrol"; //start animation
+    private bool shrink = false;
+    private float fadeSpeed = 0.01f;
+    private GameObject bodyMesh;
+    private bool instantiated;
+    private float deadCounter = 0.0f;
+    private float beforeShrinkTime = 2.0f;
 
+    public GameObject exitDoor;
 
     void Awake()
     {   
@@ -169,7 +181,7 @@ public class FSMBoss : MonoBehaviour
         thePlayer = GameObject.FindGameObjectWithTag("Player");       
         thePlayerStatus = thePlayer.GetComponent<PlayerStatus>();       
         bossAnimator = GetComponent<Animator>();
-        bossStats = GetComponent<EnemyStats>();
+        bossStats = GetComponent<BossStats>();
         meleeDamage = bossStats.meleeDamage;
         
         iceSpikesScript = FindObjectOfType<IceSpikesBehaviour>();
@@ -191,7 +203,9 @@ public class FSMBoss : MonoBehaviour
         fireAuraPS.Stop();
         fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();        
         earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
-        levitatingRocksScript = levitatingRocks.GetComponent<LevitatingRocksBehaviour>();
+        levitatingSkullsScript = levitatingSkulls.GetComponent<LevitatingSkullsBehaviour>();
+
+        bodyMesh = GameObject.Find("ModelContainer");       
     }
 
     void Start()
@@ -225,24 +239,13 @@ public class FSMBoss : MonoBehaviour
 
             case State.CHASE:
                 if (bossStats.hitPoints <= 0)
-                {
-                    //chaseCounter += Time.deltaTime;
-                    //if (chaseCounter >= chaseDuration)
-                    //{
-                     //   chaseCounter = 0.0f;                       
-                        currState = State.DEAD;                      
-                    //}
+                {                                   
+                    currState = State.DEAD;                                         
                     break;
                 }
                 //Player dead
                 if (!thePlayerStatus.IsAlive())
-                {
-                    //if (prevState == State.BACK_TO_CENTER)
-                    //{
-                    //    gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-                    //    if (!facingRight)
-                    //        facingRight = true;
-                    //}
+                {                   
                     chaseCounter += Time.deltaTime;
                     if (chaseCounter >= chaseDuration)
                     {
@@ -314,19 +317,19 @@ public class FSMBoss : MonoBehaviour
                         currState = State.INSIDE_TORNADO;
                         break;                       
                     }
+                }
+                if(damaged)
+                {
+                    Damaged();
+                    break;
                 }                                         
                 break;
 
             case State.PRE_MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    preMeleeCounter += Time.deltaTime;
-                    if (preMeleeCounter >= preMeleeAttackDuration)
-                    {
-                        preMeleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }
+                {                   
+                    currState = State.DEAD;
+                    break;                    
                 }
                 PreMeleeAttack();
                 if (preMeleeAttackFinished) 
@@ -345,18 +348,18 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                                
                 }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
                 break;
              
             case State.MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    meleeCounter += Time.deltaTime;
-                    if (meleeCounter >= meleeAttackDuration)
-                    {
-                        meleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }
+                {                 
+                    currState = State.DEAD;
+                    break;                   
                 }
                 MeleeAttack();
                 if (meleeAttackFinished) 
@@ -375,18 +378,18 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                   
                 }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
                 break;
 
             case State.POST_MELEE_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    postMeleeCounter += Time.deltaTime;
-                    if (postMeleeCounter >= postMeleeAttackDuration)
-                    {
-                        postMeleeCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }
+                {                  
+                    currState = State.DEAD;
+                    break;                   
                 }
                 PostMeleeAttack();
                 if (postMeleeAttackFinished) //attack has finished
@@ -406,18 +409,18 @@ public class FSMBoss : MonoBehaviour
                     currState = State.INSIDE_TORNADO;
                     break;                   
                 }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
                 break;
 
             case State.PRE_BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    preBallCounter += Time.deltaTime;
-                    if (preBallCounter >= preBallAttackDuration)
-                    {
-                        preBallCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }                   
+                {                  
+                    currState = State.DEAD;
+                    break;                                    
                 }
                 PreBallAttack();
                 if (preBallAttackFinished) 
@@ -430,19 +433,19 @@ public class FSMBoss : MonoBehaviour
                         preBallAttackFinished = false; //reset value
                         break;
                     }                  
-                }               
+                }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
                 break;
 
             case State.BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    ballCounter += Time.deltaTime;
-                    if (ballCounter >= ballAttackDuration)
-                    {
-                        ballCounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }                                     
+                {                   
+                    currState = State.DEAD;
+                    break;                                                    
                 }
                 BallAttack();               
                 if (ballAttackFinished) //attack has finished
@@ -455,19 +458,19 @@ public class FSMBoss : MonoBehaviour
                         ballAttackFinished = false; //reset value
                         break;
                     }                                      
-                }               
+                }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
                 break;
 
             case State.POST_BALL_ATTACK:
                 if (bossStats.hitPoints <= 0)
-                {
-                    postBallcounter += Time.deltaTime;
-                    if (postBallcounter >= postBallAttackDuration)
-                    {
-                        postBallcounter = 0.0f;
-                        currState = State.DEAD;
-                        break;
-                    }                 
+                {                    
+                    currState = State.DEAD;
+                    break;                                    
                 }
                 PostBallAttack();
                 if (postBallAttackFinished) //attack has finished
@@ -486,6 +489,11 @@ public class FSMBoss : MonoBehaviour
                 {                                          
                     currState = State.INSIDE_TORNADO;
                     break;                    
+                }
+                if (damaged)
+                {
+                    Damaged();
+                    break;
                 }
                 break;
 
@@ -556,22 +564,19 @@ public class FSMBoss : MonoBehaviour
             case State.INSIDE_TORNADO:               
                 InsideTornado();
                 if(!insideTornado)
-                {
-                    //if (bossStats.hitPoints > 0)
-                    //{
-                        preMeleeAttackSelected = false; //reset value
-                        preBallAttackSelected = false; //reset value                                      
-                        SelectAttack();
-                        currState = State.CHASE;
-                        break;
-                    //}
-                    //else
-                    //{
-                    //    currState = State.DEAD;
-                    //    break;
-                    //}                   
+                {             
+                    preMeleeAttackSelected = false; //reset value
+                    preBallAttackSelected = false; //reset value                                      
+                    SelectAttack();
+                    currState = State.CHASE;
+                    break;                                  
                 }
-                break;
+                if (damaged)
+                {
+                    Damaged();
+                    break;
+                }
+                break;          
         }
     }
     //Method called by the FSM
@@ -624,25 +629,51 @@ public class FSMBoss : MonoBehaviour
             currState == State.INSIDE_TORNADO)
         {
             //Debug.Log("Damaged");
-            bossStats.ApplyDamage(damage);
-            //create damage effect
-            
+            bossStats.ApplyDamageToBoss(damage);
+            damaged = true;                     
         }
     }
 
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
+    private void Damaged()
+    {
+        bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
+        damaged = false;
+    }
+
     private void Dead()
     {
-
-        //Apagar los efectos de aviso del bastón y después morir
-
         if (currAnimation != "Dead")
         {
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
-            //Destroy boss            
-            Destroy(gameObject, deadTime);                          
+            GetComponent<CapsuleCollider>().enabled = false;            
+            levitatingSkullsScript.StopSkullsAttack();
+            if (earthAuraPS.isPlaying)
+            {
+                earthAuraDamageScript.auraActive = false;
+                earthAuraPS.Stop();
+            }
+        }
+
+        if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
+            shrink = true;                     
+        }
+
+        if (shrink)
+        {
+            deadCounter += Time.deltaTime;
+            if (deadCounter >= beforeShrinkTime)
+            { 
+                bodyMesh.transform.localScale *= 0.9f;
+                if (bodyMesh.transform.localScale.x <= 0.1f)
+                {                   
+                    GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
+                    transform.parent.gameObject.SetActive(false);                   
+                }
+            }
         }
     }
 
@@ -662,7 +693,7 @@ public class FSMBoss : MonoBehaviour
 
                 prevState = State.PATROL;
             }
-            // --------------------------  24/06/17 Boss doesnt need to move in patrol
+            // -------------------------- Boss doesnt need to move in patrol
             //Vector3 newPos = gameObject.transform.position;
 
             //if (facingRight == true)
@@ -683,27 +714,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);     
         }
         else
-        {
-            //if (prevState == State.BACK_TO_CENTER)
-            //{
-            //    prevState = State.CHASE;
-            //    Vector3 bossPos = gameObject.transform.position;
-            //    int diff = (int)(thePlayer.transform.position.x - bossPos.x);
-              
-            //    if (diff > 0)
-            //    {
-            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 270, 0);
-            //        if (!facingRight)
-            //            facingRight = true;
-            //    }
-            //    if (diff < 0)
-            //    {
-            //        gameObject.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-            //        if (facingRight)
-            //            facingRight = false;
-            //    }
-            //}
-
+        {           
             if (preMeleeAttackSelected && !atMeleeRange || preBallAttackSelected && !atBallRange)
             {
                 Vector3 newPos = gameObject.transform.position;
@@ -737,7 +748,7 @@ public class FSMBoss : MonoBehaviour
             
             earthAuraPS.Play();
             earthAuraDamageScript.auraActive = true;
-            levitatingRocksScript.StartRocksAttack();        
+            levitatingSkullsScript.StartSkullsAttack();        
         }
        
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -1030,8 +1041,8 @@ public class FSMBoss : MonoBehaviour
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
 
-        //Keep levitating rocks rotation
-        gameObject.transform.Find("LevitatingRocks").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
+        //Keep levitating skulls rotation
+        gameObject.transform.Find("LevitatingSkulls").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
     }
 
     public State GetCurrentState()

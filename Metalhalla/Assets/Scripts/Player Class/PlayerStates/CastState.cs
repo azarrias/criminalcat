@@ -26,15 +26,15 @@ public class CastState : PlayerState
                 status.StartGUIFeedback("Tornado"); 
                 // New version with ParticlesManager
                 if (status.facingRight)
-                    ParticlesManager.SpawnParticle("tornado", status.transform.position + status.eagleAttackInstanceOffset, true);
+                    ParticlesManager.SpawnParticle("tornado3D", status.transform.position + status.eagleAttackInstanceOffset, true);
                 else
-                    ParticlesManager.SpawnParticle("tornado", status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up, false);
+                    ParticlesManager.SpawnParticle("tornado3D", status.transform.position - status.eagleAttackInstanceOffset.x * Vector3.right + status.eagleAttackInstanceOffset.y * Vector3.up, false);
             }
             
             //if (status.magic == PlayerStatus.MAGIC.WILDBOAR)
             if (input.newInput.GetRightTriggerInput() > 0)
             {
-                status.PlayFx("wildboar");
+//                status.PlayFx("wildboar");
                 status.StartGUIFeedback("Earthquake");
                 if (status.facingRight)
                     ParticlesManager.SpawnParticle("wildboar", status.transform.position + status.wildboarAttackInstanceOffset, true);

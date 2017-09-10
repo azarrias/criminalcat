@@ -13,6 +13,8 @@ public class RockBehaviour : MonoBehaviour {
     private MeshRenderer rockMR;
     public float fadeoutSpeed = 0.01f;
 
+    public bool hasHitShield = false;
+
     void Start()
     {
         rockDustParticles = GetComponent<ParticleSystem>();
@@ -30,16 +32,26 @@ public class RockBehaviour : MonoBehaviour {
     {
         if (disipate)
             Disipate();
+        else if (hasHitShield)
+            UpdateAfterShieldHit();
     }
 
     void OnTriggerEnter(Collider collider)
     {
-        // mod to teach the player that falling stalagmites are BAD
-        //if (collider.CompareTag("Player") && !disipate)
-        if (!disipate && (collider.CompareTag("Player") || collider.CompareTag("Viking")))
+        if (!disipate && !hasHitShield)
         {
-            collider.gameObject.SendMessage("ApplyDamage", damage);
+            if (collider.CompareTag("Player") || collider.CompareTag("Viking"))
+            {
+                collider.gameObject.SendMessage("ApplyDamage", damage);
+            }
+            else if (LayerMask.LayerToName(collider.gameObject.layer) == "shield")
+            {
+                hasHitShield = true;
+            }
         }
+
+
+        
     }
 
     private void Disipate()
@@ -71,5 +83,11 @@ public class RockBehaviour : MonoBehaviour {
             startingColor.a = 1.0f;
             rockMR.materials[0].color = startingColor;
         }
+    }
+
+    private void UpdateAfterShieldHit()
+    {
+        Debug.Log("Shield hit");
+        disipate = true; 
     }
 }

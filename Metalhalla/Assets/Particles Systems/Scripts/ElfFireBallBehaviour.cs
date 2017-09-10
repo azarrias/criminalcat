@@ -42,7 +42,8 @@ public class ElfFireBallBehaviour : MonoBehaviour {
     {
         if (LayerMask.LayerToName(collision.gameObject.layer) == "ground" || 
             LayerMask.LayerToName(collision.gameObject.layer) == "wall" ||
-            LayerMask.LayerToName(collision.gameObject.layer) == "player")
+            LayerMask.LayerToName(collision.gameObject.layer) == "player" ||
+            LayerMask.LayerToName(collision.gameObject.layer) == "shield")
         {
             collision.gameObject.SendMessage("ApplyDamage", ballDamage, SendMessageOptions.DontRequireReceiver);
             gameObject.transform.Find("BallExplosion").gameObject.SetActive(true);

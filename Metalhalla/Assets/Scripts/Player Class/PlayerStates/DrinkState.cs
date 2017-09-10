@@ -17,12 +17,8 @@ public class DrinkState : PlayerState
         if (status.previousState != this)
         {
             drinkFramesCount = 0;
-            if (status.ConsumeBeer(1) == false) 
-            {
-                status.SetState(PlayerStatus.idle);
-                return;
-            }
             status.StartGUIFeedback("YButton");
+            status.ShowHorn(true);
         }
 
         if (drinkFramesCount >= drinkFramesDuration)

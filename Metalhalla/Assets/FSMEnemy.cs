@@ -113,8 +113,8 @@ public class FSMEnemy : MonoBehaviour
             case State.BEING_HIT:
                 if (enemyStats.hitPoints <= 0)
                     ChangeState(State.DEAD);
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("BeingHit") &&
-                        animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+                else if (animator.GetCurrentAnimatorStateInfo(1).IsName("Damaged") &&
+                        animator.GetCurrentAnimatorStateInfo(1).normalizedTime > 1 && !animator.IsInTransition(1))
                 {
                     ChangeState(State.CHASE);
                 }
@@ -196,8 +196,9 @@ public class FSMEnemy : MonoBehaviour
             break;
 
             case State.BEING_HIT:
-                animator.SetBool("being_hit", true);
+ //               animator.SetBool("being_hit", true);
                 faceXCoordinate(player.transform.position.x);
+                animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
             break;
 
             case State.STUNNED:
@@ -244,7 +245,7 @@ public class FSMEnemy : MonoBehaviour
                 los.enabled = false;
                 break;
             case State.BEING_HIT:
-                animator.SetBool("being_hit", false);
+//                animator.SetBool("being_hit", false);
                 break;
             case State.STUNNED:
                 animator.SetBool("idle", false);
@@ -309,7 +310,7 @@ public class FSMEnemy : MonoBehaviour
         {
           //  Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
-            AudioManager.instance.RandomizePlayFx(hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2*Vector3.back, facingRight);  // blood positioning has to be improved

@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour {
         helpButton = helpButton.GetComponent<Button>();
         creditsButton = creditsButton.GetComponent<Button>();
         exitGamebutton = exitGamebutton.GetComponent<Button>();
-        saveMenuStateScript = GameObject.FindGameObjectWithTag("GameManager").GetComponent<SaveMenuState>();
+        saveMenuStateScript = GameObject.FindGameObjectWithTag("GameSession").GetComponent<SaveMenuState>();
         menuBG = GameObject.FindGameObjectWithTag("MenuBG");
 
         if (isIngameMenu)
@@ -79,8 +79,13 @@ public class MenuManager : MonoBehaviour {
     {
         //Game runs at regular speed
         Time.timeScale = 1f;
-        //SceneManager.LoadScene(nextScene);
+        
         GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>().GoToNextScene( nextScene );
+        SavePlayerState sps = GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>();
+        if (sps)
+        {
+            sps.ResetPlayerStatusValues();
+        }
     }
 
 	//Activate quit menu

@@ -12,7 +12,6 @@ public class IdleState : PlayerState {
             return;
         }
 
-        // prevent "autofire" when holding buttons
         if (status.previousState == PlayerStatus.fall && input.newInput.GetJumpButtonHeld() == true)
             status.jumpAvailable = false;
         else if( status.jumpAvailable == false && input.newInput.GetJumpButtonHeld() == false)
@@ -36,7 +35,6 @@ public class IdleState : PlayerState {
             return; 
         }
 
-        //if (input.newInput.GetCastButtonDown() == true)
         if (input.newInput.GetCastButtonDown() == true && status.ConsumeStamina(1) == true )
         {
             status.SetState(PlayerStatus.cast);
@@ -64,18 +62,10 @@ public class IdleState : PlayerState {
             }
         }
 
-        if (input.newInput.GetContextButtonDown() == true)
+        if (input.newInput.GetContextButtonDown() == true && status.ConsumeBeer(1) == true)
         {
-            if (status.beerRefillAvailable == true)
-            {
-                status.SetState(PlayerStatus.refill);
-                return;
-            }
-            else
-            {
-                status.SetState(PlayerStatus.drink);
-                return;
-            }
+            status.SetState(PlayerStatus.drink);
+            return;
         }
 
         if (input.newInput.GetHorizontalInput() != 0)

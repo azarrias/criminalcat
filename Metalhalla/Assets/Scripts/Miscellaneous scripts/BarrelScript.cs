@@ -4,27 +4,22 @@ using UnityEngine;
 
 public class BarrelScript : MonoBehaviour {
 
+    private Vector3 respawnPoint;
+    private CameraManager cameraManagerScript;
+
+    private void Start()
+    {
+        respawnPoint = transform.position + Vector3.up;
+        cameraManagerScript = GameObject.FindGameObjectWithTag("CameraManager").GetComponent<CameraManager>();
+    }
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.tag == "Player")
         {
-            // removed the beer refil in barrels in favor of "coin" collectables
-            //collision.GetComponent<PlayerStatus>().beerRefillAvailable = true;
-
-            //collision.GetComponent<PlayerStatus>().activeRespawnPoint = transform.position + Vector3.up;
-            Vector3 respawnPoint;
-            respawnPoint = transform.position + Vector3.up;
             respawnPoint.z = collision.transform.position.z;
-            collision.GetComponent<PlayerStatus>().activeRespawnPoint = respawnPoint;
+            if (collision.GetComponent<PlayerStatus>().SetRespawnPoint(respawnPoint) == true)
+                cameraManagerScript.ShowCheckpointLabel();
+
         }
     }
-    /*
-    private void OnTriggerExit(Collider collision)
-    {
-        if (collision.tag == "Player")
-        {
-            collision.GetComponent<PlayerStatus>().beerRefillAvailable = false;
-        }
-    }
-    */
 }

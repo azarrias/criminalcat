@@ -6,10 +6,29 @@ ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Box001
+    100004: Group1
+    100006: Omni001
+    100008: Omni002
+    100010: shield
     400000: //RootNode
+    400002: Box001
+    400004: Group1
+    400006: Omni001
+    400008: Omni002
+    400010: shield
     2300000: //RootNode
+    2300002: Box001
+    2300004: Group1
+    2300006: shield
     3300000: //RootNode
+    3300002: Box001
+    3300004: Group1
+    3300006: shield
     4300000: Sphere001
+    4300002: shield
+    4300004: Box001
+    4300006: Group1
   materials:
     importMaterials: 1
     materialName: 0
@@ -34,7 +53,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.3
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1

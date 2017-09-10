@@ -9,6 +9,7 @@ public class CloseOpenDoor : MonoBehaviour {
     private bool closed = false;   
     private bool playerInside = false;
     public float speed = 8.0f;
+    public bool openExitDoor = false; //boss has died, door opens again
 
     void Awake()
     {
@@ -26,6 +27,15 @@ public class CloseOpenDoor : MonoBehaviour {
 	void Update () {
         if (!closed && playerInside)
             CloseDoor();
+
+        if(openExitDoor)
+        {
+            if (gameObject.name == "MovingDoorExit")
+                OpenDoorSlowly();
+
+            if (movingDoor.transform.localPosition.y >= localInitialPosition.y)
+                openExitDoor = false;
+        }
 	}
 
     public void CloseDoor()
@@ -39,6 +49,11 @@ public class CloseOpenDoor : MonoBehaviour {
         gameObject.transform.localPosition = localInitialPosition;
         closed = false;
         playerInside = false; 
+    }
+
+    public void OpenDoorSlowly()
+    {
+         transform.position += Vector3.up * speed * Time.deltaTime;
     }
 
     void OnTriggerEnter(Collider collider)

@@ -31,6 +31,11 @@ public class WildBoarBehaviour : MonoBehaviour
     private Vector3 halfExtents;
     public int damage = 20;
     private bool allowApplyDamage = true;
+    private GameObject player;
+    private PlayerStatus playerStatus;
+    private AudioSource wildboardAudioSource;
+    private bool firstTime = true;
+    float fadeOutTime = 1.0f;
 
     void Awake()
     {
@@ -42,6 +47,8 @@ public class WildBoarBehaviour : MonoBehaviour
         timeToDeactivateWithExplosion = timeToDeactivateNoExplosion + stoneParticles.main.startLifetime.constant;
         attackHorizontalRadius = stoneParticles.shape.radius;
         halfExtents = new Vector3(0.1f, attackVerticalRange, 1.0f);
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerStatus = player.GetComponent<PlayerStatus>();
     }
 
     // Use this for initialization
@@ -58,18 +65,24 @@ public class WildBoarBehaviour : MonoBehaviour
         stoneParticles.Stop();
         smallFragmentsParticles.Stop();
         allowApplyDamage = true;
+
+        if (!firstTime)
+        {
+            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboar);    
+        }
+        else
+            firstTime = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
         if (!stop)
         {
-            MoveParticleSystem(moveDirection.normalized);
+            MoveParticleSystem(moveDirection);
         }
 
-        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection.normalized, transform.position + attackHorizontalRadius * moveDirection.normalized, Color.red);
+        Debug.DrawLine(transform.position - attackHorizontalRadius * moveDirection, transform.position + attackHorizontalRadius * moveDirection, Color.red);
         Debug.DrawLine(transform.position, transform.position + Vector3.up * attackVerticalRange, Color.red);
         Debug.DrawLine(transform.position, transform.position - Vector3.up * attackVerticalRange, Color.red);
     }
@@ -105,13 +118,11 @@ public class WildBoarBehaviour : MonoBehaviour
             if (hits.Length != 0)
             {
                 ActivateStoneExplosion();
+                AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboarDestruction);
 
                 for (int i = 0; i < hits.Length; i++)
-                {
-                    //if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) != "destroyableEagle")  
-                    //{
-                        hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
-                    //}
+                {                    
+                     hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
                 }
 
             }
@@ -146,6 +157,11 @@ public class WildBoarBehaviour : MonoBehaviour
 
     void StopAttack()
     {
+        if (wildboardAudioSource)
+        {
+            AudioManager.instance.FadeAudioSource(wildboardAudioSource, FadeAudio.FadeType.FadeOut, fadeOutTime, 0.0f);
+        }
+
         if (!explosion)
         {
             trailParticles.Stop();
@@ -162,6 +178,7 @@ public class WildBoarBehaviour : MonoBehaviour
     {
     //    Debug.Log("Disable wildboar");
         gameObject.SetActive(false);
+        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
         frames_counter = 0;
         explosion = false;
         stop = false;

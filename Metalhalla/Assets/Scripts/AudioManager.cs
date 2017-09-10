@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance = null;
@@ -12,25 +11,92 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Prefabs")]
     public GameObject fXDiegeticAudioSourcePrefab;
-    public int numberOfFXDiegeticAudioSources = 5;
     public GameObject fXNonDiegeticAudioSourcePrefab;
-    public int numberOfFXNonDiegeticAudioSources = 5;
-
-        [Header("Channels")]
-        public AudioSource musicSource;
-    /*    public AudioSource diegeticFxSource;
-        public AudioSource nondiegeticFxSource;*/
+    public GameObject musicAudioSourcePrefab;
+    private int numberOfFXDiegeticAudioSources = 5;
+    private int numberOfFXNonDiegeticAudioSources = 5;
+    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
-    public AudioClip introCutscene;
-    public AudioClip playingLevel;
+    public MusicTrack cinematicaInicio;
+    public MusicTrack menuInicial;
+    public MusicTrack tutorial;
+    public MusicTrack[] warmUp;
+    public MusicTrack koreanMode;
+    public MusicTrack hardcoreBattle;
+    public MusicTrack liftablePlatforms;
+    public MusicTrack cinematicaBoss;
+    public MusicTrack boss;
+    public MusicTrack finalComico;
+    public MusicTrack creditos;
 
     [Header("Randomization")]
-    public float lowPitchRange = .95f;
-    public float highPitchRange = 1.05f;
+    [Tooltip("Pitch Offset (relative to the base pitch)")]
+    [Range(0.0f, 0.5f)]
+    public float pitchRelativeOffset = 0.1f;
+    [Tooltip("Volume Offset (relative to the base volume)")]
+    [Range(0.0f, 0.5f)]
+    public float volumeRelativeOffset = 0.1f;
 
+    private GameObject cameraManagerGO;
+    private CameraManager cameraManager;
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
+    private List<GameObject> musicAudioSources;
+
+    [System.Serializable]
+    public class MusicTrack
+    {
+        public AudioClip audioClip;
+        public float MusicLoopPointStart, MusicLoopPointEnd;
+
+        //        public AudioSource audioSource;
+
+        float[] audioData;
+        long position;
+        int sampleLoopPointStart, sampleLoopPointEnd;
+        int start;
+
+        public void Init()
+        {
+            double multiplier = MusicLoopPointStart / audioClip.length;
+            sampleLoopPointStart = (int)(multiplier * audioClip.samples * audioClip.channels);
+            multiplier = MusicLoopPointEnd / audioClip.length;
+            sampleLoopPointEnd = (int)(multiplier * audioClip.samples * audioClip.channels);
+            audioData = new float[audioClip.samples * audioClip.channels];
+
+            audioClip.GetData(audioData, 0);
+            audioClip = AudioClip.Create(audioClip.name + "_Loop", audioClip.samples, audioClip.channels, audioClip.frequency, true, OnAudioRead, OnAudioSetPos);
+        }
+
+        void OnAudioRead(float[] data)
+        {
+            if (start < 64)
+            {
+                start++;
+                position = 0;
+                return;
+            }
+            int count = 0;
+            while (count < data.Length)
+            {
+                data[count] = audioData[position];
+
+                position++;
+                count++;
+
+                if (position >= sampleLoopPointEnd)
+                {
+                    position = sampleLoopPointStart;
+                }
+            }
+        }
+
+        void OnAudioSetPos(int newPos)
+        {
+
+        }
+    }
 
     void Awake()
     {
@@ -38,23 +104,16 @@ public class AudioManager : MonoBehaviour {
         {
             instance = this;
 
-            fXDiegeticAudioSources = new List<GameObject>();
-            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
+            fXDiegeticAudioSources = InitializeAudioSources(fXDiegeticAudioSourcePrefab, numberOfFXDiegeticAudioSources);
+            fXNonDiegeticAudioSources = InitializeAudioSources(fXNonDiegeticAudioSourcePrefab, numberOfFXNonDiegeticAudioSources);
+            musicAudioSources = InitializeAudioSources(musicAudioSourcePrefab, numberOfMusicAudioSources);
+
+            cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
+            if (cameraManagerGO)
             {
-                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-                obj.SetActive(false);
-                fXDiegeticAudioSources.Add(obj);
-                DontDestroyOnLoad(obj);
+                cameraManager = cameraManagerGO.GetComponent<CameraManager>();
             }
 
-            fXNonDiegeticAudioSources = new List<GameObject>();
-            for (int i = 0; i < numberOfFXDiegeticAudioSources; ++i)
-            {
-                GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-                obj.SetActive(false);
-                fXDiegeticAudioSources.Add(obj);
-                DontDestroyOnLoad(obj);
-            }
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -62,84 +121,88 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
     }
 
-    GameObject GetDiegeticFXAudioSource()
+    GameObject GetAudioSource(GameObject audioSourcePrefab, ref List<GameObject> audioSourceList)
     {
-        for(int i = 0; i < fXDiegeticAudioSources.Count; ++i)
+        for (int i = 0; i < audioSourceList.Count; ++i)
         {
-            if(!fXDiegeticAudioSources[i].activeInHierarchy)
+            if (!audioSourceList[i].activeInHierarchy)
             {
-                return fXDiegeticAudioSources[i];
+                return audioSourceList[i];
             }
         }
 
-        GameObject obj = (GameObject)Instantiate(fXDiegeticAudioSourcePrefab);
-        fXDiegeticAudioSources.Add(obj);
-        DontDestroyOnLoad(obj);
-        return obj;
-    }
-
-    GameObject GetNonDiegeticFXAudioSource()
-    {
-        for (int i = 0; i < fXNonDiegeticAudioSources.Count; ++i)
-        {
-            if (!fXNonDiegeticAudioSources[i].activeInHierarchy)
-            {
-                return fXNonDiegeticAudioSources[i];
-            }
-        }
-
-        GameObject obj = (GameObject)Instantiate(fXNonDiegeticAudioSourcePrefab);
-        fXNonDiegeticAudioSources.Add(obj);
+        GameObject obj = (GameObject)Instantiate(audioSourcePrefab);
+        audioSourceList.Add(obj);
         DontDestroyOnLoad(obj);
         return obj;
     }
 
     public void StopMusic()
     {
-        musicSource.Stop();
+//        musicSource.Stop();
     }
 
-    public void PlayMusic(AudioClip clip)
+    public AudioSource PlayMusic(AudioClip clip, float loopStart = 0.0f, float loopEnd = 0.0f)
     {
+        GameObject obj = GetAudioSource(musicAudioSourcePrefab, ref musicAudioSources);
+        obj.SetActive(true);
+        AudioSource musicSource = obj.GetComponent<AudioSource>();
+
         musicSource.clip = clip;
         musicSource.Play();
+
+        StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
+        return musicSource;
+        //        musicSource.clip = clip;
+        //        musicSource.Play();
     }
 
-    public AudioSource PlayDiegeticFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
-        GameObject obj = GetDiegeticFXAudioSource();
-        return PlayFx(obj, clip, pitch);
+        // Play diegetic sound fx only if they are produced by the player
+        // or if their source GO position is within player camera boundaries 
+        GameObject obj;
+        if (sourceGO.tag.Equals("Player") || sourceGO.layer == LayerMask.NameToLayer("totem attack") 
+            || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
+        {
+            obj = GetAudioSource(fXDiegeticAudioSourcePrefab, ref fXDiegeticAudioSources);
+            return PlayFx(obj, clip, pitch, volume);
+        }
+        else return null;
     }
 
-    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
-        GameObject obj = GetNonDiegeticFXAudioSource();
-        return PlayFx(obj, clip, pitch);
+        GameObject obj = GetAudioSource(fXNonDiegeticAudioSourcePrefab, ref fXNonDiegeticAudioSources);
+        return PlayFx(obj, clip, pitch, volume);
     }
 
-    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f)
+    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
     {
         obj.SetActive(true);
         AudioSource fxSource = obj.GetComponent<AudioSource>();
 
         fxSource.clip = clip;
         fxSource.pitch = pitch;
+        fxSource.volume = volume;
         fxSource.Play();
         StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
 
         return fxSource;
     }
 
-    public void RandomizePlayFx(params AudioClip[] clips)
+    public void RandomizePlayFx(GameObject sourceGO, float basePitch = 1.0f, float baseVolume = 1.0f, params AudioClip[] clips)
     {
         int randomIndex = Random.Range(0, clips.Length);
-        float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-        PlayDiegeticFx(clips[randomIndex], randomPitch);
+        float randomPitch = Random.Range(basePitch - basePitch * pitchRelativeOffset, 
+            basePitch + basePitch * pitchRelativeOffset);
+        float randomVolume = Random.Range(baseVolume - 2 * baseVolume * volumeRelativeOffset, baseVolume);
+        PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch, randomVolume);
     }
 
     void OnEnable()
@@ -154,16 +217,42 @@ public class AudioManager : MonoBehaviour {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
      {
+        cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
+        if (cameraManagerGO)
+        {
+            cameraManager = cameraManagerGO.GetComponent<CameraManager>();
+        }
 
         switch (scene.buildIndex)
         {
-            case 0:
-                PlayMusic(introCutscene);
+            // case 0: break; // Title
+            case 1: // Initial menu
+            {
+                menuInicial.Init();
+                PlayMusic(menuInicial.audioClip);
+//                PlayMusic(introCutscene);
                 break;
-            case 2:
+            }
+            case 2: // Dungeon entrance
+            {
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
                 StopMusic();
-                PlayMusic(playingLevel);
                 break;
+            }
+            case 3: // Dungeon
+            {
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                StopMusic();
+//                PlayMusic(playingLevel);
+                break;
+            }
+            case 4: // Boss scene
+            {
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                StopMusic(); 
+                break;
+            }
+            // case 5: break; // End
         }
 
     }
@@ -192,11 +281,11 @@ public class AudioManager : MonoBehaviour {
 
     IEnumerator FadeIn(float duration)
     {
-        while(musicSource.volume < 1.0f)
-        {
-            musicSource.volume += Time.deltaTime / duration;
+//        while(musicSource.volume < 1.0f)
+ //       {
+ //           musicSource.volume += Time.deltaTime / duration;
             yield return null;
-        }
+ //       }
     }
 
     IEnumerator ReleaseAudioSource(GameObject obj, float delayTime, float timeScale)
@@ -230,4 +319,24 @@ public class AudioManager : MonoBehaviour {
         fadeAudioComponent.targetVolume = targetVolume;
     }
 
+    IEnumerator SetMixerParameter(string parameter, float value)
+    {
+        // I know this looks silly, but it is a workaround to a unity bug
+        yield return new WaitForEndOfFrame();
+        AudioManager.instance.mixer.SetFloat(parameter, value);
+    }
+
+    private List<GameObject> InitializeAudioSources(GameObject audioSourcePrefab, int numberOfAudioSources)
+    {
+        List<GameObject> audioSourceList = new List<GameObject>();
+        for (int i = 0; i < numberOfAudioSources; ++i)
+        {
+            GameObject obj = (GameObject)Instantiate(audioSourcePrefab);
+            obj.SetActive(false);
+            audioSourceList.Add(obj);
+            DontDestroyOnLoad(obj);
+        }
+
+        return audioSourceList;
+    }
 }

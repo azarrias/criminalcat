@@ -53,7 +53,7 @@ public class TornadoBehaviour : MonoBehaviour {
     private float fadeCounter = 0.0f;
 
     private FSMBoss fsmBoss = null;
-    private EnemyStats bossStats = null;
+    private BossStats bossStats = null;
 
     private GameObject player;
     private PlayerStatus playerStatus;
@@ -66,7 +66,7 @@ public class TornadoBehaviour : MonoBehaviour {
         if (scene.name == "Dungeon Boss")
         {
             fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
-            bossStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<EnemyStats>();
+            bossStats = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossStats>();
         }
 
         contains = new List<GameObject>();
@@ -77,20 +77,26 @@ public class TornadoBehaviour : MonoBehaviour {
 
         player = GameObject.FindGameObjectWithTag("Player");
         playerStatus = player.GetComponent<PlayerStatus>();
+
+        tornadoEyeTr = transform.FindChild("TornadoEye");
+        tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
 	void Start ()
     {                
-        tornadoEyeTr = transform.FindChild("TornadoEye");
-        tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
+        //tornadoEyeTr = transform.FindChild("TornadoEye");
+        //tornadoCircles = new ParticleSystem.Particle[tornadoCirclesPS.main.maxParticles];
     }
 
     private void OnEnable()
     {
         if (!firstTime)
         {
-            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(playerStatus.fxTornado);
-            AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeIn, fadeSeconds, 1.0f);
+            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxTornado);
+            if (tornadoAudioSource)
+            {
+                AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeIn, fadeSeconds, 1.0f);
+            }
         }
         else
             firstTime = false;
@@ -238,15 +244,36 @@ public class TornadoBehaviour : MonoBehaviour {
     private void PrepareRotation(GameObject enemy)
     {
         enemy.SendMessage("Stunt", SendMessageOptions.DontRequireReceiver);
-        enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.Find("ModelContainer").localRotation;
-        enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
-        Absorb(enemy);       
+
+        if(enemy.CompareTag("Boss"))
+        {
+            enemy.GetComponent<BossStats>().initialRotation = enemy.transform.Find("ModelContainer").localRotation;
+            enemy.GetComponent<BossStats>().initialPosition = enemy.transform.position;
+        }
+        else
+        {
+            enemy.GetComponent<EnemyStats>().initialRotation = enemy.transform.Find("ModelContainer").localRotation;
+            enemy.GetComponent<EnemyStats>().initialPosition = enemy.transform.position;
+        }
+        
+        Absorb(enemy);
         //enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
 
-        if (enemy.GetComponent<EnemyStats>().hitPoints > 0)
-            rotate = true;
+        if (enemy.CompareTag("Boss"))
+        {
+            if (enemy.GetComponent<BossStats>().hitPoints > 0)
+                rotate = true;
+            else
+                disipate = true;
+        }
         else
-            disipate = true;                   
+        {
+            if (enemy.GetComponent<EnemyStats>().hitPoints > 0)
+                rotate = true;
+            else
+                disipate = true;
+        }
+                           
     }
 
     private void Rotate()
@@ -267,8 +294,17 @@ public class TornadoBehaviour : MonoBehaviour {
         AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeOut, fadeSeconds, 0.0f);
         foreach (var enemy in contains)
         {
-            enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
-            enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
+            if(enemy.CompareTag("Boss"))
+            {
+                enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<BossStats>().initialRotation;
+                enemy.transform.position = enemy.GetComponent<BossStats>().initialPosition;
+            }
+            else
+            {
+                enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
+                enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
+            }
+            
             enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
         }

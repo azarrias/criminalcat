@@ -14,6 +14,6 @@ public class Rotation : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        gameObject.transform.localRotation *= Quaternion.AngleAxis(angle, Vector3.forward);
+        gameObject.transform.localRotation *= Quaternion.AngleAxis(angle, Vector3.up);
 	}
 }
