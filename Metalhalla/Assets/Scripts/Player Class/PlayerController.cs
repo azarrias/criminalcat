@@ -8,6 +8,8 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
+    public bool useInputAI = false;
+
 	PlayerInput 	 playerInput;
 	PlayerStatus     playerStatus;
 	PlayerMove  	 playerMove;
@@ -15,8 +17,11 @@ public class PlayerController : MonoBehaviour {
 	Animator		 playerAnimator;
 
 	void Start() {
-		playerInput = GetComponent<PlayerInput> ();
-		playerStatus = GetComponent<PlayerStatus> ();
+        if (useInputAI)
+            playerInput = GetComponent<PlayerInputAI>();
+        else
+            playerInput = GetComponent<PlayerInput> ();
+        playerStatus = GetComponent<PlayerStatus> ();
 		playerMove = GetComponent<PlayerMove> ();
 		playerCollider = GetComponent<PlayerCollider> ();
 		playerAnimator = GetComponent<Animator> ();
@@ -27,7 +32,7 @@ public class PlayerController : MonoBehaviour {
     }
 	void FixedUpdate (){
 		
-		playerStatus.statusUpdateAfterInput(playerInput);
+		playerStatus.statusUpdateAfterInput((PlayerInput)playerInput);
 		playerMove.CalculateSpeed(playerInput, playerStatus, playerCollider);
 		playerCollider.CheckMove (ref playerMove, ref playerStatus);
 		playerStatus.statusUpdateAfterCollisionCheck (playerCollider, playerInput);
@@ -49,6 +54,21 @@ public class PlayerController : MonoBehaviour {
         playerAnimator.SetBool("dash", playerStatus.IsDash());
         
 	}
+
+    public void switchAIInput(bool power)
+    {
+        if (useInputAI == power)
+            return;
+        useInputAI = power;
+        if (useInputAI)
+        {
+            playerInput = GetComponent<PlayerInputAI>();
+        }
+        else
+        {
+            playerInput = GetComponent<PlayerInput>();
+        }
+    }
 
 
 
