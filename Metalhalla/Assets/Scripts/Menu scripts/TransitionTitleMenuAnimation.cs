@@ -18,7 +18,7 @@ public class TransitionTitleMenuAnimation : MonoBehaviour
         movieAudio = GetComponent<AudioSource>();
         movieAudio.clip = movie.audioClip;
         movie.Play();
-        movieAudio.Play();
+//        movieAudio.Play();
     }
 
     private void Update()

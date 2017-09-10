@@ -44,6 +44,8 @@ public class AudioManager : MonoBehaviour {
     private List<GameObject> fXNonDiegeticAudioSources;
     private List<GameObject> musicAudioSources;
 
+    private AudioSource musicChannel1;
+
     [System.Serializable]
     public class MusicTrack
     {
@@ -225,9 +227,13 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
-            // case 0: break; // Title
+            case 0:
+                musicChannel1 = PlayMusic(cinematicaInicio.audioClip);
+                break; // Title
             case 1: // Initial menu
             {
+                if (musicChannel1)
+                    FadeAudioSource(musicChannel1, FadeAudio.FadeType.FadeOut, 2.0f, 0.0f);
                 menuInicial.Init();
                 PlayMusic(menuInicial.audioClip);
 //                PlayMusic(introCutscene);
