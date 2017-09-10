@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour {
     public GameObject musicAudioSourcePrefab;
     private int numberOfFXDiegeticAudioSources = 5;
     private int numberOfFXNonDiegeticAudioSources = 5;
-    private int numberOfMusicAudioSources = 2;
+//    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
     public MusicTrack cinematicaInicio;
@@ -42,9 +42,10 @@ public class AudioManager : MonoBehaviour {
     private CameraManager cameraManager;
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
-    private List<GameObject> musicAudioSources;
+//    private List<GameObject> musicAudioSources;
 
     private AudioSource musicChannel1;
+    private AudioSource musicChannel2;
 
     [System.Serializable]
     public class MusicTrack
@@ -102,13 +103,23 @@ public class AudioManager : MonoBehaviour {
 
     void Awake()
     {
+        GameObject obj;
+
         if (instance == null)
         {
             instance = this;
 
+            // Create Sound FX pools of audio source objects
             fXDiegeticAudioSources = InitializeAudioSources(fXDiegeticAudioSourcePrefab, numberOfFXDiegeticAudioSources);
             fXNonDiegeticAudioSources = InitializeAudioSources(fXNonDiegeticAudioSourcePrefab, numberOfFXNonDiegeticAudioSources);
-            musicAudioSources = InitializeAudioSources(musicAudioSourcePrefab, numberOfMusicAudioSources);
+
+            // Create Music audio source objects
+            obj = (GameObject)Instantiate(musicAudioSourcePrefab);
+            musicChannel1 = obj.GetComponent<AudioSource>();
+            DontDestroyOnLoad(obj);
+            obj = (GameObject)Instantiate(musicAudioSourcePrefab);
+            musicChannel2 = obj.GetComponent<AudioSource>();
+            DontDestroyOnLoad(obj);
 
             cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
             if (cameraManagerGO)
@@ -149,19 +160,16 @@ public class AudioManager : MonoBehaviour {
 //        musicSource.Stop();
     }
 
-    public AudioSource PlayMusic(AudioClip clip, float loopStart = 0.0f, float loopEnd = 0.0f)
+    public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float loopStart = 0.0f, float loopEnd = 0.0f)
     {
-        GameObject obj = GetAudioSource(musicAudioSourcePrefab, ref musicAudioSources);
-        obj.SetActive(true);
-        AudioSource musicSource = obj.GetComponent<AudioSource>();
+//        obj.SetActive(true);
+//        AudioSource musicSource = obj.GetComponent<AudioSource>();
 
         musicSource.clip = clip;
         musicSource.Play();
 
-        StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
+ //       StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
         return musicSource;
-        //        musicSource.clip = clip;
-        //        musicSource.Play();
     }
 
     public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
@@ -228,14 +236,15 @@ public class AudioManager : MonoBehaviour {
         switch (scene.buildIndex)
         {
             case 0:
-                musicChannel1 = PlayMusic(cinematicaInicio.audioClip);
+                PlayMusic(cinematicaInicio.audioClip, musicChannel1);
                 break; // Title
             case 1: // Initial menu
             {
+                menuInicial.Init();
                 if (musicChannel1)
                     FadeAudioSource(musicChannel1, FadeAudio.FadeType.FadeOut, 2.0f, 0.0f);
-                menuInicial.Init();
-                PlayMusic(menuInicial.audioClip);
+                PlayMusic(menuInicial.audioClip, musicChannel2);
+                musicChannel2.loop = true;
 //                PlayMusic(introCutscene);
                 break;
             }
