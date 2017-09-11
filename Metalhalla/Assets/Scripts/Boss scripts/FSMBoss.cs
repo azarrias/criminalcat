@@ -205,7 +205,7 @@ public class FSMBoss : MonoBehaviour
         earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
         levitatingSkullsScript = levitatingSkulls.GetComponent<LevitatingSkullsBehaviour>();
 
-        bodyMesh = GameObject.Find("ModelContainer");       
+        bodyMesh = transform.Find("ModelContainer").gameObject;
     }
 
     void Start()
