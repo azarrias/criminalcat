@@ -109,6 +109,8 @@ public class PlayerStatus : MonoBehaviour
     [HideInInspector]
     public Vector3 activeRespawnPoint;
     private CameraFade cameraFade;
+    private bool changeSceneIfDead = false;
+    private string nextSceneIfDead;
 
     // -- State variables (using state pattern) -- //
     public static AttackState attack;
@@ -212,6 +214,8 @@ public class PlayerStatus : MonoBehaviour
         colliderSize = GetComponent<BoxCollider>().size;
 
         godMode = false;
+
+        changeSceneIfDead = false;
     }
 
     void Update()
@@ -247,20 +251,42 @@ public class PlayerStatus : MonoBehaviour
     // ---- RESPAWN functions ------------------------------------------------------------------------------------------
     public void ReSpawn()
     {
-        RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
-        if (facingRight == false)
-            Flip();
-        SetPlayerAtRespawnPoint();
-        SetMaxHealth();
-        stamina = staminaAtStart;
-        beer = beerAtStart;
-        SetState(PlayerStatus.idle);
+        if (changeSceneIfDead)
+        {
+            SceneLoader loader = GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>();
+            loader.GoToNextScene(nextSceneIfDead);
+        }
+        else
+        {
+            RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
+            if (facingRight == false)
+                Flip();
+            SetPlayerAtRespawnPoint();
+            SetMaxHealth();
+            stamina = staminaAtStart;
+            beer = beerAtStart;
+            SetState(PlayerStatus.idle);
 
-        // add hoc for level elements 
-        GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
-        if (movingDoor)
-            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+            // add hoc for level elements 
+            GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
+            if (movingDoor)
+                movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+        }
+    }
 
+    public bool SetRespawnPoint(Vector3 newRespawnPoint)
+    {
+        if (newRespawnPoint == activeRespawnPoint)
+            return false;
+
+        activeRespawnPoint = newRespawnPoint;
+        return true;
+    }
+
+    public void SetNewSceneOnDeath(string newSceneName)
+    {
+        nextSceneIfDead = newSceneName;
+        changeSceneIfDead = true;
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
@@ -631,14 +657,4 @@ public class PlayerStatus : MonoBehaviour
         hammerMesh.GetComponent<Renderer>().enabled = visible;
     }
 
-    // ---- RESPAWN MANAGEMENT functions ------------------------------------------------------------------------------------------------
-    public bool SetRespawnPoint(Vector3 newRespawnPoint)
-    {
-        if (newRespawnPoint == activeRespawnPoint)
-            return false;
-
-        activeRespawnPoint = newRespawnPoint;
-        return true;
-    }
-    
 }
