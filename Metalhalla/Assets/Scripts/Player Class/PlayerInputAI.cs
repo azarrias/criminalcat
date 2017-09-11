@@ -8,7 +8,8 @@ public class PlayerInputAI : PlayerInput
     {
         None,
         AfterBossDefeat,
-        MainMenuAnimation
+        MainMenuAnimation,
+        WalkRight
     };
 
     [System.Serializable]
@@ -50,6 +51,12 @@ public class PlayerInputAI : PlayerInput
                                                 new AIStep(AIAction.Jump, 1.0f) };
     public bool loopMainMenuAnimation = true;
 
+    [Header("MainMenuAnimation program parameters")]
+    [SerializeField]
+    private AIStep[] stepsWalkRightAI= { new AIStep(AIAction.Walk, 5.0f )};
+    public bool loopWalkRightAI= true;
+
+
     private AIStep[] _currentProgramSteps;
     private int _currentProgramStepIndex;
     private bool _currentProgramLoop;
@@ -62,17 +69,7 @@ public class PlayerInputAI : PlayerInput
     private void Start()
     {
         base.StartPlayerInput();    // substitute to base.Start() due to protection level and override not feasible
-        switch (program)
-        {
-            case AIProgram.None: break;
-            case AIProgram.AfterBossDefeat:
-                SetAIProgram(stepsAfterBossDefeat, loopAfterBossDefeat);
-                break;
-            case AIProgram.MainMenuAnimation:
-                SetAIProgram(stepsMainMenuAnimation, loopMainMenuAnimation);
-                break;
-        }
-
+        SetAIProgram( program );
     }
 
     public override void GetInput()
@@ -81,7 +78,7 @@ public class PlayerInputAI : PlayerInput
     }
 
 
-    private void SetAIProgram(AIStep[] steps, bool loop)
+    private void SetAIProgramConstraints(AIStep[] steps, bool loop)
     {
         _currentProgramSteps = steps;
         _currentProgramLoop = loop;
@@ -135,5 +132,22 @@ public class PlayerInputAI : PlayerInput
 
         }
 
+    }
+
+    public void SetAIProgram(AIProgram program)
+    {
+        switch (program)
+        {
+            case AIProgram.None: break;
+            case AIProgram.AfterBossDefeat:
+                SetAIProgramConstraints(stepsAfterBossDefeat, loopAfterBossDefeat);
+                break;
+            case AIProgram.MainMenuAnimation:
+                SetAIProgramConstraints(stepsMainMenuAnimation, loopMainMenuAnimation);
+                break;
+            case AIProgram.WalkRight:
+                SetAIProgramConstraints(stepsWalkRightAI, loopWalkRightAI);
+                break;
+        }
     }
 }
