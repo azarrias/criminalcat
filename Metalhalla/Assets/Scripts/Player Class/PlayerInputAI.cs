@@ -39,9 +39,9 @@ public class PlayerInputAI : PlayerInput
 
     [Header("AfterBossDefeat program parameters")]
     [SerializeField]
-    private AIStep[] stepsAfterBossDefeat = { new AIStep( AIAction.Idle, 0.5f ),
-                                                new AIStep(AIAction.Walk, 2.0f),
-                                                new AIStep(AIAction.Dash) };
+    private AIStep[] stepsAfterBossDefeat = {   new AIStep(AIAction.Idle, 0.2f),
+                                                new AIStep(AIAction.Walk, 5.0f)
+                                               };
     public bool loopAfterBossDefeat = false;
 
     [Header("MainMenuAnimation program parameters")]
