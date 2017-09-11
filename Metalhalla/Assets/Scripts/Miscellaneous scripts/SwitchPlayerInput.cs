@@ -6,11 +6,11 @@ public class SwitchPlayerInput : MonoBehaviour {
 
     public enum inputSwitch
     {
-        Player2AI,
-        AI2Player
+        PlayerToAI,
+        AIToPlayer
     };
 
-    public inputSwitch change = inputSwitch.Player2AI;
+    public inputSwitch change = inputSwitch.PlayerToAI;
     public PlayerInputAI.AIProgram program = PlayerInputAI.AIProgram.None;
 
     void Start()
@@ -22,7 +22,7 @@ public class SwitchPlayerInput : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            bool useAI = change == inputSwitch.Player2AI ? true : false;
+            bool useAI = change == inputSwitch.PlayerToAI ? true : false;
             PlayerController controller = collision.GetComponent<PlayerController>();
             if (useAI)
             {
