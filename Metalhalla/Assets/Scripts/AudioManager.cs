@@ -6,6 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour {
 
+    public enum State
+    {
+        TITLE_CINEMATIC,
+        INITIAL_MENU,
+        TUTORIAL,
+        WARMUP,
+        KOREAN_MODE,
+        HARDCORE_BATTLE,
+        LIFTABLE_PLATFORMS,
+        BOSS_CINEMATIC,
+        BOSS,
+        COMICAL_ENDING,
+        CREDITS
+    }
+
+    State currentState;
+    State previousState;
+
     public static AudioManager instance = null;
     public AudioMixer mixer;
 
@@ -18,17 +36,17 @@ public class AudioManager : MonoBehaviour {
 //    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
-    public MusicTrack cinematicaInicio;
-    public MusicTrack menuInicial;
-    public MusicTrack tutorial;
-    public MusicTrack[] warmUp;
-    public MusicTrack koreanMode;
-    public MusicTrack hardcoreBattle;
-    public MusicTrack liftablePlatforms;
-    public MusicTrack cinematicaBoss;
-    public MusicTrack boss;
-    public MusicTrack finalComico;
-    public MusicTrack creditos;
+    public AudioClip cinematicaInicio;
+    public MusicLoop menuInicial;
+    public AudioClip tutorial;
+    public AudioClip[] warmUp;
+    public AudioClip koreanMode;
+    public AudioClip hardcoreBattle;
+    public AudioClip liftablePlatforms;
+    public AudioClip cinematicaBoss;
+    public AudioClip boss;
+    public AudioClip finalComico;
+    public AudioClip creditos;
 
     [Header("Randomization")]
     [Tooltip("Pitch Offset (relative to the base pitch)")]
@@ -44,24 +62,29 @@ public class AudioManager : MonoBehaviour {
     private List<GameObject> fXNonDiegeticAudioSources;
 //    private List<GameObject> musicAudioSources;
 
-    private AudioSource musicChannel1;
-    private AudioSource musicChannel2;
+    public AudioSource musicChannel1;
+    public AudioSource musicChannel2;
 
     [System.Serializable]
-    public class MusicTrack
+    public class MusicLoop
     {
         public AudioClip audioClip;
+        public AudioClip audioLoop;
         public float MusicLoopPointStart, MusicLoopPointEnd;
-
-        //        public AudioSource audioSource;
+        public bool isLooping, isFinished;
+        public AudioSource musicAudioSource;
 
         float[] audioData;
         long position;
         int sampleLoopPointStart, sampleLoopPointEnd;
         int start;
 
-        public void Init()
+        public void Init(AudioSource audioSource)
         {
+            isLooping = true;
+            isFinished = false;
+            musicAudioSource = audioSource;
+
             double multiplier = MusicLoopPointStart / audioClip.length;
             sampleLoopPointStart = (int)(multiplier * audioClip.samples * audioClip.channels);
             multiplier = MusicLoopPointEnd / audioClip.length;
@@ -69,26 +92,41 @@ public class AudioManager : MonoBehaviour {
             audioData = new float[audioClip.samples * audioClip.channels];
 
             audioClip.GetData(audioData, 0);
-            audioClip = AudioClip.Create(audioClip.name + "_Loop", audioClip.samples, audioClip.channels, audioClip.frequency, true, OnAudioRead, OnAudioSetPos);
+            audioLoop = AudioClip.Create(audioClip.name + "_Loop", audioClip.samples, audioClip.channels, audioClip.frequency, true, OnAudioRead, OnAudioSetPos);
         }
 
         void OnAudioRead(float[] data)
         {
+            if (isFinished)
+            {
+                Debug.Log("shit has finished");
+                return;
+            }
+
             if (start < 64)
             {
                 start++;
                 position = 0;
                 return;
             }
+
             int count = 0;
             while (count < data.Length)
             {
                 data[count] = audioData[position];
 
-                position++;
-                count++;
+                if (position < audioData.Length - 1)
+                {
+                    position++;
+                    count++;
+                }
+                else if (!isLooping)
+                {
+                    isFinished = true;
+                    return;
+                }
 
-                if (position >= sampleLoopPointEnd)
+                if (position >= sampleLoopPointEnd && isLooping == true)
                 {
                     position = sampleLoopPointStart;
                 }
@@ -98,6 +136,15 @@ public class AudioManager : MonoBehaviour {
         void OnAudioSetPos(int newPos)
         {
 
+        }
+
+        public void Release()
+        {
+            musicAudioSource.loop = false;
+            musicAudioSource.clip = null;
+            AudioManager.instance.StopMusic(musicAudioSource);
+            audioLoop = null;
+            AudioClip.DestroyImmediate(audioLoop, false);
         }
     }
 
@@ -139,6 +186,12 @@ public class AudioManager : MonoBehaviour {
 
     }
 
+    void Update()
+    {
+        if (menuInicial.isFinished)
+            menuInicial.Release();
+    }
+
     GameObject GetAudioSource(GameObject audioSourcePrefab, ref List<GameObject> audioSourceList)
     {
         for (int i = 0; i < audioSourceList.Count; ++i)
@@ -155,9 +208,9 @@ public class AudioManager : MonoBehaviour {
         return obj;
     }
 
-    public void StopMusic()
+    public void StopMusic(AudioSource musicSource)
     {
-//        musicSource.Stop();
+        musicSource.Stop();
     }
 
     public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float loopStart = 0.0f, float loopEnd = 0.0f)
@@ -236,14 +289,14 @@ public class AudioManager : MonoBehaviour {
         switch (scene.buildIndex)
         {
             case 0:
-                PlayMusic(cinematicaInicio.audioClip, musicChannel1);
+                PlayMusic(cinematicaInicio, musicChannel1);
                 break; // Title
             case 1: // Initial menu
             {
-                menuInicial.Init();
+                menuInicial.Init(musicChannel2);
                 if (musicChannel1)
                     FadeAudioSource(musicChannel1, FadeAudio.FadeType.FadeOut, 2.0f, 0.0f);
-                PlayMusic(menuInicial.audioClip, musicChannel2);
+                PlayMusic(menuInicial.audioLoop, musicChannel2);
                 musicChannel2.loop = true;
 //                PlayMusic(introCutscene);
                 break;
@@ -251,20 +304,20 @@ public class AudioManager : MonoBehaviour {
             case 2: // Dungeon entrance
             {
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
-                StopMusic();
+//                StopMusic();
                 break;
             }
             case 3: // Dungeon
             {
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-                StopMusic();
+//                StopMusic();
 //                PlayMusic(playingLevel);
                 break;
             }
             case 4: // Boss scene
             {
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-                StopMusic(); 
+//                StopMusic(); 
                 break;
             }
             // case 5: break; // End

@@ -86,6 +86,9 @@ public class MenuManager : MonoBehaviour {
         {
             sps.ResetPlayerStatusValues();
         }
+
+        // Stop looping Initial Menu music
+        AudioManager.instance.menuInicial.isLooping = false;
     }
 
 	//Activate quit menu
