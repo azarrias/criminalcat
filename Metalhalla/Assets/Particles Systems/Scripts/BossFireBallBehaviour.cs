@@ -12,16 +12,47 @@ public class BossFireBallBehaviour : MonoBehaviour {
     private float deactivationTime = 2.0f;
     private float deactivationCounter = 0.0f;
     private bool deactivate = false;
-
+    private bool generatingBall = false;
+    private GameObject ballExplosion;
+    private GameObject ball;
+    private GameObject smoke;
+    private float timeToGenerate = 1.5f;
+    private FSMBoss fsmBoss;
+    private GameObject particlesManager;
     
+    void Awake()
+    {
+        ballExplosion = gameObject.transform.Find("BallExplosion").gameObject;
+        ball = gameObject.transform.Find("Ball").gameObject;
+        smoke = gameObject.transform.Find("Ball/Smoke").gameObject;
+        fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
+        timeToGenerate = fsmBoss.preBallAttackDuration;
+        particlesManager = GameObject.Find("ParticlesManager");    
+    }
+
 	// Use this for initialization
 	void Start() {
-
+        ball.transform.localScale = Vector3.zero;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (!deactivate)
+        if(generatingBall)
+        {
+            Vector3 scale = ball.transform.localScale;
+            scale.x += Time.deltaTime / timeToGenerate;
+            scale.y += Time.deltaTime / timeToGenerate;
+            scale.z += Time.deltaTime / timeToGenerate;
+            ball.transform.localScale = scale;
+
+            if (scale.x >= 1.0f)
+            {
+                generatingBall = false;
+                SetFacingRight(fsmBoss.facingRight);
+                smoke.SetActive(true);
+            }                       
+        }
+        else if (!generatingBall && !deactivate)
         {
             transform.Translate(direction * speed * Time.deltaTime);
 
@@ -30,11 +61,11 @@ public class BossFireBallBehaviour : MonoBehaviour {
             {
                 lifeTimeCounter = 0.0f;
                 deactivate = true;
-                gameObject.transform.Find("BallExplosion").gameObject.SetActive(true);
-                gameObject.transform.Find("Ball").gameObject.SetActive(false);
+                ballExplosion.SetActive(true);
+                ball.SetActive(false);
             }
         }
-        if (deactivate)
+        else if (deactivate)
             Deactivate();
 	}
 
@@ -46,8 +77,8 @@ public class BossFireBallBehaviour : MonoBehaviour {
             LayerMask.LayerToName(collision.gameObject.layer) == "shield")
         {
             collision.gameObject.SendMessage("ApplyDamage", ballDamage, SendMessageOptions.DontRequireReceiver);
-            gameObject.transform.Find("BallExplosion").gameObject.SetActive(true);
-            gameObject.transform.Find("Ball").gameObject.SetActive(false);
+            ballExplosion.SetActive(true);
+            ball.SetActive(false);
             gameObject.GetComponent<SphereCollider>().enabled = false;
             deactivate = true;
             lifeTimeCounter = 0.0f;  //reset lifetime
@@ -58,8 +89,8 @@ public class BossFireBallBehaviour : MonoBehaviour {
     {
         if (collider.gameObject.CompareTag("MovingDoor"))
         {
-            gameObject.transform.Find("BallExplosion").gameObject.SetActive(true);
-            gameObject.transform.Find("Ball").gameObject.SetActive(false);
+            ballExplosion.SetActive(true);
+            ball.SetActive(false);
             gameObject.GetComponent<SphereCollider>().enabled = false;
             deactivate = true;
             lifeTimeCounter = 0.0f;  //reset lifetime
@@ -86,14 +117,6 @@ public class BossFireBallBehaviour : MonoBehaviour {
         }
     }
 
-    public void SetFacingRight(Vector3 ballDirection)
-    {
-        Transform ball = gameObject.transform.Find("Ball").transform;
-        direction = ballDirection.normalized;
-        Quaternion rotation = Quaternion.LookRotation(ballDirection);
-        ball.localRotation = rotation;
-    }
-
     void Deactivate()
     {
         deactivationCounter += Time.deltaTime;
@@ -103,6 +126,23 @@ public class BossFireBallBehaviour : MonoBehaviour {
             deactivate = false;
             gameObject.SetActive(false);
             gameObject.GetComponent<SphereCollider>().enabled = true;
+            ball.transform.localScale = Vector3.zero;                   
         }
+    }
+
+    public void GenerateBall()
+    {
+        generatingBall = true;
+        smoke.SetActive(false);
+    }
+
+    public void SetBossAsParent()
+    {
+        transform.parent = fsmBoss.gameObject.transform;
+    }
+
+    public void SetPMAsParent()
+    {
+        transform.parent = particlesManager.transform;
     }
 }
