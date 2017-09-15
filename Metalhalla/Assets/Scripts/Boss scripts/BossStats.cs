@@ -22,22 +22,14 @@ public class BossStats : MonoBehaviour
     [Header("Sound Effects")]
     public AudioClip fxEnemyWasHit;
 
-    // Use this for initialization
-    void Start()
-    {
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ApplyDamageToBoss(int value)
     {
         //AudioManager.instance.PlayFx(fxEnemyWasHit);
         hitPoints -= value;
+    }
+
+    public float GetCurrentHealthRatio()
+    {
+        return (float)hitPoints / (float)maxHitPoints;
     }
 }
