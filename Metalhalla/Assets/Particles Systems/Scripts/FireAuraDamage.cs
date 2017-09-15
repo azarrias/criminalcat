@@ -6,7 +6,7 @@ public class FireAuraDamage : MonoBehaviour {
 
     [HideInInspector]
     public bool auraActive = false;
-    private bool playerInsideFireAura = true;
+    private bool playerInsideFireAura = false;
     private float waitCounter = 0.0f;
     public float waitTime = 0.5f;
     private bool applyAuraDamage = true;
@@ -26,7 +26,7 @@ public class FireAuraDamage : MonoBehaviour {
             if (playerInsideFireAura && applyAuraDamage)
             {
                 player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
-                applyAuraDamage = false;
+                applyAuraDamage = false;              
             }
 
             waitCounter += Time.deltaTime;
