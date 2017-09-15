@@ -94,9 +94,7 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
             scale.y += scaleSpeed * Time.deltaTime;
             scale.z += scaleSpeed * Time.deltaTime;
             skulls[i].transform.Find("SkullMesh").transform.localScale = scale;
-
-            //Detach skulls from boss
-            skulls[i].transform.parent = boss.transform.parent;
+           
             if (i == skulls.Length-1 && scale.z >= maxScale)
                 state = State.ASCENSION;
         }     

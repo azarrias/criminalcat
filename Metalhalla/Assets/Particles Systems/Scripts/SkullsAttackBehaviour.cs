@@ -72,9 +72,7 @@ public class SkullsAttackBehaviour : MonoBehaviour {
         if (scale.x == 0.0f)
         {           
             disipate = false;
-            gameObject.SetActive(false);
-            //Set boss as parent
-            gameObject.transform.parent = parentGO.transform;
+            gameObject.SetActive(false);           
         }
     }
 
