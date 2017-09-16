@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-public class AudioManager : MonoBehaviour {
+public class AudioManager : MonoBehaviour
+{
 
     public enum State
     {
@@ -33,14 +34,14 @@ public class AudioManager : MonoBehaviour {
     public GameObject musicAudioSourcePrefab;
     private int numberOfFXDiegeticAudioSources = 5;
     private int numberOfFXNonDiegeticAudioSources = 5;
-//    private int numberOfMusicAudioSources = 2;
+    //    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
     public AudioClip cinematicaInicio;
     public MusicLoop menuInicial;
-    public AudioClip tutorial;
+    public MusicLoop tutorial;
     public AudioClip[] warmUp;
-    public AudioClip koreanMode;
+    public MusicLoop koreanMode;
     public AudioClip hardcoreBattle;
     public AudioClip liftablePlatforms;
     public AudioClip cinematicaBoss;
@@ -60,7 +61,7 @@ public class AudioManager : MonoBehaviour {
     private CameraManager cameraManager;
     private List<GameObject> fXDiegeticAudioSources;
     private List<GameObject> fXNonDiegeticAudioSources;
-//    private List<GameObject> musicAudioSources;
+    //    private List<GameObject> musicAudioSources;
 
     public AudioSource musicChannel1;
     public AudioSource musicChannel2;
@@ -98,12 +99,9 @@ public class AudioManager : MonoBehaviour {
         void OnAudioRead(float[] data)
         {
             if (isFinished)
-            {
-                Debug.Log("shit has finished");
                 return;
-            }
 
-            if (start < 64)
+            if (start <= 16)
             {
                 start++;
                 position = 0;
@@ -182,7 +180,8 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
     }
 
@@ -215,13 +214,13 @@ public class AudioManager : MonoBehaviour {
 
     public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float loopStart = 0.0f, float loopEnd = 0.0f)
     {
-//        obj.SetActive(true);
-//        AudioSource musicSource = obj.GetComponent<AudioSource>();
+        //        obj.SetActive(true);
+        //        AudioSource musicSource = obj.GetComponent<AudioSource>();
 
         musicSource.clip = clip;
         musicSource.Play();
 
- //       StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
+        //       StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
         return musicSource;
     }
 
@@ -230,7 +229,7 @@ public class AudioManager : MonoBehaviour {
         // Play diegetic sound fx only if they are produced by the player
         // or if their source GO position is within player camera boundaries 
         GameObject obj;
-        if (sourceGO.tag.Equals("Player") || sourceGO.layer == LayerMask.NameToLayer("totem attack") 
+        if (sourceGO.tag.Equals("Player") || sourceGO.layer == LayerMask.NameToLayer("totem attack")
             || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
         {
             obj = GetAudioSource(fXDiegeticAudioSourcePrefab, ref fXDiegeticAudioSources);
@@ -262,7 +261,7 @@ public class AudioManager : MonoBehaviour {
     public void RandomizePlayFx(GameObject sourceGO, float basePitch = 1.0f, float baseVolume = 1.0f, params AudioClip[] clips)
     {
         int randomIndex = Random.Range(0, clips.Length);
-        float randomPitch = Random.Range(basePitch - basePitch * pitchRelativeOffset, 
+        float randomPitch = Random.Range(basePitch - basePitch * pitchRelativeOffset,
             basePitch + basePitch * pitchRelativeOffset);
         float randomVolume = Random.Range(baseVolume - 2 * baseVolume * volumeRelativeOffset, baseVolume);
         PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch, randomVolume);
@@ -279,7 +278,7 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-     {
+    {
         cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
         if (cameraManagerGO)
         {
@@ -288,39 +287,36 @@ public class AudioManager : MonoBehaviour {
 
         switch (scene.buildIndex)
         {
-            case 0:
+            case 0: // Title
                 PlayMusic(cinematicaInicio, musicChannel1);
-                break; // Title
+                break; 
             case 1: // Initial menu
-            {
-                menuInicial.Init(musicChannel2);
-                if (musicChannel1)
-                    FadeAudioSource(musicChannel1, FadeAudio.FadeType.FadeOut, 2.0f, 0.0f);
-                PlayMusic(menuInicial.audioLoop, musicChannel2);
-                musicChannel2.loop = true;
-//                PlayMusic(introCutscene);
-                break;
-            }
+                {
+                    menuInicial.Init(musicChannel2);
+                    PlayMusic(menuInicial.audioLoop, musicChannel2);
+                    musicChannel2.loop = true;
+                    break;
+                }
             case 2: // Dungeon entrance
-            {
-                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
-//                StopMusic();
-                break;
-            }
+                {
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
+                    //                StopMusic();
+                    break;
+                }
             case 3: // Dungeon
-            {
-                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-//                StopMusic();
-//                PlayMusic(playingLevel);
-                break;
-            }
+                {
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                    //                StopMusic();
+                    //                PlayMusic(playingLevel);
+                    break;
+                }
             case 4: // Boss scene
-            {
-                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-//                StopMusic(); 
-                break;
-            }
-            // case 5: break; // End
+                {
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                    //                StopMusic(); 
+                    break;
+                }
+                // case 5: break; // End
         }
 
     }
@@ -349,11 +345,11 @@ public class AudioManager : MonoBehaviour {
 
     IEnumerator FadeIn(float duration)
     {
-//        while(musicSource.volume < 1.0f)
- //       {
- //           musicSource.volume += Time.deltaTime / duration;
-            yield return null;
- //       }
+        //        while(musicSource.volume < 1.0f)
+        //       {
+        //           musicSource.volume += Time.deltaTime / duration;
+        yield return null;
+        //       }
     }
 
     IEnumerator ReleaseAudioSource(GameObject obj, float delayTime, float timeScale)
@@ -406,5 +402,16 @@ public class AudioManager : MonoBehaviour {
         }
 
         return audioSourceList;
+    }
+
+    public void Wait(float seconds, System.Action action)
+    {
+        StartCoroutine(_wait(seconds, action));
+    }
+
+    IEnumerator _wait(float time, System.Action callback)
+    {
+        yield return new WaitForSeconds(time);
+        callback();
     }
 }
