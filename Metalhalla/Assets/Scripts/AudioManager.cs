@@ -292,6 +292,9 @@ public class AudioManager : MonoBehaviour
                 break; 
             case 1: // Initial menu
                 {
+                    if (AudioManager.instance.musicChannel1)
+                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+
                     menuInicial.Init(musicChannel2);
                     PlayMusic(menuInicial.audioLoop, musicChannel2);
                     musicChannel2.loop = true;
@@ -299,21 +302,32 @@ public class AudioManager : MonoBehaviour
                 }
             case 2: // Dungeon entrance
                 {
+                    if (AudioManager.instance.musicChannel2)
+                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+
+                    tutorial.Init(musicChannel1);
+                    PlayMusic(tutorial.audioLoop, musicChannel1);
+                    musicChannel1.loop = true;
+
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
-                    //                StopMusic();
                     break;
                 }
             case 3: // Dungeon
                 {
+                    if (AudioManager.instance.musicChannel2)
+                        menuInicial.Release();
+
+                    if (AudioManager.instance.musicChannel1)
+                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+
+                    PlayMusic(warmUp[0], musicChannel2);
+
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-                    //                StopMusic();
-                    //                PlayMusic(playingLevel);
                     break;
                 }
             case 4: // Boss scene
                 {
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
-                    //                StopMusic(); 
                     break;
                 }
                 // case 5: break; // End
