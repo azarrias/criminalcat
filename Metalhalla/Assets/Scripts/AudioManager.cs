@@ -173,8 +173,6 @@ public class AudioManager : MonoBehaviour
                 cameraManager = cameraManagerGO.GetComponent<CameraManager>();
             }
 
-            player = GameObject.FindGameObjectWithTag("Player");
-
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -348,6 +346,8 @@ public class AudioManager : MonoBehaviour
                 }
             case 2: // Dungeon entrance
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
+
                     if (AudioManager.instance.musicChannel2)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
 
@@ -360,6 +360,7 @@ public class AudioManager : MonoBehaviour
                 }
             case 3: // Dungeon
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
                     currentState = State.WARMUP;
 
                     if (AudioManager.instance.musicChannel2)
@@ -373,6 +374,7 @@ public class AudioManager : MonoBehaviour
                 }
             case 4: // Boss scene
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
                     currentState = State.BOSS;
 
                     if (AudioManager.instance.musicChannel2)
