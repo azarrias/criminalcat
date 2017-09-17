@@ -173,8 +173,6 @@ public class AudioManager : MonoBehaviour
                 cameraManager = cameraManagerGO.GetComponent<CameraManager>();
             }
 
-            player = GameObject.FindGameObjectWithTag("Player");
-
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -217,6 +215,17 @@ public class AudioManager : MonoBehaviour
                         PlayMusic(liftablePlatforms, musicChannel2);
                         musicChannel2.loop = true;
                         currentState = State.LIFTABLE_PLATFORMS;
+                    }
+                    break;
+                }
+            case State.BOSS:
+                {
+                    if (player.transform.position.x > 62.0f)
+                    {
+                        if (AudioManager.instance.musicChannel1)
+                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+                        PlayMusic(finalComico, musicChannel2);
+                        currentState = State.COMICAL_ENDING;
                     }
                     break;
                 }
@@ -337,6 +346,8 @@ public class AudioManager : MonoBehaviour
                 }
             case 2: // Dungeon entrance
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
+
                     if (AudioManager.instance.musicChannel2)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
 
@@ -349,6 +360,7 @@ public class AudioManager : MonoBehaviour
                 }
             case 3: // Dungeon
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
                     currentState = State.WARMUP;
 
                     if (AudioManager.instance.musicChannel2)
@@ -362,6 +374,14 @@ public class AudioManager : MonoBehaviour
                 }
             case 4: // Boss scene
                 {
+                    player = GameObject.FindGameObjectWithTag("Player");
+                    currentState = State.BOSS;
+
+                    if (AudioManager.instance.musicChannel2)
+                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+
+                    PlayMusic(boss, musicChannel1);
+
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                     break;
                 }
