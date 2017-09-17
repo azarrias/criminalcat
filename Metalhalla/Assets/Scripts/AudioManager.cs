@@ -362,6 +362,11 @@ public class AudioManager : MonoBehaviour
                 }
             case 4: // Boss scene
                 {
+                    if (AudioManager.instance.musicChannel2)
+                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+
+                    PlayMusic(boss, musicChannel1);
+
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                     break;
                 }
