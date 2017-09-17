@@ -316,8 +316,10 @@ public class PlayerStatus : MonoBehaviour
         if (newState != attack)
             attackCollider.enabled = false;
         if (newState != defense)
+        {
             ShowShield(false);
-
+            ResetAnimatorLayerWeights();
+        }
         if (newState != drink)
             ShowHorn(false);
 

@@ -138,8 +138,6 @@ public class BossGUIManager : MonoBehaviour
         rightLimit *= guiRatio;
 
         float bottomLimit = bottomMargin;
-        Debug.Log("leftLimit: " + leftLimit + ", rightLimit: " + rightLimit);
-        Debug.Log("screen width: " + Screen.width + " canvas: " + canvas.pixelRect.width + " canvasScaler: " + canvasScaler.scaleFactor);
         float desiredWidth = rightLimit - leftLimit;
         float newScaleX = desiredWidth / HPBar.rect.width;
 
