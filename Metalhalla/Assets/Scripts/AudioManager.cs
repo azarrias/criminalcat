@@ -220,6 +220,17 @@ public class AudioManager : MonoBehaviour
                     }
                     break;
                 }
+            case State.BOSS:
+                {
+                    if (player.transform.position.x > 62.0f)
+                    {
+                        if (AudioManager.instance.musicChannel1)
+                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+                        PlayMusic(finalComico, musicChannel2);
+                        currentState = State.COMICAL_ENDING;
+                    }
+                    break;
+                }
         }
 
         if (menuInicial.isFinished)
@@ -362,6 +373,8 @@ public class AudioManager : MonoBehaviour
                 }
             case 4: // Boss scene
                 {
+                    currentState = State.BOSS;
+
                     if (AudioManager.instance.musicChannel2)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
 
