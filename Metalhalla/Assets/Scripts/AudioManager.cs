@@ -210,6 +210,14 @@ public class AudioManager : MonoBehaviour
                 }
             case State.KOREAN_MODE:
                 {
+                    if (player.transform.position.x > 135.0f)
+                    {
+                        if (AudioManager.instance.musicChannel1)
+                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                        PlayMusic(liftablePlatforms, musicChannel2);
+                        musicChannel2.loop = true;
+                        currentState = State.LIFTABLE_PLATFORMS;
+                    }
                     break;
                 }
         }
@@ -348,8 +356,6 @@ public class AudioManager : MonoBehaviour
 
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
-
-//                    PlayMusic(warmUp[0], musicChannel2);
 
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                     break;
