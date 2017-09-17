@@ -14,7 +14,7 @@ public class AudioManager : MonoBehaviour
         TUTORIAL,
         WARMUP,
         KOREAN_MODE,
-        HARDCORE_BATTLE,
+//        HARDCORE_BATTLE,
         LIFTABLE_PLATFORMS,
         BOSS_CINEMATIC,
         BOSS,
@@ -23,7 +23,6 @@ public class AudioManager : MonoBehaviour
     }
 
     State currentState;
-    State previousState;
 
     public static AudioManager instance = null;
     public AudioMixer mixer;
@@ -42,7 +41,7 @@ public class AudioManager : MonoBehaviour
     public MusicLoop tutorial;
     public AudioClip[] warmUp;
     public MusicLoop koreanMode;
-    public AudioClip hardcoreBattle;
+//    public AudioClip hardcoreBattle;
     public AudioClip liftablePlatforms;
     public AudioClip cinematicaBoss;
     public AudioClip boss;
@@ -65,6 +64,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource musicChannel1;
     public AudioSource musicChannel2;
+
+    private GameObject player;
 
     [System.Serializable]
     public class MusicLoop
@@ -172,6 +173,8 @@ public class AudioManager : MonoBehaviour
                 cameraManager = cameraManagerGO.GetComponent<CameraManager>();
             }
 
+            player = GameObject.FindGameObjectWithTag("Player");
+
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -187,6 +190,38 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
+        switch(currentState)
+        {
+            case State.WARMUP:
+                {
+                    if (!musicChannel2.isPlaying)
+                        PlayMusic(warmUp[Random.Range(0, warmUp.Length)], musicChannel2);
+
+                    if (player.transform.position.x > 80.0f)
+                    {
+                        koreanMode.Init(musicChannel1);
+                        if (AudioManager.instance.musicChannel2)
+                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                        PlayMusic(koreanMode.audioLoop, musicChannel1);
+                        currentState = State.KOREAN_MODE;
+                    }
+
+                    break;
+                }
+            case State.KOREAN_MODE:
+                {
+                    if (player.transform.position.x > 135.0f)
+                    {
+                        if (AudioManager.instance.musicChannel1)
+                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                        PlayMusic(liftablePlatforms, musicChannel2);
+                        musicChannel2.loop = true;
+                        currentState = State.LIFTABLE_PLATFORMS;
+                    }
+                    break;
+                }
+        }
+
         if (menuInicial.isFinished)
             menuInicial.Release();
     }
@@ -314,13 +349,13 @@ public class AudioManager : MonoBehaviour
                 }
             case 3: // Dungeon
                 {
+                    currentState = State.WARMUP;
+
                     if (AudioManager.instance.musicChannel2)
                         menuInicial.Release();
 
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
-
-                    PlayMusic(warmUp[0], musicChannel2);
 
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
                     break;
