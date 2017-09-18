@@ -34,7 +34,7 @@ public class EarthAuraDamage : MonoBehaviour {
                 if (playerInsideEarthAura && applyAuraDamage)
                 {
                     player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
-                    Debug.Log("GO Aura damage: " + gameObject.name);
+                    Debug.Log("Aura damage");
                     applyAuraDamage = false;
                 }
 
@@ -54,7 +54,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = true;
-            //Debug.Log("Player inside earth aura " + gameObject.name);
+            Debug.Log("IN AURA");
 
             timeNoDamageCounter = 0.0f;
         }
@@ -65,7 +65,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = false;
-            //Debug.Log("Player outside earth aura " + gameObject.name);
+            Debug.Log("OUT AURA");
         }
     }
 }

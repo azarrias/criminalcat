@@ -26,8 +26,8 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
     private ParticleSystem middleDustPS;
     private ParticleSystem rightDust1PS;
     private ParticleSystem rightDust2PS;
-    
 
+    private bool deactivateDust = false;
 
     // Use this for initialization
     void Start () {
@@ -70,15 +70,48 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
             Debug.Log("Error: safeAreaLeftScript not found");
 
         leftDust1PS = transform.parent.FindChild("LeftDust1").gameObject.GetComponent<ParticleSystem>();
+        leftDust1PS.gameObject.SetActive(false);
+
         leftDust2PS = transform.parent.FindChild("LeftDust2").gameObject.GetComponent<ParticleSystem>();
+        leftDust2PS.gameObject.SetActive(false);
+
         middleDustPS = transform.parent.FindChild("MiddleDust").gameObject.GetComponent<ParticleSystem>();
+        middleDustPS.gameObject.SetActive(false);
+
         rightDust1PS = transform.parent.FindChild("RightDust1").gameObject.GetComponent<ParticleSystem>();
+        rightDust1PS.gameObject.SetActive(false);
+
         rightDust2PS = transform.parent.FindChild("RightDust2").gameObject.GetComponent<ParticleSystem>();
+        rightDust2PS.gameObject.SetActive(false);
+
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(deactivateDust)
+        {
+            if (leftDust1PS.isStopped)          
+                leftDust1PS.gameObject.SetActive(false);
+           
+            if(leftDust2PS.isStopped)
+                leftDust2PS.gameObject.SetActive(false);
+
+            if (middleDustPS.isStopped)
+                middleDustPS.gameObject.SetActive(false);
+
+            if (rightDust1PS.isStopped)
+                rightDust1PS.gameObject.SetActive(false);
+
+            if (rightDust2PS.isStopped)
+                rightDust2PS.gameObject.SetActive(false);
+
+            if(leftDust1PS.isStopped && leftDust2PS.isStopped &&
+                middleDustPS.isStopped && rightDust1PS.isStopped &&
+                rightDust2PS.isStopped)
+            {
+                deactivateDust = false;
+            }
+        }
 	}
 
     public void ShowIceSpikes()
@@ -91,14 +124,16 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         spikesAnimator.SetBool("HideIceSpikes", true);
         if (spikesAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
+            deactivateDust = true;
+
             leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
-            leftDust1PS.Stop();
+            leftDust1PS.Stop();          
 
             leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
-            leftDust2PS.Stop();
+            leftDust2PS.Stop();           
 
             middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
-            middleDustPS.Stop();
+            middleDustPS.Stop();            
 
             rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
             rightDust1PS.Stop();
@@ -114,7 +149,7 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         spikesAnimator.SetBool("ShowIceSpikes", false);
         spikesAnimator.SetBool("HideIceSpikes", false);
         EnableLeftSpikes();
-        EnableRightSpikes();       
+        EnableRightSpikes();
         //leftSphere.GetComponent<Renderer>().material.color = Color.grey;
         //rightSphere.GetComponent<Renderer>().material.color = Color.grey;
 
@@ -158,17 +193,22 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
 
         if (leftSafe)
         {
+            leftDust2PS.gameObject.SetActive(true);
             leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
 
+            leftDust1PS.gameObject.SetActive(true);
             leftDust1PS.Play();
             leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            middleDustPS.gameObject.SetActive(true);
             middleDustPS.Play();
             middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            rightDust1PS.gameObject.SetActive(true);
             rightDust1PS.Play();
             rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            rightDust2PS.gameObject.SetActive(true);
             rightDust2PS.Play();
             rightDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
@@ -177,17 +217,22 @@ public class IceSpikesBehaviour3D : MonoBehaviour {
         }
         if (rightSafe)
         {
+            rightDust2PS.gameObject.SetActive(true);
             rightDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = false;
 
+            rightDust1PS.gameObject.SetActive(true);
             rightDust1PS.Play();
             rightDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            middleDustPS.gameObject.SetActive(true);
             middleDustPS.Play();
             middleDustPS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            leftDust1PS.gameObject.SetActive(true);
             leftDust1PS.Play();
             leftDust1PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
+            leftDust2PS.gameObject.SetActive(true);
             leftDust2PS.Play();
             leftDust2PS.gameObject.GetComponent<EarthAuraDamage>().auraActive = true;
 
