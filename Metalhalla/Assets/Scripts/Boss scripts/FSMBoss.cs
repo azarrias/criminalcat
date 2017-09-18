@@ -109,6 +109,8 @@ public class FSMBoss : MonoBehaviour
     public AudioClip iceSpikesAttack;
     public AudioClip fireballAura;
     private AudioSource venomAuraSkullAttackSource;
+    private AudioSource venomAuraIceSpikesSource;
+    private AudioSource fireballAuraSource;
 
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
@@ -804,6 +806,8 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             postMeleeAttackFinished = true;
+            // TO DO - It seems that this may not execute if the boss is stunned by the tornado while 
+            // preparing the skull attack
             if (venomAuraSkullAttackSource)
             {
                 venomAuraSkullAttackSource.loop = false;
@@ -841,7 +845,9 @@ public class FSMBoss : MonoBehaviour
             Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
             GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", ballSpawnPosition, facingRight);
             fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
-            fireBall.GetComponent<BossFireBallBehaviour>().GenerateBall();           
+            fireBall.GetComponent<BossFireBallBehaviour>().GenerateBall();
+
+            fireballAuraSource = AudioManager.instance.PlayDiegeticFx(gameObject, fireballAura, true);
         }   
             preBallAttackFinished = true;
         
@@ -887,7 +893,16 @@ public class FSMBoss : MonoBehaviour
         {
             postBallAttackFinished = true;
             ballAttackIndicatorPS.Stop();
-            fireAuraPS.Stop();            
+            fireAuraPS.Stop();
+
+            if (fireballAuraSource)
+            {
+                // TO DO - Fix this fade out, it seems that this piece of code 
+                // executes several times after the fire ball attack
+                fireballAuraSource.loop = false;
+                AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                Debug.Log("post ball attack");
+            }
         }
 
         //Set the boss looking at the player
@@ -921,6 +936,8 @@ public class FSMBoss : MonoBehaviour
 
             if (iceSpikesScript3D != null)
                 iceSpikesScript3D.SelectIceSafe();
+
+            venomAuraIceSpikesSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraIceSpikes, true);
         }
         else
         {
@@ -946,6 +963,8 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
+
+            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, true);
 
             //Sacar los pinchos y dejarlos durante un tiempo
             if (iceSpikesScript != null)
@@ -980,6 +999,12 @@ public class FSMBoss : MonoBehaviour
              
             if(iceSpikesScript3D != null)
                 iceSpikesScript3D.HideIceSpikes();
+
+            if (venomAuraIceSpikesSource)
+            {
+                venomAuraIceSpikesSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraIceSpikesSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
         }
         else
         {
