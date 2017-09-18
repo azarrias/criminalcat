@@ -47,7 +47,10 @@ public class SkullsAttackBehaviour : MonoBehaviour {
         {
             dust.Play();
             if (!hasHitShield)
+            {
                 collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+                Debug.Log("skull damage");
+            }
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
         }

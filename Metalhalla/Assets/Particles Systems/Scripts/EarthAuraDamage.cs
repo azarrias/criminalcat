@@ -54,7 +54,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = true;
-            Debug.Log("IN AURA");
+            //Debug.Log("IN AURA");
 
             timeNoDamageCounter = 0.0f;
         }
@@ -65,7 +65,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = false;
-            Debug.Log("OUT AURA");
+            //Debug.Log("OUT AURA");
         }
     }
 }

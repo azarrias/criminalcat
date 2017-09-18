@@ -778,12 +778,6 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);          
         }
                         
-        if (playerHit)
-        {
-            thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
-            playerHit = false;
-        }
-
         if(bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             meleeAttackFinished = true;
