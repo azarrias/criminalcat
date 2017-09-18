@@ -103,6 +103,12 @@ public class FSMBoss : MonoBehaviour
     public float damagedDuration = 0.0f;
     private float damagedCounter = 0.0f;
 
+    [Header("Sound FXs")]
+    public AudioClip venomAuraSkullAttack;
+    public AudioClip venomAuraIceSpikes;
+    public AudioClip iceSpikesAttack;
+    public AudioClip fireballAura;
+
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
     IceSpikesBehaviour3D iceSpikesScript3D = null;
