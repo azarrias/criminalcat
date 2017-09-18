@@ -268,7 +268,7 @@ public class AudioManager : MonoBehaviour
         return musicSource;
     }
 
-    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
+    public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, bool loop = false, float pitch = 1.0f, float volume = 1.0f)
     {
         // Play diegetic sound fx only if they are produced by the player
         // or if their source GO position is within player camera boundaries 
@@ -277,18 +277,18 @@ public class AudioManager : MonoBehaviour
             || cameraManager.Is3DPositionOnScreen(sourceGO.transform.position))
         {
             obj = GetAudioSource(fXDiegeticAudioSourcePrefab, ref fXDiegeticAudioSources);
-            return PlayFx(obj, clip, pitch, volume);
+            return PlayFx(obj, clip, loop, pitch, volume);
         }
         else return null;
     }
 
-    public AudioSource PlayNonDiegeticFx(AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
+    public AudioSource PlayNonDiegeticFx(AudioClip clip, bool loop = false, float pitch = 1.0f, float volume = 1.0f)
     {
         GameObject obj = GetAudioSource(fXNonDiegeticAudioSourcePrefab, ref fXNonDiegeticAudioSources);
-        return PlayFx(obj, clip, pitch, volume);
+        return PlayFx(obj, clip, loop, pitch, volume);
     }
 
-    public AudioSource PlayFx(GameObject obj, AudioClip clip, float pitch = 1.0f, float volume = 1.0f)
+    public AudioSource PlayFx(GameObject obj, AudioClip clip, bool loop = false, float pitch = 1.0f, float volume = 1.0f)
     {
         obj.SetActive(true);
         AudioSource fxSource = obj.GetComponent<AudioSource>();
@@ -296,6 +296,9 @@ public class AudioManager : MonoBehaviour
         fxSource.clip = clip;
         fxSource.pitch = pitch;
         fxSource.volume = volume;
+        if (loop)
+            fxSource.loop = true;
+
         fxSource.Play();
         StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
 
@@ -308,7 +311,7 @@ public class AudioManager : MonoBehaviour
         float randomPitch = Random.Range(basePitch - basePitch * pitchRelativeOffset,
             basePitch + basePitch * pitchRelativeOffset);
         float randomVolume = Random.Range(baseVolume - 2 * baseVolume * volumeRelativeOffset, baseVolume);
-        PlayDiegeticFx(sourceGO, clips[randomIndex], randomPitch, randomVolume);
+        PlayDiegeticFx(sourceGO, clips[randomIndex], false, randomPitch, randomVolume);
     }
 
     void OnEnable()

@@ -108,6 +108,7 @@ public class FSMBoss : MonoBehaviour
     public AudioClip venomAuraIceSpikes;
     public AudioClip iceSpikesAttack;
     public AudioClip fireballAura;
+    private AudioSource venomAuraSkullAttackSource;
 
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
@@ -753,6 +754,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             
             earthAuraPS.Play();
+            venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, true);
             earthAuraDamageScript.auraActive = true;
             levitatingSkullsScript.StartSkullsAttack();        
         }
@@ -802,6 +804,11 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             postMeleeAttackFinished = true;
+            if (venomAuraSkullAttackSource)
+            {
+                venomAuraSkullAttackSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
             earthAuraPS.Stop();
             earthAuraDamageScript.auraActive = false;
         }
