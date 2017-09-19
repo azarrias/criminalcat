@@ -15,16 +15,17 @@ public class SkullsAttackBehaviour : MonoBehaviour {
     private GameObject skullMesh;
 
     [HideInInspector]
-    public GameObject parentGO; //boss
+    public GameObject bossManager3D; 
 
     void Awake()
     {
         skullMesh = transform.Find("SkullMesh").gameObject;      
         dust = GetComponent<ParticleSystem>();
+        bossManager3D = GameObject.Find("BossManager3D");
     }
 
 	void Update () {
-        if (parentGO.activeSelf == false) //boss is dead
+        if (bossManager3D.activeSelf == false) //boss is dead
         {           
             skullMesh.GetComponent<SphereCollider>().enabled = false;               
         }

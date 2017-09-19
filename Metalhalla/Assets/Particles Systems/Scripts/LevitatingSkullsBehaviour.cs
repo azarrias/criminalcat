@@ -28,19 +28,14 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
     public float scaleSpeed = 1.0f;
     public float maxScale = 1.0f;
     
-    private GameObject boss;
-
     void Awake()
-    {
-        boss = GameObject.FindGameObjectWithTag("Boss");
-
+    {        
         skulls = new GameObject[4];
         
         for (int i = 0; i < skulls.Length; i++)
         {
             skulls[i] = Instantiate(skullPrefab, Vector3.zero, Quaternion.identity);
-            skulls[i].transform.Find("SkullMesh").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
-            skulls[i].GetComponent<SkullsAttackBehaviour>().parentGO = boss;
+            skulls[i].transform.Find("SkullMesh").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);           
             skulls[i].SetActive(false);
         }
                  
