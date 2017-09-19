@@ -39,6 +39,10 @@ public class FSMBoss : MonoBehaviour
     private FireAuraDamage fireAuraDamageScript = null;
     private LevitatingSkullsBehaviour levitatingSkullsScript = null;
     private EarthAuraDamage earthAuraDamageScript = null;
+    private Vector3 startPos;
+    private bool restartPos = false;
+    private float restartPosTime = 3.0f;
+    private float restartPosCount = 0.0f;
 
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
@@ -221,6 +225,7 @@ public class FSMBoss : MonoBehaviour
     void Start()
     {       
         castingArea.transform.position = spikesReturnSpot.transform.position;
+        startPos = transform.position;
     }
 
 
@@ -260,6 +265,7 @@ public class FSMBoss : MonoBehaviour
                         chaseCounter = 0.0f;
                         currState = State.PATROL;
                         playerInSight = false;
+                        restartPos = true;
                         break;
                     }
                 }
@@ -700,15 +706,17 @@ public class FSMBoss : MonoBehaviour
 
                 prevState = State.PATROL;
             }
-            // -------------------------- Boss doesnt need to move in patrol
-            //Vector3 newPos = gameObject.transform.position;
-
-            //if (facingRight == true)
-            //    newPos.x += bossStats.normalSpeed * Time.deltaTime;
-            //else
-            //    newPos.x -= bossStats.normalSpeed * Time.deltaTime;
-
-            //gameObject.transform.position = newPos;
+            
+            if(restartPos)
+            {
+                restartPosCount += Time.deltaTime;
+                if (restartPosCount >= restartPosTime)
+                {
+                    restartPosCount = 0.0f;
+                    restartPos = false;
+                    transform.position = startPos;                   
+                }
+            }
         }       
     }
 
