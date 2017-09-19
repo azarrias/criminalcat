@@ -964,7 +964,7 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
 
-            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, true);
+            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, false);
 
             //Sacar los pinchos y dejarlos durante un tiempo
             if (iceSpikesScript != null)
