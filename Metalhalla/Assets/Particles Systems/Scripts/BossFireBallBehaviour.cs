@@ -19,7 +19,10 @@ public class BossFireBallBehaviour : MonoBehaviour {
     private float timeToGenerate = 1.5f;
     private FSMBoss fsmBoss;
     private GameObject particlesManager;
-    
+
+    [Header("Sound FXs")]
+    public AudioClip fireBall;
+
     void Awake()
     {
         ballExplosion = gameObject.transform.Find("BallExplosion").gameObject;
@@ -50,6 +53,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
                 generatingBall = false;
                 SetFacingRight(fsmBoss.facingRight);
                 smoke.SetActive(true);
+                AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
             }                       
         }
         else if (!generatingBall && !deactivate)
