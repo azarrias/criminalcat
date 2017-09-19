@@ -806,7 +806,7 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             postMeleeAttackFinished = true;
-            // TO DO - It seems that this may not execute if the boss is stunned by the tornado while 
+            
             // preparing the skull attack
             if (venomAuraSkullAttackSource)
             {
@@ -1064,6 +1064,11 @@ public class FSMBoss : MonoBehaviour
             fireAuraPS.Stop();         
             earthAuraDamageScript.auraActive = false;
             earthAuraPS.Stop();
+            if (venomAuraSkullAttackSource)
+            {
+                venomAuraSkullAttackSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
         }
     }
 
