@@ -18,13 +18,19 @@ public class BossGUIManager : MonoBehaviour
     private RectTransform Label;
 
     [Tooltip("HP animation time")]
-    public float hpAnimationTime = 0.1f;
+    public float hpAnimationTime = 0.3f;
     private float hpBarAnimationTime;
     private float hpBackgroundAnimationTime;
 
     [Header("Layout parameters")]
-    public float horizontalMargin = 20.0f;
+    public float horizontalMargin = 50.0f;
     public float bottomMargin = 100.0f;
+
+    [Header("Bar appearance animation parameters")]
+    public float appearanceDuration = 2.0f;
+    bool animateIntoScene = false;
+    bool animateOutOfScene = false;
+    float animationElapsedTime;
 
     // GUI HP animation when winning or losing HP
     private float healthRatioCurrentPlayer = 1.0f;
@@ -45,8 +51,6 @@ public class BossGUIManager : MonoBehaviour
 
         // set the correct layout
         InitBarLayout();
-
-        healthRatioTarget = 0;  // for animation
     }
 
     private void Start()
@@ -58,14 +62,34 @@ public class BossGUIManager : MonoBehaviour
             Debug.Log("Error - HP greyed bar not set");
 
         maxHP = bossStats.maxHitPoints;
+        gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        SetHealth(bossStats.GetCurrentHealthRatio());
+        if (animateIntoScene)
+        {
+            animationElapsedTime += Time.deltaTime;
+            AnimateBarIntoScene(animationElapsedTime / appearanceDuration);
+            if (animationElapsedTime >= appearanceDuration)
+                animateIntoScene = false;
+        }
+        else if (animateOutOfScene)
+        {
+            animationElapsedTime += Time.deltaTime;
+            AnimateBarOutOfScene(animationElapsedTime / appearanceDuration);
+            if (animationElapsedTime >= appearanceDuration)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            SetHealth(bossStats.GetCurrentHealthRatio());
 
-        UpdateHPbar();
-        UpdateHPBackground();
+            UpdateHPbar();
+            UpdateHPBackground();
+        }
     }
 
     void SetHealth(float healthRatio)
@@ -112,6 +136,9 @@ public class BossGUIManager : MonoBehaviour
         healthRatioCurrentGUI = healthRatioOrigin * lambda + healthRatioTarget * (1 - lambda);
 
         HPBackground.localScale = new Vector3(healthRatioCurrentGUI * _healthRatioMaxScale, HPBackground.localScale.y, 1);
+
+        if (healthRatioCurrentGUI <= 0.0f)
+            StartAnimationOutOfScene();
     }
 
     private void SetHealthRatioPositions()
@@ -151,5 +178,44 @@ public class BossGUIManager : MonoBehaviour
         Label.anchoredPosition = new Vector2(leftLimit, bottomLimit + HPBar.rect.height *0.7f);
 
         _healthRatioMaxScale = newScaleX;
+    }
+
+    private void AnimateBarIntoScene( float progress )
+    {
+        float backgroundSpeedRatio = 2.5f;
+        if (progress <= 1)
+        {
+            HPBar.localScale = new Vector3(progress * _healthRatioMaxScale, HPBar.localScale.y, 1);
+            HPBackground.localScale = new Vector3(progress * _healthRatioMaxScale, HPBackground.localScale.y, 1);
+        }
+        else
+        {
+            HPBar.localScale = new Vector3(_healthRatioMaxScale, HPBar.localScale.y, 1);
+            HPBackground.localScale = new Vector3(_healthRatioMaxScale, HPBackground.localScale.y, 1);
+        }
+
+        if (progress <= 1/backgroundSpeedRatio)
+            Background.localScale = new Vector3(progress * _healthRatioMaxScale * backgroundSpeedRatio, Background.localScale.y, 1);
+        else
+            Background.localScale = new Vector3( _healthRatioMaxScale , Background.localScale.y, 1);
+
+    }
+
+    private void AnimateBarOutOfScene( float progress )
+    {
+        // HPBar and HPBackground scales should be 0 already -> boss is dead
+        Background.localScale = new Vector3( (1 - progress )* _healthRatioMaxScale, Background.localScale.y, 1);
+    }
+
+    public void StartAnimationIntoScene()
+    { 
+       animateIntoScene = true;
+       animationElapsedTime = 0.0f;
+    }
+
+    public void StartAnimationOutOfScene()
+    {
+        animateOutOfScene = true;
+        animationElapsedTime = 0.0f;
     }
 }

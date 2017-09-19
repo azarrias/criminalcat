@@ -271,6 +271,10 @@ public class PlayerStatus : MonoBehaviour
             GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
             if (movingDoor)
                 movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+
+            GameObject bossGUI = GameObject.Find("BossGUI");
+            if (bossGUI)
+                bossGUI.SetActive(false);
         }
     }
 
