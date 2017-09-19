@@ -75,11 +75,6 @@ public class SightRange : MonoBehaviour {
             //Collider starting size
             sightRange.size = new Vector3(24.0f, 7.0f, 5.0f);
             fsmBoss.playerInSight = false;
-        }
-
-        if (collider.CompareTag("Boss"))
-        {
-            fsmBoss.Flip();
-        }
+        }       
     }  
 }

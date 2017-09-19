@@ -219,9 +219,7 @@ public class FSMBoss : MonoBehaviour
     }
 
     void Start()
-    {
-        spikesCastingSpot.transform.position = gameObject.transform.position + Vector3.forward * spikesAttackBossDepth;
-        spikesReturnSpot.transform.position = gameObject.transform.position;
+    {       
         castingArea.transform.position = spikesReturnSpot.transform.position;
     }
 
@@ -1074,7 +1072,7 @@ public class FSMBoss : MonoBehaviour
     {
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
-
+        
         //Keep levitating skulls rotation
         gameObject.transform.Find("LevitatingSkulls").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
     }
