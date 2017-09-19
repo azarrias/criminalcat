@@ -150,6 +150,7 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
         state = State.MATERIALIZATION;
         for (int i = 0; i < skulls.Length; i++)
         {
+            skulls[i].transform.Find("SkullMesh").transform.localScale = Vector3.zero;
             skulls[i].transform.Find("SkullMesh").GetComponent<SphereCollider>().enabled = false;
             skulls[i].SetActive(true);
             skulls[i].transform.position = spawnPoints[i].transform.position;
