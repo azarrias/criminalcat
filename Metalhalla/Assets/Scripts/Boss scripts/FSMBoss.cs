@@ -891,18 +891,15 @@ public class FSMBoss : MonoBehaviour
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            postBallAttackFinished = true;
-            ballAttackIndicatorPS.Stop();
-            fireAuraPS.Stop();
-
-            if (fireballAuraSource)
-            {
-                // TO DO - Fix this fade out, it seems that this piece of code 
-                // executes several times after the fire ball attack
+            if (fireballAuraSource && !postBallAttackFinished)
+            {               
                 fireballAuraSource.loop = false;
                 AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
                 Debug.Log("post ball attack");
             }
+            postBallAttackFinished = true;
+            ballAttackIndicatorPS.Stop();
+            fireAuraPS.Stop();         
         }
 
         //Set the boss looking at the player
