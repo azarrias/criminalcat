@@ -292,8 +292,20 @@ public class FSMDarkElf : MonoBehaviour
     {
         if (currentState != State.STUNNED)
         {
+            animator.SetLayerWeight(1, 1.0f);
             Debug.Log(name.ToString() + ": I've been hit");
             ChangeState(State.BEING_HIT);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            // camera shake when starting being hit state
+            camFollow.StartShake();
+            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
+            //blood.transform.parent = transform;
+            blood.transform.SetParent(transform);
+        }
+        else
+        {
+            animator.SetLayerWeight(1, 1.0f);
+            animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
