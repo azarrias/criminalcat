@@ -13,7 +13,7 @@ public class CloseOpenDoor : MonoBehaviour {
 
     [Header("Sound FXs")]
     public AudioClip doorSound;
-    private AudioSource doorSoundSource;
+    public AudioSource doorSoundSource;
 
     void Awake()
     {
@@ -38,7 +38,11 @@ public class CloseOpenDoor : MonoBehaviour {
                 OpenDoorSlowly();
 
             if (movingDoor.transform.localPosition.y >= localInitialPosition.y)
+            {
                 openExitDoor = false;
+                if (doorSoundSource.isPlaying)
+                    AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+            }
         }
 	}
 
