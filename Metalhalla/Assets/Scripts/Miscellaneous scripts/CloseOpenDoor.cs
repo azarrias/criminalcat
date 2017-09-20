@@ -11,6 +11,10 @@ public class CloseOpenDoor : MonoBehaviour {
     public float speed = 8.0f;
     public bool openExitDoor = false; //boss has died, door opens again
 
+    [Header("Sound FXs")]
+    public AudioClip doorSound;
+    public AudioSource doorSoundSource;
+
     void Awake()
     {
         movingDoor = gameObject;
@@ -34,7 +38,11 @@ public class CloseOpenDoor : MonoBehaviour {
                 OpenDoorSlowly();
 
             if (movingDoor.transform.localPosition.y >= localInitialPosition.y)
+            {
                 openExitDoor = false;
+                if (doorSoundSource.isPlaying)
+                    AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+            }
         }
 	}
 
@@ -59,12 +67,16 @@ public class CloseOpenDoor : MonoBehaviour {
     void OnTriggerEnter(Collider collider)
     {
         if (collider.gameObject.name == "BossFightAreaFloor" || LayerMask.LayerToName(collider.gameObject.layer) == "ground")
+        {
             closed = true;
+            AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+        }
     }
 
     public void PlayerInside()
     {
         playerInside = true;
+        doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, doorSound, true);
     }
 
     public void PlayerOutside()

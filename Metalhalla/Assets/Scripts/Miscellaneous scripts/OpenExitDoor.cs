@@ -5,10 +5,12 @@ using UnityEngine;
 public class OpenExitDoor : MonoBehaviour {
 
     public GameObject exitDoor;
+    private CloseOpenDoor closeOpenDoor;
 
     void Awake()
     {
         exitDoor = GameObject.Find("MovingDoorExit");
+        closeOpenDoor = exitDoor.GetComponent<CloseOpenDoor>();
     }
 
    // Use this for initialization
@@ -23,6 +25,7 @@ public class OpenExitDoor : MonoBehaviour {
 
     public void OpenDoor()
     {
-        exitDoor.GetComponent<CloseOpenDoor>().openExitDoor = true;
+        closeOpenDoor.openExitDoor = true;
+        closeOpenDoor.doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, closeOpenDoor.doorSound, true);
     }
 }
