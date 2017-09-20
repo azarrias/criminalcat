@@ -651,6 +651,7 @@ public class FSMBoss : MonoBehaviour
     private void Damaged()
     {
         bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
+        ParticlesManager.SpawnParticle("blood", transform.position, facingRight); //TODO: set position at the right place
         damaged = false;
     }
 
