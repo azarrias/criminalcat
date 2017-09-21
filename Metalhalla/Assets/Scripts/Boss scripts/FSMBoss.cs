@@ -343,6 +343,11 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                   
                     currState = State.DEAD;
+                    if (venomAuraSkullAttackSource)
+                    {
+                        venomAuraSkullAttackSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+                    }
                     break;                    
                 }
                 PreMeleeAttack();
@@ -373,6 +378,11 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                 
                     currState = State.DEAD;
+                    if (venomAuraSkullAttackSource)
+                    {
+                        venomAuraSkullAttackSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+                    }
                     break;                   
                 }
                 MeleeAttack();
@@ -403,6 +413,11 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                  
                     currState = State.DEAD;
+                    if (venomAuraSkullAttackSource)
+                    {
+                        venomAuraSkullAttackSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+                    }
                     break;                   
                 }
                 PostMeleeAttack();
@@ -434,7 +449,12 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                  
                     currState = State.DEAD;
-                    break;                                    
+                    if (fireballAuraSource)
+                    {
+                        fireballAuraSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                    }
+                        break;                                    
                 }
                 PreBallAttack();
                 if (preBallAttackFinished) 
@@ -459,6 +479,11 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                   
                     currState = State.DEAD;
+                    if (fireballAuraSource)
+                    {
+                        fireballAuraSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                    }
                     break;                                                    
                 }
                 BallAttack();               
@@ -484,6 +509,11 @@ public class FSMBoss : MonoBehaviour
                 if (bossStats.hitPoints <= 0)
                 {                    
                     currState = State.DEAD;
+                    if (fireballAuraSource)
+                    {
+                        fireballAuraSource.loop = false;
+                        AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                    }
                     break;                                    
                 }
                 PostBallAttack();
