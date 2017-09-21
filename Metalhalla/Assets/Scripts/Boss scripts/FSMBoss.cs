@@ -924,6 +924,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             fireAuraDamageScript.auraActive = false;
             fireAura.GetComponent<SphereCollider>().enabled = false;
+            fireAura.GetComponent<FireAuraDamage>().ColliderDisabled();
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)

@@ -178,7 +178,7 @@ public class TornadoBehaviour3D : MonoBehaviour {
 
     void OnTriggerStay(Collider collider)
     {
-        if (collider.gameObject.name == "FireAura" && fsmBoss.GetCurrentState() == FSMBoss.State.PRE_BALL_ATTACK)
+        if (collider.gameObject.name == "FireAura")
             disipate = true;
     }
 

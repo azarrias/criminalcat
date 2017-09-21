@@ -40,8 +40,8 @@ public class CloseOpenDoor : MonoBehaviour {
             if (movingDoor.transform.localPosition.y >= localInitialPosition.y)
             {
                 openExitDoor = false;
-                if (doorSoundSource.isPlaying)
-                    AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+                //if (doorSoundSource.isPlaying)
+                //    AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
             }
         }
 	}
@@ -69,14 +69,14 @@ public class CloseOpenDoor : MonoBehaviour {
         if (collider.gameObject.name == "BossFightAreaFloor" || LayerMask.LayerToName(collider.gameObject.layer) == "ground")
         {
             closed = true;
-            AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
+            //AudioManager.instance.FadeAudioSource(doorSoundSource, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
         }
     }
 
     public void PlayerInside()
     {
         playerInside = true;
-        doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, doorSound, true);
+        //doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, doorSound, true);
     }
 
     public void PlayerOutside()
