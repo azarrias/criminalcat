@@ -68,7 +68,11 @@ public class PlayerInputAI : PlayerInput
 
     [Header("VictoryPose program parameters")]
     [SerializeField]
-    private AIStep[] stepsVictoryPose = { new AIStep(AIAction.WalkLeft, 0.3f),
+    private AIStep[] stepsVictoryPose = { new AIStep(AIAction.WalkLeft, 0.7f),
+                                          new AIStep(AIAction.Idle, 0.1f),
+                                          new AIStep(AIAction.Taunt, 1.3f),
+                                          new AIStep(AIAction.WalkRight, 0.7f),
+                                          new AIStep(AIAction.Idle, 0.1f),
                                           new AIStep(AIAction.Taunt, 1.3f)};
     private AIBehaviourOnEnd behaviourVictoryPose = AIBehaviourOnEnd.ReturnControlToPlayer;
 
@@ -108,53 +112,62 @@ public class PlayerInputAI : PlayerInput
         float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
         Debug.Log(stepAction + " => " + stepTime);
 
-        if (stepAction == AIAction.WalkRight)
+        switch (stepAction)
         {
-            newInput.SetHorizontalInput(1.0f);
-        }
-        else if(stepAction == AIAction.WalkLeft)
-        {
-            newInput.SetHorizontalInput(-1.0f);
-        }
-        else if (_currentProgramTime <= 0.0f)
-        {
-            switch(stepAction)
-            {
-                case AIAction.Jump:
+            case AIAction.WalkRight:
+                newInput.SetHorizontalInput(1.0f);
+                break;
+            case AIAction.WalkLeft:
+                newInput.SetHorizontalInput(-1.0f);
+                break;
+            case AIAction.Jump:
+                if (_currentProgramTime <= 0.2f)
                     newInput.SetJumpButtonDown(true);
-                    break;
-                case AIAction.Attack:
+                break;
+            case AIAction.Attack:
+                if (_currentProgramTime <= 0.2f)
                     newInput.SetAttackButtonDown(true);
-                    break;
-                case AIAction.Dash:
+                break;
+            case AIAction.Dash:
+                if (_currentProgramTime <= 0.2f)
                     newInput.SetDashButtonDown(true);
-                    break;
-                case AIAction.Taunt:
+                break;
+            case AIAction.Taunt:
+                if (_currentProgramTime <= 0.2f)
                     newInput.SetTauntButtonDown(true);
-                    break;
-                default: break;
-            }
+                break;
+            case AIAction.None:
+            default:
+                break;
         }
 
         _currentProgramTime += Time.deltaTime;
         if (_currentProgramTime >= stepTime)
         {
             int totalSteps = _currentProgramSteps.Length;
+            _currentProgramStepIndex++;
+
             switch (_currentProgramBehaviour)
             {
                 case AIBehaviourOnEnd.Loop:
-                    _currentProgramStepIndex = (_currentProgramStepIndex + 1) % totalSteps;
-                    _currentProgramTime = -0.001f;
+                    _currentProgramStepIndex = (_currentProgramStepIndex) % totalSteps;
+                    _currentProgramTime = 0.0f;
                     break;
                 case AIBehaviourOnEnd.None:
-                    if (_currentProgramStepIndex + 1 != totalSteps)
+                    if (_currentProgramStepIndex != totalSteps)
                     {
-                        _currentProgramStepIndex++;
-                        _currentProgramTime = -0.001f;
+                        _currentProgramTime = 0.0f;
                     }
                     break;
                 case AIBehaviourOnEnd.ReturnControlToPlayer:
-                    GetComponent<PlayerController>().useInputAI = false;
+                    if (_currentProgramStepIndex != totalSteps)
+                    {
+                        _currentProgramTime = 0.0f;
+                    }
+                    else
+                    {
+                        GetComponent<PlayerController>().switchAIInput(false);
+                    }
                     break;
             }
         }
