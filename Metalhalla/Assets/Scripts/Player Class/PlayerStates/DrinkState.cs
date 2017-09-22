@@ -12,6 +12,7 @@ public class DrinkState : PlayerState
         drinkFramesDuration = framesDuration;
         drinkFramesCount = 0;
     }
+
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)

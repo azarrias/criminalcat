@@ -103,6 +103,7 @@ public class PlayerStatus : MonoBehaviour
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
     public float dashDuration = 0.4f;
+    public float tauntDuration = 0.5f;
 
     [Header("Respawn parameters")]
     public Vector3 initialPosition;
@@ -126,6 +127,7 @@ public class PlayerStatus : MonoBehaviour
     public static IdleState idle;
     public static JumpState jump;
     public static RefillState refill;
+    public static TauntState taunt;
     public static WalkState walk;
     [HideInInspector]
     public PlayerState currentState;
@@ -197,6 +199,7 @@ public class PlayerStatus : MonoBehaviour
         idle = new IdleState();
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
         refill = new RefillState(CalculateFramesFromTime(refillDuration));
+        taunt = new TauntState(CalculateFramesFromTime(tauntDuration));
         walk = new WalkState();
         SetState(idle);
 
@@ -513,6 +516,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsHit() { return currentState == hit; }
     public bool IsDash() { return currentState == dash; }
     public bool IsDead() { return currentState == dead; }
+    public bool IsTaunt() { return currentState == taunt; }
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }

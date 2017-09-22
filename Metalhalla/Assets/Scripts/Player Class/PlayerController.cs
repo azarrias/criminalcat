@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour {
         playerAnimator.SetBool("cast", playerStatus.IsCast());
         playerAnimator.SetBool("dead", !playerStatus.IsAlive());
         playerAnimator.SetBool("dash", playerStatus.IsDash());
+        playerAnimator.SetBool("taunt", playerStatus.IsTaunt());
         
 	}
 

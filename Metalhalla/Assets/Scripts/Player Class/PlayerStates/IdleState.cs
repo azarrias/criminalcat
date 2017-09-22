@@ -74,6 +74,12 @@ public class IdleState : PlayerState {
             return;
         }
 
+        if (input.newInput.GetTauntButtonDown() == true)
+        {
+            status.SetState(PlayerStatus.taunt);
+            return;
+        }
+
         status.SetState(this);
     }
 
