@@ -7,6 +7,7 @@ public class PlayerStatus : MonoBehaviour
     public GameObject playerModel;
     Quaternion playerModelDefaultRotation;
     Quaternion playerModelClimbRotation;
+    Quaternion playerModelTauntRotation;
 
     [Header("Attack Elements")]
     public GameObject hammerMesh;
@@ -103,7 +104,7 @@ public class PlayerStatus : MonoBehaviour
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
     public float dashDuration = 0.4f;
-    public float tauntDuration = 0.5f;
+    public float tauntDuration = 1.3f;
 
     [Header("Respawn parameters")]
     public Vector3 initialPosition;
@@ -165,6 +166,7 @@ public class PlayerStatus : MonoBehaviour
     {
         playerModelDefaultRotation = playerModel.transform.localRotation;
         playerModelClimbRotation = Quaternion.identity;
+        playerModelTauntRotation.SetLookRotation(new Vector3(0, 0, -1), new Vector3(0, 1, 0));
 
         attackCollider.enabled = false;
         lightningGenerator.SetActive(false);    // temp
@@ -330,12 +332,19 @@ public class PlayerStatus : MonoBehaviour
         if (newState != drink)
             ShowHorn(false);
 
-        if (IsClimb() && WasClimb() == false)
+        if (IsClimb())
             SetClimbStateModelRotation();
-        else if (WasClimb() && IsClimb() == false)
+        else if (IsTaunt())
+            SetTauntStateModelRotation();
+        else if ((WasClimb() && IsClimb() == false) || (WasTaunt() && IsTaunt() == false))
         {
             SetInitialModelRotation();
             SetAnimatorSpeed(1.0f);
+        }
+
+        if (IsClimb() == false &&  IsTaunt() )
+        {
+
         }
     }
 
@@ -524,6 +533,7 @@ public class PlayerStatus : MonoBehaviour
     public bool WasFall() { return previousState == fall; }
     public bool WasDead() { return previousState == dead; }
     public bool WasClimb() { return previousState == climb; }
+    public bool WasTaunt() { return previousState == taunt; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
     public void PlayFx(string fx)
@@ -592,6 +602,12 @@ public class PlayerStatus : MonoBehaviour
     public void SetInitialModelRotation()
     {
         playerModel.transform.localRotation = playerModelDefaultRotation;
+    }
+
+    public void SetTauntStateModelRotation()
+    {
+        // to modify
+        playerModel.transform.localRotation = playerModelTauntRotation;
     }
 
     // ---- GHOST JUMP functions --------------------------------------------------------------------------------------------------
