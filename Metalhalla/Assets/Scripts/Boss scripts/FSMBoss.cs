@@ -699,6 +699,11 @@ public class FSMBoss : MonoBehaviour
                 earthAuraDamageScript.auraActive = false;
                 earthAuraPS.Stop();
             }
+            if (fireballAuraSource)
+            {
+                fireballAuraSource.loop = false;
+                AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+            }
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
