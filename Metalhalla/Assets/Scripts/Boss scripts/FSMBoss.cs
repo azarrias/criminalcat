@@ -720,7 +720,18 @@ public class FSMBoss : MonoBehaviour
                 if (bodyMesh.transform.localScale.x <= 0.1f)
                 {                   
                     GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
-                    transform.parent.gameObject.SetActive(false);                   
+                    
+
+                    //mod for the celebration
+                    GameObject player = GameObject.FindWithTag("Player");
+                    if (player)
+                    {
+                        player.GetComponent<PlayerInputAI>().SetAIProgram(PlayerInputAI.AIProgram.VictoryPose);
+                        player.GetComponent<PlayerController>().switchAIInput(true);
+                    }
+
+                    transform.parent.gameObject.SetActive(false);
+
                 }
             }
         }
