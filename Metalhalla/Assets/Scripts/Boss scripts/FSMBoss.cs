@@ -750,7 +750,8 @@ public class FSMBoss : MonoBehaviour
                 {
                     restartPosCount = 0.0f;
                     restartPos = false;
-                    transform.position = startPos;                   
+                    transform.position = startPos;
+                    bossStats.hitPoints = bossStats.maxHitPoints;                 
                 }
             }
         }       
