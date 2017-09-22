@@ -25,10 +25,12 @@ public class PlayerInputAI : PlayerInput
     {
         None,
         Idle,
-        Walk,
+        WalkRight,
+        WalkLeft,
         Jump,
         Attack,
-        Dash
+        Dash,
+        Taunt
     };
 
     [System.Serializable]
@@ -48,7 +50,7 @@ public class PlayerInputAI : PlayerInput
     [Header("AfterBossDefeat program parameters")]
     [SerializeField]
     private AIStep[] stepsAfterBossDefeat = {   new AIStep(AIAction.Idle, 0.2f),
-                                                new AIStep(AIAction.Walk, 5.0f)
+                                                new AIStep(AIAction.WalkRight, 5.0f)
                                                };
     public AIBehaviourOnEnd behaviourAfterBossDefeat = AIBehaviourOnEnd.None;
 
@@ -61,9 +63,14 @@ public class PlayerInputAI : PlayerInput
 
     [Header("MainMenuAnimation program parameters")]
     [SerializeField]
-    private AIStep[] stepsWalkRightAI= { new AIStep(AIAction.Walk, 5.0f )};
+    private AIStep[] stepsWalkRightAI= { new AIStep(AIAction.WalkRight, 5.0f )};
     public AIBehaviourOnEnd behaviourWalkRightAI = AIBehaviourOnEnd.Loop;
 
+    [Header("VictoryPose program parameters")]
+    [SerializeField]
+    private AIStep[] stepsVictoryPose = { new AIStep(AIAction.WalkLeft, 0.3f),
+                                          new AIStep(AIAction.Taunt, 1.3f)};
+    private AIBehaviourOnEnd behaviourVictoryPose = AIBehaviourOnEnd.ReturnControlToPlayer;
 
     private AIStep[] _currentProgramSteps;
     private int _currentProgramStepIndex;
@@ -99,10 +106,15 @@ public class PlayerInputAI : PlayerInput
 
         AIAction stepAction = _currentProgramSteps[_currentProgramStepIndex].action;
         float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
+        Debug.Log(stepAction + " => " + stepTime);
 
-        if (stepAction == AIAction.Walk)
+        if (stepAction == AIAction.WalkRight)
         {
             newInput.SetHorizontalInput(1.0f);
+        }
+        else if(stepAction == AIAction.WalkLeft)
+        {
+            newInput.SetHorizontalInput(-1.0f);
         }
         else if (_currentProgramTime <= 0.0f)
         {
@@ -117,9 +129,13 @@ public class PlayerInputAI : PlayerInput
                 case AIAction.Dash:
                     newInput.SetDashButtonDown(true);
                     break;
+                case AIAction.Taunt:
+                    newInput.SetTauntButtonDown(true);
+                    break;
                 default: break;
             }
         }
+
         _currentProgramTime += Time.deltaTime;
         if (_currentProgramTime >= stepTime)
         {
@@ -138,6 +154,7 @@ public class PlayerInputAI : PlayerInput
                     }
                     break;
                 case AIBehaviourOnEnd.ReturnControlToPlayer:
+                    GetComponent<PlayerController>().useInputAI = false;
                     break;
             }
         }
@@ -160,6 +177,7 @@ public class PlayerInputAI : PlayerInput
 
             case AIProgram.None:
             case AIProgram.VictoryPose:
+                SetAIProgramConstraints(stepsVictoryPose, behaviourVictoryPose);
                 break;
         }
     }
