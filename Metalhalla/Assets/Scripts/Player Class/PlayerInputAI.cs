@@ -3,12 +3,20 @@ using System.Collections;
 
 public class PlayerInputAI : PlayerInput
 {
+    [System.Serializable]
+    public enum AIBehaviourOnEnd
+    {
+        None,
+        Loop, 
+        ReturnControlToPlayer
+    }
 
     public enum AIProgram
     {
         None,
         AfterBossDefeat,
         MainMenuAnimation,
+        VictoryPose,
         WalkRight
     };
 
@@ -42,24 +50,24 @@ public class PlayerInputAI : PlayerInput
     private AIStep[] stepsAfterBossDefeat = {   new AIStep(AIAction.Idle, 0.2f),
                                                 new AIStep(AIAction.Walk, 5.0f)
                                                };
-    public bool loopAfterBossDefeat = false;
+    public AIBehaviourOnEnd behaviourAfterBossDefeat = AIBehaviourOnEnd.None;
 
     [Header("MainMenuAnimation program parameters")]
     [SerializeField]
     private AIStep[] stepsMainMenuAnimation = { new AIStep(AIAction.Idle, 0.5f ),
                                                 new AIStep(AIAction.Attack,1.0f),
                                                 new AIStep(AIAction.Jump, 1.0f) };
-    public bool loopMainMenuAnimation = true;
+    public AIBehaviourOnEnd behaviourMainMenuAnimation = AIBehaviourOnEnd.Loop;
 
     [Header("MainMenuAnimation program parameters")]
     [SerializeField]
     private AIStep[] stepsWalkRightAI= { new AIStep(AIAction.Walk, 5.0f )};
-    public bool loopWalkRightAI= true;
+    public AIBehaviourOnEnd behaviourWalkRightAI = AIBehaviourOnEnd.Loop;
 
 
     private AIStep[] _currentProgramSteps;
     private int _currentProgramStepIndex;
-    private bool _currentProgramLoop;
+    private AIBehaviourOnEnd _currentProgramBehaviour;
     private float _currentProgramTime;
     
     public PlayerInputAI() : base()
@@ -78,10 +86,10 @@ public class PlayerInputAI : PlayerInput
     }
 
 
-    private void SetAIProgramConstraints(AIStep[] steps, bool loop)
+    private void SetAIProgramConstraints(AIStep[] steps, AIBehaviourOnEnd behaviour)
     {
         _currentProgramSteps = steps;
-        _currentProgramLoop = loop;
+        _currentProgramBehaviour = behaviour;
         _currentProgramStepIndex = 0;
         _currentProgramTime = -0.001f;
     }
@@ -116,20 +124,22 @@ public class PlayerInputAI : PlayerInput
         if (_currentProgramTime >= stepTime)
         {
             int totalSteps = _currentProgramSteps.Length;
-            if (_currentProgramLoop)
+            switch (_currentProgramBehaviour)
             {
-                _currentProgramStepIndex = (_currentProgramStepIndex + 1) % totalSteps;
-                _currentProgramTime = -0.001f;
-            }
-            else
-            {
-                if (_currentProgramStepIndex + 1 != totalSteps)
-                {
-                    _currentProgramStepIndex++;
+                case AIBehaviourOnEnd.Loop:
+                    _currentProgramStepIndex = (_currentProgramStepIndex + 1) % totalSteps;
                     _currentProgramTime = -0.001f;
-                }
+                    break;
+                case AIBehaviourOnEnd.None:
+                    if (_currentProgramStepIndex + 1 != totalSteps)
+                    {
+                        _currentProgramStepIndex++;
+                        _currentProgramTime = -0.001f;
+                    }
+                    break;
+                case AIBehaviourOnEnd.ReturnControlToPlayer:
+                    break;
             }
-
         }
 
     }
@@ -138,15 +148,18 @@ public class PlayerInputAI : PlayerInput
     {
         switch (program)
         {
-            case AIProgram.None: break;
             case AIProgram.AfterBossDefeat:
-                SetAIProgramConstraints(stepsAfterBossDefeat, loopAfterBossDefeat);
+                SetAIProgramConstraints(stepsAfterBossDefeat, behaviourAfterBossDefeat);
                 break;
             case AIProgram.MainMenuAnimation:
-                SetAIProgramConstraints(stepsMainMenuAnimation, loopMainMenuAnimation);
+                SetAIProgramConstraints(stepsMainMenuAnimation, behaviourMainMenuAnimation);
                 break;
             case AIProgram.WalkRight:
-                SetAIProgramConstraints(stepsWalkRightAI, loopWalkRightAI);
+                SetAIProgramConstraints(stepsWalkRightAI, behaviourWalkRightAI);
+                break;
+
+            case AIProgram.None:
+            case AIProgram.VictoryPose:
                 break;
         }
     }
