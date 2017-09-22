@@ -208,7 +208,11 @@ public class BossGUIManager : MonoBehaviour
     }
 
     public void StartAnimationIntoScene()
-    { 
+    {
+        if (healthRatioCurrentGUI <= 0.0f)
+        {
+            return;
+        }
        animateIntoScene = true;
        animationElapsedTime = 0.0f;
     }
