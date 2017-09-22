@@ -22,6 +22,11 @@ public class EarthAuraDamage : MonoBehaviour {
         player = GameObject.Find("Player");
     }
 
+    void OnEnable()
+    {
+        playerInsideEarthAura = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -34,7 +39,7 @@ public class EarthAuraDamage : MonoBehaviour {
                 if (playerInsideEarthAura && applyAuraDamage)
                 {
                     player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
-                    Debug.Log("Aura damage");
+                    Debug.Log("Aura damage from GO:" + gameObject.name);
                     applyAuraDamage = false;
                 }
 
@@ -54,7 +59,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = true;
-            //Debug.Log("IN AURA");
+            Debug.Log("IN AURA from GO:" + gameObject.name);
 
             timeNoDamageCounter = 0.0f;
         }
@@ -65,7 +70,7 @@ public class EarthAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideEarthAura = false;
-            //Debug.Log("OUT AURA");
+            Debug.Log("OUT AURA from GO:" + gameObject.name);
         }
     }
 }
