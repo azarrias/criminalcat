@@ -14,6 +14,9 @@ public class SkullsAttackBehaviour : MonoBehaviour {
 
     private GameObject skullMesh;
 
+    [Header("Sound FXs")]
+    public AudioClip skullsVanishing;
+
     [HideInInspector]
     public GameObject bossManager3D; 
 
@@ -54,6 +57,7 @@ public class SkullsAttackBehaviour : MonoBehaviour {
             }
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
+            AudioManager.instance.PlayDiegeticFx(gameObject, skullsVanishing);
         }
     }
 
