@@ -687,12 +687,14 @@ public class FSMBoss : MonoBehaviour
         bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
         ParticlesManager.SpawnParticle("blood", transform.position, facingRight); //TODO: set position at the right place
         damaged = false;
+        AudioManager.instance.PlayDiegeticFx(gameObject, beingHit);
     }
 
     private void Dead()
     {
         if (currAnimation != "Dead")
         {
+            AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath);
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
@@ -724,7 +726,7 @@ public class FSMBoss : MonoBehaviour
                 if (bodyMesh.transform.localScale.x <= 0.1f)
                 {                   
                     GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
-                    
+                    AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter);
 
                     //mod for the celebration
                     GameObject player = GameObject.FindWithTag("Player");
@@ -814,6 +816,7 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             
             earthAuraPS.Play();
+            AudioManager.instance.PlayDiegeticFx(gameObject, castSkulls);
             venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, true);
             earthAuraDamageScript.auraActive = true;
             levitatingSkullsScript.StartSkullsAttack();        
