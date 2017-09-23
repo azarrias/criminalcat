@@ -112,6 +112,10 @@ public class FSMBoss : MonoBehaviour
     public AudioClip venomAuraIceSpikes;
     public AudioClip iceSpikesAttack;
     public AudioClip fireballAura;
+    public AudioClip bossDeath;
+    public AudioClip beingHit;
+    public AudioClip blueSpiritLaughter;
+    public AudioClip castSkulls;
     private AudioSource venomAuraSkullAttackSource;
     private AudioSource venomAuraIceSpikesSource;
     private AudioSource fireballAuraSource;
