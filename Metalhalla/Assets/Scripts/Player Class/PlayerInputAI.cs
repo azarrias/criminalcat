@@ -30,7 +30,8 @@ public class PlayerInputAI : PlayerInput
         Jump,
         Attack,
         Dash,
-        Taunt
+        Taunt,
+        ShieldUp
     };
 
     [System.Serializable]
@@ -50,7 +51,8 @@ public class PlayerInputAI : PlayerInput
     [Header("AfterBossDefeat program parameters")]
     [SerializeField]
     private AIStep[] stepsAfterBossDefeat = {   new AIStep(AIAction.Idle, 0.2f),
-                                                new AIStep(AIAction.WalkRight, 5.0f)
+                                                new AIStep(AIAction.WalkRight, 1.5f),
+                                                new AIStep(AIAction.ShieldUp, 10.0f)
                                                };
     public AIBehaviourOnEnd behaviourAfterBossDefeat = AIBehaviourOnEnd.None;
 
@@ -136,6 +138,13 @@ public class PlayerInputAI : PlayerInput
                 if (_currentProgramTime <= 0.2f)
                     newInput.SetTauntButtonDown(true);
                 break;
+            case AIAction.ShieldUp:
+                if (_currentProgramTime <= 0.2f)
+                    newInput.SetDefenseButtonDown(true);
+                else
+                    newInput.SetDefenseButtonHeld(true);
+                newInput.SetVerticalInput(1.0f);
+                    break;
             case AIAction.None:
             default:
                 break;
