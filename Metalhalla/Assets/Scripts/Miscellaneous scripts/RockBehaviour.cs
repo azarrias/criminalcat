@@ -19,9 +19,9 @@ public class RockBehaviour : MonoBehaviour {
     {
         rockDustParticles = GetComponent<ParticleSystem>();
 
-        Transform rockTr = transform.Find("estalactita/Group6554");
+        Transform rockTr = transform.Find("rock/Group6554");
         if(rockTr == null)
-            rockTr = transform.Find("rock");
+            rockTr = transform.Find("rock/rock");
 
         rockMR = rockTr.gameObject.GetComponent<MeshRenderer>();
     }
@@ -49,9 +49,6 @@ public class RockBehaviour : MonoBehaviour {
                 hasHitShield = true;
             }
         }
-
-
-        
     }
 
     private void Disipate()
