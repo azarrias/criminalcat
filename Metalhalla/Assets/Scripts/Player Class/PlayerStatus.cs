@@ -111,8 +111,8 @@ public class PlayerStatus : MonoBehaviour
     [HideInInspector]
     public Vector3 activeRespawnPoint;
     private CameraFade cameraFade;
-    private bool changeSceneIfDead = false;
-    private string nextSceneIfDead;
+    //private bool changeSceneIfDead = false;
+    //private string nextSceneIfDead;
 
     // -- State variables (using state pattern) -- //
     public static AttackState attack;
@@ -219,13 +219,11 @@ public class PlayerStatus : MonoBehaviour
         colliderSize = GetComponent<BoxCollider>().size;
 
         godMode = false;
-
-        changeSceneIfDead = false;
     }
 
     void Update()
     {
-        // TODO - Remove this shortcuts when other entities and interactions are in place
+        // Debug mode
         if (Input.GetKeyDown(KeyCode.F1) == true)
             ApplyDamage(20);
         if (Input.GetKeyDown(KeyCode.F2) == true)
@@ -256,31 +254,23 @@ public class PlayerStatus : MonoBehaviour
     // ---- RESPAWN functions ------------------------------------------------------------------------------------------
     public void ReSpawn()
     {
-        if (changeSceneIfDead)
-        {
-            SceneLoader loader = GameObject.FindWithTag("SceneLoader").GetComponent<SceneLoader>();
-            loader.GoToNextScene(nextSceneIfDead);
-        }
-        else
-        {
-            RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
-            if (facingRight == false)
-                Flip();
-            SetPlayerAtRespawnPoint();
-            SetMaxHealth();
-            stamina = staminaAtStart;
-            beer = beerAtStart;
-            SetState(PlayerStatus.idle);
+        RestoreColliderSize();   // to restore the animation event when sigmund falls on his knees
+        if (facingRight == false)
+            Flip();
+        SetPlayerAtRespawnPoint();
+        SetMaxHealth();
+        stamina = staminaAtStart;
+        beer = beerAtStart;
+        SetState(PlayerStatus.idle);
 
-            // add hoc for level elements 
-            GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
-            if (movingDoor)
-                movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
+        // add hoc for level elements 
+        GameObject movingDoor = GameObject.FindGameObjectWithTag("MovingDoor");
+        if (movingDoor)
+            movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
 
-            GameObject bossGUI = GameObject.Find("BossGUI");
-            if (bossGUI)
-                bossGUI.SetActive(false);
-        }
+        GameObject bossGUI = GameObject.Find("BossGUI");
+        if (bossGUI)
+            bossGUI.SetActive(false);
     }
 
     public bool SetRespawnPoint(Vector3 newRespawnPoint)
@@ -290,12 +280,6 @@ public class PlayerStatus : MonoBehaviour
 
         activeRespawnPoint = newRespawnPoint;
         return true;
-    }
-
-    public void SetNewSceneOnDeath(string newSceneName)
-    {
-        nextSceneIfDead = newSceneName;
-        changeSceneIfDead = true;
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
