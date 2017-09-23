@@ -112,7 +112,7 @@ public class PlayerInputAI : PlayerInput
 
         AIAction stepAction = _currentProgramSteps[_currentProgramStepIndex].action;
         float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
-        Debug.Log(stepAction + " => " + stepTime);
+        //Debug.Log(stepAction + " => " + stepTime);
 
         switch (stepAction)
         {

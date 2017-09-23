@@ -16,7 +16,7 @@ public class SetNextSceneOnPlayerDeath : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<PlayerStatus>().SetNewSceneOnDeath(nextSceneOnDeath);
+            //collision.GetComponent<PlayerStatus>().SetNewSceneOnDeath(nextSceneOnDeath);
         }
     }
 }
