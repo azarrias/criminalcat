@@ -318,13 +318,11 @@ public class FSMEnemy : MonoBehaviour
             camFollow.StartShake();
             if (!bloodyDamage)
             {
-                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
-                hitEffect.transform.SetParent(transform);
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;                
             }
             else
             {
-                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
-                blood.transform.SetParent(transform);
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;               
                 bloodyDamage = false;
             }
         }
@@ -337,13 +335,11 @@ public class FSMEnemy : MonoBehaviour
             camFollow.StartShake();
             if (!bloodyDamage)
             {
-                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
-                hitEffect.transform.SetParent(transform);
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;               
             }
             else
             {
-                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
-                blood.transform.SetParent(transform);
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;                
                 bloodyDamage = false;
             }
         }
