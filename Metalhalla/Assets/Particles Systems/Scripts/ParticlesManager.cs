@@ -13,6 +13,7 @@ public class ParticlesManager : MonoBehaviour
     public GameObject elfFireBallPrefab;
     public GameObject bloodPrefab;
     public GameObject tornado3DPrefab;
+    public GameObject hitEffectPrefab;
     private GameObject particlesPrefab;
    
 
@@ -100,6 +101,17 @@ public class ParticlesManager : MonoBehaviour
             blood.transform.parent = transform;
             particlesPool["blood"].Add(blood);
         }
+
+        //------------------------------- HIT EFFECT PARTICLES  ------------------------
+        particlesPool["hitEffect"] = new List<GameObject>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject blood = Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity);
+            blood.SetActive(false);
+            blood.transform.parent = transform;
+            particlesPool["hitEffect"].Add(blood);
+        }
     }
 
     // Update is called once per frame
@@ -141,7 +153,11 @@ public class ParticlesManager : MonoBehaviour
                 {
                     particle.GetComponent<BloodBehaviour>().SetFacingRight(facingRight);
                 }
-                
+                else if (name == "hitEffect")
+                {
+                    particle.GetComponent<HitEffectBehaviour>().SetFacingRight(facingRight);
+                }
+
                 particleToSpawn = particle;
                 break;
             }
@@ -169,6 +185,10 @@ public class ParticlesManager : MonoBehaviour
             else if (name == "blood")
             {
                 particlesManager.particlesPrefab = particlesManager.bloodPrefab;
+            }
+            else if (name == "hitEffect")
+            {
+                particlesManager.particlesPrefab = particlesManager.hitEffectPrefab;
             }
 
             GameObject newParticle = Instantiate(particlesManager.particlesPrefab, spawnPosition, Quaternion.identity);
