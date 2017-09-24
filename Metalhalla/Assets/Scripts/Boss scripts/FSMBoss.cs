@@ -686,14 +686,15 @@ public class FSMBoss : MonoBehaviour
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Damaged()
     {
+        Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
         bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
         if (!bloodyDamage)
         {
-            ParticlesManager.SpawnParticle("hitEffect", transform.position, facingRight); //TODO: set position at the right place
+            ParticlesManager.SpawnParticle("hitEffect", ballSpawnPosition, facingRight); //TODO: set position at the right place
         }
         else
         {
-            ParticlesManager.SpawnParticle("blood", transform.position, facingRight); //TODO: set position at the right place
+            ParticlesManager.SpawnParticle("blood", ballSpawnPosition, facingRight); //TODO: set position at the right place
             bloodyDamage = false;
         }
         damaged = false;
