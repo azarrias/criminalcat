@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class HitEffectBehaviour : MonoBehaviour {
 
-    private Vector3 scaleFacingRight = new Vector3(1.0f, 1.0f, 1.0f);
-    private Vector3 scaleFacingLeft = new Vector3(-1.0f, 1.0f, 1.0f);
+    private Vector3 scaleFacingRight = new Vector3(-1.0f, 1.0f, 1.0f);
+    private Vector3 scaleFacingLeft = new Vector3(1.0f, 1.0f, 1.0f);
    
 	// Use this for initialization
 	void Start () {

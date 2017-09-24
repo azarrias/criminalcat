@@ -57,6 +57,8 @@ public class FSMDarkElf : MonoBehaviour
     private float hitRecoil;
     private float deadRecoil;
 
+    private bool bloodyDamage = false;
+
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
@@ -298,9 +300,17 @@ public class FSMDarkElf : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
+                hitEffect.transform.SetParent(transform);
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
+                blood.transform.SetParent(transform);
+                bloodyDamage = false;
+            }
         }
         else
         {
@@ -309,9 +319,17 @@ public class FSMDarkElf : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
+                hitEffect.transform.SetParent(transform);
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
+                blood.transform.SetParent(transform);
+                bloodyDamage = false;
+            }
         }
     }
 
@@ -450,4 +468,8 @@ public class FSMDarkElf : MonoBehaviour
         capsule.direction = direction;
     }
 
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
+    }
 }

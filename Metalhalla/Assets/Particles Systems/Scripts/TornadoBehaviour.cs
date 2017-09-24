@@ -304,7 +304,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
                 enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
             }
-            
+            enemy.SendMessage("ApplyBloodyDamage", SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
         }

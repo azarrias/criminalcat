@@ -42,6 +42,7 @@ public class RockBehaviour : MonoBehaviour {
         {
             if (collider.CompareTag("Player") || collider.CompareTag("Viking"))
             {
+                collider.gameObject.SendMessage("ApplyBloodyDamage", SendMessageOptions.DontRequireReceiver);
                 collider.gameObject.SendMessage("ApplyDamage", damage);
             }
             else if (LayerMask.LayerToName(collider.gameObject.layer) == "shield")

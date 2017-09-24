@@ -56,6 +56,8 @@ public class FSMEnemy : MonoBehaviour
     private float hitRecoil;
     private float deadRecoil;
 
+    private bool bloodyDamage = false;
+
     private void Awake()
     {
         los = GetComponent<LineOfSight>();
@@ -314,9 +316,17 @@ public class FSMEnemy : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2*Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
+                hitEffect.transform.SetParent(transform);
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
+                blood.transform.SetParent(transform);
+                bloodyDamage = false;
+            }
         }
         else
         {
@@ -325,9 +335,17 @@ public class FSMEnemy : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;
+                hitEffect.transform.SetParent(transform);
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;
+                blood.transform.SetParent(transform);
+                bloodyDamage = false;
+            }
         }
     }
 
@@ -413,6 +431,11 @@ public class FSMEnemy : MonoBehaviour
         Vector3 tmp = box.size;
         tmp.y = ysize;
         box.size = tmp;
+    }
+
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
     }
 
 }

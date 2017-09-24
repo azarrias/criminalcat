@@ -191,6 +191,8 @@ public class FSMBoss : MonoBehaviour
 
     public GameObject exitDoor;
 
+    private bool bloodyDamage = false;
+
     void Awake()
     {   
         currState = State.PATROL;
@@ -685,7 +687,15 @@ public class FSMBoss : MonoBehaviour
     private void Damaged()
     {
         bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
-        ParticlesManager.SpawnParticle("blood", transform.position, facingRight); //TODO: set position at the right place
+        if (!bloodyDamage)
+        {
+            ParticlesManager.SpawnParticle("hitEffect", transform.position, facingRight); //TODO: set position at the right place
+        }
+        else
+        {
+            ParticlesManager.SpawnParticle("blood", transform.position, facingRight); //TODO: set position at the right place
+            bloodyDamage = false;
+        }
         damaged = false;
         AudioManager.instance.PlayDiegeticFx(gameObject, beingHit);
     }
@@ -1154,5 +1164,10 @@ public class FSMBoss : MonoBehaviour
     public void WakeUp()
     {
         insideTornado = false;
+    }
+
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
     }
 }
