@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
+    private const float POSX_ENTER_KOREAN_MODE = 82.0f;
+    private const float POSX_ENTER_LIFTABLE_PLATFORMS = 140.0f;
+    private const float POSX_ENTER_ENDING = 62.0f;
 
     public enum State
     {
@@ -18,7 +21,7 @@ public class AudioManager : MonoBehaviour
         LIFTABLE_PLATFORMS,
         BOSS_CINEMATIC,
         BOSS,
-        COMICAL_ENDING,
+        ENDING,
         CREDITS
     }
 
@@ -196,7 +199,7 @@ public class AudioManager : MonoBehaviour
                     if (!musicChannel2.isPlaying)
                         PlayMusic(warmUp[Random.Range(0, warmUp.Length)], musicChannel2);
 
-                    if (player.transform.position.x > 80.0f)
+                    if (player.transform.position.x > POSX_ENTER_KOREAN_MODE)
                     {
                         koreanMode.Init(musicChannel1);
                         if (AudioManager.instance.musicChannel2)
@@ -209,7 +212,7 @@ public class AudioManager : MonoBehaviour
                 }
             case State.KOREAN_MODE:
                 {
-                    if (player.transform.position.x > 135.0f)
+                    if (player.transform.position.x > POSX_ENTER_LIFTABLE_PLATFORMS)
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
@@ -221,12 +224,13 @@ public class AudioManager : MonoBehaviour
                 }
             case State.BOSS:
                 {
-                    if (player.transform.position.x > 62.0f)
+                    if (player.transform.position.x > POSX_ENTER_ENDING)
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
                         PlayMusic(final, musicChannel2);
-                        currentState = State.COMICAL_ENDING;
+                        musicChannel2.loop = false;
+                        currentState = State.ENDING;
                     }
                     break;
                 }
