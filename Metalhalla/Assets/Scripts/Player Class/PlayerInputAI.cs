@@ -31,7 +31,8 @@ public class PlayerInputAI : PlayerInput
         Attack,
         Dash,
         Taunt,
-        ShieldUp
+        ShieldUp,
+        HammerCheck
     };
 
     [System.Serializable]
@@ -113,7 +114,7 @@ public class PlayerInputAI : PlayerInput
         AIAction stepAction = _currentProgramSteps[_currentProgramStepIndex].action;
         float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
         //Debug.Log(stepAction + " => " + stepTime);
-
+        GetComponent<Animator>().SetLayerWeight(1, 0);
         switch (stepAction)
         {
             case AIAction.WalkRight:
@@ -145,6 +146,9 @@ public class PlayerInputAI : PlayerInput
                     newInput.SetDefenseButtonHeld(true);
                 newInput.SetVerticalInput(1.0f);
                     break;
+            case AIAction.HammerCheck:
+                GetComponent<Animator>().SetLayerWeight(1, 1);
+                break;
             case AIAction.None:
             default:
                 break;
