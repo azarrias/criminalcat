@@ -346,6 +346,7 @@ public class AudioManager : MonoBehaviour
 
 //                    menuInicial.Init(musicChannel2);
                     PlayMusic(menuInicial, musicChannel2);
+                    FadeAudioSource(musicChannel2, FadeAudio.FadeType.FadeIn, 2.0f, 1.0f);
                     musicChannel2.loop = true;
                     break;
                 }
