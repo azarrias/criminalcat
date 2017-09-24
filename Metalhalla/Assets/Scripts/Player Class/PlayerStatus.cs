@@ -15,6 +15,7 @@ public class PlayerStatus : MonoBehaviour
     public GameObject lightningGenerator;
     public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
+    public BoxCollider dashAttackCollider;
 
     [Header("Defense Elements")]
     public GameObject shield;
@@ -170,6 +171,7 @@ public class PlayerStatus : MonoBehaviour
 
         attackCollider.enabled = false;
         lightningGenerator.SetActive(false);    // temp
+        dashAttackCollider.enabled = false;
 
         shieldCollider.enabled = false;
         ShowShield(false);
@@ -315,6 +317,8 @@ public class PlayerStatus : MonoBehaviour
         }
         if (newState != drink)
             ShowHorn(false);
+        if (newState != dash)
+            dashAttackCollider.enabled = false;
 
         if (IsClimb())
             SetClimbStateModelRotation();

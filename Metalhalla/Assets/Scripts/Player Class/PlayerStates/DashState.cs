@@ -7,12 +7,16 @@ public class DashState : PlayerState
     int dashFramesDuration;
     int dashFramesCount;
     bool isAirDash;
+    int dashAttackStartFrame;
+    int dashAttackReleaseFrame;
 
     public DashState(int framesDuration)
     {
         dashFramesDuration = framesDuration;
         dashFramesCount = 0;
         isAirDash = false;
+        dashAttackStartFrame = framesDuration / 4;
+        dashAttackReleaseFrame = framesDuration/2;
     }
 
     public override void HandleInput(PlayerInput input, PlayerStatus status)
@@ -24,6 +28,15 @@ public class DashState : PlayerState
                 isAirDash = true;
             else
                 isAirDash = false;
+        }
+
+        if (dashFramesCount >= dashAttackStartFrame && dashFramesCount < dashAttackReleaseFrame && status.dashAttackCollider.enabled == false)
+        {
+            status.dashAttackCollider.enabled = true;
+        }
+        if ( dashFramesCount >= dashAttackReleaseFrame && status.dashAttackCollider.enabled == true)
+        {
+            status.dashAttackCollider.enabled = false;
         }
 
         if (status.jumpAvailable == true && isAirDash == false && (input.newInput.GetJumpButtonDown() == true || input.newInput.GetJumpButtonHeld() == true))
