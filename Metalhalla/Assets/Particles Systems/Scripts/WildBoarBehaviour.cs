@@ -121,8 +121,9 @@ public class WildBoarBehaviour : MonoBehaviour
                 AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboarDestruction);
 
                 for (int i = 0; i < hits.Length; i++)
-                {                    
-                     hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
+                {
+                    hits[i].collider.gameObject.SendMessage("ApplyBloodyDamage", SendMessageOptions.DontRequireReceiver);
+                    hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
                 }
 
             }
