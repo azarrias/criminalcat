@@ -88,7 +88,7 @@ public class MenuManager : MonoBehaviour {
         }
 
         // Stop looping Initial Menu music
-        AudioManager.instance.menuInicial.isLooping = false;
+        AudioManager.instance.musicChannel2.loop = false;
     }
 
 	//Activate quit menu

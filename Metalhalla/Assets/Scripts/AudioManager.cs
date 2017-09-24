@@ -37,16 +37,17 @@ public class AudioManager : MonoBehaviour
 
     [Header("Music Tracks")]
     public AudioClip cinematicaInicio;
-    public MusicLoop menuInicial;
+    //    public MusicLoop menuInicial;
+    public AudioClip menuInicial;
     public MusicLoop tutorial;
     public AudioClip[] warmUp;
     public MusicLoop koreanMode;
 //    public AudioClip hardcoreBattle;
     public AudioClip liftablePlatforms;
-    public AudioClip cinematicaBoss;
+//    public AudioClip cinematicaBoss;
     public AudioClip boss;
-    public AudioClip finalComico;
-    public AudioClip creditos;
+    public AudioClip final;
+//    public AudioClip creditos;
 
     [Header("Randomization")]
     [Tooltip("Pitch Offset (relative to the base pitch)")]
@@ -224,15 +225,15 @@ public class AudioManager : MonoBehaviour
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
-                        PlayMusic(finalComico, musicChannel2);
+                        PlayMusic(final, musicChannel2);
                         currentState = State.COMICAL_ENDING;
                     }
                     break;
                 }
         }
 
-        if (menuInicial.isFinished)
-            menuInicial.Release();
+//        if (menuInicial.isFinished)
+//            menuInicial.Release();
     }
 
     GameObject GetAudioSource(GameObject audioSourcePrefab, ref List<GameObject> audioSourceList)
@@ -256,12 +257,13 @@ public class AudioManager : MonoBehaviour
         musicSource.Stop();
     }
 
-    public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float loopStart = 0.0f, float loopEnd = 0.0f)
+    public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float volume = 1.0f)
     {
         //        obj.SetActive(true);
         //        AudioSource musicSource = obj.GetComponent<AudioSource>();
 
         musicSource.clip = clip;
+        musicSource.volume = volume;
         musicSource.Play();
 
         //       StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
@@ -342,8 +344,8 @@ public class AudioManager : MonoBehaviour
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 1.0f, 0.0f);
 
-                    menuInicial.Init(musicChannel2);
-                    PlayMusic(menuInicial.audioLoop, musicChannel2);
+//                    menuInicial.Init(musicChannel2);
+                    PlayMusic(menuInicial, musicChannel2);
                     musicChannel2.loop = true;
                     break;
                 }
@@ -366,8 +368,8 @@ public class AudioManager : MonoBehaviour
                     player = GameObject.FindGameObjectWithTag("Player");
                     currentState = State.WARMUP;
 
-                    if (AudioManager.instance.musicChannel2)
-                        menuInicial.Release();
+//                    if (AudioManager.instance.musicChannel2)
+//                        menuInicial.Release();
 
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
