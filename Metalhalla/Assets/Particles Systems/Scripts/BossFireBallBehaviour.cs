@@ -28,8 +28,11 @@ public class BossFireBallBehaviour : MonoBehaviour {
         ballExplosion = gameObject.transform.Find("BallExplosion").gameObject;
         ball = gameObject.transform.Find("Ball").gameObject;
         smoke = gameObject.transform.Find("Ball/Smoke").gameObject;
-        fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
-        timeToGenerate = fsmBoss.preBallAttackDuration;
+        if (GameObject.FindGameObjectWithTag("Boss"))
+        {
+            fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
+            timeToGenerate = fsmBoss.preBallAttackDuration;
+        }
         particlesManager = GameObject.Find("ParticlesManager");    
     }
 
