@@ -114,7 +114,7 @@ public class PlayerInputAI : PlayerInput
         AIAction stepAction = _currentProgramSteps[_currentProgramStepIndex].action;
         float stepTime = _currentProgramSteps[_currentProgramStepIndex].duration;
         //Debug.Log(stepAction + " => " + stepTime);
-        GetComponent<Animator>().SetLayerWeight(1, 0);
+
         switch (stepAction)
         {
             case AIAction.WalkRight:
@@ -140,12 +140,18 @@ public class PlayerInputAI : PlayerInput
                     newInput.SetTauntButtonDown(true);
                 break;
             case AIAction.ShieldUp:
-                if (_currentProgramTime <= 0.2f)
-                    newInput.SetDefenseButtonDown(true);
-                else
-                    newInput.SetDefenseButtonHeld(true);
-                newInput.SetVerticalInput(1.0f);
+                {
+                    if (_currentProgramTime <= 0.2f)
+                        newInput.SetDefenseButtonDown(true);
+                    else
+                        newInput.SetDefenseButtonHeld(true);
+                    // move from forward to up
+                    float lambda = (0.3f - _currentProgramTime)/0.3f;
+                    lambda = Mathf.Clamp(lambda, 0, 1);
+                    newInput.SetHorizontalInput(lambda);
+                    newInput.SetVerticalInput(1 - lambda);
                     break;
+                }
             case AIAction.HammerCheck:
                 GetComponent<Animator>().SetLayerWeight(1, 1);
                 break;
@@ -153,6 +159,10 @@ public class PlayerInputAI : PlayerInput
             default:
                 break;
         }
+        
+        // PlayerStatus blends automatically the layerWeight when showing the shield up
+        if (stepAction  != AIAction.ShieldUp && stepAction != AIAction.HammerCheck)
+            GetComponent<Animator>().SetLayerWeight(1, 0);
 
         _currentProgramTime += Time.deltaTime;
         if (_currentProgramTime >= stepTime)
