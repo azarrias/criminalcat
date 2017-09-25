@@ -241,7 +241,7 @@ public class AudioManager : MonoBehaviour
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME);
+                                MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME);
                         PlayMusic(final, musicChannel2, ENDING_TRACK_VOLUME);
                         musicChannel2.loop = false;
                         currentState = State.ENDING;

@@ -113,7 +113,7 @@ public class FSMBoss : MonoBehaviour
     public AudioClip iceSpikesAttack;
     public AudioClip fireballAura;
     public AudioClip bossDeath;
-    public AudioClip beingHit;
+    public AudioClip[] beingHit;
     public AudioClip blueSpiritLaughter;
     public AudioClip castSkulls;
     private AudioSource venomAuraSkullAttackSource;
@@ -668,7 +668,7 @@ public class FSMBoss : MonoBehaviour
             bloodyDamage = false;
         }
         damaged = false;
-        AudioManager.instance.PlayDiegeticFx(gameObject, beingHit);
+        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, beingHit);
     }
 
     private void Dead()
