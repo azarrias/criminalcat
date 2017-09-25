@@ -64,6 +64,7 @@ public class PlayerStatus : MonoBehaviour
     public float staminaRecoveryRate = 0.0f;
     int stamina;
     float staminaRecovery;
+    bool fullStaminaRecovery;
 
     [Header("Beer Setup")]
     [Tooltip("Starting beer value")]
@@ -182,6 +183,7 @@ public class PlayerStatus : MonoBehaviour
 
         GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>().RecoverPlayerStatusValues( this);
         staminaRecovery = 0.0f;
+        fullStaminaRecovery = false;
 
         GameObject guiObject = GameObject.Find("GUI");
         if (guiObject)
@@ -242,13 +244,15 @@ public class PlayerStatus : MonoBehaviour
             godMode = !godMode;
 
         // stamina recovery
-        if (stamina == 0)
+        float staminaRecoveryCap = fullStaminaRecovery ? staminaMaximum : 1;
+        if (stamina < staminaRecoveryCap)
         {
             staminaRecovery += staminaRecoveryRate * Time.deltaTime;
             if (staminaRecovery >= 1.0f)
             {
                 RestoreStamina(1);
                 staminaRecovery = 0.0f;
+                PlayFx("staminaUp");
             }
         }
     }
@@ -414,6 +418,16 @@ public class PlayerStatus : MonoBehaviour
         stamina = value;
     }
 
+    public void SetStaminaRecoveryParameters( bool fullRecovery, float newRecoveryRate)
+    {
+        fullStaminaRecovery = fullRecovery;
+        staminaRecoveryRate = newRecoveryRate;
+    }
+
+    public bool HasMaxStamina()
+    {
+        return stamina == staminaMaximum;
+    }
     // ---- BEER functions ---------------------------------------------------------------------------------------------
     public bool ConsumeBeer(int consumption)
     {
