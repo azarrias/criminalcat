@@ -10,6 +10,8 @@ public class AudioManager : MonoBehaviour
     private const float POSX_ENTER_LIFTABLE_PLATFORMS = 140.0f;
     private const float POSX_ENTER_ENDING = 62.0f;
 
+    private const float ENDING_TRACK_VOLUME = 0.95f;
+
     public enum State
     {
         TITLE_CINEMATIC,
@@ -228,7 +230,7 @@ public class AudioManager : MonoBehaviour
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
-                        PlayMusic(final, musicChannel2);
+                        PlayMusic(final, musicChannel2, ENDING_TRACK_VOLUME);
                         musicChannel2.loop = false;
                         currentState = State.ENDING;
                     }
