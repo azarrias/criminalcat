@@ -28,15 +28,19 @@ public class BossFireBallBehaviour : MonoBehaviour {
         ballExplosion = gameObject.transform.Find("BallExplosion").gameObject;
         ball = gameObject.transform.Find("Ball").gameObject;
         smoke = gameObject.transform.Find("Ball/Smoke").gameObject;
-        fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
-        timeToGenerate = fsmBoss.preBallAttackDuration;
+        if (GameObject.FindGameObjectWithTag("Boss"))
+        {
+            fsmBoss = GameObject.FindGameObjectWithTag("Boss").GetComponent<FSMBoss>();
+            timeToGenerate = fsmBoss.preBallAttackDuration;
+        }
         particlesManager = GameObject.Find("ParticlesManager");    
     }
 
 	// Use this for initialization
 	void Start() {
         ball.transform.localScale = Vector3.zero;
-	}
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -53,6 +57,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
                 generatingBall = false;
                 SetFacingRight(fsmBoss.facingRight);
                 smoke.SetActive(true);
+                gameObject.GetComponent<SphereCollider>().enabled = true;
                 AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
             }                       
         }
@@ -129,7 +134,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
             deactivationCounter = 0.0f;
             deactivate = false;
             gameObject.SetActive(false);
-            gameObject.GetComponent<SphereCollider>().enabled = true;
+            //gameObject.GetComponent<SphereCollider>().enabled = true;
             ball.transform.localScale = Vector3.zero;                   
         }
     }

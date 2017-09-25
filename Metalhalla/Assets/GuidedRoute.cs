@@ -16,6 +16,11 @@ public class GuidedRoute : MonoBehaviour {
     [Tooltip("Speed to move in the route")]
     public float speed = 2.0f;
 
+    [Header("Randomization")]
+    [Tooltip("Randomize the MC movement")]
+    public bool randomize = true;
+    public float speedRandomVariation = 10.0f;
+
     private int totalSteps;
     private int currentStepIndex;
     private int nextStepIndex;
@@ -24,9 +29,13 @@ public class GuidedRoute : MonoBehaviour {
     private Vector3 currentDirection;
     private float currentDistance;
     private bool reverse = false;
+    private float baseSpeed;
 
     private void Start()
     {
+        if (randomize)
+            baseSpeed = speed;
+                
         totalSteps = stepPoints.Length;
         if (totalSteps >= 2)
         {
@@ -80,6 +89,8 @@ public class GuidedRoute : MonoBehaviour {
 
     private void UpdateSteps()
     {
+        if (randomize)
+            speed = Random.Range(baseSpeed - speedRandomVariation, baseSpeed + speedRandomVariation);
         currentStep = stepPoints[currentStepIndex].position;
         nextStep = stepPoints[nextStepIndex].position;
         currentDirection = (nextStep - currentStep).normalized;
