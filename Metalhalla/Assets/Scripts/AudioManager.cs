@@ -12,6 +12,8 @@ public class AudioManager : MonoBehaviour
 
     private const float ENDING_TRACK_VOLUME = 0.95f;
 
+    private const float CAVE_ECHO_WETMIX = 0.15f;
+
     public enum State
     {
         TITLE_CINEMATIC,
@@ -342,6 +344,7 @@ public class AudioManager : MonoBehaviour
 
         switch (scene.buildIndex)
         {
+
             case 0: // Title
                 PlayMusic(cinematicaInicio, musicChannel1);
                 break; 
@@ -354,6 +357,8 @@ public class AudioManager : MonoBehaviour
                     PlayMusic(menuInicial, musicChannel2);
                     FadeAudioSource(musicChannel2, FadeAudio.FadeType.FadeIn, 2.0f, 1.0f);
                     musicChannel2.loop = true;
+
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
                     break;
                 }
             case 2: // Dungeon entrance
@@ -367,7 +372,7 @@ public class AudioManager : MonoBehaviour
                     PlayMusic(tutorial.audioLoop, musicChannel1);
                     musicChannel1.loop = true;
 
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.0f));
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
                     break;
                 }
             case 3: // Dungeon
@@ -381,7 +386,7 @@ public class AudioManager : MonoBehaviour
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
 
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
                     break;
                 }
             case 4: // Boss scene
@@ -394,7 +399,7 @@ public class AudioManager : MonoBehaviour
 
                     PlayMusic(boss, musicChannel1);
 
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", 0.15f));
+                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
                     break;
                 }
                 // case 5: break; // End
@@ -464,7 +469,7 @@ public class AudioManager : MonoBehaviour
         fadeAudioComponent.targetVolume = targetVolume;
     }
 
-    IEnumerator SetMixerParameter(string parameter, float value)
+    IEnumerator SetMixerParameter(string parameter, float value = 0.0f)
     {
         // I know this looks silly, but it is a workaround to a unity bug
         yield return new WaitForEndOfFrame();
