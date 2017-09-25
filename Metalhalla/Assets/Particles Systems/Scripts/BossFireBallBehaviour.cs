@@ -36,7 +36,8 @@ public class BossFireBallBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
         ball.transform.localScale = Vector3.zero;
-	}
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -53,6 +54,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
                 generatingBall = false;
                 SetFacingRight(fsmBoss.facingRight);
                 smoke.SetActive(true);
+                gameObject.GetComponent<SphereCollider>().enabled = true;
                 AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
             }                       
         }
@@ -129,7 +131,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
             deactivationCounter = 0.0f;
             deactivate = false;
             gameObject.SetActive(false);
-            gameObject.GetComponent<SphereCollider>().enabled = true;
+            //gameObject.GetComponent<SphereCollider>().enabled = true;
             ball.transform.localScale = Vector3.zero;                   
         }
     }
