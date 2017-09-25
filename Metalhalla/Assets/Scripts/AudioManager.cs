@@ -16,6 +16,7 @@ public class AudioManager : MonoBehaviour
     private const float FADEOUT_TARGET_VOLUME = 0.0f;
 
     private const float CAVE_ECHO_WETMIX = 0.15f;
+    private const float STARTING_MIXER_GROUP_ATTENUATION = 0.5f;
 
     public enum State
     {
@@ -195,7 +196,9 @@ public class AudioManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        AudioManager.instance.mixer.SetFloat("MusicVolume", 20.0f * Mathf.Log10(STARTING_MIXER_GROUP_ATTENUATION));
+        AudioManager.instance.mixer.SetFloat("FXDiegeticVolume", 20.0f * Mathf.Log10(STARTING_MIXER_GROUP_ATTENUATION));
+        AudioManager.instance.mixer.SetFloat("FXNonDiegeticVolume", 20.0f * Mathf.Log10(STARTING_MIXER_GROUP_ATTENUATION));
     }
 
     void Update()
