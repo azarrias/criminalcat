@@ -11,10 +11,17 @@ public class BatBehaviour : MonoBehaviour {
     public float flapWingsPitch = 1.0f;
     public AudioClip[] fxFlapWings;
 
+    Animator anim;
+    AnimatorStateInfo state;
+
     private void Awake()
     {
-        Animator anim = GetComponent<Animator>();
-        AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+        anim = GetComponent<Animator>();
+        state = anim.GetCurrentAnimatorStateInfo(0);
+    }
+
+    private void Start()
+    {
         anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
     }
 
