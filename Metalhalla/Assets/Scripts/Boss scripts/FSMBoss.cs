@@ -116,6 +116,7 @@ public class FSMBoss : MonoBehaviour
     public AudioClip[] beingHit;
     public AudioClip blueSpiritLaughter;
     public AudioClip castSkulls;
+    public AudioClip youDie;
     private AudioSource venomAuraSkullAttackSource;
     private AudioSource venomAuraIceSpikesSource;
     private AudioSource fireballAuraSource;
@@ -675,7 +676,6 @@ public class FSMBoss : MonoBehaviour
     {
         if (currAnimation != "Dead")
         {
-            AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath);
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "Dead";
             bossAnimator.SetBool(currAnimation, true);
@@ -700,7 +700,9 @@ public class FSMBoss : MonoBehaviour
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            shrink = true;                     
+            if (!shrink)
+                    AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath);
+            shrink = true;
         }
 
         if (shrink)
@@ -712,7 +714,9 @@ public class FSMBoss : MonoBehaviour
                 if (bodyMesh.transform.localScale.x <= 0.1f)
                 {                   
                     GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
-                    AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter);
+                    AudioManager.instance.Wait(1.5f, () => {
+                        AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter);
+                    });
 
                     //mod for the celebration
                     GameObject player = GameObject.FindWithTag("Player");
@@ -983,6 +987,7 @@ public class FSMBoss : MonoBehaviour
                 iceSpikesScript3D.SelectIceSafe();
 
             venomAuraIceSpikesSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraIceSpikes, true);
+            AudioManager.instance.PlayDiegeticFx(gameObject, youDie);
         }
         else
         {
