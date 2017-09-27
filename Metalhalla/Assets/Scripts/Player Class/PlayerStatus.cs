@@ -40,6 +40,10 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] rightFootsteps;
     public AudioClip[] hurtScream;
     public AudioClip deathScream;
+    public AudioClip[] drinkBeer;
+    public AudioClip[] burp;
+    public AudioClip voiceWhat;
+    public AudioClip voiceDammit;
 
     [Header("Sound FXs parameters")]
     [Range(0.0f, 1.0f)]
