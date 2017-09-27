@@ -20,6 +20,7 @@ public class DrinkState : PlayerState
             drinkFramesCount = 0;
             status.StartGUIFeedback("YButton");
             status.ShowHorn(true);
+            status.PlayFx("drink");
         }
 
         if (drinkFramesCount >= drinkFramesDuration)
@@ -28,7 +29,7 @@ public class DrinkState : PlayerState
                 status.SetState(PlayerStatus.walk);
             else
                 status.SetState(PlayerStatus.idle);
-
+            status.PlayFx("burp");
         }
         else
             status.SetState(this);

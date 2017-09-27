@@ -368,7 +368,7 @@ public class PlayerStatus : MonoBehaviour
         if (health >= healthMaximum)
             health = healthMaximum;
 
-        PlayFx("restoreHealth");
+//        PlayFx("restoreHealth");
         return true;
     }
 
@@ -562,10 +562,14 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
         else if (fx.Equals("restoreBeer"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
-        else if (fx.Equals("restoreHealth"))
-            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
+//        else if (fx.Equals("restoreHealth"))
+//            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
             AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
+        else if (fx.Equals("drink"))
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, drinkBeer);
+        else if (fx.Equals("burp"))
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, burp);
     }
 
     // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------
