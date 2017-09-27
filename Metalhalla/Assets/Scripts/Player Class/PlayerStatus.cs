@@ -44,6 +44,7 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] burp;
     public AudioClip voiceWhat;
     public AudioClip voiceDammit;
+    private const float VOICE_DAMMIT_PITCH = 0.7f;
 
     [Header("Sound FXs parameters")]
     [Range(0.0f, 1.0f)]
@@ -562,14 +563,18 @@ public class PlayerStatus : MonoBehaviour
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
         else if (fx.Equals("restoreBeer"))
             AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
-//        else if (fx.Equals("restoreHealth"))
-//            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
+        //        else if (fx.Equals("restoreHealth"))
+        //            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
             AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
         else if (fx.Equals("drink"))
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, drinkBeer);
         else if (fx.Equals("burp"))
             AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, burp);
+        else if (fx.Equals("what"))
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceWhat);
+        else if (fx.Equals("dammit"))
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceDammit, false, VOICE_DAMMIT_PITCH);
     }
 
     // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------

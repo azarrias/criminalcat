@@ -15,6 +15,8 @@ public class SlowDownTime : MonoBehaviour {
     private float previousTimeScale;
     private float previousFixedDeltaTime;
 
+    private const float TIME_TO_WAIT_VOICE = 6.5f;
+
     void Start()
     {
         GetComponent<Renderer>().enabled = false;
@@ -46,6 +48,11 @@ public class SlowDownTime : MonoBehaviour {
             Time.fixedDeltaTime *= slowedTimeScale;
             elapsedTime = 0.0f;
             startCountdown = true;
+
+            AudioManager.instance.Wait(TIME_TO_WAIT_VOICE * slowedTimeScale, () =>
+            {
+                collision.GetComponent<PlayerStatus>().PlayFx("dammit");
+            });
         }
     }
 }

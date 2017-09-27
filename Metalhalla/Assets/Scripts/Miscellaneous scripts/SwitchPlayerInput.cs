@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SwitchPlayerInput : MonoBehaviour {
 
+    private const string ENDING_TRIGGER_NAME = "SwitchPlayerInputTrigger - Ending";
+
     public enum inputSwitch
     {
         PlayerToAI,
@@ -27,6 +29,8 @@ public class SwitchPlayerInput : MonoBehaviour {
             if (useAI)
             {
                 controller.GetComponent<PlayerInputAI>().SetAIProgram(program);
+                if (gameObject.name.Equals(ENDING_TRIGGER_NAME))
+                    collision.GetComponent<PlayerStatus>().PlayFx("what");
             }
             controller.switchAIInput(useAI);
         }
