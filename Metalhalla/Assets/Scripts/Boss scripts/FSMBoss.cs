@@ -115,7 +115,7 @@ public class FSMBoss : MonoBehaviour
     public AudioClip bossDeath;
     public AudioClip[] beingHit;
     public AudioClip blueSpiritLaughter;
-    public AudioClip castSkulls;
+    public AudioClip[] castSkulls;
     public AudioClip youDie;
     private AudioSource venomAuraSkullAttackSource;
     private AudioSource venomAuraIceSpikesSource;
@@ -806,7 +806,13 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             
             earthAuraPS.Play();
-            AudioManager.instance.PlayDiegeticFx(gameObject, castSkulls);
+            for (int i = 0; i<4; ++i)
+            {
+                AudioManager.instance.Wait(Random.Range(0, 1.5f), () =>
+                {
+                    AudioManager.instance.RandomizePlayFx(gameObject, 1.3f, 1.0f, castSkulls);
+                });
+            }
             venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, true);
             earthAuraDamageScript.auraActive = true;
             levitatingSkullsScript.StartSkullsAttack();        
