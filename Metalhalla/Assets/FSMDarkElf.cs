@@ -40,6 +40,7 @@ public class FSMDarkElf : MonoBehaviour
     [Header("Sound FXs")]
     public AudioClip fireBall;
     public AudioClip[] hurtScream;
+    public AudioClip deathScream;
 
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
@@ -220,6 +221,7 @@ public class FSMDarkElf : MonoBehaviour
                 animator.SetBool("attack", true);
                 break;
             case State.DEAD:
+                AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
                 animator.SetBool("dead", true);
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
