@@ -215,7 +215,7 @@ public class AudioManager : MonoBehaviour
                         koreanMode.Init(musicChannel1);
                         if (AudioManager.instance.musicChannel2)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME);
+                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
                         PlayMusic(koreanMode.audioLoop, musicChannel1);
                         currentState = State.KOREAN_MODE;
                     }
@@ -228,7 +228,7 @@ public class AudioManager : MonoBehaviour
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME);
+                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
                         PlayMusic(liftablePlatforms, musicChannel2);
                         musicChannel2.loop = true;
                         currentState = State.LIFTABLE_PLATFORMS;
@@ -241,7 +241,7 @@ public class AudioManager : MonoBehaviour
                     {
                         if (AudioManager.instance.musicChannel1)
                             AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME);
+                                MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
                         PlayMusic(final, musicChannel2, ENDING_TRACK_VOLUME);
                         musicChannel2.loop = false;
                         currentState = State.ENDING;
@@ -362,11 +362,11 @@ public class AudioManager : MonoBehaviour
                 {
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME);
+                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
 
 //                    menuInicial.Init(musicChannel2);
                     PlayMusic(menuInicial, musicChannel2);
-                    FadeAudioSource(musicChannel2, FadeAudio.FadeType.FadeIn, 2.0f, 1.0f);
+                    FadeAudioSource(musicChannel2, FadeAudio.FadeType.FadeIn, 2.0f, 1.0f, false);
                     musicChannel2.loop = true;
 
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
@@ -378,7 +378,7 @@ public class AudioManager : MonoBehaviour
 
                     if (AudioManager.instance.musicChannel2)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME);
+                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
 
                     tutorial.Init(musicChannel1);
                     PlayMusic(tutorial.audioLoop, musicChannel1);
@@ -397,7 +397,7 @@ public class AudioManager : MonoBehaviour
 
                     if (AudioManager.instance.musicChannel1)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME);
+                            MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
 
                     StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
                     break;
@@ -409,7 +409,7 @@ public class AudioManager : MonoBehaviour
 
                     if (AudioManager.instance.musicChannel2)
                         AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME);
+                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
 
                     PlayMusic(boss, musicChannel1);
 
@@ -474,13 +474,14 @@ public class AudioManager : MonoBehaviour
         obj.SetActive(false);
     }
 
-    public void FadeAudioSource(AudioSource audioSource, FadeAudio.FadeType type, float duration, float targetVolume)
+    public void FadeAudioSource(AudioSource audioSource, FadeAudio.FadeType type, float duration, float targetVolume, bool pause = true)
     {
         FadeAudio fadeAudioComponent = gameObject.AddComponent<FadeAudio>() as FadeAudio;
         fadeAudioComponent.fadeType = type;
         fadeAudioComponent.audioSource = audioSource;
         fadeAudioComponent.fadeDuration = duration;
         fadeAudioComponent.targetVolume = targetVolume;
+        fadeAudioComponent.canBePaused = pause;
     }
 
     IEnumerator SetMixerParameter(string parameter, float value = 0.0f)
