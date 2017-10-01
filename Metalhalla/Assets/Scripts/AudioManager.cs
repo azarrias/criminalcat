@@ -47,18 +47,20 @@ public class AudioManager : MonoBehaviour
     //    private int numberOfMusicAudioSources = 2;
 
     [Header("Music Tracks")]
-    public AudioClip cinematicaInicio;
+    public MusicTrack cinematicaInicio;
     //    public MusicLoop menuInicial;
-    public AudioClip menuInicial;
+    public MusicTrack menuInicial;
     public MusicLoop tutorial;
-    public AudioClip[] warmUp;
+    public MusicTrack[] warmUp;
+    private int currentWarmUpIndex;
     public MusicLoop koreanMode;
 //    public AudioClip hardcoreBattle;
-    public AudioClip liftablePlatforms;
+    public MusicTrack[] liftablePlatforms;
 //    public AudioClip cinematicaBoss;
-    public AudioClip boss;
-    public AudioClip final;
-//    public AudioClip creditos;
+    public MusicTrack boss;
+    public MusicTrack final;
+    //    public AudioClip creditos;
+    public Stack<MusicPlay> musicStack;
 
     [Header("Randomization")]
     [Tooltip("Pitch Offset (relative to the base pitch)")]
@@ -80,34 +82,102 @@ public class AudioManager : MonoBehaviour
     private GameObject player;
 
     [System.Serializable]
-    public class MusicLoop
+    public class MusicPlay
     {
+        public MusicTrack track;
+        public AudioSource audioSource;
+
+        public MusicPlay(MusicTrack mt, AudioSource a)
+        {
+            track = mt;
+            audioSource = a;
+        }
+    }
+
+    [System.Serializable]
+    public class MusicTrack
+    {
+        public AudioClip sourceAudioClip;
+        [HideInInspector]
         public AudioClip audioClip;
-        public AudioClip audioLoop;
+        [HideInInspector]
+        public AudioSource musicAudioSource;
+        [HideInInspector]
+        public AudioSource otherMusicAudioSource;
+
+        [HideInInspector]
+        // Fade out point in PCM samples
+        public int fadePoint;
+
+        virtual public void Init()
+        {
+            audioClip = sourceAudioClip;
+            fadePoint = (int)((audioClip.length - MUSIC_TRACK_FADEOUT_LONG) * audioClip.frequency);
+
+            if (!AudioManager.instance.musicChannel1.isPlaying)
+            {
+                musicAudioSource = AudioManager.instance.musicChannel1;
+                otherMusicAudioSource = AudioManager.instance.musicChannel2;
+            }
+            else if (!AudioManager.instance.musicChannel2.isPlaying)
+            {
+                musicAudioSource = AudioManager.instance.musicChannel2;
+                otherMusicAudioSource = AudioManager.instance.musicChannel1;
+            }
+            else
+            {
+/*                FadeAudio fade = AudioManager.instance.musicChannel1.GetComponent<FadeAudio>();
+                if (fade != null && fade.fadeType == FadeAudio.FadeType.FadeOut)
+                {
+                    musicAudioSource = AudioManager.instance.musicChannel1;
+                    otherMusicAudioSource = AudioManager.instance.musicChannel2;
+                }
+                else
+                {
+                    musicAudioSource = AudioManager.instance.musicChannel2;
+                    otherMusicAudioSource = AudioManager.instance.musicChannel1;
+                }*/
+                Debug.Log("There are no free music channels to initialize " + sourceAudioClip.name);
+            }
+        }
+
+        public void Release(AudioSource source)
+        {
+            source.loop = false;
+            source.clip = null;
+            audioClip = null;
+            AudioClip.DestroyImmediate(audioClip, false);
+        }
+    }
+
+    [System.Serializable]
+    public class MusicLoop : MusicTrack
+    {
         public float MusicLoopPointStart, MusicLoopPointEnd;
         public bool isLooping, isFinished;
-        public AudioSource musicAudioSource;
+//        public AudioSource musicAudioSource;
 
         float[] audioData;
         long position;
         int sampleLoopPointStart, sampleLoopPointEnd;
         int start;
 
-        public void Init(AudioSource audioSource)
+        override public void Init()
         {
+            base.Init();
             isLooping = true;
             isFinished = false;
-            musicAudioSource = audioSource;
+            position = 0;
 
-            double multiplier = MusicLoopPointStart / audioClip.length;
-            sampleLoopPointStart = (int)(multiplier * audioClip.samples * audioClip.channels);
-            multiplier = MusicLoopPointEnd / audioClip.length;
-            sampleLoopPointEnd = (int)(multiplier * audioClip.samples * audioClip.channels);
-            audioData = new float[audioClip.samples * audioClip.channels];
+            double multiplier = MusicLoopPointStart / sourceAudioClip.length;
+            sampleLoopPointStart = (int)(multiplier * sourceAudioClip.samples * sourceAudioClip.channels);
+            multiplier = MusicLoopPointEnd / sourceAudioClip.length;
+            sampleLoopPointEnd = (int)(multiplier * sourceAudioClip.samples * sourceAudioClip.channels);
+            audioData = new float[sourceAudioClip.samples * sourceAudioClip.channels];
 
-            audioClip.GetData(audioData, 0);
-            audioLoop = AudioClip.Create(audioClip.name + "_Loop", audioClip.samples, audioClip.channels, 
-                audioClip.frequency, true, OnAudioRead, OnAudioSetPos);
+            sourceAudioClip.GetData(audioData, 0);
+            audioClip = AudioClip.Create(sourceAudioClip.name + "_Loop", sourceAudioClip.samples, sourceAudioClip.channels,
+                sourceAudioClip.frequency, true, OnAudioRead, OnAudioSetPos);
         }
 
         void OnAudioRead(float[] data)
@@ -150,14 +220,11 @@ public class AudioManager : MonoBehaviour
 
         }
 
-        public void Release()
+/*        public override void Release(AudioSource source)
         {
-            musicAudioSource.loop = false;
-            musicAudioSource.clip = null;
-            AudioManager.instance.StopMusic(musicAudioSource);
-            audioLoop = null;
-            AudioClip.DestroyImmediate(audioLoop, false);
-        }
+            base.Release(source);
+            AudioClip.DestroyImmediate(audioClip, false);
+        }*/
     }
 
     void Awake()
@@ -186,6 +253,7 @@ public class AudioManager : MonoBehaviour
                 cameraManager = cameraManagerGO.GetComponent<CameraManager>();
             }
 
+            musicStack = new Stack<MusicPlay>();
         }
         else if (instance != this)
             Destroy(gameObject);
@@ -203,55 +271,114 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
+        MusicPlay play;
+
         switch(currentState)
         {
             case State.WARMUP:
+                if (player.transform.position.x > POSX_ENTER_KOREAN_MODE)
                 {
-                    if (!musicChannel2.isPlaying)
-                        PlayMusic(warmUp[Random.Range(0, warmUp.Length)], musicChannel2);
-
-                    if (player.transform.position.x > POSX_ENTER_KOREAN_MODE)
+                    while (musicStack.Count > 0)
                     {
-                        koreanMode.Init(musicChannel1);
-                        if (AudioManager.instance.musicChannel2)
-                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
-                        PlayMusic(koreanMode.audioLoop, musicChannel1);
-                        currentState = State.KOREAN_MODE;
+                        play = musicStack.Pop();
+                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        {
+                            AudioManager.instance.StopMusic(play);
+                        });
                     }
 
-                    break;
+                    koreanMode.Init();
+                    PlayMusic(koreanMode);
+                    koreanMode.musicAudioSource.loop = true;
+                    currentState = State.KOREAN_MODE;
                 }
+                else if (warmUp[currentWarmUpIndex].fadePoint <= warmUp[currentWarmUpIndex].musicAudioSource.timeSamples)
+                {
+                    currentWarmUpIndex = (currentWarmUpIndex + 1) % 2;
+                    while (musicStack.Count > 0)
+                    {
+                        play = musicStack.Pop();
+                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        {
+                            AudioManager.instance.StopMusic(play);
+                        });
+                    }
+
+                    warmUp[currentWarmUpIndex].Init();
+                    PlayMusic(warmUp[currentWarmUpIndex]);
+                    FadeAudioSource(warmUp[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 
+                        MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
+                }
+                break;
+
             case State.KOREAN_MODE:
+                if (player.transform.position.x > POSX_ENTER_LIFTABLE_PLATFORMS)
                 {
-                    if (player.transform.position.x > POSX_ENTER_LIFTABLE_PLATFORMS)
+                    currentWarmUpIndex = 0;
+                    currentState = State.LIFTABLE_PLATFORMS;
+                    while (musicStack.Count > 0)
                     {
-                        if (AudioManager.instance.musicChannel1)
-                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
-                        PlayMusic(liftablePlatforms, musicChannel2);
-                        musicChannel2.loop = true;
-                        currentState = State.LIFTABLE_PLATFORMS;
+                        play = musicStack.Pop();
+                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        {
+                            AudioManager.instance.StopMusic(play);
+                        });
                     }
-                    break;
+
+                    liftablePlatforms[currentWarmUpIndex].Init();
+
+                    PlayMusic(liftablePlatforms[currentWarmUpIndex]);
+                    FadeAudioSource(liftablePlatforms[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 
+                        MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
                 }
+
+                break;
+
+            case State.LIFTABLE_PLATFORMS:
+                if (liftablePlatforms[currentWarmUpIndex].fadePoint <= liftablePlatforms[currentWarmUpIndex].musicAudioSource.timeSamples)
+                {
+                    currentWarmUpIndex = (currentWarmUpIndex + 1) % 2;
+                    while (musicStack.Count > 0)
+                    {
+                        play = musicStack.Pop();
+                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        {
+                            AudioManager.instance.StopMusic(play);
+                        });
+                    }
+
+                    liftablePlatforms[currentWarmUpIndex].Init();
+                    PlayMusic(liftablePlatforms[currentWarmUpIndex]);
+                    FadeAudioSource(liftablePlatforms[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn,
+                        MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
+                }
+                break;
+
             case State.BOSS:
+                if (player.transform.position.x > POSX_ENTER_ENDING)
                 {
-                    if (player.transform.position.x > POSX_ENTER_ENDING)
+                    while (musicStack.Count > 0)
                     {
-                        if (AudioManager.instance.musicChannel1)
-                            AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                                MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-                        PlayMusic(final, musicChannel2, ENDING_TRACK_VOLUME);
-                        musicChannel2.loop = false;
-                        currentState = State.ENDING;
+                        play = musicStack.Pop();
+                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        {
+                            AudioManager.instance.StopMusic(play);
+                        });
                     }
-                    break;
+
+                    currentState = State.ENDING;
+                    final.Init();
+                    PlayMusic(final, ENDING_TRACK_VOLUME);
                 }
+
+                break;
         }
 
-//        if (menuInicial.isFinished)
-//            menuInicial.Release();
     }
 
     GameObject GetAudioSource(GameObject audioSourcePrefab, ref List<GameObject> audioSourceList)
@@ -270,22 +397,27 @@ public class AudioManager : MonoBehaviour
         return obj;
     }
 
-    public void StopMusic(AudioSource musicSource)
+    public void StopMusic(MusicPlay music)
     {
-        musicSource.Stop();
+        music.track.musicAudioSource.Stop();
+        music.track.Release(music.audioSource);
     }
 
-    public AudioSource PlayMusic(AudioClip clip, AudioSource musicSource, float volume = 1.0f)
+    public AudioSource PlayMusic(MusicTrack track, float volume = 1.0f)
     {
-        //        obj.SetActive(true);
-        //        AudioSource musicSource = obj.GetComponent<AudioSource>();
+        if(track.musicAudioSource)
+        {
+            track.musicAudioSource.clip = track.audioClip;
+            track.musicAudioSource.volume = volume;
+            musicStack.Push(new MusicPlay(track, track.musicAudioSource));
+            track.musicAudioSource.Play();
+        }
+        else
+        {
+            Debug.Log("Cannot play music track " + track.sourceAudioClip.name + " since it has no audio source attached to it");
+        }
 
-        musicSource.clip = clip;
-        musicSource.volume = volume;
-        musicSource.Play();
-
-        //       StartCoroutine(ReleaseAudioSource(obj, clip.length, Time.timeScale));
-        return musicSource;
+        return track.musicAudioSource;
     }
 
     public AudioSource PlayDiegeticFx(GameObject sourceGO, AudioClip clip, bool loop = false, float pitch = 1.0f, float volume = 1.0f)
@@ -356,66 +488,66 @@ public class AudioManager : MonoBehaviour
         {
 
             case 0: // Title
-                PlayMusic(cinematicaInicio, musicChannel1);
+                cinematicaInicio.Init();
+                PlayMusic(cinematicaInicio);
                 break; 
+
             case 1: // Initial menu
+                menuInicial.Init();
+                while (musicStack.Count > 0)
                 {
-                    if (AudioManager.instance.musicChannel1)
-                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut, 
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-
-//                    menuInicial.Init(musicChannel2);
-                    PlayMusic(menuInicial, musicChannel2);
-                    FadeAudioSource(musicChannel2, FadeAudio.FadeType.FadeIn, 2.0f, 1.0f, false);
-                    musicChannel2.loop = true;
-
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
-                    break;
+                    AudioManager.instance.StopMusic(musicStack.Pop());
+                    FadeAudioSource(menuInicial.musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
                 }
+
+                PlayMusic(menuInicial);
+                menuInicial.musicAudioSource.loop = true;
+
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
+                break;
+
             case 2: // Dungeon entrance
+                player = GameObject.FindGameObjectWithTag("Player");
+
+                while (musicStack.Count > 0)
                 {
-                    player = GameObject.FindGameObjectWithTag("Player");
-
-                    if (AudioManager.instance.musicChannel2)
-                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-
-                    tutorial.Init(musicChannel1);
-                    PlayMusic(tutorial.audioLoop, musicChannel1);
-                    musicChannel1.loop = true;
-
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
-                    break;
+                    AudioManager.instance.StopMusic(musicStack.Pop());
                 }
+                tutorial.Init();
+                PlayMusic(tutorial);
+                FadeAudioSource(tutorial.musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
+                tutorial.musicAudioSource.loop = true;
+
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
+                break;
+
             case 3: // Dungeon
+                player = GameObject.FindGameObjectWithTag("Player");
+                currentState = State.WARMUP;
+                currentWarmUpIndex = 0;
+                while (musicStack.Count > 0)
                 {
-                    player = GameObject.FindGameObjectWithTag("Player");
-                    currentState = State.WARMUP;
-
-//                    if (AudioManager.instance.musicChannel2)
-//                        menuInicial.Release();
-
-                    if (AudioManager.instance.musicChannel1)
-                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel1, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
-
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
-                    break;
+                    AudioManager.instance.StopMusic(musicStack.Pop());
                 }
+                warmUp[currentWarmUpIndex].Init();
+
+                PlayMusic(warmUp[currentWarmUpIndex]);
+                FadeAudioSource(warmUp[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
+                break;
+
             case 4: // Boss scene
-                {
-                    player = GameObject.FindGameObjectWithTag("Player");
-                    currentState = State.BOSS;
+                player = GameObject.FindGameObjectWithTag("Player");
+                currentState = State.BOSS;
+                boss.Init();
+                if (boss.otherMusicAudioSource.isPlaying)
+                    AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSource, FadeAudio.FadeType.FadeOut,
+                        MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
+                PlayMusic(boss);
+                boss.musicAudioSource.loop = true;
 
-                    if (AudioManager.instance.musicChannel2)
-                        AudioManager.instance.FadeAudioSource(AudioManager.instance.musicChannel2, FadeAudio.FadeType.FadeOut,
-                            MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-
-                    PlayMusic(boss, musicChannel1);
-
-                    StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
-                    break;
-                }
+                StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
+                break;
                 // case 5: break; // End
         }
 
