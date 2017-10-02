@@ -539,6 +539,10 @@ public class AudioManager : MonoBehaviour
             case 4: // Boss scene
                 player = GameObject.FindGameObjectWithTag("Player");
                 currentState = State.BOSS;
+                while (musicStack.Count > 0)
+                {
+                    AudioManager.instance.StopMusic(musicStack.Pop());
+                }
                 boss.Init();
                 if (boss.otherMusicAudioSource.isPlaying)
                     AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSource, FadeAudio.FadeType.FadeOut,
