@@ -10,7 +10,6 @@ public class AudioManager : MonoBehaviour
     private const float POSX_ENTER_LIFTABLE_PLATFORMS = 140.0f;
     private const float POSX_ENTER_ENDING = 62.0f;
 
-    private const float ENDING_TRACK_VOLUME = 0.90f;
     private const float MUSIC_TRACK_FADEOUT_SHORT = 2.0f;
     private const float MUSIC_TRACK_FADEOUT_LONG = 6.0f;
     private const float FADEOUT_TARGET_VOLUME = 0.0f;
@@ -58,6 +57,15 @@ public class AudioManager : MonoBehaviour
     public const float FX_BOSS_VOICE_YOUDIE_VOL = 1.0f;
     public const float FX_OPEN_CHEST_VOL = 0.7f;
     public const float FX_SKULLS_VANISHING_VOL = 0.2f;
+
+    public const float MUSIC_TITLE_VOL = 1.0f;
+    public const float MUSIC_MENU_VOL = 0.9f;
+    public const float MUSIC_TUTORIAL_VOL = 0.9f;
+    public const float MUSIC_WARMUP_VOL = 0.9f;
+    public const float MUSIC_KOREAN_VOL = 0.95f;
+    public const float MUSIC_PLATFORMS_VOL = 0.9f;
+    public const float MUSIC_BOSS_VOL = 1.0f;
+    public const float MUSIC_ENDING_VOL = 0.9f;
 
     public enum State
     {
@@ -331,7 +339,7 @@ public class AudioManager : MonoBehaviour
                     }
 
                     koreanMode.Init();
-                    PlayMusic(koreanMode);
+                    PlayMusic(koreanMode, MUSIC_KOREAN_VOL);
                     koreanMode.musicAudioSource.loop = true;
                     currentState = State.KOREAN_MODE;
                 }
@@ -349,7 +357,7 @@ public class AudioManager : MonoBehaviour
                     }
 
                     warmUp[currentWarmUpIndex].Init();
-                    PlayMusic(warmUp[currentWarmUpIndex]);
+                    PlayMusic(warmUp[currentWarmUpIndex], MUSIC_WARMUP_VOL);
                     FadeAudioSource(warmUp[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 
                         MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
                 }
@@ -372,7 +380,7 @@ public class AudioManager : MonoBehaviour
 
                     liftablePlatforms[currentWarmUpIndex].Init();
 
-                    PlayMusic(liftablePlatforms[currentWarmUpIndex]);
+                    PlayMusic(liftablePlatforms[currentWarmUpIndex], MUSIC_PLATFORMS_VOL);
                     FadeAudioSource(liftablePlatforms[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 
                         MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
                 }
@@ -394,7 +402,7 @@ public class AudioManager : MonoBehaviour
                     }
 
                     liftablePlatforms[currentWarmUpIndex].Init();
-                    PlayMusic(liftablePlatforms[currentWarmUpIndex]);
+                    PlayMusic(liftablePlatforms[currentWarmUpIndex], MUSIC_PLATFORMS_VOL);
                     FadeAudioSource(liftablePlatforms[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn,
                         MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
                 }
@@ -413,7 +421,7 @@ public class AudioManager : MonoBehaviour
 
                 currentState = State.CREDITS;
                 final.Init();
-                PlayMusic(final, ENDING_TRACK_VOLUME);
+                PlayMusic(final, MUSIC_ENDING_VOL);
 
                 break;
         }
@@ -528,7 +536,7 @@ public class AudioManager : MonoBehaviour
 
             case 0: // Title
                 cinematicaInicio.Init();
-                PlayMusic(cinematicaInicio);
+                PlayMusic(cinematicaInicio, MUSIC_TITLE_VOL);
                 break; 
 
             case 1: // Initial menu
@@ -539,7 +547,7 @@ public class AudioManager : MonoBehaviour
                     FadeAudioSource(menuInicial.musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
                 }
 
-                PlayMusic(menuInicial);
+                PlayMusic(menuInicial, MUSIC_MENU_VOL);
                 menuInicial.musicAudioSource.loop = true;
 
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix"));
@@ -553,7 +561,7 @@ public class AudioManager : MonoBehaviour
                     AudioManager.instance.StopMusic(musicStack.Pop());
                 }
                 tutorial.Init();
-                PlayMusic(tutorial);
+                PlayMusic(tutorial, MUSIC_TUTORIAL_VOL);
                 FadeAudioSource(tutorial.musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
                 tutorial.musicAudioSource.loop = true;
 
@@ -570,7 +578,7 @@ public class AudioManager : MonoBehaviour
                 }
                 warmUp[currentWarmUpIndex].Init();
 
-                PlayMusic(warmUp[currentWarmUpIndex]);
+                PlayMusic(warmUp[currentWarmUpIndex], MUSIC_WARMUP_VOL);
                 FadeAudioSource(warmUp[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn, 5.0f, 1.0f, false);
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
                 break;
@@ -586,7 +594,7 @@ public class AudioManager : MonoBehaviour
                 if (boss.otherMusicAudioSource.isPlaying)
                     AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSource, FadeAudio.FadeType.FadeOut,
                         MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-                PlayMusic(boss);
+                PlayMusic(boss, MUSIC_BOSS_VOL);
                 boss.musicAudioSource.loop = true;
 
                 StartCoroutine(SetMixerParameter("FXDiegeticEchoWetmix", CAVE_ECHO_WETMIX));
