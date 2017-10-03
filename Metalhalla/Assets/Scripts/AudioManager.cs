@@ -33,7 +33,7 @@ public class AudioManager : MonoBehaviour
         CREDITS
     }
 
-    State currentState;
+    public State currentState;
 
     public static AudioManager instance = null;
     public AudioMixer mixer;
@@ -358,23 +358,20 @@ public class AudioManager : MonoBehaviour
                 }
                 break;
 
-            case State.BOSS:
-                if (player.transform.position.x > POSX_ENTER_ENDING)
+            case State.ENDING:
+                while (musicStack.Count > 0)
                 {
-                    while (musicStack.Count > 0)
+                    play = musicStack.Pop();
+                    FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
+                    AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
                     {
-                        play = musicStack.Pop();
-                        FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
-                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
-                        {
-                            AudioManager.instance.StopMusic(play);
-                        });
-                    }
-
-                    currentState = State.ENDING;
-                    final.Init();
-                    PlayMusic(final, ENDING_TRACK_VOLUME);
+                        AudioManager.instance.StopMusic(play);
+                    });
                 }
+
+                currentState = State.CREDITS;
+                final.Init();
+                PlayMusic(final, ENDING_TRACK_VOLUME);
 
                 break;
         }

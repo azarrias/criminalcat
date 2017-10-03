@@ -30,7 +30,10 @@ public class SwitchPlayerInput : MonoBehaviour {
             {
                 controller.GetComponent<PlayerInputAI>().SetAIProgram(program);
                 if (gameObject.name.Equals(ENDING_TRIGGER_NAME))
+                {
+                    AudioManager.instance.currentState = AudioManager.State.ENDING;
                     collision.GetComponent<PlayerStatus>().PlayFx("what");
+                }
             }
             controller.switchAIInput(useAI);
         }
