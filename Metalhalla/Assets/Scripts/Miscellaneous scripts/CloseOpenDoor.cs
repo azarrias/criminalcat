@@ -76,7 +76,7 @@ public class CloseOpenDoor : MonoBehaviour {
     public void PlayerInside()
     {
         playerInside = true;
-        doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, doorSound, false);
+        doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, doorSound, false, 1.0f, AudioManager.FX_DOOR_VOL);
     }
 
     public void PlayerOutside()

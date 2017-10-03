@@ -26,6 +26,7 @@ public class OpenExitDoor : MonoBehaviour {
     public void OpenDoor()
     {
         closeOpenDoor.openExitDoor = true;
-        closeOpenDoor.doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, closeOpenDoor.doorSound, false);
+        closeOpenDoor.doorSoundSource = AudioManager.instance.PlayDiegeticFx(gameObject, closeOpenDoor.doorSound, 
+            false, 1.0f, AudioManager.FX_DOOR_VOL);
     }
 }

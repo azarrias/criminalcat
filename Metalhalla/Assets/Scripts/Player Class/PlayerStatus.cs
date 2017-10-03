@@ -44,11 +44,6 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] burp;
     public AudioClip voiceWhat;
     public AudioClip voiceDammit;
-    private const float VOICE_DAMMIT_PITCH = 0.7f;
-
-    [Header("Sound FXs parameters")]
-    [Range(0.0f, 1.0f)]
-    public float footstepVolume = 0.4f;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -546,35 +541,36 @@ public class PlayerStatus : MonoBehaviour
     public void PlayFx(string fx)
     {
         if (fx.Equals("swing"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing, false, 1.0f, AudioManager.FX_PLAYER_SWING_VOL);
         else if (fx.Equals("jump"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump, false, 1.0f, AudioManager.FX_PLAYER_JUMP_VOL);
         else if (fx.Equals("land"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand, false, 1.0f, AudioManager.FX_PLAYER_LAND_VOL);
         else if (fx.Equals("tornado"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado, false, 1.0f, AudioManager.FX_PLAYER_TORNADO_VOL);
         else if (fx.Equals("wildboar"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar, false, 1.0f, AudioManager.FX_PLAYER_WILDBOAR_VOL);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_FOOTSTEP_VOL, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_FOOTSTEP_VOL, rightFootsteps);
         else if (fx.Equals("hurtScream"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_HURT_VOL, hurtScream);
         else if (fx.Equals("restoreBeer"))
-            AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
+            AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer, false, 1.0f, AudioManager.FX_RESTORE_BEER_VOL);
         //        else if (fx.Equals("restoreHealth"))
         //            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
+            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream, false, 1.0f, AudioManager.FX_PLAYER_DEATH_VOL);
         else if (fx.Equals("drink"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, drinkBeer);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_DRINK_BEER_VOL, drinkBeer);
         else if (fx.Equals("burp"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, burp);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_BURP_VOL, burp);
         else if (fx.Equals("what"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, voiceWhat);
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceWhat, false, 1.0f, AudioManager.FX_PLAYER_VOICE_WHAT_VOL);
         else if (fx.Equals("dammit"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, voiceDammit, false, VOICE_DAMMIT_PITCH);
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceDammit, false, 
+                AudioManager.FX_PLAYER_VOICE_DAMMIT_PITCH, AudioManager.FX_PLAYER_VOICE_DAMMIT_VOL);
     }
 
     // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------

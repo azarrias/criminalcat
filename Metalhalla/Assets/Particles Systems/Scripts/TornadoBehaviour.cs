@@ -92,7 +92,7 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         if (!firstTime)
         {
-            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxTornado);
+            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxTornado, false, 1.0f, AudioManager.FX_PLAYER_TORNADO_VOL);
             if (tornadoAudioSource)
             {
                 AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeIn, fadeSeconds, 1.0f);

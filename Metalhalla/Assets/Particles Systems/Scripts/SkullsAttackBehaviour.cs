@@ -57,7 +57,7 @@ public class SkullsAttackBehaviour : MonoBehaviour {
             }
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
-            AudioManager.instance.PlayDiegeticFx(gameObject, skullsVanishing);
+            AudioManager.instance.PlayDiegeticFx(gameObject, skullsVanishing, false, 1.0f, AudioManager.FX_SKULLS_VANISHING_VOL);
         }
     }
 

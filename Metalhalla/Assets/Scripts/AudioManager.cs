@@ -10,13 +10,54 @@ public class AudioManager : MonoBehaviour
     private const float POSX_ENTER_LIFTABLE_PLATFORMS = 140.0f;
     private const float POSX_ENTER_ENDING = 62.0f;
 
-    private const float ENDING_TRACK_VOLUME = 0.95f;
+    private const float ENDING_TRACK_VOLUME = 0.90f;
     private const float MUSIC_TRACK_FADEOUT_SHORT = 2.0f;
     private const float MUSIC_TRACK_FADEOUT_LONG = 6.0f;
     private const float FADEOUT_TARGET_VOLUME = 0.0f;
 
     private const float CAVE_ECHO_WETMIX = 0.15f;
     private const float STARTING_MIXER_GROUP_ATTENUATION = 0.5f;
+
+    public const float FX_NAVIGATE_VOL = 0.4f;
+    public const float FX_SELECT_VOL = 0.7f;
+    public const float FX_RESTORE_BEER_VOL = 0.6f;
+
+    public const float FX_VIKING_DEATH_VOL = 0.7f;
+    public const float FX_VIKING_HURT_VOL = 0.8f;
+    public const float FX_PLAYER_BURP_VOL = 0.9f;
+    public const float FX_PLAYER_DEATH_VOL = 0.9f;
+    public const float FX_PLAYER_DRINK_BEER_VOL = 0.9f;
+    public const float FX_PLAYER_FOOTSTEP_VOL = 0.1f;
+    public const float FX_PLAYER_SWING_VOL = 0.6f;
+    public const float FX_PLAYER_HIT_VOL = 0.9f;
+    public const float FX_PLAYER_HURT_VOL = 0.9f;
+    public const float FX_PLAYER_JUMP_VOL = 0.4f;
+    public const float FX_PLAYER_LAND_VOL = 0.5f;
+    public const float FX_PLAYER_TORNADO_VOL = 0.7f;
+    public const float FX_PLAYER_VOICE_DAMMIT_PITCH = 0.7f;
+    public const float FX_PLAYER_VOICE_DAMMIT_VOL = 1.0f;
+    public const float FX_PLAYER_VOICE_WHAT_VOL = 1.0f;
+    public const float FX_PLAYER_WILDBOAR_VOL = 0.8f;
+    public const float FX_PLAYER_WILDBOAR_DESTRUCTION_VOL = 0.9f;
+    public const float FX_BAT_FLAPWINGS_VOL = 0.006f;
+    public const float FX_BAT_FLAPWINGS_PITCH = 3.5f;
+    public const float FX_DESTRUCTION_VOL = 0.8f;
+    public const float FX_DOOR_VOL = 0.6f;
+    public const float FX_DARKELF_DEATH_SCREAM_VOL = 0.8f;
+    public const float FX_DARKELF_HURT_SCREAM_VOL = 0.8f;
+    public const float FX_DARKELF_FIREBALL_VOL = 0.8f;
+    public const float FX_BOSS_BEING_HIT_VOL = 1.0f;
+    public const float FX_BOSS_CAST_SKULLS_VOL = 0.8f;
+    public const float FX_BOSS_DEATH_VOL = 1.0f;
+    public const float FX_BOSS_FIREBALL_AURA_VOL = 0.6f;
+    public const float FX_BOSS_FIREBALL_VOL = 0.8f;
+    public const float FX_BOSS_ICE_SPIKES_VOL = 0.8f;
+    public const float FX_BOSS_SPIRIT_LAUGH_VOL = 1.0f;
+    public const float FX_BOSS_VENOM_AURA_ICE_SPIKES_VOL = 0.8f;
+    public const float FX_BOSS_VENOM_AURA_SKULL_ATTACK_VOL = 0.3f;
+    public const float FX_BOSS_VOICE_YOUDIE_VOL = 1.0f;
+    public const float FX_OPEN_CHEST_VOL = 0.7f;
+    public const float FX_SKULLS_VANISHING_VOL = 0.2f;
 
     public enum State
     {
@@ -33,6 +74,7 @@ public class AudioManager : MonoBehaviour
         CREDITS
     }
 
+    [HideInInspector]
     public State currentState;
 
     public static AudioManager instance = null;

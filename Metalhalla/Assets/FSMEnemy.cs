@@ -200,7 +200,7 @@ public class FSMEnemy : MonoBehaviour
 
             case State.BEING_HIT:
                 //               animator.SetBool("being_hit", true);
-                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_HURT_VOL, hurtScream);
                 faceXCoordinate(player.transform.position.x);
                 animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
             break;
@@ -230,7 +230,7 @@ public class FSMEnemy : MonoBehaviour
             break;
 
             case State.DEAD:
-                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, deathScream);
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_DEATH_VOL, deathScream);
                 animator.SetBool("dead", true);
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
@@ -334,7 +334,7 @@ public class FSMEnemy : MonoBehaviour
         {
             animator.SetLayerWeight(1, 1.0f);
             animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_HURT_VOL, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             if (!bloodyDamage)

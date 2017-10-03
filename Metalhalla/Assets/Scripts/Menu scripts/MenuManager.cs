@@ -235,12 +235,12 @@ public class MenuManager : MonoBehaviour {
 
     public void ClickedButton()
     {
-        AudioManager.instance.PlayNonDiegeticFx(fxSelect);
+        AudioManager.instance.PlayNonDiegeticFx(fxSelect, false, 1.0f, AudioManager.FX_SELECT_VOL);
     }
 
     public void HighlightedButton()
     {
-        AudioManager.instance.PlayNonDiegeticFx(fxNavigate);
+        AudioManager.instance.PlayNonDiegeticFx(fxNavigate, false, 1.0f, AudioManager.FX_NAVIGATE_VOL);
     }
 
     public void SetMusicVolume(Slider slider)

@@ -669,7 +669,7 @@ public class FSMBoss : MonoBehaviour
             bloodyDamage = false;
         }
         damaged = false;
-        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, beingHit);
+        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_BOSS_BEING_HIT_VOL, beingHit);
     }
 
     private void Dead()
@@ -701,7 +701,7 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             if (!shrink)
-                    AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath);
+                    AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath, false, 1.0f, AudioManager.FX_BOSS_DEATH_VOL);
             shrink = true;
         }
 
@@ -715,7 +715,7 @@ public class FSMBoss : MonoBehaviour
                 {                   
                     GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
                     AudioManager.instance.Wait(1.5f, () => {
-                        AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter);
+                        AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter, false, 1.0f, AudioManager.FX_BOSS_SPIRIT_LAUGH_VOL);
                     });
 
                     //mod for the celebration
@@ -810,10 +810,11 @@ public class FSMBoss : MonoBehaviour
             {
                 AudioManager.instance.Wait(Random.Range(0, 1.5f), () =>
                 {
-                    AudioManager.instance.RandomizePlayFx(gameObject, 1.3f, 1.0f, castSkulls);
+                    AudioManager.instance.RandomizePlayFx(gameObject, 1.3f, AudioManager.FX_BOSS_CAST_SKULLS_VOL, castSkulls);
                 });
             }
-            venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, true);
+            venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, 
+                true, 1.0f, AudioManager.FX_BOSS_VENOM_AURA_SKULL_ATTACK_VOL);
             earthAuraDamageScript.auraActive = true;
             levitatingSkullsScript.StartSkullsAttack();        
         }
@@ -904,7 +905,7 @@ public class FSMBoss : MonoBehaviour
             fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
             fireBall.GetComponent<BossFireBallBehaviour>().GenerateBall();
 
-            fireballAuraSource = AudioManager.instance.PlayDiegeticFx(gameObject, fireballAura, true);
+            fireballAuraSource = AudioManager.instance.PlayDiegeticFx(gameObject, fireballAura, true, 1.0f, AudioManager.FX_BOSS_FIREBALL_AURA_VOL);
         }   
             preBallAttackFinished = true;
         
@@ -992,8 +993,9 @@ public class FSMBoss : MonoBehaviour
             if (iceSpikesScript3D != null)
                 iceSpikesScript3D.SelectIceSafe();
 
-            venomAuraIceSpikesSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraIceSpikes, true);
-            AudioManager.instance.PlayDiegeticFx(gameObject, youDie);
+            venomAuraIceSpikesSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraIceSpikes, 
+                true, 1.0f, AudioManager.FX_BOSS_VENOM_AURA_ICE_SPIKES_VOL);
+            AudioManager.instance.PlayDiegeticFx(gameObject, youDie, false, 1.0f, AudioManager.FX_BOSS_VOICE_YOUDIE_VOL);
         }
         else
         {
@@ -1020,7 +1022,7 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
 
-            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, false);
+            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, false, 1.0f, AudioManager.FX_BOSS_ICE_SPIKES_VOL);
 
             //Sacar los pinchos y dejarlos durante un tiempo
             if (iceSpikesScript != null)

@@ -205,7 +205,7 @@ public class FSMDarkElf : MonoBehaviour
                 //                animator.SetBool("being_hit", true);
                 /*waitingTime = 0.0f;
                 timeToWait = 1.0f;*/
-                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_DARKELF_HURT_SCREAM_VOL, hurtScream);
                 faceXCoordinate(player.transform.position.x);
                 animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
                 break;
@@ -222,7 +222,7 @@ public class FSMDarkElf : MonoBehaviour
                 animator.SetBool("attack", true);
                 break;
             case State.DEAD:
-                AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
+                AudioManager.instance.PlayDiegeticFx(gameObject, deathScream, false, 1.0f, AudioManager.FX_DARKELF_DEATH_SCREAM_VOL);
                 animator.SetBool("dead", true);
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
@@ -319,7 +319,7 @@ public class FSMDarkElf : MonoBehaviour
         {
             animator.SetLayerWeight(1, 1.0f);
             animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_DARKELF_HURT_SCREAM_VOL, hurtScream);
             // camera shake when starting being hit state
             camFollow.StartShake();
             if (!bloodyDamage)
@@ -403,7 +403,7 @@ public class FSMDarkElf : MonoBehaviour
             iniPos = new Vector3(transform.position.x - fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
 
-        AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
+        AudioManager.instance.PlayDiegeticFx(gameObject, fireBall, false, 1.0f, AudioManager.FX_DARKELF_FIREBALL_VOL);
         Vector3 direction;
         if ((facingRight == true && player.transform.position.x >= iniPos.x) || (facingRight == false && player.transform.position.x <= iniPos.x))
             direction = player.transform.position - iniPos;

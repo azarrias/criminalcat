@@ -58,7 +58,7 @@ public class BossFireBallBehaviour : MonoBehaviour {
                 SetFacingRight(fsmBoss.facingRight);
                 smoke.SetActive(true);
                 gameObject.GetComponent<SphereCollider>().enabled = true;
-                AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
+                AudioManager.instance.PlayDiegeticFx(gameObject, fireBall, false, 1.0f, AudioManager.FX_BOSS_FIREBALL_VOL);
             }                       
         }
         else if (!generatingBall && !deactivate)
