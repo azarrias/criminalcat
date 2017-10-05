@@ -128,6 +128,7 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource musicChannel1;
     public AudioSource musicChannel2;
+    public AudioSource musicChannel3;
 
     private GameObject player;
 
@@ -176,18 +177,20 @@ public class AudioManager : MonoBehaviour
             }
             else
             {
-/*                FadeAudio fade = AudioManager.instance.musicChannel1.GetComponent<FadeAudio>();
-                if (fade != null && fade.fadeType == FadeAudio.FadeType.FadeOut)
-                {
-                    musicAudioSource = AudioManager.instance.musicChannel1;
-                    otherMusicAudioSource = AudioManager.instance.musicChannel2;
-                }
-                else
-                {
-                    musicAudioSource = AudioManager.instance.musicChannel2;
-                    otherMusicAudioSource = AudioManager.instance.musicChannel1;
-                }*/
-                Debug.Log("There are no free music channels to initialize " + sourceAudioClip.name);
+                musicAudioSource = AudioManager.instance.musicChannel3;
+                otherMusicAudioSource = AudioManager.instance.musicChannel2;
+                /*                FadeAudio fade = AudioManager.instance.musicChannel1.GetComponent<FadeAudio>();
+                                if (fade != null && fade.fadeType == FadeAudio.FadeType.FadeOut)
+                                {
+                                    musicAudioSource = AudioManager.instance.musicChannel1;
+                                    otherMusicAudioSource = AudioManager.instance.musicChannel2;
+                                }
+                                else
+                                {
+                                    musicAudioSource = AudioManager.instance.musicChannel2;
+                                    otherMusicAudioSource = AudioManager.instance.musicChannel1;
+                                }*/
+              //  Debug.Log("There are no free music channels to initialize " + sourceAudioClip.name);
             }
         }
 
@@ -296,6 +299,9 @@ public class AudioManager : MonoBehaviour
             obj = (GameObject)Instantiate(musicAudioSourcePrefab);
             musicChannel2 = obj.GetComponent<AudioSource>();
             DontDestroyOnLoad(obj);
+            obj = (GameObject)Instantiate(musicAudioSourcePrefab);
+            musicChannel3 = obj.GetComponent<AudioSource>();
+            DontDestroyOnLoad(obj);
 
             cameraManagerGO = GameObject.FindGameObjectWithTag("CameraManager");
             if (cameraManagerGO)
@@ -332,16 +338,17 @@ public class AudioManager : MonoBehaviour
                     {
                         play = musicStack.Pop();
                         FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
-                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                        AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG + 0.5f, () =>
                         {
                             AudioManager.instance.StopMusic(play);
                         });
                     }
 
+                    currentState = State.KOREAN_MODE;
                     koreanMode.Init();
                     PlayMusic(koreanMode, MUSIC_KOREAN_VOL);
                     koreanMode.musicAudioSource.loop = true;
-                    currentState = State.KOREAN_MODE;
+
                 }
                 else if (warmUp[currentWarmUpIndex].fadePoint <= warmUp[currentWarmUpIndex].musicAudioSource.timeSamples)
                 {
