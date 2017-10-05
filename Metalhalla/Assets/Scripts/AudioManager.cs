@@ -168,13 +168,13 @@ public class AudioManager : MonoBehaviour
             fadePoint = (int)((audioClip.length - MUSIC_TRACK_FADEOUT_LONG) * audioClip.frequency);
             otherMusicAudioSources = new AudioSource[2];
 
-            if (!AudioManager.instance.musicChannel1.isPlaying)
+            if (!AudioManager.instance.musicChannel1.clip)
             {
                 musicAudioSource = AudioManager.instance.musicChannel1;
                 otherMusicAudioSources[0] = AudioManager.instance.musicChannel2;
                 otherMusicAudioSources[1] = AudioManager.instance.musicChannel3;
             }
-            else if (!AudioManager.instance.musicChannel2.isPlaying)
+            else if (!AudioManager.instance.musicChannel2.clip)
             {
                 musicAudioSource = AudioManager.instance.musicChannel2;
                 otherMusicAudioSources[0] = AudioManager.instance.musicChannel1;
