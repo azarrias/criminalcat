@@ -455,10 +455,10 @@ public class AudioManager : MonoBehaviour
                 }
 
                 currentState = State.CREDITS;
-                final.Init();
 
-                AudioManager.instance.Wait(0.8f, () =>
+                AudioManager.instance.Wait(0.5f, () =>
                 {
+                    final.Init();
                     PlayMusic(final, MUSIC_ENDING_VOL);
                 });
                 
