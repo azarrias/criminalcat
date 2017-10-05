@@ -74,10 +74,11 @@ public class AudioManager : MonoBehaviour
         TUTORIAL,
         WARMUP,
         KOREAN_MODE,
-//        HARDCORE_BATTLE,
         LIFTABLE_PLATFORMS,
         BOSS_CINEMATIC,
         BOSS,
+        DEFEAT_BOSS,
+        PRE_ENDING,
         ENDING,
         CREDITS
     }
@@ -102,7 +103,8 @@ public class AudioManager : MonoBehaviour
     public MusicTrack menuInicial;
     public MusicLoop tutorial;
     public MusicTrack[] warmUp;
-    private int currentWarmUpIndex;
+    [HideInInspector]
+    public int currentWarmUpIndex;
     public MusicLoop koreanMode;
 //    public AudioClip hardcoreBattle;
     public MusicTrack[] liftablePlatforms;
@@ -154,7 +156,7 @@ public class AudioManager : MonoBehaviour
         [HideInInspector]
         public AudioSource musicAudioSource;
         [HideInInspector]
-        public AudioSource otherMusicAudioSource;
+        public AudioSource[] otherMusicAudioSources;
 
         [HideInInspector]
         // Fade out point in PCM samples
@@ -164,21 +166,26 @@ public class AudioManager : MonoBehaviour
         {
             audioClip = sourceAudioClip;
             fadePoint = (int)((audioClip.length - MUSIC_TRACK_FADEOUT_LONG) * audioClip.frequency);
+            otherMusicAudioSources = new AudioSource[2];
 
             if (!AudioManager.instance.musicChannel1.isPlaying)
             {
                 musicAudioSource = AudioManager.instance.musicChannel1;
-                otherMusicAudioSource = AudioManager.instance.musicChannel2;
+                otherMusicAudioSources[0] = AudioManager.instance.musicChannel2;
+                otherMusicAudioSources[1] = AudioManager.instance.musicChannel3;
             }
             else if (!AudioManager.instance.musicChannel2.isPlaying)
             {
                 musicAudioSource = AudioManager.instance.musicChannel2;
-                otherMusicAudioSource = AudioManager.instance.musicChannel1;
+                otherMusicAudioSources[0] = AudioManager.instance.musicChannel1;
+                otherMusicAudioSources[1] = AudioManager.instance.musicChannel3;
             }
             else
             {
                 musicAudioSource = AudioManager.instance.musicChannel3;
-                otherMusicAudioSource = AudioManager.instance.musicChannel2;
+                otherMusicAudioSources[0] = AudioManager.instance.musicChannel2;
+                otherMusicAudioSources[1] = AudioManager.instance.musicChannel1;
+
                 /*                FadeAudio fade = AudioManager.instance.musicChannel1.GetComponent<FadeAudio>();
                                 if (fade != null && fade.fadeType == FadeAudio.FadeType.FadeOut)
                                 {
@@ -190,7 +197,7 @@ public class AudioManager : MonoBehaviour
                                     musicAudioSource = AudioManager.instance.musicChannel2;
                                     otherMusicAudioSource = AudioManager.instance.musicChannel1;
                                 }*/
-              //  Debug.Log("There are no free music channels to initialize " + sourceAudioClip.name);
+                //  Debug.Log("There are no free music channels to initialize " + sourceAudioClip.name);
             }
         }
 
@@ -415,6 +422,27 @@ public class AudioManager : MonoBehaviour
                 }
                 break;
 
+            case State.DEFEAT_BOSS:
+
+                currentWarmUpIndex = 0;
+                currentState = State.LIFTABLE_PLATFORMS;
+                while (musicStack.Count > 0)
+                {
+                    play = musicStack.Pop();
+                    FadeAudioSource(play.audioSource, FadeAudio.FadeType.FadeOut, MUSIC_TRACK_FADEOUT_LONG, FADEOUT_TARGET_VOLUME, false);
+                    AudioManager.instance.Wait(MUSIC_TRACK_FADEOUT_LONG * 2, () =>
+                    {
+                        AudioManager.instance.StopMusic(play);
+                    });
+                }
+
+                liftablePlatforms[currentWarmUpIndex].Init();
+
+                PlayMusic(liftablePlatforms[currentWarmUpIndex], MUSIC_PLATFORMS_VOL);
+                FadeAudioSource(liftablePlatforms[currentWarmUpIndex].musicAudioSource, FadeAudio.FadeType.FadeIn,
+                    MUSIC_TRACK_FADEOUT_LONG, 1.0f, false);
+                break;
+
             case State.ENDING:
                 while (musicStack.Count > 0)
                 {
@@ -428,8 +456,12 @@ public class AudioManager : MonoBehaviour
 
                 currentState = State.CREDITS;
                 final.Init();
-                PlayMusic(final, MUSIC_ENDING_VOL);
 
+                AudioManager.instance.Wait(0.8f, () =>
+                {
+                    PlayMusic(final, MUSIC_ENDING_VOL);
+                });
+                
                 break;
         }
 
@@ -598,8 +630,11 @@ public class AudioManager : MonoBehaviour
                     AudioManager.instance.StopMusic(musicStack.Pop());
                 }
                 boss.Init();
-                if (boss.otherMusicAudioSource.isPlaying)
-                    AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSource, FadeAudio.FadeType.FadeOut,
+                if (boss.otherMusicAudioSources[0].isPlaying)
+                    AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSources[0], FadeAudio.FadeType.FadeOut,
+                        MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
+                if (boss.otherMusicAudioSources[1].isPlaying)
+                    AudioManager.instance.FadeAudioSource(boss.otherMusicAudioSources[1], FadeAudio.FadeType.FadeOut,
                         MUSIC_TRACK_FADEOUT_SHORT, FADEOUT_TARGET_VOLUME, false);
                 PlayMusic(boss, MUSIC_BOSS_VOL);
                 boss.musicAudioSource.loop = true;

@@ -701,7 +701,10 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             if (!shrink)
-                    AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath, false, 1.0f, AudioManager.FX_BOSS_DEATH_VOL);
+            {
+                AudioManager.instance.currentState = AudioManager.State.DEFEAT_BOSS;
+                AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath, false, 1.0f, AudioManager.FX_BOSS_DEATH_VOL);
+            }
             shrink = true;
         }
 
