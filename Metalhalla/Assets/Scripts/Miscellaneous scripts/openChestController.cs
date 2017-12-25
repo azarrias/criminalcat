@@ -43,9 +43,10 @@ public class openChestController : MonoBehaviour
     // when attacking the chest it gets open
     public void ApplyDamage(int dmg = 0)
     {
+        ParticlesManager.SpawnParticle("hitEffect", transform.position, true);
         if (currentState == state.CLOSED)
         {
-            if (openChest) AudioManager.instance.PlayDiegeticFx(gameObject, openChest);
+            if (openChest) AudioManager.instance.PlayDiegeticFx(gameObject, openChest, false, 1.0f, AudioManager.FX_OPEN_CHEST_VOL);
             currentState = state.OPEN;
             chestAnimator.SetBool("open", true);
         }

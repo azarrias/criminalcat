@@ -52,7 +52,7 @@ public class PlayerCollider : MonoBehaviour {
 
 			Debug.DrawRay (rayOrigin, Vector3.right*directionX*rayLength , Color.red);
 
-            if (Physics.Raycast(rayOrigin, Vector3.right * directionX, out hit, rayLength, noCloudCollisionMask))
+            if (Physics.Raycast(rayOrigin, Vector3.right * directionX, out hit, rayLength, generalCollisionMask))
             { 
             // this is ok since we check the bottom most with a slope
             float surfaceAngle = Vector2.Angle (hit.normal, Vector2.up);

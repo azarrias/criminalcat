@@ -13,6 +13,7 @@ public class FadeAudio : MonoBehaviour {
     public float targetVolume;
     float normalizedTime;
     float step;
+    public bool canBePaused;
 
     void Start()
     {
@@ -24,7 +25,10 @@ public class FadeAudio : MonoBehaviour {
     void Update () {
         if (normalizedTime <= 1.0f)
         {
-            normalizedTime += step * Time.deltaTime;
+            if (canBePaused)
+                normalizedTime += step * Time.deltaTime;
+            else
+                normalizedTime += step * Time.unscaledDeltaTime;
             audioSource.volume = Mathf.Lerp(fadeType == FadeType.FadeIn ? 0.0f : startingVolume, targetVolume, normalizedTime);
         }
         else

@@ -30,7 +30,12 @@ public class CreditsController : MonoBehaviour {
         audioSource.clip = creditsTrack;
         audioSource.Play();
 
-        finalcreditsYtranslation = Screen.height / 2 + creditsGO.GetComponent<RectTransform>().rect.height;
+        finalcreditsYtranslation = 1.5f*Screen.height + creditsGO.GetComponent<RectTransform>().rect.height;
+
+        Vector3 tmpPos = criminalCatLogo.rectTransform.position;
+        tmpPos.y = -(Screen.height + creditsGO.GetComponent<RectTransform>().rect.height) + criminalCatLogo.rectTransform.rect.height/2;
+        criminalCatLogo.rectTransform.position = tmpPos;
+
         creditsYtranslationSpeed = finalcreditsYtranslation/ (totalCreditsTime - staticCreditsTime);
     }
 	

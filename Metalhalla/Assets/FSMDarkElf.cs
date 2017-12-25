@@ -40,6 +40,7 @@ public class FSMDarkElf : MonoBehaviour
     [Header("Sound FXs")]
     public AudioClip fireBall;
     public AudioClip[] hurtScream;
+    public AudioClip deathScream;
 
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
@@ -56,6 +57,8 @@ public class FSMDarkElf : MonoBehaviour
     public bool facingRight;
     private float hitRecoil;
     private float deadRecoil;
+
+    private bool bloodyDamage = false;
 
     private void Awake()
     {
@@ -113,9 +116,9 @@ public class FSMDarkElf : MonoBehaviour
                     ChangeState(State.IDLE);
                 break;
             case State.BEING_HIT:
-                if (enemyStats.hitPoints <= 0)
+/*                if (enemyStats.hitPoints <= 0)
                     ChangeState(State.DEAD);
-                else if (animator.GetCurrentAnimatorStateInfo(1).IsName("Damaged") &&
+                else */if (animator.GetCurrentAnimatorStateInfo(1).IsName("Damaged") &&
                         animator.GetCurrentAnimatorStateInfo(1).normalizedTime > 1 && !animator.IsInTransition(1))
                 {
                     ChangeState(State.CHASE);
@@ -199,9 +202,10 @@ public class FSMDarkElf : MonoBehaviour
                 los.enabled = true;
                 break;
             case State.BEING_HIT:
-//                animator.SetBool("being_hit", true);
+                //                animator.SetBool("being_hit", true);
                 /*waitingTime = 0.0f;
                 timeToWait = 1.0f;*/
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_DARKELF_HURT_SCREAM_VOL, hurtScream);
                 faceXCoordinate(player.transform.position.x);
                 animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
                 break;
@@ -218,6 +222,7 @@ public class FSMDarkElf : MonoBehaviour
                 animator.SetBool("attack", true);
                 break;
             case State.DEAD:
+                AudioManager.instance.PlayDiegeticFx(gameObject, deathScream, false, 1.0f, AudioManager.FX_DARKELF_DEATH_SCREAM_VOL);
                 animator.SetBool("dead", true);
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
@@ -292,14 +297,40 @@ public class FSMDarkElf : MonoBehaviour
     {
         if (currentState != State.STUNNED)
         {
+            animator.SetLayerWeight(1, 1.0f);
             Debug.Log(name.ToString() + ": I've been hit");
-            ChangeState(State.BEING_HIT);
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            if (enemyStats.hitPoints <= 0)
+                ChangeState(State.DEAD);
+            else 
+                ChangeState(State.BEING_HIT);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position, facingRight);                                                                                                                                        //blood.transform.parent = transform;               
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position, facingRight);                                                                                                                                     //blood.transform.parent = transform;               
+                bloodyDamage = false;
+            }
+        }
+        else
+        {
+            animator.SetLayerWeight(1, 1.0f);
+            animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_DARKELF_HURT_SCREAM_VOL, hurtScream);
+            // camera shake when starting being hit state
+            camFollow.StartShake();
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position, facingRight);                                                                                                                                      //blood.transform.parent = transform;               
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position, facingRight);                                                                                                                                   //blood.transform.parent = transform;               
+                bloodyDamage = false;
+            }
         }
     }
 
@@ -372,7 +403,7 @@ public class FSMDarkElf : MonoBehaviour
             iniPos = new Vector3(transform.position.x - fbOffsetX, transform.position.y - fbOffsetY, transform.position.z);
         }
 
-        AudioManager.instance.PlayDiegeticFx(gameObject, fireBall);
+        AudioManager.instance.PlayDiegeticFx(gameObject, fireBall, false, 1.0f, AudioManager.FX_DARKELF_FIREBALL_VOL);
         Vector3 direction;
         if ((facingRight == true && player.transform.position.x >= iniPos.x) || (facingRight == false && player.transform.position.x <= iniPos.x))
             direction = player.transform.position - iniPos;
@@ -438,4 +469,8 @@ public class FSMDarkElf : MonoBehaviour
         capsule.direction = direction;
     }
 
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
+    }
 }

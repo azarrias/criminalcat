@@ -26,7 +26,7 @@ public class RockFall : MonoBehaviour {
         {
             GameObject rock = Instantiate(rockPrefab, transform.position, Quaternion.identity);
             int randomRotation = Random.Range(1, 10) * 10;
-            rock.transform.localRotation *= Quaternion.Euler(0.0f, randomRotation, 0.0f); 
+            rock.transform.Find("rock").localRotation *= Quaternion.Euler(0.0f, randomRotation, 0.0f); 
             rock.transform.parent = gameObject.transform;
             rock.SetActive(false);          
             rocks[i] = rock;
@@ -74,6 +74,7 @@ public class RockFall : MonoBehaviour {
         float randomScale = Random.Range(1.0f, 2.5f);
         rock.transform.localScale *= randomScale;
         rock.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        rock.transform.Find("rock_collider").GetComponent<CapsuleCollider>().enabled = true;
         rock.SetActive(true);       
 
         rockIndex++;

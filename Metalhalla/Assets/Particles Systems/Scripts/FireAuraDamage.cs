@@ -6,7 +6,7 @@ public class FireAuraDamage : MonoBehaviour {
 
     [HideInInspector]
     public bool auraActive = false;
-    private bool playerInsideFireAura = true;
+    private bool playerInsideFireAura = false;
     private float waitCounter = 0.0f;
     public float waitTime = 0.5f;
     private bool applyAuraDamage = true;
@@ -26,7 +26,7 @@ public class FireAuraDamage : MonoBehaviour {
             if (playerInsideFireAura && applyAuraDamage)
             {
                 player.SendMessage("ApplyDamage", auraDamage, SendMessageOptions.DontRequireReceiver);
-                applyAuraDamage = false;
+                applyAuraDamage = false;              
             }
 
             waitCounter += Time.deltaTime;
@@ -43,7 +43,7 @@ public class FireAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideFireAura = true;
-            //Debug.Log("Player inside fire aura");
+            Debug.Log("Player inside fire aura");
         }
     }
 
@@ -52,8 +52,13 @@ public class FireAuraDamage : MonoBehaviour {
         if (collider.CompareTag("Player"))
         {
             playerInsideFireAura = false;
-            //Debug.Log("Player outside fire aura");
+            Debug.Log("Player outside fire aura");
         }
+    }
+
+    public void ColliderDisabled()
+    {
+        playerInsideFireAura = false;
     }
 
 

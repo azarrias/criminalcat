@@ -42,7 +42,7 @@ public class LiftablePlatform : MonoBehaviour {
         Vector3 pos = transform.position;
         if (goingToB)
         {
-            pos += directionAtoB * Time.fixedDeltaTime * liftSpeed;
+            pos += directionAtoB * Time.deltaTime * liftSpeed;
             if (Vector3.Distance(pos, pointA) >= distanceAtoB)
             {
                 pos = pointB;
@@ -51,7 +51,7 @@ public class LiftablePlatform : MonoBehaviour {
         }
         else
         {
-            pos -= directionAtoB * Time.fixedDeltaTime * fallSpeed;
+            pos -= directionAtoB * Time.deltaTime * fallSpeed;
 
             if (Vector3.Distance(pos, pointB) >= distanceAtoB)
             {

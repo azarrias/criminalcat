@@ -28,19 +28,14 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
     public float scaleSpeed = 1.0f;
     public float maxScale = 1.0f;
     
-    private GameObject boss;
-
     void Awake()
-    {
-        boss = GameObject.FindGameObjectWithTag("Boss");
-
+    {        
         skulls = new GameObject[4];
         
         for (int i = 0; i < skulls.Length; i++)
         {
             skulls[i] = Instantiate(skullPrefab, Vector3.zero, Quaternion.identity);
-            skulls[i].transform.Find("SkullMesh").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);
-            skulls[i].GetComponent<SkullsAttackBehaviour>().parentGO = boss;
+            skulls[i].transform.Find("SkullMesh").transform.localScale = new Vector3(0.0f, 0.0f, 0.0f);           
             skulls[i].SetActive(false);
         }
                  
@@ -94,9 +89,7 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
             scale.y += scaleSpeed * Time.deltaTime;
             scale.z += scaleSpeed * Time.deltaTime;
             skulls[i].transform.Find("SkullMesh").transform.localScale = scale;
-
-            //Detach skulls from boss
-            skulls[i].transform.parent = boss.transform.parent;
+           
             if (i == skulls.Length-1 && scale.z >= maxScale)
                 state = State.ASCENSION;
         }     
@@ -152,6 +145,7 @@ public class LevitatingSkullsBehaviour : MonoBehaviour {
         state = State.MATERIALIZATION;
         for (int i = 0; i < skulls.Length; i++)
         {
+            skulls[i].transform.Find("SkullMesh").transform.localScale = Vector3.zero;
             skulls[i].transform.Find("SkullMesh").GetComponent<SphereCollider>().enabled = false;
             skulls[i].SetActive(true);
             skulls[i].transform.position = spawnPoints[i].transform.position;

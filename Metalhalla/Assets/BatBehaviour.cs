@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class BatBehaviour : MonoBehaviour {
 
-    [Header("Sound Effects")]
-    [Range(0.0f, 1.0f)]
-    public float flapWingsVolume = 0.1f;
     public AudioClip[] fxFlapWings;
+
+    Animator anim;
+    AnimatorStateInfo state;
 
     private void Awake()
     {
-        Animator anim = GetComponent<Animator>();
-        AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+        anim = GetComponent<Animator>();
+        state = anim.GetCurrentAnimatorStateInfo(0);
+    }
+
+    private void Start()
+    {
         anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
     }
 
     public void FlapWings()
     {
-        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, flapWingsVolume, fxFlapWings);
+        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_BAT_FLAPWINGS_VOL, fxFlapWings);
     }
 }

@@ -39,6 +39,10 @@ public class FSMBoss : MonoBehaviour
     private FireAuraDamage fireAuraDamageScript = null;
     private LevitatingSkullsBehaviour levitatingSkullsScript = null;
     private EarthAuraDamage earthAuraDamageScript = null;
+    private Vector3 startPos;
+    private bool restartPos = false;
+    private float restartPosTime = 3.0f;
+    private float restartPosCount = 0.0f;
 
     [Tooltip("Depth of casting point")]
     public float spikesAttackBossDepth = 1.5f;
@@ -102,6 +106,20 @@ public class FSMBoss : MonoBehaviour
     [Tooltip("Damaged state transition duration")]
     public float damagedDuration = 0.0f;
     private float damagedCounter = 0.0f;
+
+    [Header("Sound FXs")]
+    public AudioClip venomAuraSkullAttack;
+    public AudioClip venomAuraIceSpikes;
+    public AudioClip iceSpikesAttack;
+    public AudioClip fireballAura;
+    public AudioClip bossDeath;
+    public AudioClip[] beingHit;
+    public AudioClip blueSpiritLaughter;
+    public AudioClip[] castSkulls;
+    public AudioClip youDie;
+    private AudioSource venomAuraSkullAttackSource;
+    private AudioSource venomAuraIceSpikesSource;
+    private AudioSource fireballAuraSource;
 
     //ice spikes attack animator
     IceSpikesBehaviour iceSpikesScript = null;
@@ -174,6 +192,8 @@ public class FSMBoss : MonoBehaviour
 
     public GameObject exitDoor;
 
+    private bool bloodyDamage = false;
+
     void Awake()
     {   
         currState = State.PATROL;
@@ -199,20 +219,20 @@ public class FSMBoss : MonoBehaviour
         earthAuraPS.Stop();
         ballAttackIndicatorPS = ballAttackIndicator.GetComponent<ParticleSystem>();
         ballAttackIndicatorPS.Stop();
+        fireAura.GetComponent<SphereCollider>().enabled = false;
         fireAuraPS = fireAura.GetComponent<ParticleSystem>();
         fireAuraPS.Stop();
         fireAuraDamageScript = fireAura.GetComponent<FireAuraDamage>();        
         earthAuraDamageScript = earthAura.GetComponent<EarthAuraDamage>();
         levitatingSkullsScript = levitatingSkulls.GetComponent<LevitatingSkullsBehaviour>();
 
-        bodyMesh = GameObject.Find("ModelContainer");       
+        bodyMesh = transform.Find("ModelContainer").gameObject;
     }
 
     void Start()
-    {
-        spikesCastingSpot.transform.position = gameObject.transform.position + Vector3.forward * spikesAttackBossDepth;
-        spikesReturnSpot.transform.position = gameObject.transform.position;
+    {       
         castingArea.transform.position = spikesReturnSpot.transform.position;
+        startPos = transform.position;
     }
 
 
@@ -252,6 +272,7 @@ public class FSMBoss : MonoBehaviour
                         chaseCounter = 0.0f;
                         currState = State.PATROL;
                         playerInSight = false;
+                        restartPos = true;
                         break;
                     }
                 }
@@ -604,16 +625,15 @@ public class FSMBoss : MonoBehaviour
                 int num = rand.Next(0, 2);
                 if (num == 0)
                 {
-                    preMeleeAttackSelected = true;                   
+                    preMeleeAttackSelected = true;
                 }
                 if (num == 1)
-                {                   
+                {
                     preBallAttackSelected = true;
                 }
             }
 
         }
-
     }
     //-------------------------------- DAMAGE THE BOSS -----------------------------------------
     
@@ -637,8 +657,19 @@ public class FSMBoss : MonoBehaviour
     // ------------------------------------- ACTIONS TO PERFORM IN EACH STATE --------------------------------------------
     private void Damaged()
     {
+        Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
         bossAnimator.Play("Damaged", bossAnimator.GetLayerIndex("Damaged"), 0);
+        if (!bloodyDamage)
+        {
+            ParticlesManager.SpawnParticle("hitEffect", ballSpawnPosition, facingRight); //TODO: set position at the right place
+        }
+        else
+        {
+            ParticlesManager.SpawnParticle("blood", ballSpawnPosition, facingRight); //TODO: set position at the right place
+            bloodyDamage = false;
+        }
         damaged = false;
+        AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_BOSS_BEING_HIT_VOL, beingHit);
     }
 
     private void Dead()
@@ -655,11 +686,26 @@ public class FSMBoss : MonoBehaviour
                 earthAuraDamageScript.auraActive = false;
                 earthAuraPS.Stop();
             }
+            if (fireballAuraSource)
+            {
+                fireballAuraSource.loop = false;
+                AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+            }
+            if (venomAuraSkullAttackSource)
+            {
+                venomAuraSkullAttackSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            shrink = true;                     
+            if (!shrink)
+            {
+                AudioManager.instance.currentState = AudioManager.State.DEFEAT_BOSS;
+                AudioManager.instance.PlayDiegeticFx(gameObject, bossDeath, false, 1.0f, AudioManager.FX_BOSS_DEATH_VOL);
+            }
+            shrink = true;
         }
 
         if (shrink)
@@ -671,7 +717,20 @@ public class FSMBoss : MonoBehaviour
                 if (bodyMesh.transform.localScale.x <= 0.1f)
                 {                   
                     GameObject spirit = Instantiate(bossSpirit, bodyMesh.transform.position - Vector3.up, Quaternion.identity);
-                    transform.parent.gameObject.SetActive(false);                   
+                    AudioManager.instance.Wait(1.5f, () => {
+                        AudioManager.instance.PlayDiegeticFx(gameObject, blueSpiritLaughter, false, 1.0f, AudioManager.FX_BOSS_SPIRIT_LAUGH_VOL);
+                    });
+
+                    //mod for the celebration
+                    GameObject player = GameObject.FindWithTag("Player");
+                    if (player)
+                    {
+                        player.GetComponent<PlayerInputAI>().SetAIProgram(PlayerInputAI.AIProgram.VictoryPose);
+                        player.GetComponent<PlayerController>().switchAIInput(true);
+                    }
+
+                    transform.parent.gameObject.SetActive(false);
+
                 }
             }
         }
@@ -693,15 +752,18 @@ public class FSMBoss : MonoBehaviour
 
                 prevState = State.PATROL;
             }
-            // -------------------------- Boss doesnt need to move in patrol
-            //Vector3 newPos = gameObject.transform.position;
-
-            //if (facingRight == true)
-            //    newPos.x += bossStats.normalSpeed * Time.deltaTime;
-            //else
-            //    newPos.x -= bossStats.normalSpeed * Time.deltaTime;
-
-            //gameObject.transform.position = newPos;
+            
+            if(restartPos)
+            {
+                restartPosCount += Time.deltaTime;
+                if (restartPosCount >= restartPosTime)
+                {
+                    restartPosCount = 0.0f;
+                    restartPos = false;
+                    transform.position = startPos;
+                    bossStats.hitPoints = bossStats.maxHitPoints;                 
+                }
+            }
         }       
     }
 
@@ -747,6 +809,15 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);
             
             earthAuraPS.Play();
+            for (int i = 0; i<4; ++i)
+            {
+                AudioManager.instance.Wait(Random.Range(0, 1.5f), () =>
+                {
+                    AudioManager.instance.RandomizePlayFx(gameObject, 1.3f, AudioManager.FX_BOSS_CAST_SKULLS_VOL, castSkulls);
+                });
+            }
+            venomAuraSkullAttackSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraSkullAttack, 
+                true, 1.0f, AudioManager.FX_BOSS_VENOM_AURA_SKULL_ATTACK_VOL);
             earthAuraDamageScript.auraActive = true;
             levitatingSkullsScript.StartSkullsAttack();        
         }
@@ -778,12 +849,6 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, true);          
         }
                         
-        if (playerHit)
-        {
-            thePlayer.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
-            playerHit = false;
-        }
-
         if(bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             meleeAttackFinished = true;
@@ -802,6 +867,13 @@ public class FSMBoss : MonoBehaviour
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
             postMeleeAttackFinished = true;
+            
+            // preparing the skull attack
+            if (venomAuraSkullAttackSource)
+            {
+                venomAuraSkullAttackSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
             earthAuraPS.Stop();
             earthAuraDamageScript.auraActive = false;
         }
@@ -825,16 +897,21 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "PreBallAttack";
             bossAnimator.SetBool(currAnimation, true);
-            
+
+            fireAura.GetComponent<SphereCollider>().enabled = true;
             ballAttackIndicatorPS.Play();
             fireAuraPS.Play();
-            fireAuraDamageScript.auraActive = true;           
-        }
+            fireAuraDamageScript.auraActive = true;
 
-        if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-        {
+            Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
+            GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", ballSpawnPosition, facingRight);
+            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);
+            fireBall.GetComponent<BossFireBallBehaviour>().GenerateBall();
+
+            fireballAuraSource = AudioManager.instance.PlayDiegeticFx(gameObject, fireballAura, true, 1.0f, AudioManager.FX_BOSS_FIREBALL_AURA_VOL);
+        }   
             preBallAttackFinished = true;
-        }
+        
         //Set the boss looking at the player
         Vector3 newPos = gameObject.transform.position;
         int diff = (int)(thePlayer.transform.position.x - newPos.x);
@@ -853,11 +930,7 @@ public class FSMBoss : MonoBehaviour
         {   
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "BallAttack";
-            bossAnimator.SetBool(currAnimation, true);
-
-            Vector3 ballSpawnPosition = transform.FindChild("BallSpawnPoint").transform.position;
-            GameObject fireBall = ParticlesManager.SpawnParticle("bossFireBall", ballSpawnPosition, facingRight);
-            fireBall.GetComponent<BossFireBallBehaviour>().SetFacingRight(facingRight);                    
+            bossAnimator.SetBool(currAnimation, true);            
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -874,13 +947,21 @@ public class FSMBoss : MonoBehaviour
             currAnimation = "PostBallAttack";
             bossAnimator.SetBool(currAnimation, true);
             fireAuraDamageScript.auraActive = false;
+            fireAura.GetComponent<SphereCollider>().enabled = false;
+            fireAura.GetComponent<FireAuraDamage>().ColliderDisabled();
         }
 
         if (bossAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
+            if (fireballAuraSource && !postBallAttackFinished)
+            {               
+                fireballAuraSource.loop = false;
+                AudioManager.instance.FadeAudioSource(fireballAuraSource, FadeAudio.FadeType.FadeOut, 3.0f, 0.0f);
+                Debug.Log("post ball attack");
+            }
             postBallAttackFinished = true;
             ballAttackIndicatorPS.Stop();
-            fireAuraPS.Stop();            
+            fireAuraPS.Stop();         
         }
 
         //Set the boss looking at the player
@@ -914,6 +995,10 @@ public class FSMBoss : MonoBehaviour
 
             if (iceSpikesScript3D != null)
                 iceSpikesScript3D.SelectIceSafe();
+
+            venomAuraIceSpikesSource = AudioManager.instance.PlayDiegeticFx(gameObject, venomAuraIceSpikes, 
+                true, 1.0f, AudioManager.FX_BOSS_VENOM_AURA_ICE_SPIKES_VOL);
+            AudioManager.instance.PlayDiegeticFx(gameObject, youDie, false, 1.0f, AudioManager.FX_BOSS_VOICE_YOUDIE_VOL);
         }
         else
         {
@@ -939,6 +1024,8 @@ public class FSMBoss : MonoBehaviour
             bossAnimator.SetBool(currAnimation, false);
             currAnimation = "CastIceSpikes";
             bossAnimator.SetBool(currAnimation, true);
+
+            AudioManager.instance.PlayDiegeticFx(gameObject, iceSpikesAttack, false, 1.0f, AudioManager.FX_BOSS_ICE_SPIKES_VOL);
 
             //Sacar los pinchos y dejarlos durante un tiempo
             if (iceSpikesScript != null)
@@ -973,6 +1060,12 @@ public class FSMBoss : MonoBehaviour
              
             if(iceSpikesScript3D != null)
                 iceSpikesScript3D.HideIceSpikes();
+
+            if (venomAuraIceSpikesSource)
+            {
+                venomAuraIceSpikesSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraIceSpikesSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
         }
         else
         {
@@ -1032,6 +1125,11 @@ public class FSMBoss : MonoBehaviour
             fireAuraPS.Stop();         
             earthAuraDamageScript.auraActive = false;
             earthAuraPS.Stop();
+            if (venomAuraSkullAttackSource)
+            {
+                venomAuraSkullAttackSource.loop = false;
+                AudioManager.instance.FadeAudioSource(venomAuraSkullAttackSource, FadeAudio.FadeType.FadeOut, 0.5f, 0.0f);
+            }
         }
     }
 
@@ -1040,7 +1138,7 @@ public class FSMBoss : MonoBehaviour
     {
         gameObject.transform.localRotation *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
         facingRight = !facingRight;
-
+        
         //Keep levitating skulls rotation
         gameObject.transform.Find("LevitatingSkulls").localRotation *= Quaternion.Euler(0.0f, -180.0f, 0.0f);
     }
@@ -1058,5 +1156,10 @@ public class FSMBoss : MonoBehaviour
     public void WakeUp()
     {
         insideTornado = false;
+    }
+
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
     }
 }

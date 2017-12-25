@@ -19,12 +19,13 @@ public class DestructionController : MonoBehaviour
 
     public void ApplyDamage(int dmg = 0)
     {
+        ParticlesManager.SpawnParticle("hitEffect", transform.position, true);
         GameObject broken = Instantiate(remains, transform.position, transform.rotation);
         broken.GetComponent<AdjustDirection>().fragmentScale = transform.localScale;
         broken.GetComponent<AdjustDirection>().pushForceX = pushForceX;
         broken.GetComponent<AdjustDirection>().pushForceY = pushForceY;
 
-        AudioManager.instance.PlayDiegeticFx(gameObject, destructionSound);
+        AudioManager.instance.PlayDiegeticFx(gameObject, destructionSound, false, 1.0f, AudioManager.FX_DESTRUCTION_VOL);
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraFollow>().StartShake(magnitude, duration);
         Destroy(gameObject);
 

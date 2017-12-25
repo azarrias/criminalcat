@@ -14,17 +14,21 @@ public class SkullsAttackBehaviour : MonoBehaviour {
 
     private GameObject skullMesh;
 
+    [Header("Sound FXs")]
+    public AudioClip skullsVanishing;
+
     [HideInInspector]
-    public GameObject parentGO; //boss
+    public GameObject bossManager3D; 
 
     void Awake()
     {
         skullMesh = transform.Find("SkullMesh").gameObject;      
         dust = GetComponent<ParticleSystem>();
+        bossManager3D = GameObject.Find("BossManager3D");
     }
 
 	void Update () {
-        if (parentGO.activeSelf == false) //boss is dead
+        if (bossManager3D.activeSelf == false) //boss is dead
         {           
             skullMesh.GetComponent<SphereCollider>().enabled = false;               
         }
@@ -47,9 +51,13 @@ public class SkullsAttackBehaviour : MonoBehaviour {
         {
             dust.Play();
             if (!hasHitShield)
+            {
                 collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
+                Debug.Log("skull damage");
+            }
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             disipate = true;
+            AudioManager.instance.PlayDiegeticFx(gameObject, skullsVanishing, false, 1.0f, AudioManager.FX_SKULLS_VANISHING_VOL);
         }
     }
 
@@ -72,9 +80,7 @@ public class SkullsAttackBehaviour : MonoBehaviour {
         if (scale.x == 0.0f)
         {           
             disipate = false;
-            gameObject.SetActive(false);
-            //Set boss as parent
-            gameObject.transform.parent = parentGO.transform;
+            gameObject.SetActive(false);           
         }
     }
 

@@ -20,6 +20,7 @@ public class RockDestroy : MonoBehaviour {
         {
             //other.transform.parent.gameObject.SetActive(false);
             other.transform.parent.gameObject.GetComponent<RockBehaviour>().disipate = true;
+            other.enabled = false;
         }
     }
 }

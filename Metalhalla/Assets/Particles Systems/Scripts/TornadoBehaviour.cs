@@ -92,7 +92,7 @@ public class TornadoBehaviour : MonoBehaviour {
     {
         if (!firstTime)
         {
-            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxTornado);
+            tornadoAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxTornado, false, 1.0f, AudioManager.FX_PLAYER_TORNADO_VOL);
             if (tornadoAudioSource)
             {
                 AudioManager.instance.FadeAudioSource(tornadoAudioSource, FadeAudio.FadeType.FadeIn, fadeSeconds, 1.0f);
@@ -199,7 +199,7 @@ public class TornadoBehaviour : MonoBehaviour {
 
     void OnTriggerStay(Collider collider)
     {
-        if (collider.gameObject.name == "FireAura" && fsmBoss.GetCurrentState() == FSMBoss.State.PRE_BALL_ATTACK)
+        if (collider.gameObject.name == "FireAura")
             disipate = true;
     }
 
@@ -304,7 +304,7 @@ public class TornadoBehaviour : MonoBehaviour {
                 enemy.transform.Find("ModelContainer").localRotation = enemy.GetComponent<EnemyStats>().initialRotation;
                 enemy.transform.position = enemy.GetComponent<EnemyStats>().initialPosition;
             }
-            
+            enemy.SendMessage("ApplyBloodyDamage", SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);
             enemy.SendMessage("WakeUp", SendMessageOptions.DontRequireReceiver);
         }

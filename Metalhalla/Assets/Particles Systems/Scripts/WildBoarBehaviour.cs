@@ -68,7 +68,7 @@ public class WildBoarBehaviour : MonoBehaviour
 
         if (!firstTime)
         {
-            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboar);    
+            wildboardAudioSource = AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboar, false, 1.0f, AudioManager.FX_PLAYER_WILDBOAR_VOL);    
         }
         else
             firstTime = false;
@@ -118,11 +118,12 @@ public class WildBoarBehaviour : MonoBehaviour
             if (hits.Length != 0)
             {
                 ActivateStoneExplosion();
-                AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboarDestruction);
+                AudioManager.instance.PlayDiegeticFx(gameObject, playerStatus.fxWildboarDestruction, false, 1.0f, AudioManager.FX_PLAYER_WILDBOAR_DESTRUCTION_VOL);
 
                 for (int i = 0; i < hits.Length; i++)
-                {                    
-                     hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
+                {
+                    hits[i].collider.gameObject.SendMessage("ApplyBloodyDamage", SendMessageOptions.DontRequireReceiver);
+                    hits[i].collider.gameObject.SendMessage("ApplyDamage", damage, SendMessageOptions.DontRequireReceiver);                   
                 }
 
             }

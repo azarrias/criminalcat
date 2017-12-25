@@ -23,9 +23,8 @@ public class PlayerInput : MonoBehaviour {
         private bool leftTriggerDown;
         private bool rightTriggerDown;
 
-        //double tap control
+        private bool tauntButtonDown;
         private bool horizontalDoubleTap;
-
 
 		public void Reset(){
 			horizontalInput = 0f;
@@ -41,10 +40,10 @@ public class PlayerInput : MonoBehaviour {
             leftTriggerInput = 0f;
             rightTriggerInput = 0f;
             leftTriggerDown = false;
-            rightTriggerDown = false; 
+            rightTriggerDown = false;
 
-
-        horizontalDoubleTap = false; 
+            tauntButtonDown = false;
+            horizontalDoubleTap = false; 
         }
 
         public void SetHorizontalInput(float value)	{ horizontalInput = value; }
@@ -62,6 +61,7 @@ public class PlayerInput : MonoBehaviour {
         public void SetLeftTriggerDown( bool value) { leftTriggerDown = value;  }
         public void SetRightTriggerDown( bool value ) { rightTriggerDown = value; }
 
+        public void SetTauntButtonDown( bool value) { tauntButtonDown = value; }
         public void SetHorizontalDoubleTap(bool value) { horizontalDoubleTap = value; }
 
 		public float GetHorizontalInput(){ return horizontalInput;}
@@ -79,6 +79,7 @@ public class PlayerInput : MonoBehaviour {
         public bool GetLeftTriggerDown() { return leftTriggerDown; }
         public bool GetRightTriggerDown() { return rightTriggerDown; }
 
+        public bool GetTauntButtonDown() { return tauntButtonDown; }
         public bool GetHorizontalDoubleTap() { return horizontalDoubleTap; }
 
 		public void CopyInputFrom( pInput from)
@@ -96,14 +97,16 @@ public class PlayerInput : MonoBehaviour {
             leftTriggerInput = from.leftTriggerInput;
             rightTriggerInput = from.rightTriggerInput;
             leftTriggerDown = from.leftTriggerDown;
-            rightTriggerDown = from.rightTriggerDown; 
+            rightTriggerDown = from.rightTriggerDown;
 
+            tauntButtonDown = from.tauntButtonDown;
             horizontalDoubleTap = from.horizontalDoubleTap;
         }
 	};
 
     public pInput newInput;
-    pInput oldInput;
+    [HideInInspector]
+    public pInput oldInput;
 
     GUIManager guiManager; 
 
@@ -116,14 +119,10 @@ public class PlayerInput : MonoBehaviour {
 
     private void Start()
     {
-        GameObject guiObject = GameObject.Find("GUI");
-        if (guiObject)
-            guiManager = guiObject.GetComponent<GUIManager>();
-        doubleTapFramesCount = 0;
-        hDoubleTap = doubleTap.IDLE;
+        StartPlayerInput();
     }
 
-    public void GetInput()
+    public virtual void GetInput()
 	{
 		oldInput.CopyInputFrom (newInput);  //make a savestate from last input
     // OLD CONTROL MAPPING
@@ -157,8 +156,9 @@ public class PlayerInput : MonoBehaviour {
         newInput.SetLeftTriggerInput(Input.GetAxis("LeftTrigger"));
         newInput.SetRightTriggerInput(Input.GetAxis("RightTrigger"));
         newInput.SetLeftTriggerDown(!oldInput.GetLeftTriggerDown() && oldInput.GetLeftTriggerInput() == 0 && newInput.GetLeftTriggerInput() > 0);
-        newInput.SetRightTriggerDown(!oldInput.GetRightTriggerDown() && oldInput.GetRightTriggerInput() == 0 && newInput.GetRightTriggerInput() > 0); 
+        newInput.SetRightTriggerDown(!oldInput.GetRightTriggerDown() && oldInput.GetRightTriggerInput() == 0 && newInput.GetRightTriggerInput() > 0);
 
+        newInput.SetTauntButtonDown(Input.GetButton("ButtonSelect"));
         newInput.SetCastButtonDown( newInput.GetLeftTriggerDown() || newInput.GetRightTriggerDown() );
     }
 
@@ -202,5 +202,14 @@ public class PlayerInput : MonoBehaviour {
         }
         */
         return ret; 
+    }
+
+    public void StartPlayerInput()
+    {
+        GameObject guiObject = GameObject.Find("GUI");
+        if (guiObject)
+            guiManager = guiObject.GetComponent<GUIManager>();
+        doubleTapFramesCount = 0;
+        hDoubleTap = doubleTap.IDLE;
     }
 }

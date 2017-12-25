@@ -8,7 +8,7 @@ public class PlaftormStayTrigger : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
-            if (other.transform.position.y >= transform.position.y)
+          if (other.transform.position.y >= transform.position.y)
                 other.gameObject.transform.parent = transform.parent;
         }
     }
@@ -17,7 +17,9 @@ public class PlaftormStayTrigger : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
-            other.gameObject.transform.parent = null; 
+            PlayerStatus playerStatus = other.GetComponent<PlayerStatus>();
+            if (playerStatus.IsJump() == true || playerStatus.IsDash() || playerStatus.IsFall()  || playerStatus.IsWalk())
+                other.gameObject.transform.parent = null; 
         }
     }
 }

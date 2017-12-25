@@ -12,6 +12,7 @@ public class DrinkState : PlayerState
         drinkFramesDuration = framesDuration;
         drinkFramesCount = 0;
     }
+
     public override void HandleInput(PlayerInput input, PlayerStatus status)
     {
         if (status.previousState != this)
@@ -19,6 +20,7 @@ public class DrinkState : PlayerState
             drinkFramesCount = 0;
             status.StartGUIFeedback("YButton");
             status.ShowHorn(true);
+            status.PlayFx("drink");
         }
 
         if (drinkFramesCount >= drinkFramesDuration)
@@ -27,7 +29,7 @@ public class DrinkState : PlayerState
                 status.SetState(PlayerStatus.walk);
             else
                 status.SetState(PlayerStatus.idle);
-
+            status.PlayFx("burp");
         }
         else
             status.SetState(this);

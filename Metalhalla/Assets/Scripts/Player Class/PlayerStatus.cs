@@ -7,6 +7,7 @@ public class PlayerStatus : MonoBehaviour
     public GameObject playerModel;
     Quaternion playerModelDefaultRotation;
     Quaternion playerModelClimbRotation;
+    Quaternion playerModelTauntRotation;
 
     [Header("Attack Elements")]
     public GameObject hammerMesh;
@@ -14,6 +15,7 @@ public class PlayerStatus : MonoBehaviour
     public GameObject lightningGenerator;
     public Vector3 eagleAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
     public Vector3 wildboarAttackInstanceOffset = new Vector3(1.0f, -0.7f, 0);
+    public BoxCollider dashAttackCollider;
 
     [Header("Defense Elements")]
     public GameObject shield;
@@ -38,10 +40,10 @@ public class PlayerStatus : MonoBehaviour
     public AudioClip[] rightFootsteps;
     public AudioClip[] hurtScream;
     public AudioClip deathScream;
-
-    [Header("Sound FXs parameters")]
-    [Range(0.0f, 1.0f)]
-    public float footstepVolume = 0.4f;
+    public AudioClip[] drinkBeer;
+    public AudioClip[] burp;
+    public AudioClip voiceWhat;
+    public AudioClip voiceDammit;
 
     [HideInInspector]
     public Animator playerAnimator;
@@ -62,6 +64,7 @@ public class PlayerStatus : MonoBehaviour
     public float staminaRecoveryRate = 0.0f;
     int stamina;
     float staminaRecovery;
+    bool fullStaminaRecovery;
 
     [Header("Beer Setup")]
     [Tooltip("Starting beer value")]
@@ -103,12 +106,15 @@ public class PlayerStatus : MonoBehaviour
     public float fallCloudDuration = 0.3f;
     public float deadDuration = 3.0f;
     public float dashDuration = 0.4f;
+    public float tauntDuration = 1.3f;
 
     [Header("Respawn parameters")]
     public Vector3 initialPosition;
     [HideInInspector]
     public Vector3 activeRespawnPoint;
     private CameraFade cameraFade;
+    //private bool changeSceneIfDead = false;
+    //private string nextSceneIfDead;
 
     // -- State variables (using state pattern) -- //
     public static AttackState attack;
@@ -124,6 +130,7 @@ public class PlayerStatus : MonoBehaviour
     public static IdleState idle;
     public static JumpState jump;
     public static RefillState refill;
+    public static TauntState taunt;
     public static WalkState walk;
     [HideInInspector]
     public PlayerState currentState;
@@ -161,9 +168,11 @@ public class PlayerStatus : MonoBehaviour
     {
         playerModelDefaultRotation = playerModel.transform.localRotation;
         playerModelClimbRotation = Quaternion.identity;
+        playerModelTauntRotation.SetLookRotation(new Vector3(0, 0, -1), new Vector3(0, 1, 0));
 
         attackCollider.enabled = false;
         lightningGenerator.SetActive(false);    // temp
+        dashAttackCollider.enabled = false;
 
         shieldCollider.enabled = false;
         ShowShield(false);
@@ -174,6 +183,7 @@ public class PlayerStatus : MonoBehaviour
 
         GameObject.FindGameObjectWithTag("GameSession").GetComponent<SavePlayerState>().RecoverPlayerStatusValues( this);
         staminaRecovery = 0.0f;
+        fullStaminaRecovery = false;
 
         GameObject guiObject = GameObject.Find("GUI");
         if (guiObject)
@@ -195,6 +205,7 @@ public class PlayerStatus : MonoBehaviour
         idle = new IdleState();
         jump = new JumpState(CalculateFramesFromTime(GetComponent<PlayerMove>().timeToJumpApex));
         refill = new RefillState(CalculateFramesFromTime(refillDuration));
+        taunt = new TauntState(CalculateFramesFromTime(tauntDuration));
         walk = new WalkState();
         SetState(idle);
 
@@ -216,7 +227,7 @@ public class PlayerStatus : MonoBehaviour
 
     void Update()
     {
-        // TODO - Remove this shortcuts when other entities and interactions are in place
+        // Debug mode
         if (Input.GetKeyDown(KeyCode.F1) == true)
             ApplyDamage(20);
         if (Input.GetKeyDown(KeyCode.F2) == true)
@@ -233,13 +244,15 @@ public class PlayerStatus : MonoBehaviour
             godMode = !godMode;
 
         // stamina recovery
-        if (stamina == 0)
+        float staminaRecoveryCap = fullStaminaRecovery ? staminaMaximum : 1;
+        if (stamina < staminaRecoveryCap)
         {
             staminaRecovery += staminaRecoveryRate * Time.deltaTime;
             if (staminaRecovery >= 1.0f)
             {
                 RestoreStamina(1);
                 staminaRecovery = 0.0f;
+                PlayFx("staminaUp");
             }
         }
     }
@@ -261,6 +274,18 @@ public class PlayerStatus : MonoBehaviour
         if (movingDoor)
             movingDoor.GetComponent<CloseOpenDoor>().OpenDoor();
 
+        GameObject bossGUI = GameObject.Find("BossGUI");
+        if (bossGUI)
+            bossGUI.SetActive(false);
+    }
+
+    public bool SetRespawnPoint(Vector3 newRespawnPoint)
+    {
+        if (newRespawnPoint == activeRespawnPoint)
+            return false;
+
+        activeRespawnPoint = newRespawnPoint;
+        return true;
     }
 
     // ---- STATE functions ---------------------------------------------------------------------------------------------
@@ -290,17 +315,28 @@ public class PlayerStatus : MonoBehaviour
         if (newState != attack)
             attackCollider.enabled = false;
         if (newState != defense)
+        {
             ShowShield(false);
-
+            ResetAnimatorLayerWeights();
+        }
         if (newState != drink)
             ShowHorn(false);
+        if (newState != dash)
+            dashAttackCollider.enabled = false;
 
-        if (IsClimb() && WasClimb() == false)
+        if (IsClimb())
             SetClimbStateModelRotation();
-        else if (WasClimb() && IsClimb() == false)
+        else if (IsTaunt())
+            SetTauntStateModelRotation();
+        else if ((WasClimb() && IsClimb() == false) || (WasTaunt() && IsTaunt() == false))
         {
             SetInitialModelRotation();
             SetAnimatorSpeed(1.0f);
+        }
+
+        if (IsClimb() == false &&  IsTaunt() )
+        {
+
         }
     }
 
@@ -328,7 +364,7 @@ public class PlayerStatus : MonoBehaviour
         if (health >= healthMaximum)
             health = healthMaximum;
 
-        PlayFx("restoreHealth");
+//        PlayFx("restoreHealth");
         return true;
     }
 
@@ -382,6 +418,16 @@ public class PlayerStatus : MonoBehaviour
         stamina = value;
     }
 
+    public void SetStaminaRecoveryParameters( bool fullRecovery, float newRecoveryRate)
+    {
+        fullStaminaRecovery = fullRecovery;
+        staminaRecoveryRate = newRecoveryRate;
+    }
+
+    public bool HasMaxStamina()
+    {
+        return stamina == staminaMaximum;
+    }
     // ---- BEER functions ---------------------------------------------------------------------------------------------
     public bool ConsumeBeer(int consumption)
     {
@@ -481,6 +527,7 @@ public class PlayerStatus : MonoBehaviour
     public bool IsHit() { return currentState == hit; }
     public bool IsDash() { return currentState == dash; }
     public bool IsDead() { return currentState == dead; }
+    public bool IsTaunt() { return currentState == taunt; }
 
     public bool WasIdle() { return previousState == idle; }
     public bool WasWalk() { return previousState == walk; }
@@ -488,32 +535,42 @@ public class PlayerStatus : MonoBehaviour
     public bool WasFall() { return previousState == fall; }
     public bool WasDead() { return previousState == dead; }
     public bool WasClimb() { return previousState == climb; }
+    public bool WasTaunt() { return previousState == taunt; }
 
     // ---- SOUND functions ---------------------------------------------------------------------------------------------
     public void PlayFx(string fx)
     {
         if (fx.Equals("swing"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxSwing, false, 1.0f, AudioManager.FX_PLAYER_SWING_VOL);
         else if (fx.Equals("jump"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxJump, false, 1.0f, AudioManager.FX_PLAYER_JUMP_VOL);
         else if (fx.Equals("land"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxLand, false, 1.0f, AudioManager.FX_PLAYER_LAND_VOL);
         else if (fx.Equals("tornado"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxTornado, false, 1.0f, AudioManager.FX_PLAYER_TORNADO_VOL);
         else if (fx.Equals("wildboar"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar);
+            AudioManager.instance.PlayDiegeticFx(gameObject, fxWildboar, false, 1.0f, AudioManager.FX_PLAYER_WILDBOAR_VOL);
         else if (fx.Equals("leftFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, leftFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_FOOTSTEP_VOL, leftFootsteps);
         else if (fx.Equals("rightFootstep"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, footstepVolume, rightFootsteps);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_FOOTSTEP_VOL, rightFootsteps);
         else if (fx.Equals("hurtScream"))
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_HURT_VOL, hurtScream);
         else if (fx.Equals("restoreBeer"))
-            AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer);
-        else if (fx.Equals("restoreHealth"))
-            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
+            AudioManager.instance.PlayNonDiegeticFx(fxRestoreBeer, false, 1.0f, AudioManager.FX_RESTORE_BEER_VOL);
+        //        else if (fx.Equals("restoreHealth"))
+        //            AudioManager.instance.PlayNonDiegeticFx(fxRestoreLife);
         else if (fx.Equals("death"))
-            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream);
+            AudioManager.instance.PlayDiegeticFx(gameObject, deathScream, false, 1.0f, AudioManager.FX_PLAYER_DEATH_VOL);
+        else if (fx.Equals("drink"))
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_DRINK_BEER_VOL, drinkBeer);
+        else if (fx.Equals("burp"))
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_PLAYER_BURP_VOL, burp);
+        else if (fx.Equals("what"))
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceWhat, false, 1.0f, AudioManager.FX_PLAYER_VOICE_WHAT_VOL);
+        else if (fx.Equals("dammit"))
+            AudioManager.instance.PlayDiegeticFx(gameObject, voiceDammit, false, 
+                AudioManager.FX_PLAYER_VOICE_DAMMIT_PITCH, AudioManager.FX_PLAYER_VOICE_DAMMIT_VOL);
     }
 
     // --- ANIMATOR MANAGEMENT functions ---------------------------------------------------------------------------------
@@ -556,6 +613,12 @@ public class PlayerStatus : MonoBehaviour
     public void SetInitialModelRotation()
     {
         playerModel.transform.localRotation = playerModelDefaultRotation;
+    }
+
+    public void SetTauntStateModelRotation()
+    {
+        // to modify
+        playerModel.transform.localRotation = playerModelTauntRotation;
     }
 
     // ---- GHOST JUMP functions --------------------------------------------------------------------------------------------------
@@ -631,14 +694,4 @@ public class PlayerStatus : MonoBehaviour
         hammerMesh.GetComponent<Renderer>().enabled = visible;
     }
 
-    // ---- RESPAWN MANAGEMENT functions ------------------------------------------------------------------------------------------------
-    public bool SetRespawnPoint(Vector3 newRespawnPoint)
-    {
-        if (newRespawnPoint == activeRespawnPoint)
-            return false;
-
-        activeRespawnPoint = newRespawnPoint;
-        return true;
-    }
-    
 }

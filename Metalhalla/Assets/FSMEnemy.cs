@@ -39,6 +39,7 @@ public class FSMEnemy : MonoBehaviour
 
     [Header("Sound FXs")]
     public AudioClip[] hurtScream;
+    public AudioClip[] deathScream;
 
     private float minPatrolDistance = 0.0f;
     private Vector3 destination = Vector3.zero;
@@ -55,6 +56,8 @@ public class FSMEnemy : MonoBehaviour
     public bool facingRight;
     private float hitRecoil;
     private float deadRecoil;
+
+    private bool bloodyDamage = false;
 
     private void Awake()
     {
@@ -196,7 +199,8 @@ public class FSMEnemy : MonoBehaviour
             break;
 
             case State.BEING_HIT:
- //               animator.SetBool("being_hit", true);
+                //               animator.SetBool("being_hit", true);
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_HURT_VOL, hurtScream);
                 faceXCoordinate(player.transform.position.x);
                 animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
             break;
@@ -226,6 +230,7 @@ public class FSMEnemy : MonoBehaviour
             break;
 
             case State.DEAD:
+                AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_DEATH_VOL, deathScream);
                 animator.SetBool("dead", true);
                 int direction = facingRight ? -1 : 1;
                 transform.position += new Vector3(direction * deadRecoil, 0, 0);
@@ -308,14 +313,39 @@ public class FSMEnemy : MonoBehaviour
     {
         if (currentState != State.STUNNED)
         {
-          //  Debug.Log(name.ToString() + ": I've been hit");
-            ChangeState(State.BEING_HIT);
-            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, 1.0f, hurtScream);
+            animator.SetLayerWeight(1, 1.0f);
+            if (enemyStats.hitPoints <= 0)
+                ChangeState(State.DEAD);
+            else
+                ChangeState(State.BEING_HIT);
             // camera shake when starting being hit state
             camFollow.StartShake();
-            GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2*Vector3.back, facingRight);  // blood positioning has to be improved
-            //blood.transform.parent = transform;
-            blood.transform.SetParent(transform);
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;                
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;               
+                bloodyDamage = false;
+            }
+        }
+        else
+        {
+            animator.SetLayerWeight(1, 1.0f);
+            animator.Play("Damaged", animator.GetLayerIndex("Damaged"), 0);
+            AudioManager.instance.RandomizePlayFx(gameObject, 1.0f, AudioManager.FX_VIKING_HURT_VOL, hurtScream);
+            // camera shake when starting being hit state
+            camFollow.StartShake();
+            if (!bloodyDamage)
+            {
+                GameObject hitEffect = ParticlesManager.SpawnParticle("hitEffect", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                      //blood.transform.parent = transform;               
+            }
+            else
+            {
+                GameObject blood = ParticlesManager.SpawnParticle("blood", transform.position + 2 * Vector3.back, facingRight);  // blood positioning has to be improved                                                                                                                                    //blood.transform.parent = transform;                
+                bloodyDamage = false;
+            }
         }
     }
 
@@ -401,6 +431,11 @@ public class FSMEnemy : MonoBehaviour
         Vector3 tmp = box.size;
         tmp.y = ysize;
         box.size = tmp;
+    }
+
+    public void ApplyBloodyDamage()
+    {
+        bloodyDamage = true;
     }
 
 }
